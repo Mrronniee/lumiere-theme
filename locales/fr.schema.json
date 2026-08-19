@@ -568,6 +568,9 @@
     "footer": {
       "name": "Footer",
       "settings": {
+        "show_payment_icons": {
+          "label": "Afficher les logos des moyens de paiement"
+        },
         "background_color": {
           "label": "Couleur de fond"
         },
@@ -993,7 +996,13 @@
     "related_products": {
       "name": "Produits associés",
       "settings": {
-        "title": {
+        "intent": {
+          "label": "Type de recommandation",
+          "info": "Les produits complémentaires sont ceux que vous associez à la main dans l’application gratuite Shopify Search & Discovery. Ajoutez la section une deuxième fois pour afficher les deux.",
+          "options__1": { "label": "Produits similaires (automatique)" },
+          "options__2": { "label": "Produits complémentaires (Search & Discovery)" }
+        },
+"title": {
           "label": "Titre"
         },
         "collection": {
@@ -1028,6 +1037,7 @@
         }
       },
       "presets": {
+        "complementary": { "name": "Produits complémentaires" },
         "name": "Produits associés"
       }
     },

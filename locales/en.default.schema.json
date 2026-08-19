@@ -568,6 +568,9 @@
     "footer": {
       "name": "Footer",
       "settings": {
+        "show_payment_icons": {
+          "label": "Show payment method logos"
+        },
         "background_color": {
           "label": "Background colour"
         },
@@ -993,7 +996,13 @@
     "related_products": {
       "name": "Related products",
       "settings": {
-        "title": {
+        "intent": {
+          "label": "Recommendation type",
+          "info": "Complementary products are the ones you pair by hand in the free Shopify Search & Discovery app. Add this section a second time to show both.",
+          "options__1": { "label": "Related products (automatic)" },
+          "options__2": { "label": "Complementary products (Search & Discovery)" }
+        },
+"title": {
           "label": "Heading"
         },
         "collection": {
@@ -1028,6 +1037,7 @@
         }
       },
       "presets": {
+        "complementary": { "name": "Complementary products" },
         "name": "Related products"
       }
     },

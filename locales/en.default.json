@@ -1,5 +1,8 @@
 {
   "general": {
+    "payment": {
+      "methods": "Payment methods"
+    },
     "search": {
       "search": "Search",
       "title": "Search",
@@ -232,6 +235,7 @@
       },
       "from_price_html": "From {{ price }}",
       "price": {
+          "unit_price": "Unit price",
         "regular_price": "Regular price",
         "sale_price": "Sale price"
       }

@@ -1,5 +1,8 @@
 {
   "general": {
+    "payment": {
+      "methods": "Moyens de paiement"
+    },
     "search": {
       "search": "Rechercher",
       "title": "Recherche",
@@ -232,6 +235,7 @@
       },
       "from_price_html": "À partir de {{ price }}",
       "price": {
+          "unit_price": "Prix à l’unité",
         "regular_price": "Prix régulier",
         "sale_price": "Prix soldé"
       }

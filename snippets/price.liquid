@@ -16,6 +16,7 @@
       assign show_colour = true
   endcase
 
+  assign unit_variant = product.selected_or_first_available_variant
   assign compare_at_price = product.compare_at_price
   assign price = product.price
   assign available = product.available
@@ -61,6 +62,13 @@
       {%- else -%}
         {{ money_price }}
       {%- endif -%}
+    </span>
+  {%- endif -%}
+
+  {%- if unit_variant.unit_price_measurement -%}
+    <span class="price__unit">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      {{ unit_variant.unit_price | money }} / {% if unit_variant.unit_price_measurement.reference_value != 1 %}{{ unit_variant.unit_price_measurement.reference_value }} {% endif %}{{ unit_variant.unit_price_measurement.reference_unit }}
     </span>
   {%- endif -%}
 

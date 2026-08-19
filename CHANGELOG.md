@@ -1,5 +1,28 @@
 # Changelog
 
+## 1.2.0 — 2026-08-20
+
+### Added
+- Payment method logos in the footer, taken from the methods your store
+  actually accepts. New setting: **Show payment method logos**.
+- Unit price on the product page and on product cards — required in the EU
+  (Directive 98/6/EC) for anything sold by weight, volume or length. It appears
+  only when you have set a unit of measure on the variant, and follows the
+  selected variant.
+- Complementary product recommendations. The product recommendations section
+  now has a **Recommendation type** setting — *Related* (automatic) or
+  *Complementary*, the ones you pair by hand in the free Shopify Search &
+  Discovery app. Add the section twice to show both.
+
+### Fixed
+- Text left in French in an English theme: 102 strings the merchant or the
+  shopper could see — section names and demo content in the editor, screen
+  reader labels, and a few strings written straight into JavaScript.
+
+### Fixed
+- Payment logos in the footer had no on/off setting and were not exposed as a
+  list to screen readers.
+
 ## 1.1.0 — 2026-08-20
 
 ### Added

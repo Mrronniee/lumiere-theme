@@ -156,6 +156,14 @@
     margin-left: 0.75rem;
   }
 
+  .product-info__price-unit {
+    display: block;
+    margin-top: 0.35rem;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+
   .product-info__price-badge {
     display: inline-block;
     background: var(--color-sale);
@@ -555,6 +563,14 @@
             -{{ current_variant.compare_at_price | minus: current_variant.price | times: 100 | divided_by: current_variant.compare_at_price }}%
           {%- endif -%}
         </span>
+        <span class="product-info__price-unit" data-unit-price{% unless current_variant.unit_price_measurement %} hidden{% endunless %}>
+          <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+          <span data-unit-price-text>
+            {%- if current_variant.unit_price_measurement -%}
+              {{ current_variant.unit_price | money }} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }} {% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
+            {%- endif -%}
+          </span>
+        </span>
       </div>
 
       {%- form 'product', product, id: 'ProductForm', class: 'product-form', data-type: 'add-to-cart-form' -%}
@@ -751,6 +767,22 @@
   <script type="application/json" data-product-json>
     {{ product | json }}
   </script>
+
+  {%- comment -%}
+    `product | json` ne garantit pas unit_price_measurement : on emet la mesure
+    nous-memes pour que le changement de variante puisse rafraichir la ligne.
+  {%- endcomment -%}
+  <script type="application/json" data-unit-json>
+    {
+      {%- for v in product.variants -%}
+        "{{ v.id }}": {
+          "unit": {% if v.unit_price_measurement %}{{ v.unit_price | money | json }}{% else %}null{% endif %},
+          "ref": {% if v.unit_price_measurement %}{{ v.unit_price_measurement.reference_value | json }}{% else %}null{% endif %},
+          "measure": {% if v.unit_price_measurement %}{{ v.unit_price_measurement.reference_unit | json }}{% else %}null{% endif %}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    }
+  </script>
 </div>
 
 {%- comment -%} ZOOM MODAL {%- endcomment -%}
@@ -824,7 +856,7 @@
           "type": "text",
           "id": "heading",
           "label": "t:sections.main_product.blocks.collapsible_tab.settings.heading.label",
-          "default": "Livraison & Retours"
+          "default": "Shipping & returns"
         },
         {
           "type": "richtext",

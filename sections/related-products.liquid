@@ -60,7 +60,7 @@
       {%- comment -%} API de recommandations Shopify : reellement lie au produit courant {%- endcomment -%}
       <div
         data-recommendations
-        data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
+        data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent={{ section.settings.intent | default: 'related' }}"
       >
         {%- if recommendations.performed and recommendations.products_count > 0 -%}
           {%- for product in recommendations.products -%}
@@ -79,10 +79,27 @@
   "class": "section-related-products",
   "settings": [
     {
+      "type": "select",
+      "id": "intent",
+      "label": "t:sections.related_products.settings.intent.label",
+      "info": "t:sections.related_products.settings.intent.info",
+      "options": [
+        {
+          "value": "related",
+          "label": "t:sections.related_products.settings.intent.options__1.label"
+        },
+        {
+          "value": "complementary",
+          "label": "t:sections.related_products.settings.intent.options__2.label"
+        }
+      ],
+      "default": "related"
+    },
+    {
       "type": "text",
       "id": "title",
       "label": "t:sections.related_products.settings.title.label",
-      "default": "Vous aimerez aussi"
+      "default": "You may also like"
     },
     {
       "type": "collection",
@@ -165,6 +182,7 @@
     }
   ],
   "presets": [
+    {"name": "t:sections.related_products.presets.complementary.name", "settings": {"intent": "complementary"}},
     {
       "name": "t:sections.related_products.presets.name",
       "category": "Product"

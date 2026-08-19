@@ -428,7 +428,7 @@
           if (freshOverlay && this.overlay) this.overlay.className = this.overlay.className;
         }
       } catch (e) {
-        console.error('Rafraichissement du panier impossible:', e);
+        console.error('Could not refresh the cart:', e);
       }
 
       // Compteurs presents hors du drawer (header, page panier)
@@ -482,7 +482,7 @@
         this.open();
         Notify.show(strings.cartAdded);
       } catch (error) {
-        console.error('Ajout au panier impossible:', error);
+        console.error('Could not add to cart:', error);
         Notify.show(strings.cartError, 'error');
       } finally {
         submitBtn?.classList.remove('is-loading');
@@ -536,7 +536,7 @@
         }
         await this.refresh();
       } catch (error) {
-        console.error('Mise a jour du panier impossible:', error);
+        console.error('Could not update the cart:', error);
         Notify.show(strings.cartError, 'error');
       } finally {
         this.state.isUpdating = false;
@@ -629,7 +629,7 @@
         utils.lockScroll(true);
         utils.trapFocus(this.modal, this.modal.querySelector('button[data-quick-view-close]'));
       } catch (error) {
-        console.error('Quick view indisponible:', error);
+        console.error('Quick view unavailable:', error);
         // Repli : on laisse le client aller sur la fiche produit.
         window.location.href = `${window.location.origin}/products/${handle}`;
       }
@@ -993,6 +993,30 @@
         badge.hidden = !onSale;
         if (onSale) {
           badge.textContent = `-${Math.round((1 - variant.price / variant.compare_at_price) * 100)}%`;
+        }
+      }
+
+      // Prix a l'unite (obligation UE pour les ventes au poids/volume/longueur).
+      // La mesure ne figure pas de facon fiable dans `product | json` : elle est
+      // emise par la section dans [data-unit-json].
+      const unitWrap = section.querySelector('[data-unit-price]');
+      if (unitWrap) {
+        if (this.unitData === undefined) {
+          const unitJson = section.querySelector('[data-unit-json]');
+          try {
+            this.unitData = unitJson ? JSON.parse(unitJson.textContent) : null;
+          } catch (e) {
+            this.unitData = null;
+          }
+        }
+        const u = this.unitData && this.unitData[variant.id];
+        const unitText = unitWrap.querySelector('[data-unit-price-text]');
+        if (u && u.unit) {
+          const ref = u.ref && u.ref !== 1 ? u.ref + ' ' : '';
+          if (unitText) unitText.textContent = u.unit + ' / ' + ref + u.measure;
+          unitWrap.hidden = false;
+        } else {
+          unitWrap.hidden = true;
         }
       }
 

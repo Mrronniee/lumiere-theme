@@ -117,7 +117,7 @@
     display: flex;
     gap: 0.5rem;
     align-items: center;
-  }
+   margin: 0; padding: 0; list-style: none; }
 
   .footer__payment-icon {
     height: 24px;
@@ -217,13 +217,15 @@
 
     <div class="footer__bottom">
       <p class="footer__copyright">
-        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | default: 'Tous droits réservés.' }}
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | default: 'All rights reserved.' }}
       </p>
-      <div class="footer__payments">
-        {%- for type in shop.enabled_payment_types -%}
-          {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
-        {%- endfor -%}
-      </div>
+      {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
+        <ul class="footer__payments" role="list" aria-label="{{ 'general.payment.methods' | t }}">
+          {%- for type in shop.enabled_payment_types -%}
+            <li>{{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}</li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
     </div>
   </div>
 </footer>
@@ -254,10 +256,16 @@
       "default": "#333333"
     },
     {
+      "type": "checkbox",
+      "id": "show_payment_icons",
+      "label": "t:sections.footer.settings.show_payment_icons.label",
+      "default": true
+    },
+    {
       "type": "text",
       "id": "copyright_text",
       "label": "t:sections.footer.settings.copyright_text.label",
-      "default": "Tous droits réservés."
+      "default": "All rights reserved."
     }
   ],
   "blocks": [
@@ -285,7 +293,7 @@
           "type": "textarea",
           "id": "description",
           "label": "t:sections.footer.blocks.brand.settings.description.label",
-          "default": "Maison de mode française fondée sur l'artisanat et l'intemporel. Chaque pièce raconte une histoire d'élégance et de passion."
+          "default": "A French fashion house built on craft and permanence. Every piece tells a story."
         }
       ]
     },

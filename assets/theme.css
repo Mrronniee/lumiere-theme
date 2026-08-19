@@ -1219,3 +1219,11 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 .header {
   border-bottom-width: var(--border-width, 1px);
 }
+
+/* Prix a l'unite — affiche uniquement si le marchand a renseigne la mesure. */
+.price__unit {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+}
