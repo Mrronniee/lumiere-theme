@@ -1,0 +1,42 @@
+{% comment %}
+  Section: Barre d'annonce
+  Affiche un message promotionnel en haut de page
+{% endcomment %}
+
+{%- if section.settings.show_announcement -%}
+  <div class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
+    <div class="announcement-bar__content">
+      {%- if section.settings.link != blank -%}
+        <a href="{{ section.settings.link }}" class="announcement-bar__link">
+          <span class="announcement-bar__message">{{ section.settings.text | escape }}</span>
+        </a>
+      {%- else -%}
+        <span class="announcement-bar__message">{{ section.settings.text | escape }}</span>
+      {%- endif -%}
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.announcement_bar.name",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "t:sections.announcement_bar.settings.show_announcement.label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "t:sections.announcement_bar.settings.text.label"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.announcement_bar.settings.link.label"
+    }
+  ]
+}
+{% endschema %}

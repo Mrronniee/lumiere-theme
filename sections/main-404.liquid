@@ -1,0 +1,80 @@
+{% comment %}
+  Section: Page 404
+{% endcomment %}
+
+{%- style -%}
+  .page-404 {
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--spacing-xl) var(--container-padding);
+  }
+
+  .page-404__code {
+    font-family: var(--font-heading);
+    font-size: clamp(6rem, 15vw, 12rem);
+    font-weight: 400;
+    line-height: 1;
+    color: var(--color-primary);
+    opacity: 0.1;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-404__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .page-404__text {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+    max-width: 400px;
+  }
+
+  .page-404__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .page-404__link:hover {
+    background: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+{%- endstyle -%}
+
+<div class="page-404">
+  <span class="page-404__code">404</span>
+  <h1 class="page-404__title">{{ 'general.404.title' | t }}</h1>
+  <p class="page-404__text">{{ 'general.404.subtext' | t }}</p>
+  <a href="{{ routes.root_url }}" class="page-404__link">
+    {{ 'general.404.link' | t }}
+    {% render 'icon', icon: 'arrow-right' %}
+  </a>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_404.name",
+  "tag": "section",
+  "class": "section-404",
+  "settings": []
+}
+{% endschema %}

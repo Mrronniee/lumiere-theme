@@ -1,0 +1,173 @@
+{% comment %}
+  Section: Divider
+  Separateur decoratif entre deux sections : espace vide, filet plein, pointille ou degrade
+  Aucun contenu textuel : le bloc entier est masque aux technologies d'assistance
+{% endcomment %}
+
+{%- liquid
+  assign divider_style = section.settings.divider_style
+  assign thickness = section.settings.line_thickness | at_least: 1
+  assign line_width = section.settings.line_width | at_least: 10 | at_most: 100
+  assign line_color = section.settings.line_color
+  assign space_above = section.settings.space_above
+  assign space_below = section.settings.space_below
+  assign space_above_mobile = space_above | times: 65 | divided_by: 100
+  assign space_below_mobile = space_below | times: 65 | divided_by: 100
+  assign dot_radius = thickness | divided_by: 2.0
+  assign dot_period = thickness | times: 3
+-%}
+
+{%- style -%}
+  .divider-{{ section.id }} {
+    padding: {{ space_above }}px var(--container-padding) {{ space_below }}px;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .divider-{{ section.id }} .divider__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  {%- if divider_style != 'space' -%}
+    .divider-{{ section.id }} .divider__line {
+      width: {{ line_width }}%;
+      height: {{ thickness }}px;
+      margin: 0 auto;
+    }
+  {%- endif -%}
+
+  {%- case divider_style -%}
+    {%- when 'solid' -%}
+      .divider-{{ section.id }} .divider__line {
+        background-color: {{ line_color }};
+      }
+    {%- when 'dotted' -%}
+      .divider-{{ section.id }} .divider__line {
+        background-image: radial-gradient(circle, {{ line_color }} {{ dot_radius }}px, {{ line_color | color_modify: 'alpha', 0 }} {{ dot_radius }}px);
+        background-size: {{ dot_period }}px {{ thickness }}px;
+        background-position: center;
+        background-repeat: repeat-x;
+      }
+    {%- when 'gradient' -%}
+      .divider-{{ section.id }} .divider__line {
+        background-image: linear-gradient(to right, {{ line_color | color_modify: 'alpha', 0 }}, {{ line_color }} 50%, {{ line_color | color_modify: 'alpha', 0 }});
+      }
+  {%- endcase -%}
+
+  @media screen and (max-width: 749px) {
+    .divider-{{ section.id }} {
+      padding-top: {{ space_above_mobile }}px;
+      padding-bottom: {{ space_below_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="divider divider-{{ section.id }}" data-section-id="{{ section.id }}" aria-hidden="true">
+  <div class="divider__inner">
+    {%- if divider_style != 'space' -%}
+      <div class="divider__line"></div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.divider.name",
+  "tag": "div",
+  "class": "section-divider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.divider.settings.header__1.content"
+    },
+    {
+      "type": "select",
+      "id": "divider_style",
+      "label": "t:sections.divider.settings.divider_style.label",
+      "info": "t:sections.divider.settings.divider_style.info",
+      "options": [
+        {
+          "value": "space",
+          "label": "t:sections.divider.settings.divider_style.options__1.label"
+        },
+        {
+          "value": "solid",
+          "label": "t:sections.divider.settings.divider_style.options__2.label"
+        },
+        {
+          "value": "dotted",
+          "label": "t:sections.divider.settings.divider_style.options__3.label"
+        },
+        {
+          "value": "gradient",
+          "label": "t:sections.divider.settings.divider_style.options__4.label"
+        }
+      ],
+      "default": "solid"
+    },
+    {
+      "type": "range",
+      "id": "line_thickness",
+      "min": 1,
+      "max": 12,
+      "step": 1,
+      "default": 1,
+      "unit": "px",
+      "label": "t:sections.divider.settings.line_thickness.label"
+    },
+    {
+      "type": "range",
+      "id": "line_width",
+      "min": 10,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "unit": "%",
+      "label": "t:sections.divider.settings.line_width.label"
+    },
+    {
+      "type": "color",
+      "id": "line_color",
+      "label": "t:sections.divider.settings.line_color.label",
+      "default": "#e3ded6"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.divider.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "space_above",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px",
+      "label": "t:sections.divider.settings.space_above.label",
+      "info": "t:sections.divider.settings.space_above.info"
+    },
+    {
+      "type": "range",
+      "id": "space_below",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "default": 40,
+      "unit": "px",
+      "label": "t:sections.divider.settings.space_below.label"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.divider.settings.background_color.label",
+      "default": "rgba(0,0,0,0)"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.divider.presets.name",
+      "category": "Layout"
+    }
+  ]
+}
+{% endschema %}

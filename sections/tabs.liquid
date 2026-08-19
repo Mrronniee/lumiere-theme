@@ -1,0 +1,594 @@
+{% comment %}
+  Section: Tabs
+  Contenu organise en onglets (motif ARIA tabs complet)
+  Sans JavaScript, tous les panneaux restent visibles et titres : amelioration progressive
+  Sous 749px, la liste d'onglets defile horizontalement
+{% endcomment %}
+
+{%- liquid
+  assign bg_color = section.settings.background_color
+  assign text_color = section.settings.text_color
+  assign active_color = section.settings.active_color
+  assign border_color = text_color | color_mix: bg_color, 18
+  assign media_color = text_color | color_mix: bg_color, 6
+
+  assign nav_justify = 'safe center'
+  if section.settings.alignment == 'left'
+    assign nav_justify = 'flex-start'
+  elsif section.settings.alignment == 'right'
+    assign nav_justify = 'safe flex-end'
+  endif
+-%}
+
+{%- style -%}
+  .tabs {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ bg_color }};
+  }
+
+  .tabs__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .tabs__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .tabs__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .tabs__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ text_color }};
+  }
+
+  .tabs__nav {
+    display: none;
+  }
+
+  .tabs--enhanced .tabs__nav {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: var(--spacing-md);
+    justify-content: flex-start;
+    justify-content: {{ nav_justify }};
+    overflow-x: auto;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid {{ border_color }};
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .tabs__tab {
+    position: relative;
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    padding: var(--spacing-sm) 0.125rem;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: {{ text_color }};
+    opacity: 0.6;
+    background: none;
+    border: none;
+    transition: opacity var(--transition-fast), color var(--transition-fast);
+  }
+
+  .tabs__tab::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background-color: {{ active_color }};
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform var(--transition-base);
+  }
+
+  .tabs__tab[aria-selected='true'] {
+    color: {{ active_color }};
+    font-weight: 500;
+    opacity: 1;
+  }
+
+  .tabs__tab[aria-selected='true']::after {
+    transform: scaleX(1);
+  }
+
+  .tabs__tab:focus-visible {
+    outline: 2px solid {{ active_color }};
+    outline-offset: 2px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .tabs__tab:hover {
+      opacity: 1;
+    }
+  }
+
+  .tabs__panel + .tabs__panel {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid {{ border_color }};
+  }
+
+  .tabs--enhanced .tabs__panel + .tabs__panel {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .tabs__panel[hidden] {
+    display: none;
+  }
+
+  .tabs__panel:focus-visible {
+    outline: 2px solid {{ active_color }};
+    outline-offset: 4px;
+  }
+
+  .tabs__panel-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: {{ text_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .tabs--enhanced .tabs__panel-title {
+    display: none;
+  }
+
+  .tabs__panel-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--spacing-lg);
+    align-items: center;
+  }
+
+  .tabs__panel-inner--media {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .tabs__media {
+    margin: 0;
+    background-color: {{ media_color }};
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .tabs__media img {
+    width: 100%;
+    height: auto;
+  }
+
+  .tabs__content {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: {{ text_color }};
+    max-width: 65ch;
+  }
+
+  .tabs__content > *:last-child {
+    margin-bottom: 0;
+  }
+
+  @keyframes tabs-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tabs--enhanced .tabs__panel:not([hidden]) {
+    animation: tabs-fade-in var(--transition-base) ease both;
+  }
+
+  @media screen and (max-width: 989px) {
+    .tabs--enhanced .tabs__nav {
+      gap: var(--spacing-sm);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .tabs__header {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .tabs--enhanced .tabs__nav {
+      justify-content: flex-start;
+      margin-left: calc(var(--container-padding) * -1);
+      margin-right: calc(var(--container-padding) * -1);
+      padding-left: var(--container-padding);
+      padding-right: var(--container-padding);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .tabs__panel-inner--media {
+      grid-template-columns: minmax(0, 1fr);
+      gap: var(--spacing-md);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .tabs__tab,
+    .tabs__tab::after {
+      transition: none;
+    }
+
+    .tabs--enhanced .tabs__panel:not([hidden]) {
+      animation: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign tablist_label = 'sections.tabs.tablist_label' | t
+-%}
+
+{%- if section.blocks.size > 0 -%}
+  <div
+    class="tabs"
+    id="Tabs-{{ section.id }}"
+    data-section-id="{{ section.id }}"
+    role="region"
+    {% if section.settings.title != blank %}
+      aria-labelledby="TabsTitle-{{ section.id }}"
+    {% else %}
+      aria-label="{{ tablist_label }}"
+    {% endif %}
+  >
+    <div class="tabs__inner">
+      {%- if section.settings.pretitle != blank or section.settings.title != blank -%}
+        <div class="tabs__header">
+          {%- if section.settings.pretitle != blank -%}
+            <p class="tabs__pretitle">{{ section.settings.pretitle | escape }}</p>
+          {%- endif -%}
+
+          {%- if section.settings.title != blank -%}
+            <h2 class="tabs__title" id="TabsTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      <div class="tabs__nav" role="tablist" aria-label="{{ tablist_label }}" data-tabs-list>
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign tab_label = block.settings.title
+            if tab_label == blank
+              assign tab_label = 'sections.tabs.tab_fallback' | t: index: forloop.index
+            endif
+          -%}
+          <button
+            type="button"
+            class="tabs__tab"
+            id="Tab-{{ section.id }}-{{ block.id }}"
+            role="tab"
+            aria-controls="TabPanel-{{ section.id }}-{{ block.id }}"
+            aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+            tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+            data-tab
+            {{ block.shopify_attributes }}
+          >
+            {{ tab_label | escape }}
+          </button>
+        {%- endfor -%}
+      </div>
+
+      <div class="tabs__panels">
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign tab_label = block.settings.title
+            if tab_label == blank
+              assign tab_label = 'sections.tabs.tab_fallback' | t: index: forloop.index
+            endif
+            assign panel_image = block.settings.image
+            assign panel_classes = 'tabs__panel-inner'
+            if panel_image != blank
+              assign panel_classes = 'tabs__panel-inner tabs__panel-inner--media'
+            endif
+          -%}
+          <div
+            class="tabs__panel"
+            id="TabPanel-{{ section.id }}-{{ block.id }}"
+            role="tabpanel"
+            aria-labelledby="Tab-{{ section.id }}-{{ block.id }}"
+            data-tab-panel
+          >
+            <h3 class="tabs__panel-title">{{ tab_label | escape }}</h3>
+
+            <div class="{{ panel_classes }}">
+              {%- if panel_image != blank -%}
+                <figure class="tabs__media">
+                  <img
+                    srcset="
+                      {%- if panel_image.width >= 400 -%}{{ panel_image | image_url: width: 400 }} 400w,{%- endif -%}
+                      {%- if panel_image.width >= 600 -%}{{ panel_image | image_url: width: 600 }} 600w,{%- endif -%}
+                      {%- if panel_image.width >= 800 -%}{{ panel_image | image_url: width: 800 }} 800w,{%- endif -%}
+                      {%- if panel_image.width >= 1200 -%}{{ panel_image | image_url: width: 1200 }} 1200w,{%- endif -%}
+                      {{ panel_image | image_url: width: 1600 }} 1600w
+                    "
+                    src="{{ panel_image | image_url: width: 800 }}"
+                    sizes="(max-width: 749px) 92vw, (max-width: 1200px) 46vw, 560px"
+                    alt="{{ panel_image.alt | escape }}"
+                    width="{{ panel_image.width }}"
+                    height="{{ panel_image.height }}"
+                    loading="lazy"
+                  >
+                </figure>
+              {%- endif -%}
+
+              {%- if block.settings.content != blank -%}
+                <div class="tabs__content rte">{{ block.settings.content }}</div>
+              {%- endif -%}
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var root = document.getElementById('Tabs-{{ section.id }}');
+      if (!root || root.getAttribute('data-tabs-init') === 'true') return;
+
+      var list = root.querySelector('[data-tabs-list]');
+      var tabs = Array.prototype.slice.call(root.querySelectorAll('[data-tab]'));
+      var panels = Array.prototype.slice.call(root.querySelectorAll('[data-tab-panel]'));
+      if (!list || tabs.length === 0 || tabs.length !== panels.length) return;
+
+      root.setAttribute('data-tabs-init', 'true');
+      root.classList.add('tabs--enhanced');
+
+      var focusableSelector =
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), iframe, [tabindex]:not([tabindex="-1"])';
+      var reduceMotion =
+        window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      /* Le panneau ne devient focusable que s'il ne contient aucun element
+         deja atteignable au clavier (recommandation ARIA APG). */
+      panels.forEach(function (panel) {
+        if (panel.querySelector(focusableSelector)) {
+          panel.removeAttribute('tabindex');
+        } else {
+          panel.setAttribute('tabindex', '0');
+        }
+      });
+
+      var activeIndex = -1;
+
+      var scrollTabIntoView = function (tab) {
+        if (typeof tab.scrollIntoView !== 'function') return;
+        if (list.scrollWidth <= list.clientWidth) return;
+        tab.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: reduceMotion ? 'auto' : 'smooth'
+        });
+      };
+
+      var activate = function (index, moveFocus, scrollTab) {
+        if (index < 0 || index >= tabs.length) return;
+
+        tabs.forEach(function (tab, i) {
+          var selected = i === index;
+          tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+          tab.setAttribute('tabindex', selected ? '0' : '-1');
+          panels[i].hidden = !selected;
+        });
+
+        activeIndex = index;
+
+        if (moveFocus) tabs[index].focus();
+        if (scrollTab) scrollTabIntoView(tabs[index]);
+      };
+
+      tabs.forEach(function (tab, index) {
+        tab.addEventListener('click', function () {
+          activate(index, false, true);
+        });
+      });
+
+      list.addEventListener('keydown', function (event) {
+        var current = tabs.indexOf(document.activeElement);
+        if (current === -1) return;
+
+        var next = null;
+
+        if (event.key === 'ArrowRight' || event.key === 'Right') {
+          next = (current + 1) % tabs.length;
+        } else if (event.key === 'ArrowLeft' || event.key === 'Left') {
+          next = (current - 1 + tabs.length) % tabs.length;
+        } else if (event.key === 'Home') {
+          next = 0;
+        } else if (event.key === 'End') {
+          next = tabs.length - 1;
+        }
+
+        if (next === null) return;
+
+        event.preventDefault();
+        activate(next, true, true);
+      });
+
+      /* Editeur de theme : selectionner un bloc ouvre l'onglet correspondant. */
+      root.addEventListener('shopify:block:select', function (event) {
+        for (var i = 0; i < tabs.length; i++) {
+          if (
+            tabs[i] === event.target ||
+            tabs[i].contains(event.target) ||
+            panels[i] === event.target ||
+            panels[i].contains(event.target)
+          ) {
+            activate(i, false, true);
+            return;
+          }
+        }
+      });
+
+      activate(0, false, false);
+    })();
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.tabs.name",
+  "tag": "section",
+  "class": "section-tabs",
+  "max_blocks": 8,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.tabs.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.tabs.settings.pretitle.label",
+      "default": "Tout savoir"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.tabs.settings.title.label",
+      "default": "Dans le détail"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.tabs.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "t:sections.tabs.settings.alignment.label",
+      "info": "t:sections.tabs.settings.alignment.info",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.tabs.settings.alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.tabs.settings.alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.tabs.settings.alignment.options__3.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.tabs.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.tabs.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.tabs.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "active_color",
+      "label": "t:sections.tabs.settings.active_color.label",
+      "info": "t:sections.tabs.settings.active_color.info",
+      "default": "#916e36"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tab",
+      "name": "t:sections.tabs.blocks.tab.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.tabs.blocks.tab.settings.title.label",
+          "info": "t:sections.tabs.blocks.tab.settings.title.info",
+          "default": "Description"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "t:sections.tabs.blocks.tab.settings.content.label",
+          "default": "<p>Décrivez ici la matière, la coupe et les finitions de la pièce. Quelques phrases suffisent pour donner envie.</p>"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.tabs.blocks.tab.settings.image.label",
+          "info": "t:sections.tabs.blocks.tab.settings.image.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.tabs.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Description",
+            "content": "<p>Une coupe droite, un tombé net et des finitions soignées. Chaque pièce est pensée pour durer, saison après saison.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Composition",
+            "content": "<p>70 % laine mérinos, 30 % cachemire. Tissé en Italie, confectionné au Portugal dans un atelier partenaire depuis dix ans.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Entretien",
+            "content": "<p>Lavage à la main à 30 °C ou nettoyage à sec. Séchage à plat, à l'abri de la lumière directe. Ne pas utiliser de sèche-linge.</p>"
+          }
+        },
+        {
+          "type": "tab",
+          "settings": {
+            "title": "Livraison et retours",
+            "content": "<p>Expédition sous 48 heures ouvrées, livraison offerte dès 120 €. Retours gratuits pendant 30 jours après réception.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

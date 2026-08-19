@@ -1,0 +1,590 @@
+{% comment %}
+  Section: Multi-column
+  Colonnes libres : image, titre, texte riche et lien facultatif.
+  Le lien est rendu soit en bouton, soit en lien texte avec fleche.
+  Aucun contenu n'est revele au survol : le survol ne sert qu'a un leger zoom.
+{% endcomment %}
+
+{%- liquid
+  assign col_d = section.settings.columns_desktop
+  assign col_t = section.settings.columns_tablet
+  assign col_m = section.settings.columns_mobile
+
+  assign vw_d = 100 | divided_by: col_d
+  assign vw_t = 100 | divided_by: col_t
+  assign vw_m = 100 | divided_by: col_m
+
+  assign gap = section.settings.spacing
+  assign gap_mobile = gap | times: 0.75 | round
+
+  assign ratio = section.settings.image_ratio
+  assign shape = section.settings.image_shape
+  assign align = section.settings.text_alignment
+
+  assign ratio_value = '1 / 1'
+  case ratio
+    when 'portrait'
+      assign ratio_value = '3 / 4'
+    when 'landscape'
+      assign ratio_value = '4 / 3'
+    when 'square'
+      assign ratio_value = '1 / 1'
+  endcase
+
+  assign media_surface = section.settings.text_color | color_mix: section.settings.background_color, 6
+-%}
+
+{%- style -%}
+  .multi-column {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .multi-column__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .multi-column__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .multi-column__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .multi-column__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+  }
+
+  .multi-column__grid {
+    display: grid;
+    grid-template-columns: repeat({{ col_d }}, minmax(0, 1fr));
+    gap: {{ gap }}px;
+    align-items: start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .multi-column__item {
+    display: flex;
+    min-width: 0;
+  }
+
+  .multi-column__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    text-align: {{ align }};
+  }
+
+  .multi-column__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    background-color: {{ media_surface }};
+    {% if shape == 'round' %}
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      max-width: 260px;
+      width: 100%;
+    {% else %}
+      border-radius: var(--radius);
+      {% if ratio != 'adapt' %}
+        aspect-ratio: {{ ratio_value }};
+      {% endif %}
+    {% endif %}
+  }
+
+  {% if shape == 'round' and align == 'center' %}
+    .multi-column__media {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  {% endif %}
+
+  {% if shape == 'round' and align == 'right' %}
+    .multi-column__media {
+      margin-left: auto;
+    }
+  {% endif %}
+
+  .multi-column__image,
+  .multi-column__media .placeholder-svg {
+    display: block;
+    width: 100%;
+    {% if shape == 'round' or ratio != 'adapt' %}
+      height: 100%;
+      object-fit: cover;
+    {% else %}
+      height: auto;
+    {% endif %}
+    transition: transform var(--transition-slow);
+  }
+
+  .multi-column__media-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .multi-column__card:hover .multi-column__image {
+      transform: scale(1.03);
+    }
+  }
+
+  .multi-column__heading {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    line-height: 1.3;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+  }
+
+  .multi-column__text {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.75;
+  }
+
+  .multi-column__text > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .multi-column__actions {
+    margin-top: auto;
+    padding-top: var(--spacing-xs);
+  }
+
+  .multi-column__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-accent-dark);
+    border-bottom: 1px solid currentColor;
+    padding-bottom: 2px;
+    transition: color var(--transition-base), opacity var(--transition-base);
+  }
+
+  .multi-column__link:hover {
+    color: var(--color-primary);
+  }
+
+  .multi-column__link .icon {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    transition: transform var(--transition-base);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .multi-column__link:hover .icon {
+      transform: translateX(3px);
+    }
+  }
+
+  .multi-column__link:focus-visible,
+  .multi-column__actions .btn:focus-visible,
+  .multi-column__media-link:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 3px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .multi-column__grid {
+      grid-template-columns: repeat({{ col_t }}, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .multi-column__grid {
+      grid-template-columns: repeat({{ col_m }}, minmax(0, 1fr));
+      gap: {{ gap_mobile }}px;
+    }
+
+    .multi-column__header {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .multi-column__heading {
+      font-size: 1.125rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .multi-column__image,
+    .multi-column__link,
+    .multi-column__link .icon {
+      transition: none;
+    }
+
+    .multi-column__card:hover .multi-column__image,
+    .multi-column__link:hover .icon {
+      transform: none;
+    }
+  }
+{%- endstyle -%}
+
+<div class="multi-column" data-section-id="{{ section.id }}">
+  <div class="multi-column__inner">
+    {%- if section.settings.pretitle != blank or section.settings.title != blank -%}
+      <div class="multi-column__header">
+        {%- if section.settings.pretitle != blank -%}
+          <p class="multi-column__pretitle">{{ section.settings.pretitle | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="multi-column__title" id="MultiColumnTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {%- assign grid_label = 'sections.multi_column.aria_label' | t -%}
+      <ul
+        class="multi-column__grid"
+        role="list"
+        {% if section.settings.title != blank %}
+          aria-labelledby="MultiColumnTitle-{{ section.id }}"
+        {% else %}
+          aria-label="{{ grid_label }}"
+        {% endif %}
+      >
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign img = block.settings.image
+            assign has_link = false
+            if block.settings.link != blank and block.settings.link_label != blank
+              assign has_link = true
+            endif
+          -%}
+          <li class="multi-column__item" {{ block.shopify_attributes }}>
+            <div class="multi-column__card">
+              {%- if has_link -%}
+                <a
+                  class="multi-column__media-link"
+                  href="{{ block.settings.link }}"
+                  tabindex="-1"
+                  aria-hidden="true"
+                >
+              {%- endif -%}
+
+              <span class="multi-column__media">
+                {%- if img != blank -%}
+                  <img
+                    srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300 }} 300w,{%- endif -%}
+                      {%- if img.width >= 600 -%}{{ img | image_url: width: 600 }} 600w,{%- endif -%}
+                      {%- if img.width >= 900 -%}{{ img | image_url: width: 900 }} 900w,{%- endif -%}
+                      {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200 }} 1200w,{%- endif -%}"
+                    src="{{ img | image_url: width: 900 }}"
+                    sizes="(min-width: 990px) {{ vw_d }}vw, (min-width: 750px) {{ vw_t }}vw, {{ vw_m }}vw"
+                    alt="{{ img.alt | escape }}"
+                    class="multi-column__image"
+                    loading="lazy"
+                    width="{{ img.width }}"
+                    height="{{ img.height }}"
+                  >
+                {%- else -%}
+                  {%- assign placeholder_name = 'lifestyle-1' -%}
+                  {%- assign placeholder_parity = forloop.index | modulo: 2 -%}
+                  {%- if placeholder_parity == 0 -%}
+                    {%- assign placeholder_name = 'lifestyle-2' -%}
+                  {%- endif -%}
+                  {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}
+                {%- endif -%}
+              </span>
+
+              {%- if has_link -%}
+                </a>
+              {%- endif -%}
+
+              {%- if block.settings.title != blank -%}
+                <h3 class="multi-column__heading">{{ block.settings.title | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <div class="multi-column__text rte">{{ block.settings.text }}</div>
+              {%- endif -%}
+
+              {%- if has_link -%}
+                <div class="multi-column__actions">
+                  {%- if section.settings.link_style == 'button' -%}
+                    <a class="btn btn--secondary" href="{{ block.settings.link }}">
+                      {{- block.settings.link_label | escape -}}
+                    </a>
+                  {%- else -%}
+                    <a class="multi-column__link" href="{{ block.settings.link }}">
+                      <span>{{ block.settings.link_label | escape }}</span>
+                      {% render 'icon', icon: 'arrow-right' %}
+                    </a>
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+            </div>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.multi_column.name",
+  "tag": "section",
+  "class": "section-multi-column",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.multi_column.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.multi_column.settings.pretitle.label",
+      "default": "Notre approche"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.multi_column.settings.title.label",
+      "default": "Ce qui fait la différence"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.multi_column.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.multi_column.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.multi_column.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "label": "t:sections.multi_column.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 8,
+      "max": 64,
+      "step": 4,
+      "default": 32,
+      "unit": "px",
+      "label": "t:sections.multi_column.settings.spacing.label"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.multi_column.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.multi_column.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.multi_column.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.multi_column.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.multi_column.settings.header__3.content"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:sections.multi_column.settings.image_ratio.label",
+      "info": "t:sections.multi_column.settings.image_ratio.info",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.multi_column.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.multi_column.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.multi_column.settings.image_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.multi_column.settings.image_ratio.options__4.label"
+        }
+      ],
+      "default": "landscape"
+    },
+    {
+      "type": "select",
+      "id": "image_shape",
+      "label": "t:sections.multi_column.settings.image_shape.label",
+      "info": "t:sections.multi_column.settings.image_shape.info",
+      "options": [
+        {
+          "value": "square",
+          "label": "t:sections.multi_column.settings.image_shape.options__1.label"
+        },
+        {
+          "value": "round",
+          "label": "t:sections.multi_column.settings.image_shape.options__2.label"
+        }
+      ],
+      "default": "square"
+    },
+    {
+      "type": "select",
+      "id": "link_style",
+      "label": "t:sections.multi_column.settings.link_style.label",
+      "options": [
+        {
+          "value": "text",
+          "label": "t:sections.multi_column.settings.link_style.options__1.label"
+        },
+        {
+          "value": "button",
+          "label": "t:sections.multi_column.settings.link_style.options__2.label"
+        }
+      ],
+      "default": "text"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.multi_column.settings.header__4.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.multi_column.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.multi_column.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "t:sections.multi_column.blocks.column.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.multi_column.blocks.column.settings.image.label",
+          "info": "t:sections.multi_column.blocks.column.settings.image.info"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.multi_column.blocks.column.settings.title.label",
+          "default": "Titre de la colonne"
+        },
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.multi_column.blocks.column.settings.text.label",
+          "default": "<p>Décrivez ici un service, un engagement ou une catégorie. Restez court : deux ou trois lignes suffisent.</p>"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "t:sections.multi_column.blocks.column.settings.link_label.label",
+          "info": "t:sections.multi_column.blocks.column.settings.link_label.info",
+          "default": "En savoir plus"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.multi_column.blocks.column.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.multi_column.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Matières durables",
+            "text": "<p>Des tissus sélectionnés chez des ateliers européens, tracés du fil au vêtement fini.</p>",
+            "link_label": "En savoir plus"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Fabrication locale",
+            "text": "<p>Chaque pièce est assemblée en petites séries, au plus près de nos ateliers partenaires.</p>",
+            "link_label": "En savoir plus"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Livraison soignée",
+            "text": "<p>Expédition sous 48 heures, emballage recyclé et retours gratuits pendant 30 jours.</p>",
+            "link_label": "En savoir plus"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,340 @@
+{% comment %}
+  Section: Image avec texte
+  Image d'un côté, contenu éditorial de l'autre.
+  Position de l'image, ratio, alignement vertical et couleurs réglables.
+  Sur mobile l'image passe systématiquement au-dessus du contenu.
+{% endcomment %}
+
+{%- style -%}
+  {%- liquid
+    case section.settings.image_ratio
+      when 'square'
+        assign ratio_value = '1 / 1'
+      when 'portrait'
+        assign ratio_value = '3 / 4'
+      when 'landscape'
+        assign ratio_value = '4 / 3'
+      else
+        assign ratio_value = ''
+    endcase
+
+    case section.settings.content_alignment
+      when 'top'
+        assign align_value = 'start'
+      when 'bottom'
+        assign align_value = 'end'
+      else
+        assign align_value = 'center'
+    endcase
+  -%}
+
+  .image-with-text {
+    padding: var(--spacing-xl) var(--container-padding);
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .image-with-text__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: {{ align_value }};
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  .image-with-text__media {
+    position: relative;
+    overflow: hidden;
+    order: 1;
+  }
+
+  {%- if ratio_value != blank %}
+  .image-with-text__media {
+    aspect-ratio: {{ ratio_value }};
+  }
+  {%- endif %}
+
+  .image-with-text__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .image-with-text__media--adapt .image-with-text__image {
+    height: auto;
+  }
+
+  .image-with-text__media .placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--color-border);
+  }
+
+  .image-with-text__content {
+    order: 2;
+  }
+
+  .image-with-text--image-right .image-with-text__media {
+    order: 2;
+  }
+
+  .image-with-text--image-right .image-with-text__content {
+    order: 1;
+  }
+
+  .image-with-text__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .image-with-text__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .image-with-text__text {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+  }
+
+  .image-with-text__button {
+    margin-top: var(--spacing-md);
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .image-with-text__inner {
+      gap: var(--spacing-md);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .image-with-text__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .image-with-text__media,
+    .image-with-text--image-right .image-with-text__media {
+      order: 1;
+    }
+
+    .image-with-text__content,
+    .image-with-text--image-right .image-with-text__content {
+      order: 2;
+    }
+  }
+{%- endstyle -%}
+
+<div
+  class="image-with-text image-with-text--image-{{ section.settings.image_position }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="image-with-text__inner">
+    <div class="image-with-text__media image-with-text__media--{{ section.settings.image_ratio }}">
+      {%- if section.settings.image != blank -%}
+        <img
+          srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+          src="{{ section.settings.image | image_url: width: 1100 }}"
+          sizes="(min-width: 750px) 50vw, 100vw"
+          alt="{{ section.settings.image.alt | escape }}"
+          class="image-with-text__image"
+          loading="lazy"
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+        >
+      {%- else -%}
+        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+      {%- endif -%}
+    </div>
+
+    <div class="image-with-text__content">
+      {%- if section.settings.pretitle != blank -%}
+        <p class="image-with-text__pretitle">{{ section.settings.pretitle | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="image-with-text__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <div class="image-with-text__text rte">{{ section.settings.text }}</div>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a
+          href="{{ section.settings.button_link }}"
+          class="btn btn--{{ section.settings.button_style }} image-with-text__button"
+        >
+          {{ section.settings.button_label | escape }}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.image_with_text.name",
+  "tag": "section",
+  "class": "section-image-with-text",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.image_with_text.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.image_with_text.settings.pretitle.label",
+      "default": "Notre maison"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.image_with_text.settings.title.label",
+      "default": "Un savoir-faire, une signature"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "t:sections.image_with_text.settings.text.label",
+      "default": "<p>Chaque pièce est dessinée dans notre atelier et façonnée en petites séries, avec des matières choisies pour durer.</p>"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.image_with_text.settings.button_label.label",
+      "default": "Découvrir"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.image_with_text.settings.button_link.label"
+    },
+    {
+      "type": "select",
+      "id": "button_style",
+      "label": "t:sections.image_with_text.settings.button_style.label",
+      "options": [
+        {
+          "value": "primary",
+          "label": "t:sections.image_with_text.settings.button_style.options__1.label"
+        },
+        {
+          "value": "secondary",
+          "label": "t:sections.image_with_text.settings.button_style.options__2.label"
+        }
+      ],
+      "default": "primary"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image_with_text.settings.header__2.content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.image_with_text.settings.image.label"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.image_with_text.settings.image_position.label",
+      "info": "t:sections.image_with_text.settings.image_position.info",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.image_with_text.settings.image_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.image_with_text.settings.image_position.options__2.label"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:sections.image_with_text.settings.image_ratio.label",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.image_with_text.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.image_with_text.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.image_with_text.settings.image_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.image_with_text.settings.image_ratio.options__4.label"
+        }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image_with_text.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.image_with_text.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.image_with_text.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "select",
+      "id": "content_alignment",
+      "label": "t:sections.image_with_text.settings.content_alignment.label",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:sections.image_with_text.settings.content_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.image_with_text.settings.content_alignment.options__2.label"
+        },
+        {
+          "value": "bottom",
+          "label": "t:sections.image_with_text.settings.content_alignment.options__3.label"
+        }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.image_with_text.presets.name",
+      "category": "Image"
+    }
+  ]
+}
+{% endschema %}

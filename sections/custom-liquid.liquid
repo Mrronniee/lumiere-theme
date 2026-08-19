@@ -1,0 +1,164 @@
+{% comment %}
+  Section: Custom Liquid
+  Permet au marchand d'inserer son propre code Liquid / HTML
+  Le contenu est rendu tel quel dans un conteneur stylable (largeur, couleurs, espacements)
+{% endcomment %}
+
+{%- style -%}
+  .custom-liquid--{{ section.id }} {
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .custom-liquid--{{ section.id }} .custom-liquid__inner {
+    font-family: var(--font-body);
+    color: {{ section.settings.text_color }};
+  }
+
+  .custom-liquid--container .custom-liquid__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .custom-liquid--narrow .custom-liquid__inner {
+    max-width: 720px;
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .custom-liquid--full .custom-liquid__inner {
+    max-width: none;
+    margin: 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .custom-liquid__inner > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .custom-liquid__placeholder {
+    max-width: 60ch;
+    margin: 0 auto;
+    padding: var(--spacing-md);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    text-align: center;
+    color: var(--color-text-light);
+  }
+
+  @media screen and (max-width: 749px) {
+    .custom-liquid--{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | times: 0.7 | round }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.7 | round }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div
+  class="custom-liquid custom-liquid--{{ section.id }} custom-liquid--{{ section.settings.width }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="custom-liquid__inner">
+    {%- if section.settings.custom_liquid != blank -%}
+      {{ section.settings.custom_liquid }}
+    {%- elsif request.design_mode -%}
+      <p class="custom-liquid__placeholder">{{ 'sections.custom_liquid.empty' | t }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.custom_liquid.name",
+  "tag": "section",
+  "class": "section-custom-liquid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.custom_liquid.settings.header__1.content"
+    },
+    {
+      "type": "liquid",
+      "id": "custom_liquid",
+      "label": "t:sections.custom_liquid.settings.custom_liquid.label",
+      "info": "t:sections.custom_liquid.settings.custom_liquid.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.custom_liquid.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "width",
+      "label": "t:sections.custom_liquid.settings.width.label",
+      "info": "t:sections.custom_liquid.settings.width.info",
+      "options": [
+        {
+          "value": "full",
+          "label": "t:sections.custom_liquid.settings.width.options__1.label"
+        },
+        {
+          "value": "container",
+          "label": "t:sections.custom_liquid.settings.width.options__2.label"
+        },
+        {
+          "value": "narrow",
+          "label": "t:sections.custom_liquid.settings.width.options__3.label"
+        }
+      ],
+      "default": "container"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 48,
+      "unit": "px",
+      "label": "t:sections.custom_liquid.settings.padding_top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 48,
+      "unit": "px",
+      "label": "t:sections.custom_liquid.settings.padding_bottom.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.custom_liquid.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.custom_liquid.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.custom_liquid.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.custom_liquid.presets.name",
+      "category": "Text"
+    }
+  ]
+}
+{% endschema %}

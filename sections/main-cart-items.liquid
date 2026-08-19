@@ -1,0 +1,320 @@
+{% comment %}
+  Section: Main Cart Items
+  Page panier complète avec tableau de produits
+{% endcomment %}
+
+{%- style -%}
+  .cart-items {
+    padding: var(--spacing-lg) 0;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .cart-items__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .cart-items__table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .cart-items__header {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-text-light);
+  }
+
+  .cart-items__row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr auto;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+  }
+
+  .cart-items__product {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+  }
+
+  .cart-items__image {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    background: #f5f5f5;
+    flex-shrink: 0;
+  }
+
+  .cart-items__product-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .cart-items__product-title {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .cart-items__product-variant {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+
+  .cart-items__product-remove {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    text-decoration: underline;
+    margin-top: 0.5rem;
+    transition: color var(--transition-fast);
+  }
+
+  .cart-items__product-remove:hover {
+    color: #c0392b;
+  }
+
+  .cart-items__price {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+  }
+
+  .cart-items__price--original {
+    text-decoration: line-through;
+    color: var(--color-text-light);
+    font-size: 0.8125rem;
+    display: block;
+  }
+
+  .cart-items__qty {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    height: 40px;
+    width: fit-content;
+  }
+
+  .cart-items__qty-btn {
+    width: 36px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: background var(--transition-fast);
+  }
+
+  .cart-items__qty-btn:hover {
+    background: var(--color-background);
+  }
+
+  .cart-items__qty-input {
+    width: 50px;
+    height: 100%;
+    text-align: center;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    -moz-appearance: textfield;
+  }
+
+  .cart-items__qty-input::-webkit-outer-spin-button,
+  .cart-items__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .cart-items__total {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+  }
+
+  .cart-items__remove-btn {
+    padding: 0.5rem;
+    color: var(--color-text-light);
+    transition: color var(--transition-fast);
+  }
+
+  .cart-items__remove-btn:hover {
+    color: #c0392b;
+  }
+
+  .cart-items__empty {
+    text-align: center;
+    padding: var(--spacing-xl) 0;
+  }
+
+  .cart-items__empty-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .cart-items__empty-text {
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .cart-items__empty-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .cart-items__empty-btn:hover {
+    background: var(--color-accent);
+  }
+
+  @media screen and (max-width: 749px) {
+    .cart-items__header { display: none; }
+
+    /* Le produit occupe toute la largeur : l'ecraser dans une colonne de 80px
+       reduisait l'image a une bande de 12px. */
+    .cart-items__row {
+      grid-template-columns: 1fr auto;
+      grid-template-areas:
+        'product product'
+        'qty     total';
+      gap: var(--spacing-sm);
+    }
+    .cart-items__product { grid-area: product; }
+    .cart-items__qty { grid-area: qty; }
+    .cart-items__total { grid-area: total; text-align: right; }
+    .cart-items__price { display: none; }
+    .cart-items__image { width: 80px; height: 96px; }
+  }
+{%- endstyle -%}
+
+<div class="cart-items" data-section-id="{{ section.id }}">
+  <h1 class="cart-items__title">{{ 'cart.general.title' | t }}</h1>
+
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" id="CartForm" novalidate>
+      <div class="cart-items__header">
+        <span>{{ 'cart.label.product' | t }}</span>
+        <span>{{ 'cart.label.price' | t }}</span>
+        <span>{{ 'cart.label.quantity' | t }}</span>
+        <span>{{ 'cart.label.total' | t }}</span>
+        <span></span>
+      </div>
+
+      {%- for item in cart.items -%}
+        <div class="cart-items__row" data-cart-item data-line="{{ forloop.index }}" data-key="{{ item.key }}">
+          <div class="cart-items__product">
+            <a href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+              {%- if item.image -%}
+                <img
+                  src="{{ item.image | image_url: width: 200 }}"
+                  alt="{{ item.image.alt | escape }}"
+                  class="cart-items__image"
+                  loading="lazy"
+                  width="100"
+                  height="120"
+                >
+              {%- else -%}
+                <span class="cart-items__image"></span>
+              {%- endif -%}
+            </a>
+            <div class="cart-items__product-info">
+              <a href="{{ item.url }}" class="cart-items__product-title">{{ item.product.title | escape }}</a>
+              {%- unless item.product.has_only_default_variant -%}
+                <span class="cart-items__product-variant">{{ item.variant.title }}</span>
+              {%- endunless -%}
+              {%- if item.properties.size > 0 -%}
+                <ul class="cart-items__properties">
+                  {%- for property in item.properties -%}
+                    {%- unless property.last == blank or property.first[0] == '_' -%}
+                      <li>{{ property.first }}: {{ property.last }}</li>
+                    {%- endunless -%}
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+              <button type="button" class="cart-items__product-remove" data-remove-item>
+                {{ 'cart.general.remove' | t }}
+              </button>
+            </div>
+          </div>
+
+          <div class="cart-items__price">
+            {%- if item.original_price != item.final_price -%}
+              <span class="cart-items__price--original">{{ item.original_price | money }}</span>
+            {%- endif -%}
+            {{ item.final_price | money }}
+          </div>
+
+          <div class="cart-items__qty">
+            <button type="button" class="cart-items__qty-btn cart-items__qty-btn--minus" data-qty-change="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
+            <label class="visually-hidden" for="CartQty-{{ forloop.index }}">{{ 'accessibility.quantity' | t }}</label>
+            <input
+              type="number"
+              id="CartQty-{{ forloop.index }}"
+              name="updates[]"
+              value="{{ item.quantity }}"
+              min="0"
+              class="cart-items__qty-input"
+              data-qty-input
+            >
+            <button type="button" class="cart-items__qty-btn cart-items__qty-btn--plus" data-qty-change="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+          </div>
+
+          <div class="cart-items__total">{{ item.final_line_price | money }}</div>
+
+          <button type="button" class="cart-items__remove-btn" data-remove-item aria-label="{{ 'cart.general.remove' | t }}">
+            {% render 'icon', icon: 'close' %}
+          </button>
+        </div>
+      {%- endfor -%}
+
+      {%- comment -%} Sans JS, le client doit pouvoir valider ses quantites {%- endcomment -%}
+      <noscript>
+        <button type="submit" name="update" class="btn btn--secondary">{{ 'cart.general.update' | t }}</button>
+      </noscript>
+    </form>
+  {%- else -%}
+    <div class="cart-items__empty">
+      <h2 class="cart-items__empty-title">{{ 'cart.general.empty' | t }}</h2>
+      <p class="cart-items__empty-text">{{ 'cart.general.empty_text' | t }}</p>
+      <a href="{{ routes.all_products_collection_url }}" class="cart-items__empty-btn">
+        {{ 'cart.general.continue_shopping' | t }}
+        {% render 'icon', icon: 'arrow-right' %}
+      </a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_cart_items.name",
+  "tag": "section",
+  "class": "section-cart-items",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,714 @@
+{% comment %}
+  Section: Reviews
+  Avis clients saisis manuellement par le marchand
+  Note moyenne calculee a partir des blocks, etoiles en SVG inline
+  Emet un balisage Product / AggregateRating (JSON-LD) si un produit est associe
+{% endcomment %}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_tablet = section.settings.columns_tablet
+  assign columns_mobile = section.settings.columns_mobile
+  assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
+  assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
+  assign star_empty = section.settings.text_color | color_mix: section.settings.background_color, 22
+-%}
+
+{%- style -%}
+  .reviews {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .reviews__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .reviews__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .reviews__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .reviews__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+  }
+
+  .reviews__average {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: var(--spacing-sm);
+  }
+
+  .reviews__average-value {
+    font-family: var(--font-heading);
+    font-size: 1.375rem;
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+  }
+
+  .reviews__average-count {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  .reviews__stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+  }
+
+  .reviews__stars--average {
+    position: relative;
+  }
+
+  .reviews__stars-fill {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.15rem;
+    overflow: hidden;
+    flex-wrap: nowrap;
+  }
+
+  .reviews__star {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 auto;
+    fill: {{ star_empty }};
+  }
+
+  .reviews__star--filled {
+    fill: {{ section.settings.star_color }};
+  }
+
+  .reviews__list {
+    display: grid;
+    grid-template-columns: repeat({{ columns_desktop }}, minmax(0, 1fr));
+    gap: var(--spacing-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .reviews__item {
+    display: flex;
+  }
+
+  .reviews__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-md);
+    background-color: {{ card_surface }};
+    border: 1px solid {{ card_border }};
+    border-radius: var(--radius);
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .reviews__card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .reviews__card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-xs);
+    flex-wrap: wrap;
+  }
+
+  .reviews__date {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: {{ section.settings.text_color }};
+    opacity: 0.6;
+  }
+
+  .reviews__heading {
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+  }
+
+  .reviews__text {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+    color: {{ section.settings.text_color }};
+    opacity: 0.85;
+    margin: 0;
+  }
+
+  .reviews__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding-top: var(--spacing-xs);
+  }
+
+  .reviews__author {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    font-style: normal;
+    color: {{ section.settings.text_color }};
+  }
+
+  .reviews__verified {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-accent-dark);
+  }
+
+  .reviews__verified svg {
+    display: block;
+    width: 14px;
+    height: 14px;
+    flex: 0 0 auto;
+  }
+
+  .reviews__product {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: {{ section.settings.text_color }};
+    transition: color var(--transition-fast), opacity var(--transition-fast);
+  }
+
+  .reviews__product:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .reviews__product:hover .reviews__product-title {
+      text-decoration-color: currentColor;
+    }
+  }
+
+  .reviews__product-image {
+    width: 40px;
+    height: 40px;
+    flex: 0 0 auto;
+    object-fit: cover;
+    border-radius: var(--radius);
+    background-color: {{ card_border }};
+  }
+
+  .reviews__product-title {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 3px;
+    transition: text-decoration-color var(--transition-fast);
+  }
+
+  @media screen and (max-width: 989px) {
+    .reviews__list {
+      grid-template-columns: repeat({{ columns_tablet }}, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .reviews__list {
+      grid-template-columns: repeat({{ columns_mobile }}, minmax(0, 1fr));
+    }
+
+    .reviews__header {
+      margin-bottom: var(--spacing-md);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reviews__card,
+    .reviews__product,
+    .reviews__product-title {
+      transition: none;
+    }
+
+    .reviews__card:hover {
+      transform: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign review_count = 0
+  assign rating_sum = 0
+  for block in section.blocks
+    if block.type != 'review'
+      continue
+    endif
+    assign block_rating = block.settings.rating | at_least: 1 | at_most: 5
+    assign rating_sum = rating_sum | plus: block_rating
+    assign review_count = review_count | plus: 1
+  endfor
+
+  assign average_rating = 0
+  assign average_percent = 0
+  if review_count > 0
+    assign average_rating = rating_sum | times: 1.0 | divided_by: review_count | round: 1
+    assign average_percent = average_rating | times: 20
+  endif
+
+  assign section_label = 'sections.reviews.aria_label' | t
+  assign average_aria = 'sections.reviews.average_aria' | t: rating: average_rating
+  assign average_value_text = 'sections.reviews.average_value' | t: rating: average_rating
+  assign average_count_text = 'sections.reviews.based_on' | t: count: review_count
+  assign verified_text = 'sections.reviews.verified' | t
+  assign product_label = 'sections.reviews.product_label' | t
+-%}
+
+<div
+  class="reviews"
+  data-section-id="{{ section.id }}"
+  role="region"
+  {% if section.settings.title != blank %}
+    aria-labelledby="ReviewsTitle-{{ section.id }}"
+  {% else %}
+    aria-label="{{ section_label }}"
+  {% endif %}
+>
+  <div class="reviews__inner">
+    {%- assign show_average_block = false -%}
+    {%- if section.settings.show_average and review_count > 0 -%}
+      {%- assign show_average_block = true -%}
+    {%- endif -%}
+
+    {%- if section.settings.pretitle != blank or section.settings.title != blank or show_average_block -%}
+      <div class="reviews__header">
+        {%- if section.settings.pretitle != blank -%}
+          <p class="reviews__pretitle">{{ section.settings.pretitle | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="reviews__title" id="ReviewsTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if show_average_block -%}
+          <div class="reviews__average">
+            <span class="reviews__stars reviews__stars--average" role="img" aria-label="{{ average_aria }}">
+              {%- for i in (1..5) -%}
+                <svg class="reviews__star" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                  <path d="M12 2.4l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5L2.6 9.2l6.5-.9z"/>
+                </svg>
+              {%- endfor -%}
+              <span class="reviews__stars-fill" style="width: {{ average_percent }}%" aria-hidden="true">
+                {%- for i in (1..5) -%}
+                  <svg class="reviews__star reviews__star--filled" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false">
+                    <path d="M12 2.4l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5L2.6 9.2l6.5-.9z"/>
+                  </svg>
+                {%- endfor -%}
+              </span>
+            </span>
+            <p class="reviews__average-value">{{ average_value_text }}</p>
+            <p class="reviews__average-count">{{ average_count_text }}</p>
+          </div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if review_count > 0 -%}
+      <ul class="reviews__list" role="list">
+        {%- for block in section.blocks -%}
+          {%- if block.type != 'review' -%}
+            {%- continue -%}
+          {%- endif -%}
+
+          {%- liquid
+            assign block_rating = block.settings.rating | at_least: 1 | at_most: 5
+            assign block_rating_label = 'sections.reviews.rating' | t: rating: block_rating
+            assign block_product = block.settings.product
+          -%}
+
+          <li class="reviews__item" {{ block.shopify_attributes }}>
+            <article class="reviews__card">
+              <div class="reviews__card-top">
+                <span class="reviews__stars">
+                  <span class="visually-hidden">{{ block_rating_label }}</span>
+                  {%- for i in (1..5) -%}
+                    <svg
+                      class="reviews__star{% if i <= block_rating %} reviews__star--filled{% endif %}"
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d="M12 2.4l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5L2.6 9.2l6.5-.9z"/>
+                    </svg>
+                  {%- endfor -%}
+                </span>
+
+                {%- if block.settings.date != blank -%}
+                  <span class="reviews__date">{{ block.settings.date | escape }}</span>
+                {%- endif -%}
+              </div>
+
+              {%- if block.settings.heading != blank -%}
+                <h3 class="reviews__heading">{{ block.settings.heading | escape }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.text != blank -%}
+                <p class="reviews__text">{{ block.settings.text | escape | newline_to_br }}</p>
+              {%- endif -%}
+
+              <div class="reviews__footer">
+                {%- if block.settings.author != blank -%}
+                  <span class="reviews__author">{{ block.settings.author | escape }}</span>
+                {%- endif -%}
+
+                {%- if block.settings.verified -%}
+                  <span class="reviews__verified">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    {{ verified_text }}
+                  </span>
+                {%- endif -%}
+
+                {%- if block_product != blank -%}
+                  <a class="reviews__product" href="{{ block_product.url }}">
+                    {%- if block_product.featured_image -%}
+                      <img
+                        class="reviews__product-image"
+                        src="{{ block_product.featured_image | image_url: width: 80 }}"
+                        srcset="
+                          {%- if block_product.featured_image.width >= 80 -%}{{ block_product.featured_image | image_url: width: 80 }} 80w,{%- endif -%}
+                          {%- if block_product.featured_image.width >= 120 -%}{{ block_product.featured_image | image_url: width: 120 }} 120w,{%- endif -%}
+                          {%- if block_product.featured_image.width >= 160 -%}{{ block_product.featured_image | image_url: width: 160 }} 160w{%- endif -%}
+                        "
+                        sizes="40px"
+                        alt=""
+                        width="{{ block_product.featured_image.width }}"
+                        height="{{ block_product.featured_image.height }}"
+                        loading="lazy"
+                      >
+                    {%- endif -%}
+                    <span class="visually-hidden">{{ product_label }}</span>
+                    <span class="reviews__product-title">{{ block_product.title | escape }}</span>
+                  </a>
+                {%- endif -%}
+              </div>
+            </article>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- liquid
+  assign ld_found = false
+  assign ld_count = 0
+  assign ld_sum = 0
+  for block in section.blocks
+    if block.type != 'review'
+      continue
+    endif
+    if block.settings.product == blank
+      continue
+    endif
+    if ld_found == false
+      assign ld_product = block.settings.product
+      assign ld_found = true
+    endif
+    if block.settings.product.handle == ld_product.handle
+      assign ld_rating = block.settings.rating | at_least: 1 | at_most: 5
+      assign ld_sum = ld_sum | plus: ld_rating
+      assign ld_count = ld_count | plus: 1
+    endif
+  endfor
+
+  if ld_found and ld_count > 0
+    assign ld_average = ld_sum | times: 1.0 | divided_by: ld_count | round: 1
+    assign ld_url = ld_product.url | prepend: shop.url
+  endif
+-%}
+
+{%- if ld_found and ld_count > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      "name": {{ ld_product.title | json }},
+      "url": {{ ld_url | json }},
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": {{ ld_average | json }},
+        "reviewCount": {{ ld_count | json }},
+        "bestRating": 5,
+        "worstRating": 1
+      },
+      "review": [
+        {%- assign ld_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type != 'review' -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- if block.settings.product == blank -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- if block.settings.product.handle != ld_product.handle -%}
+            {%- continue -%}
+          {%- endif -%}
+          {%- if ld_index > 0 -%},{%- endif -%}
+          {%- liquid
+            assign ld_item_rating = block.settings.rating | at_least: 1 | at_most: 5
+            assign ld_item_name = block.settings.heading | strip_html | strip_newlines
+            assign ld_item_body = block.settings.text | strip_html | strip_newlines
+            assign ld_item_author = block.settings.author | strip_html | strip_newlines
+          -%}
+          {
+            "@type": "Review",
+            {%- if ld_item_name != blank %}
+              "name": {{ ld_item_name | json }},
+            {%- endif %}
+            {%- if ld_item_body != blank %}
+              "reviewBody": {{ ld_item_body | json }},
+            {%- endif %}
+            {%- if ld_item_author != blank %}
+              "author": {
+                "@type": "Person",
+                "name": {{ ld_item_author | json }}
+              },
+            {%- endif %}
+            "reviewRating": {
+              "@type": "Rating",
+              "ratingValue": {{ ld_item_rating | json }},
+              "bestRating": 5,
+              "worstRating": 1
+            }
+          }
+          {%- assign ld_index = ld_index | plus: 1 -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.reviews.name",
+  "tag": "section",
+  "class": "section-reviews",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.reviews.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.reviews.settings.pretitle.label",
+      "default": "Ils ont acheté"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.reviews.settings.title.label",
+      "default": "Avis clients"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_average",
+      "label": "t:sections.reviews.settings.show_average.label",
+      "info": "t:sections.reviews.settings.show_average.info",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.reviews.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.reviews.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.reviews.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "label": "t:sections.reviews.settings.columns_mobile.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.reviews.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.reviews.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.reviews.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "t:sections.reviews.settings.star_color.label",
+      "info": "t:sections.reviews.settings.star_color.info",
+      "default": "#c8952f"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "review",
+      "name": "t:sections.reviews.blocks.review.name",
+      "settings": [
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "label": "t:sections.reviews.blocks.review.settings.rating.label"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "t:sections.reviews.blocks.review.settings.heading.label",
+          "default": "Exactement ce que j'espérais"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:sections.reviews.blocks.review.settings.text.label",
+          "default": "La coupe est parfaite et la matière tient très bien au lavage. Livraison en trois jours, emballage soigné."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "t:sections.reviews.blocks.review.settings.author.label",
+          "default": "Camille D."
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "t:sections.reviews.blocks.review.settings.date.label",
+          "info": "t:sections.reviews.blocks.review.settings.date.info",
+          "default": "12 mars 2026"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "t:sections.reviews.blocks.review.settings.product.label",
+          "info": "t:sections.reviews.blocks.review.settings.product.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "verified",
+          "label": "t:sections.reviews.blocks.review.settings.verified.label",
+          "info": "t:sections.reviews.blocks.review.settings.verified.info",
+          "default": true
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.reviews.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "heading": "Exactement ce que j'espérais",
+            "text": "La coupe est parfaite et la matière tient très bien au lavage. Livraison en trois jours, emballage soigné.",
+            "author": "Camille D.",
+            "date": "12 mars 2026",
+            "verified": true
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "heading": "Une qualité qui se voit",
+            "text": "Les finitions sont impeccables, on sent la différence dès le premier essayage. Je repasse commande sans hésiter.",
+            "author": "Julien M.",
+            "date": "28 février 2026",
+            "verified": true
+          }
+        },
+        {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "heading": "Très satisfaite du service",
+            "text": "J'ai échangé une taille, la démarche a été simple et le remboursement rapide. Un point en moins pour le délai d'expédition.",
+            "author": "Sophie L.",
+            "date": "16 février 2026",
+            "verified": true
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

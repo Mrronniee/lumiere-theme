@@ -1,0 +1,170 @@
+{% comment %}
+  Section: Wishlist
+  La grille est remplie côté client à partir du localStorage.
+{% endcomment %}
+
+{%- style -%}
+  .wishlist-page {
+    padding: var(--spacing-xl) 0;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .wishlist-page__header { text-align: center; margin-bottom: var(--spacing-lg); }
+
+  .wishlist-page__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .wishlist-page__count {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text-light);
+  }
+
+  .wishlist-page__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+  }
+
+  .wishlist-page__empty { text-align: center; padding: var(--spacing-xl) 0; }
+  .wishlist-page__empty-icon { margin-bottom: var(--spacing-md); opacity: 0.3; }
+
+  .wishlist-page__empty-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .wishlist-page__empty-text { color: var(--color-text-light); margin-bottom: var(--spacing-md); }
+
+  .wishlist-page__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  @media screen and (max-width: 989px) {
+    .wishlist-page__grid { grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr); }
+  }
+
+  @media screen and (max-width: 749px) {
+    .wishlist-page__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+      gap: {{ section.settings.grid_gap_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="wishlist-page" data-section-id="{{ section.id }}" data-section-type="wishlist">
+  <div class="wishlist-page__header">
+    <h1 class="wishlist-page__title">{{ 'wishlist.title' | t }}</h1>
+    <p
+      class="wishlist-page__count"
+      data-wishlist-count-text
+      data-template="{{ 'wishlist.count' | t: count: '[count]' | escape }}"
+    >
+      {{- 'wishlist.count' | t: count: 0 -}}
+    </p>
+  </div>
+
+  <div class="wishlist-page__actions" data-wishlist-actions hidden>
+    {%- if settings.wishlist_show_share -%}
+      <button type="button" class="btn btn--secondary" data-wishlist-share>
+        {% render 'icon', icon: 'share' %}
+        {{ 'wishlist.share' | t }}
+      </button>
+    {%- endif -%}
+    <button type="button" class="btn btn--secondary" data-wishlist-clear>
+      {{ 'wishlist.clear' | t }}
+    </button>
+  </div>
+
+  <div class="wishlist-page__grid" data-wishlist-grid hidden></div>
+
+  {%- comment -%} Masqué par défaut : sans cela le message s'affiche avant l'hydratation JS {%- endcomment -%}
+  <div class="wishlist-page__empty" data-wishlist-empty hidden>
+    <div class="wishlist-page__empty-icon">
+      {% render 'icon', icon: 'heart' %}
+    </div>
+    <h2 class="wishlist-page__empty-title">{{ 'wishlist.empty_title' | t }}</h2>
+    <p class="wishlist-page__empty-text">{{ 'wishlist.empty_text' | t }}</p>
+    <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+      {{ 'wishlist.empty_link' | t }}
+      {% render 'icon', icon: 'arrow-right' %}
+    </a>
+  </div>
+
+  <noscript>
+    <p class="wishlist-page__empty-text">{{ 'wishlist.empty_text' | t }}</p>
+  </noscript>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.wishlist.name",
+  "tag": "section",
+  "class": "section-wishlist",
+  "settings": [
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.wishlist.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.wishlist.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.wishlist.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px",
+      "label": "t:sections.wishlist.settings.grid_gap.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "unit": "px",
+      "label": "t:sections.wishlist.settings.grid_gap_mobile.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.wishlist.presets.name"
+    }
+  ]
+}
+{% endschema %}

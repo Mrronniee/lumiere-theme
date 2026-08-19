@@ -1,0 +1,182 @@
+{% comment %}
+  Section: Main Cart Footer
+  Récapitulatif et checkout
+{% endcomment %}
+
+{%- style -%}
+  .cart-footer {
+    padding: var(--spacing-lg) 0 var(--spacing-xl);
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .cart-footer__grid {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: var(--spacing-lg);
+  }
+
+  .cart-footer__note {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .cart-footer__note-label {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .cart-footer__note-input {
+    width: 100%;
+    min-height: 120px;
+    padding: 1rem;
+    border: 1px solid var(--color-border);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    resize: vertical;
+  }
+
+  .cart-footer__summary {
+    background: #fafafa;
+    padding: var(--spacing-md);
+  }
+
+  .cart-footer__summary-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .cart-footer__line {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+  }
+
+  .cart-footer__line--subtotal {
+    font-weight: 500;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--spacing-sm);
+    padding-bottom: var(--spacing-sm);
+  }
+
+  .cart-footer__discount { color: var(--color-sale); }
+
+  .cart-footer__line--total {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    border-top: 1px solid var(--color-border);
+    margin-top: var(--spacing-sm);
+    padding-top: var(--spacing-sm);
+  }
+
+  .cart-footer__checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1.25rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: var(--spacing-md);
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .cart-footer__checkout:hover {
+    background: var(--color-accent);
+  }
+
+  .cart-footer__note-shipping {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+    text-align: center;
+    margin-top: var(--spacing-sm);
+  }
+
+  @media screen and (max-width: 989px) {
+    .cart-footer__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+{%- endstyle -%}
+
+{%- if cart.item_count > 0 -%}
+<div class="cart-footer" data-section-id="{{ section.id }}">
+  <div class="cart-footer__grid">
+    {%- if settings.cart_show_note -%}
+    <div class="cart-footer__note">
+      <label for="CartNote" class="cart-footer__note-label">{{ 'cart.general.note' | t }}</label>
+      <textarea
+        name="note"
+        id="CartNote"
+        class="cart-footer__note-input"
+        placeholder="{{ 'cart.general.note_placeholder' | t }}"
+        form="CartForm"
+      >{{ cart.note }}</textarea>
+    </div>
+    {%- endif -%}
+
+    <div class="cart-footer__summary">
+      <h2 class="cart-footer__summary-title">{{ 'cart.general.summary' | t }}</h2>
+
+      <div class="cart-footer__line cart-footer__line--subtotal">
+        <span>{{ 'cart.general.subtotal' | t }}</span>
+        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+
+      <div class="cart-footer__line">
+        <span>{{ 'cart.general.shipping' | t }}</span>
+        <span>{{ 'cart.general.calculated_at_checkout' | t }}</span>
+      </div>
+
+      {%- if cart.total_discounts > 0 -%}
+        <div class="cart-footer__line">
+          <span>{{ 'cart.general.discounts' | t }}</span>
+          <span class="cart-footer__discount">-{{ cart.total_discounts | money }}</span>
+        </div>
+      {%- endif -%}
+
+      <div class="cart-footer__line cart-footer__line--total">
+        <span>{{ 'cart.general.total' | t }}</span>
+        <span data-cart-total>{{ cart.total_price | money }}</span>
+      </div>
+
+      <p class="cart-footer__note-shipping">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+
+      <button type="submit" name="checkout" class="cart-footer__checkout" form="CartForm">
+        {{ 'cart.general.checkout' | t }}
+        {% render 'icon', icon: 'arrow-right' %}
+      </button>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.main_cart_footer.name",
+  "tag": "section",
+  "class": "section-cart-footer",
+  "settings": []
+}
+{% endschema %}

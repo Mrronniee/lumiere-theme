@@ -1,0 +1,932 @@
+{% comment %}
+  Section: Slideshow
+  Diaporama pleine largeur, un block = une diapositive
+  Transition en fondu ou en glissement, defilement auto optionnel
+  Navigation : puces, fleches, clavier (fleche gauche / fleche droite)
+  Le defilement auto se met en pause au survol, au focus et quand l'onglet est masque
+  Il est entierement desactive pour les visiteurs qui demandent de reduire les animations
+{% endcomment %}
+
+{%- style -%}
+  .slideshow {
+    position: relative;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .slideshow__viewport {
+    position: relative;
+    height: {{ section.settings.height }}vh;
+    overflow: hidden;
+  }
+
+  .slideshow__track {
+    display: flex;
+    height: 100%;
+    transform: translateX(0);
+    transition: transform var(--transition-slow);
+  }
+
+  .slideshow__slide {
+    position: relative;
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .slideshow--fade .slideshow__track {
+    display: block;
+    position: relative;
+    transform: none;
+    transition: none;
+  }
+
+  .slideshow--fade .slideshow__slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-slow), visibility 0s linear var(--transition-slow);
+  }
+
+  .slideshow--fade .slideshow__slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-slow), visibility 0s;
+  }
+
+  .slideshow__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+  }
+
+  .slideshow__media img,
+  .slideshow__media svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .slideshow__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+  }
+
+  .slideshow__content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: center;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: var(--spacing-xl) var(--container-padding);
+  }
+
+  .slideshow__inner {
+    max-width: {{ section.settings.content_width }}px;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .slideshow__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .slideshow__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4.5vw, 4rem);
+    font-weight: 400;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+
+  .slideshow__text {
+    font-family: var(--font-body);
+    font-size: clamp(0.9375rem, 1.4vw, 1.125rem);
+    line-height: 1.7;
+    margin: 0;
+    max-width: 60ch;
+  }
+
+  .slideshow__actions {
+    display: flex;
+    margin-top: var(--spacing-xs);
+  }
+
+  .slideshow__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2.25rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: var(--btn-radius, 0);
+    cursor: pointer;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .slideshow__button .icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .slideshow__button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .slideshow__button:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  /* Alignements et couleurs, diapositive par diapositive */
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign slide_lightness = block.settings.text_color | color_extract: 'lightness'
+      if slide_lightness > 50
+        assign overlay_rgb = '0, 0, 0'
+        assign button_text_color = '#1a1a1a'
+      else
+        assign overlay_rgb = '255, 255, 255'
+        assign button_text_color = '#ffffff'
+      endif
+      assign slide_overlay_alpha = block.settings.overlay_opacity | divided_by: 100.0
+      assign slide_selector = '.slideshow[data-slideshow="' | append: section.id | append: '"] .slideshow__slide[data-slide-index="' | append: forloop.index0 | append: '"]'
+    -%}
+    {{ slide_selector }} .slideshow__overlay {
+      background-color: rgba({{ overlay_rgb }}, {{ slide_overlay_alpha }});
+    }
+
+    {{ slide_selector }} .slideshow__inner {
+      text-align: {{ block.settings.text_alignment }};
+      color: {{ block.settings.text_color }};
+      {%- if block.settings.text_alignment == 'center' %}
+        margin-left: auto;
+        margin-right: auto;
+        align-items: center;
+      {%- elsif block.settings.text_alignment == 'right' %}
+        margin-left: auto;
+        margin-right: 0;
+        align-items: flex-end;
+      {%- else %}
+        margin-left: 0;
+        margin-right: auto;
+        align-items: flex-start;
+      {%- endif %}
+    }
+
+    {{ slide_selector }} .slideshow__pretitle,
+    {{ slide_selector }} .slideshow__title,
+    {{ slide_selector }} .slideshow__text {
+      color: {{ block.settings.text_color }};
+    }
+
+    {{ slide_selector }} .slideshow__button {
+      background-color: {{ block.settings.text_color }};
+      border-color: {{ block.settings.text_color }};
+      color: {{ button_text_color }};
+    }
+  {%- endfor -%}
+
+  /* Controles */
+  .slideshow__arrows {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--container-padding);
+    pointer-events: none;
+  }
+
+  .slideshow__arrow {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background-color: var(--color-background);
+    color: var(--color-text);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .slideshow__arrow .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .slideshow__arrow:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 3px;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .slideshow__arrow:hover {
+      background-color: var(--color-primary);
+      border-color: var(--color-primary);
+      color: var(--color-on-primary);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .slideshow__dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: var(--spacing-md);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .slideshow__dot {
+    display: block;
+    width: 10px;
+    height: 10px;
+    padding: 0;
+    border: 1px solid var(--color-text);
+    border-radius: 50%;
+    background-color: var(--color-background);
+    opacity: 0.55;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .slideshow__dot.is-active {
+    opacity: 1;
+    transform: scale(1.35);
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+  }
+
+  .slideshow__dot:focus-visible {
+    outline: 2px solid var(--color-text);
+    outline-offset: 4px;
+    opacity: 1;
+  }
+
+  .slideshow__dot-item {
+    display: flex;
+  }
+
+  @media screen and (max-width: 749px) {
+    .slideshow__viewport {
+      height: {{ section.settings.height_mobile }}vh;
+    }
+
+    .slideshow__content {
+      padding: var(--spacing-lg) var(--container-padding) var(--spacing-xl);
+    }
+
+    .slideshow__arrow {
+      width: 40px;
+      height: 40px;
+    }
+
+    .slideshow__arrow .icon {
+      width: 18px;
+      height: 18px;
+    }
+
+    .slideshow__button {
+      padding: 0.875rem 1.75rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .slideshow__track,
+    .slideshow--fade .slideshow__slide,
+    .slideshow--fade .slideshow__slide.is-active,
+    .slideshow__button,
+    .slideshow__arrow,
+    .slideshow__dot {
+      transition: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign slide_count = section.blocks.size
+  assign has_controls = false
+  if slide_count > 1
+    assign has_controls = true
+  endif
+
+  assign carousel_label = 'sections.slideshow.carousel_label' | t
+  assign slide_roledescription = 'sections.slideshow.slide_roledescription' | t
+  assign previous_label = 'sections.slideshow.previous' | t
+  assign next_label = 'sections.slideshow.next' | t
+
+  assign transition_class = ''
+  if section.settings.transition == 'fade'
+    assign transition_class = ' slideshow--fade'
+  endif
+
+  assign autoplay_value = 'false'
+  if section.settings.autoplay and has_controls
+    assign autoplay_value = 'true'
+  endif
+-%}
+
+{%- if slide_count > 0 -%}
+  <div
+    class="slideshow{{ transition_class }}"
+    data-slideshow="{{ section.id }}"
+    data-section-id="{{ section.id }}"
+    data-autoplay="{{ autoplay_value }}"
+    data-interval="{{ section.settings.autoplay_interval }}"
+    data-transition="{{ section.settings.transition }}"
+    role="group"
+    aria-roledescription="carousel"
+    aria-label="{{ carousel_label }}"
+  >
+    <div class="slideshow__viewport">
+      <div
+        class="slideshow__track"
+        id="SlideshowTrack-{{ section.id }}"
+        data-slideshow-track
+        aria-live="polite"
+      >
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign slide_image = block.settings.image
+            assign slide_image_mobile = block.settings.image_mobile
+            if slide_image == blank and slide_image_mobile != blank
+              assign slide_image = slide_image_mobile
+            endif
+
+            assign slide_position = forloop.index
+            assign slide_label = 'sections.slideshow.slide_label' | t: index: slide_position, total: slide_count
+
+            assign is_first = false
+            if forloop.first
+              assign is_first = true
+            endif
+          -%}
+          <div
+            class="slideshow__slide{% if forloop.first %} is-active{% endif %}"
+            data-slide
+            data-slide-index="{{ forloop.index0 }}"
+            role="group"
+            aria-roledescription="{{ slide_roledescription }}"
+            aria-label="{{ slide_label }}"
+            aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
+            {{ block.shopify_attributes }}
+          >
+            {%- if slide_image != blank -%}
+              <picture class="slideshow__media">
+                {%- if slide_image_mobile != blank -%}
+                  <source
+                    media="(max-width: 749px)"
+                    srcset="{%- if slide_image_mobile.width >= 375 -%}{{ slide_image_mobile | image_url: width: 375 }} 375w,{%- endif -%}
+                      {%- if slide_image_mobile.width >= 550 -%}{{ slide_image_mobile | image_url: width: 550 }} 550w,{%- endif -%}
+                      {%- if slide_image_mobile.width >= 750 -%}{{ slide_image_mobile | image_url: width: 750 }} 750w,{%- endif -%}
+                      {%- if slide_image_mobile.width >= 1100 -%}{{ slide_image_mobile | image_url: width: 1100 }} 1100w,{%- endif -%}"
+                    sizes="100vw"
+                    width="{{ slide_image_mobile.width }}"
+                    height="{{ slide_image_mobile.height }}"
+                  >
+                {%- endif -%}
+                <img
+                  srcset="{%- if slide_image.width >= 375 -%}{{ slide_image | image_url: width: 375 }} 375w,{%- endif -%}
+                    {%- if slide_image.width >= 750 -%}{{ slide_image | image_url: width: 750 }} 750w,{%- endif -%}
+                    {%- if slide_image.width >= 1100 -%}{{ slide_image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                    {%- if slide_image.width >= 1500 -%}{{ slide_image | image_url: width: 1500 }} 1500w,{%- endif -%}
+                    {%- if slide_image.width >= 1920 -%}{{ slide_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
+                  src="{{ slide_image | image_url: width: 1920 }}"
+                  sizes="100vw"
+                  alt="{{ slide_image.alt | escape }}"
+                  width="{{ slide_image.width }}"
+                  height="{{ slide_image.height }}"
+                  {% if is_first %}
+                    loading="eager"
+                    fetchpriority="high"
+                  {% else %}
+                    loading="lazy"
+                    fetchpriority="low"
+                  {% endif %}
+                >
+              </picture>
+            {%- else -%}
+              <div class="slideshow__media">
+                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              </div>
+            {%- endif -%}
+
+            <div class="slideshow__overlay" aria-hidden="true"></div>
+
+            <div class="slideshow__content">
+              <div class="slideshow__inner">
+                {%- if block.settings.pretitle != blank -%}
+                  <p class="slideshow__pretitle">{{ block.settings.pretitle | escape }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.title != blank -%}
+                  <h2 class="slideshow__title">{{ block.settings.title | escape }}</h2>
+                {%- endif -%}
+
+                {%- if block.settings.text != blank -%}
+                  <p class="slideshow__text">{{ block.settings.text | escape | newline_to_br }}</p>
+                {%- endif -%}
+
+                {%- if block.settings.button_label != blank -%}
+                  <div class="slideshow__actions">
+                    <a
+                      class="slideshow__button"
+                      href="{% if block.settings.button_link != blank %}{{ block.settings.button_link }}{% else %}#{% endif %}"
+                    >
+                      <span>{{ block.settings.button_label | escape }}</span>
+                      {% render 'icon', icon: 'arrow-right' %}
+                    </a>
+                  </div>
+                {%- endif -%}
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- if has_controls and section.settings.show_arrows -%}
+        <div class="slideshow__arrows">
+          <button
+            type="button"
+            class="slideshow__arrow slideshow__arrow--prev"
+            data-slide-prev
+            aria-label="{{ previous_label }}"
+            aria-controls="SlideshowTrack-{{ section.id }}"
+          >
+            {% render 'icon', icon: 'arrow-left' %}
+          </button>
+
+          <button
+            type="button"
+            class="slideshow__arrow slideshow__arrow--next"
+            data-slide-next
+            aria-label="{{ next_label }}"
+            aria-controls="SlideshowTrack-{{ section.id }}"
+          >
+            {% render 'icon', icon: 'arrow-right' %}
+          </button>
+        </div>
+      {%- endif -%}
+
+      {%- if has_controls and section.settings.show_dots -%}
+        <ul class="slideshow__dots">
+          {%- for block in section.blocks -%}
+            {%- assign dot_label = 'sections.slideshow.go_to_slide' | t: index: forloop.index -%}
+            <li class="slideshow__dot-item">
+              <button
+                type="button"
+                class="slideshow__dot{% if forloop.first %} is-active{% endif %}"
+                data-slide-to="{{ forloop.index0 }}"
+                aria-label="{{ dot_label }}"
+                aria-controls="SlideshowTrack-{{ section.id }}"
+                {% if forloop.first %}aria-current="true"{% endif %}
+              ></button>
+            </li>
+          {%- endfor -%}
+        </ul>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if has_controls -%}
+    <script>
+      (function () {
+        var root = document.querySelector('[data-slideshow="{{ section.id }}"]');
+        if (!root) return;
+        /* Idempotence : si la section est rechargee dans l'editeur, le noeud
+           est neuf ; si ce script est evalue deux fois sur le meme noeud, on sort. */
+        if (root.dataset.slideshowInit === 'true') return;
+        root.dataset.slideshowInit = 'true';
+
+        var track = root.querySelector('[data-slideshow-track]');
+        var slides = Array.prototype.slice.call(root.querySelectorAll('[data-slide]'));
+        var dots = Array.prototype.slice.call(root.querySelectorAll('[data-slide-to]'));
+        var prevButton = root.querySelector('[data-slide-prev]');
+        var nextButton = root.querySelector('[data-slide-next]');
+
+        if (slides.length < 2) return;
+
+        var isSlideTransition = root.getAttribute('data-transition') === 'slide';
+        var autoplayEnabled = root.getAttribute('data-autoplay') === 'true';
+        var intervalSeconds = parseInt(root.getAttribute('data-interval'), 10);
+        if (!intervalSeconds || intervalSeconds < 3) intervalSeconds = 6;
+
+        var reducedMotionQuery =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        var prefersReducedMotion = reducedMotionQuery ? reducedMotionQuery.matches : false;
+
+        var timer = null;
+        var paused = false;
+        var current = 0;
+
+        function isRunning() {
+          return timer !== null;
+        }
+
+        function syncLiveRegion() {
+          if (!track) return;
+          /* Pendant le defilement auto la zone reste muette, sinon chaque
+             changement declenche par le visiteur est annonce. */
+          track.setAttribute('aria-live', isRunning() ? 'off' : 'polite');
+        }
+
+        function render() {
+          slides.forEach(function (slide, i) {
+            var active = i === current;
+            slide.classList.toggle('is-active', active);
+            slide.setAttribute('aria-hidden', active ? 'false' : 'true');
+            var focusables = slide.querySelectorAll('a[href], button, input, select, textarea');
+            Array.prototype.forEach.call(focusables, function (el) {
+              if (active) {
+                el.removeAttribute('tabindex');
+              } else {
+                el.setAttribute('tabindex', '-1');
+              }
+            });
+          });
+
+          dots.forEach(function (dot, i) {
+            var active = i === current;
+            dot.classList.toggle('is-active', active);
+            if (active) {
+              dot.setAttribute('aria-current', 'true');
+            } else {
+              dot.removeAttribute('aria-current');
+            }
+          });
+
+          if (isSlideTransition && track) {
+            track.style.transform = 'translateX(' + current * -100 + '%)';
+          }
+        }
+
+        function goTo(nextIndex) {
+          current = (nextIndex + slides.length) % slides.length;
+          render();
+        }
+
+        function stop() {
+          if (timer !== null) {
+            window.clearInterval(timer);
+            timer = null;
+          }
+          syncLiveRegion();
+        }
+
+        function tick() {
+          /* Si la section a ete retiree du DOM (navigation, editeur), on s'arrete. */
+          if (!root.isConnected) {
+            stop();
+            return;
+          }
+          goTo(current + 1);
+        }
+
+        function start() {
+          if (!autoplayEnabled || prefersReducedMotion || paused) return;
+          if (document.hidden) return;
+          stop();
+          timer = window.setInterval(tick, intervalSeconds * 1000);
+          syncLiveRegion();
+        }
+
+        function pause() {
+          paused = true;
+          stop();
+        }
+
+        function resume() {
+          paused = false;
+          start();
+        }
+
+        if (prevButton) {
+          prevButton.addEventListener('click', function () {
+            goTo(current - 1);
+            if (isRunning()) start();
+          });
+        }
+
+        if (nextButton) {
+          nextButton.addEventListener('click', function () {
+            goTo(current + 1);
+            if (isRunning()) start();
+          });
+        }
+
+        dots.forEach(function (dot) {
+          dot.addEventListener('click', function () {
+            goTo(parseInt(dot.getAttribute('data-slide-to'), 10) || 0);
+            if (isRunning()) start();
+          });
+        });
+
+        root.addEventListener('keydown', function (event) {
+          if (event.key === 'ArrowLeft') {
+            event.preventDefault();
+            goTo(current - 1);
+          } else if (event.key === 'ArrowRight') {
+            event.preventDefault();
+            goTo(current + 1);
+          }
+        });
+
+        root.addEventListener('mouseenter', pause);
+        root.addEventListener('mouseleave', resume);
+        root.addEventListener('focusin', pause);
+        root.addEventListener('focusout', function (event) {
+          if (root.contains(event.relatedTarget)) return;
+          resume();
+        });
+
+        document.addEventListener('visibilitychange', function () {
+          if (!root.isConnected) return;
+          if (document.hidden) {
+            stop();
+          } else if (!paused) {
+            start();
+          }
+        });
+
+        if (reducedMotionQuery && typeof reducedMotionQuery.addEventListener === 'function') {
+          reducedMotionQuery.addEventListener('change', function (event) {
+            prefersReducedMotion = event.matches;
+            if (prefersReducedMotion) {
+              stop();
+            } else {
+              start();
+            }
+          });
+        }
+
+        render();
+        syncLiveRegion();
+        start();
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.slideshow.name",
+  "tag": "section",
+  "class": "section-slideshow",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.slideshow.settings.header__1.content"
+    },
+    {
+      "type": "range",
+      "id": "height",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 85,
+      "unit": "vh",
+      "label": "t:sections.slideshow.settings.height.label"
+    },
+    {
+      "type": "range",
+      "id": "height_mobile",
+      "min": 40,
+      "max": 90,
+      "step": 5,
+      "default": 65,
+      "unit": "vh",
+      "label": "t:sections.slideshow.settings.height_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 400,
+      "max": 1200,
+      "step": 50,
+      "default": 800,
+      "unit": "px",
+      "label": "t:sections.slideshow.settings.content_width.label",
+      "info": "t:sections.slideshow.settings.content_width.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.slideshow.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "transition",
+      "label": "t:sections.slideshow.settings.transition.label",
+      "options": [
+        {
+          "value": "fade",
+          "label": "t:sections.slideshow.settings.transition.options__1.label"
+        },
+        {
+          "value": "slide",
+          "label": "t:sections.slideshow.settings.transition.options__2.label"
+        }
+      ],
+      "default": "fade"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "t:sections.slideshow.settings.autoplay.label",
+      "info": "t:sections.slideshow.settings.autoplay.info",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "autoplay_interval",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "unit": "s",
+      "label": "t:sections.slideshow.settings.autoplay_interval.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_dots",
+      "label": "t:sections.slideshow.settings.show_dots.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_arrows",
+      "label": "t:sections.slideshow.settings.show_arrows.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.slideshow.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.slideshow.settings.background_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "t:sections.slideshow.blocks.slide.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.slideshow.blocks.slide.settings.image.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.image.info"
+        },
+        {
+          "type": "image_picker",
+          "id": "image_mobile",
+          "label": "t:sections.slideshow.blocks.slide.settings.image_mobile.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.image_mobile.info"
+        },
+        {
+          "type": "text",
+          "id": "pretitle",
+          "label": "t:sections.slideshow.blocks.slide.settings.pretitle.label",
+          "default": "Nouvelle collection"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.slideshow.blocks.slide.settings.title.label",
+          "default": "L'élégance au quotidien"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "t:sections.slideshow.blocks.slide.settings.text.label",
+          "default": "Des pièces intemporelles, pensées pour durer et se porter saison après saison."
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:sections.slideshow.blocks.slide.settings.button_label.label",
+          "default": "Découvrir"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:sections.slideshow.blocks.slide.settings.button_link.label"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.label",
+          "options": [
+            {
+              "value": "left",
+              "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.options__1.label"
+            },
+            {
+              "value": "center",
+              "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.options__2.label"
+            },
+            {
+              "value": "right",
+              "label": "t:sections.slideshow.blocks.slide.settings.text_alignment.options__3.label"
+            }
+          ],
+          "default": "center"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "t:sections.slideshow.blocks.slide.settings.text_color.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.text_color.info",
+          "default": "#ffffff"
+        },
+        {
+          "type": "range",
+          "id": "overlay_opacity",
+          "min": 0,
+          "max": 80,
+          "step": 5,
+          "default": 30,
+          "unit": "%",
+          "label": "t:sections.slideshow.blocks.slide.settings.overlay_opacity.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.overlay_opacity.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.slideshow.presets.name",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "slide",
+          "settings": {
+            "pretitle": "Nouvelle collection",
+            "title": "L'élégance au quotidien",
+            "text": "Des pièces intemporelles, pensées pour durer et se porter saison après saison.",
+            "button_label": "Découvrir"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "pretitle": "Édition limitée",
+            "title": "Le vestiaire d'hiver",
+            "text": "Laines douces, coupes nettes et matières responsables, en quantités limitées.",
+            "button_label": "Voir la sélection"
+          }
+        },
+        {
+          "type": "slide",
+          "settings": {
+            "pretitle": "Savoir-faire",
+            "title": "Fabriqué en Europe",
+            "text": "Chaque pièce est confectionnée dans des ateliers partenaires, au plus près de nos exigences.",
+            "button_label": "Notre histoire"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,56 @@
+{% comment %}
+  Section: Blog
+{% endcomment %}
+
+<div class="page-shell page-shell--wide">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ blog.title | escape }}</h1>
+  </div>
+
+  {%- if blog.articles_count > 0 -%}
+    {%- paginate blog.articles by 12 -%}
+      <div class="blog-grid">
+        {%- for article in blog.articles -%}
+          <article class="blog-card">
+            <a href="{{ article.url }}" class="blog-card__link">
+              {%- if article.image -%}
+                <div class="blog-card__media">
+                  <img
+                    src="{{ article.image | image_url: width: 720 }}"
+                    srcset="{{ article.image | image_url: width: 360 }} 360w, {{ article.image | image_url: width: 720 }} 720w"
+                    sizes="(min-width: 990px) 33vw, 100vw"
+                    alt="{{ article.image.alt | escape }}"
+                    loading="lazy"
+                    width="{{ article.image.width }}"
+                    height="{{ article.image.height }}"
+                  >
+                </div>
+              {%- endif -%}
+              <time class="blog-card__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+                {{ article.published_at | date: format: 'date' }}
+              </time>
+              <h2 class="blog-card__title">{{ article.title | escape }}</h2>
+              <p class="blog-card__excerpt">{{ article.excerpt_or_content | strip_html | truncatewords: 25 }}</p>
+              <span class="blog-card__more">{{ 'blogs.article.read_more' | t }}</span>
+            </a>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        {% render 'pagination', paginate: paginate %}
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- else -%}
+    <p class="page-shell__empty">{{ 'blogs.general.empty' | t }}</p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_blog.name",
+  "tag": "section",
+  "class": "section-main-blog",
+  "settings": []
+}
+{% endschema %}

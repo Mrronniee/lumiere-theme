@@ -1,0 +1,54 @@
+{% comment %}
+  Section: Liste des collections
+{% endcomment %}
+
+<div class="page-shell page-shell--wide">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'collections.general.title' | t }}</h1>
+  </div>
+
+  {%- if collections.size > 0 -%}
+    {%- paginate collections by 24 -%}
+      <div class="collections-list">
+        {%- for collection in collections -%}
+          <a href="{{ collection.url }}" class="collections-list__item">
+            <div class="collections-list__media">
+              {%- if collection.image -%}
+                <img
+                  src="{{ collection.image | image_url: width: 720 }}"
+                  srcset="{{ collection.image | image_url: width: 360 }} 360w, {{ collection.image | image_url: width: 720 }} 720w"
+                  sizes="(min-width: 990px) 33vw, 100vw"
+                  alt="{{ collection.image.alt | escape }}"
+                  loading="lazy"
+                  width="{{ collection.image.width }}"
+                  height="{{ collection.image.height }}"
+                >
+              {%- else -%}
+                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {%- endif -%}
+            </div>
+            <h2 class="collections-list__title">{{ collection.title | escape }}</h2>
+            <span class="collections-list__count">
+              {{- 'sections.collection.product_count' | t: count: collection.products_count -}}
+            </span>
+          </a>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        {% render 'pagination', paginate: paginate %}
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- else -%}
+    <p class="page-shell__empty">{{ 'collections.general.empty' | t }}</p>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_list_collections.name",
+  "tag": "section",
+  "class": "section-list-collections",
+  "settings": []
+}
+{% endschema %}

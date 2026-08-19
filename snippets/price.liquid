@@ -1,0 +1,70 @@
+{% comment %}
+  Affichage des prix avec gestion des promotions et des prix variables
+  Usage: {% render 'price', product: product %}
+{% endcomment %}
+
+{%- liquid
+  assign show_badge = false
+  assign show_colour = false
+  case settings.price_sale_style
+    when 'badge'
+      assign show_badge = true
+    when 'both'
+      assign show_badge = true
+      assign show_colour = true
+    else
+      assign show_colour = true
+  endcase
+
+  assign compare_at_price = product.compare_at_price
+  assign price = product.price
+  assign available = product.available
+  if settings.price_show_currency_code
+    assign money_price = price | money_with_currency
+  else
+    assign money_price = price | money
+  endif
+  assign on_sale = false
+  if compare_at_price > price
+    assign on_sale = true
+  endif
+-%}
+
+<div class="price
+  {%- if available == false %} price--sold-out{% endif -%}
+  {%- if on_sale %} price--on-sale{% endif -%}
+  {%- if product.price_varies %} price--varies{% endif -%}"
+>
+  {%- if on_sale -%}
+    <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+    <span class="price__sale{% unless show_colour %} price__sale--plain{% endunless %}">
+      {%- if product.price_varies and settings.price_show_from -%}
+        {{ 'products.product.from_price_html' | t: price: money_price }}
+      {%- else -%}
+        {{ money_price }}
+      {%- endif -%}
+    </span>
+
+    <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+    <s class="price__compare">{{ compare_at_price | money }}</s>
+
+    {%- if show_badge -%}
+      <span class="price__badge-sale">
+        -{{ compare_at_price | minus: price | times: 100 | divided_by: compare_at_price }}%
+      </span>
+    {%- endif -%}
+  {%- else -%}
+    <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+    <span class="price__regular">
+      {%- if product.price_varies and settings.price_show_from -%}
+        {{ 'products.product.from_price_html' | t: price: money_price }}
+      {%- else -%}
+        {{ money_price }}
+      {%- endif -%}
+    </span>
+  {%- endif -%}
+
+  {%- unless available -%}
+    <span class="price__sold-out">{{ 'products.product.sold_out' | t }}</span>
+  {%- endunless -%}
+</div>

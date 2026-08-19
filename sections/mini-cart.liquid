@@ -1,0 +1,570 @@
+{% comment %}
+  Section: Mini-Cart Drawer
+  Panier latéral avec AJAX, upsells et animations
+{% endcomment %}
+
+{%- style -%}
+  .mini-cart {
+    position: fixed;
+    top: 0;
+    {% if settings.drawer_position == 'left' %}left: 0{% else %}right: 0{% endif %};
+    width: 100%;
+    max-width: var(--drawer-width, 460px);
+    height: 100vh;
+    height: 100dvh;
+    background: #fff;
+    z-index: 1200;
+    display: flex;
+    flex-direction: column;
+    transform: translateX({% if settings.drawer_position == 'left' %}-100%{% else %}100%{% endif %});
+    visibility: hidden;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.4s;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .mini-cart.is-open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s;
+  }
+
+  .mini-cart__overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--drawer-overlay, rgba(0,0,0,0.5));
+    z-index: 1199;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .mini-cart__overlay.is-visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .mini-cart__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  .mini-cart__title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .mini-cart__count {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+    margin-left: 0.5rem;
+  }
+
+  .mini-cart__close {
+    padding: 0.5rem;
+    transition: color var(--transition-fast);
+  }
+
+  .mini-cart__close:hover {
+    color: var(--color-accent);
+  }
+
+  .mini-cart__body {
+    flex: 1;
+    overflow-y: auto;
+    padding: var(--spacing-md);
+  }
+
+  .mini-cart__empty {
+    text-align: center;
+    padding: var(--spacing-xl) var(--spacing-md);
+  }
+
+  .mini-cart__empty-icon {
+    margin-bottom: var(--spacing-md);
+    opacity: 0.3;
+  }
+
+  .mini-cart__empty-title {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .mini-cart__empty-text {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .mini-cart__empty-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .mini-cart__empty-btn:hover {
+    background: var(--color-primary-hover);
+  }
+
+  /* Items */
+  .mini-cart__items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
+
+  .mini-cart__item {
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    gap: var(--spacing-sm);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 1px solid var(--color-border);
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .mini-cart__item-image {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    background: #f5f5f5;
+  }
+
+  .mini-cart__item-details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mini-cart__item-title {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.4;
+    margin-bottom: 0.25rem;
+  }
+
+  .mini-cart__item-variant {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .mini-cart__item-price {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .mini-cart__item-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+  }
+
+  .mini-cart__item-qty {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    height: 32px;
+  }
+
+  .mini-cart__item-qty-btn {
+    width: 32px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    transition: background var(--transition-fast);
+  }
+
+  .mini-cart__item-qty-btn:hover {
+    background: var(--color-background);
+  }
+
+  .mini-cart__item-qty-input {
+    width: 40px;
+    height: 100%;
+    text-align: center;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .mini-cart__item-qty-input::-webkit-outer-spin-button,
+  .mini-cart__item-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .mini-cart__item-remove {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+  }
+
+  .mini-cart__item-remove:hover {
+    color: var(--color-sale);
+  }
+
+  /* Upsells */
+  .mini-cart__upsells {
+    padding: var(--spacing-md) 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .mini-cart__upsells-title {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .mini-cart__upsell {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: var(--spacing-sm);
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+  }
+
+  .mini-cart__upsell-image {
+    width: 60px;
+    height: 75px;
+    object-fit: cover;
+    background: #f5f5f5;
+  }
+
+  .mini-cart__upsell-title {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+  }
+
+  .mini-cart__upsell-price {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+  }
+
+  .mini-cart__upsell-add {
+    padding: 0.5rem 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: background var(--transition-fast);
+  }
+
+  .mini-cart__upsell-add:hover {
+    background: var(--color-primary-hover);
+  }
+
+  /* Footer */
+  .mini-cart__footer {
+    padding: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    background: #fafafa;
+    flex-shrink: 0;
+  }
+
+  .mini-cart__subtotal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .mini-cart__subtotal-label {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+  }
+
+  .mini-cart__subtotal-value {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+  }
+
+  .mini-cart__note {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .mini-cart__checkout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 1rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .mini-cart__checkout:hover {
+    background: var(--color-primary-hover);
+  }
+
+  .mini-cart__view-cart {
+    display: block;
+    text-align: center;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+    text-decoration: underline;
+    padding: 0.5rem;
+    transition: color var(--transition-fast);
+  }
+
+  .mini-cart__view-cart:hover {
+    color: var(--color-primary);
+  }
+
+  .mini-cart__free-shipping {
+    padding: var(--spacing-sm);
+    background: #f0f0f0;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .mini-cart__free-shipping-text {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+  }
+
+  .mini-cart__free-shipping-bar {
+    width: 100%;
+    height: 4px;
+    background: #ddd;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+
+  .mini-cart__free-shipping-progress {
+    height: 100%;
+    background: var(--color-accent);
+    transition: width 0.5s ease;
+  }
+{%- endstyle -%}
+
+<div class="mini-cart__overlay" data-mini-cart-overlay></div>
+
+<div
+  class="mini-cart"
+  data-mini-cart
+  id="MiniCart"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="MiniCartTitle"
+  aria-hidden="true"
+>
+  <div class="mini-cart__header">
+    <div>
+      <span class="mini-cart__title" id="MiniCartTitle">{{ 'cart.general.title' | t }}</span>
+      <span class="mini-cart__count" data-cart-count-text>({{ cart.item_count }})</span>
+    </div>
+    <button type="button" class="mini-cart__close" data-mini-cart-close aria-label="{{ 'accessibility.close' | t }}">
+      {% render 'icon', icon: 'close' %}
+    </button>
+  </div>
+
+  <div class="mini-cart__body" data-mini-cart-body>
+    {%- if cart.item_count > 0 -%}
+      <div class="mini-cart__items" data-cart-items>
+        {%- for item in cart.items -%}
+          <div class="mini-cart__item" data-cart-item data-line="{{ forloop.index }}" data-key="{{ item.key }}">
+            <a href="{{ item.url }}" tabindex="-1" aria-hidden="true">
+              {%- if item.image -%}
+                <img
+                  src="{{ item.image | image_url: width: 200 }}"
+                  alt="{{ item.image.alt | escape }}"
+                  class="mini-cart__item-image"
+                  loading="lazy"
+                  width="100"
+                  height="120"
+                >
+              {%- else -%}
+                <span class="mini-cart__item-image"></span>
+              {%- endif -%}
+            </a>
+            <div class="mini-cart__item-details">
+              <a href="{{ item.url }}" class="mini-cart__item-title">{{ item.product.title | escape }}</a>
+              {%- unless item.product.has_only_default_variant -%}
+                <span class="mini-cart__item-variant">{{ item.variant.title }}</span>
+              {%- endunless -%}
+              <span class="mini-cart__item-price">{{ item.final_line_price | money }}</span>
+              <div class="mini-cart__item-actions">
+                <div class="mini-cart__item-qty">
+                  <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--minus" data-qty-change="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
+                  <input type="number" value="{{ item.quantity }}" min="0" class="mini-cart__item-qty-input" data-qty-input aria-label="{{ 'accessibility.quantity' | t }}">
+                  <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--plus" data-qty-change="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+                </div>
+                <button type="button" class="mini-cart__item-remove" data-remove-item>{{ 'cart.general.remove' | t }}</button>
+              </div>
+            </div>
+          </div>
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Upsells : on exclut les produits déjà présents dans le panier {%- endcomment -%}
+      {%- if section.settings.upsell_collection != blank -%}
+        {%- liquid
+          assign upsell_collection = collections[section.settings.upsell_collection]
+          assign cart_product_ids = ','
+          for item in cart.items
+            assign cart_product_ids = cart_product_ids | append: item.product_id | append: ','
+          endfor
+          assign upsell_shown = 0
+        -%}
+        {%- if upsell_collection.products.size > 0 -%}
+          <div class="mini-cart__upsells">
+            <p class="mini-cart__upsells-title">{{ 'cart.general.upsell_title' | t }}</p>
+            {%- for product in upsell_collection.products limit: 6 -%}
+              {%- assign needle = ',' | append: product.id | append: ',' -%}
+              {%- if upsell_shown < 2 and product.available -%}
+              {%- unless cart_product_ids contains needle -%}
+                {%- assign upsell_shown = upsell_shown | plus: 1 -%}
+                <div class="mini-cart__upsell">
+                  {%- if product.featured_image -%}
+                    <img
+                      src="{{ product.featured_image | image_url: width: 120 }}"
+                      alt="{{ product.featured_image.alt | default: product.title | escape }}"
+                      class="mini-cart__upsell-image"
+                      loading="lazy"
+                      width="60"
+                      height="75"
+                    >
+                  {%- else -%}
+                    <span class="mini-cart__upsell-image"></span>
+                  {%- endif -%}
+                  <div>
+                    <p class="mini-cart__upsell-title">{{ product.title | escape }}</p>
+                    <p class="mini-cart__upsell-price">{{ product.price | money }}</p>
+                  </div>
+                  <button type="button" class="mini-cart__upsell-add" data-upsell-add data-variant-id="{{ product.selected_or_first_available_variant.id }}">
+                    {{ 'products.product.add_to_cart' | t }}
+                  </button>
+                </div>
+              {%- endunless -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    {%- else -%}
+      <div class="mini-cart__empty">
+        <div class="mini-cart__empty-icon">
+          {% render 'icon', icon: 'cart' %}
+        </div>
+        <h2 class="mini-cart__empty-title">{{ 'cart.general.empty' | t }}</h2>
+        <p class="mini-cart__empty-text">{{ 'cart.general.empty_text' | t }}</p>
+        <a href="{{ routes.all_products_collection_url }}" class="mini-cart__empty-btn">
+          {{ 'cart.general.continue_shopping' | t }}
+          {% render 'icon', icon: 'arrow-right' %}
+        </a>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- if cart.item_count > 0 -%}
+    <div class="mini-cart__footer">
+      {%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+        {%- liquid
+          assign threshold = settings.cart_free_shipping_threshold
+          assign progress = cart.total_price | times: 100 | divided_by: threshold
+          assign progress = progress | at_most: 100
+          assign remaining = threshold | minus: cart.total_price
+          assign remaining_money = remaining | money
+        -%}
+        <div class="mini-cart__free-shipping">
+          {%- if cart.total_price >= threshold -%}
+            <p class="mini-cart__free-shipping-text">{{ 'cart.general.free_shipping_success' | t }}</p>
+          {%- else -%}
+            <p class="mini-cart__free-shipping-text">
+              {{- 'cart.general.free_shipping_progress_html' | t: amount: remaining_money -}}
+            </p>
+          {%- endif -%}
+          <div class="mini-cart__free-shipping-bar">
+            <div class="mini-cart__free-shipping-progress" style="width: {{ progress }}%"></div>
+          </div>
+        </div>
+      {%- endif -%}
+
+      <div class="mini-cart__subtotal">
+        <span class="mini-cart__subtotal-label">{{ 'cart.general.subtotal' | t }}</span>
+        <span class="mini-cart__subtotal-value" data-cart-subtotal>{{ cart.total_price | money }}</span>
+      </div>
+
+      <p class="mini-cart__note">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+
+      {%- comment -%}
+        Formulaire autonome : le drawer est présent sur toutes les pages, il ne peut pas
+        dépendre du formulaire de la page panier.
+      {%- endcomment -%}
+      <form action="{{ routes.cart_url }}" method="post" novalidate>
+        <button type="submit" name="checkout" class="mini-cart__checkout">
+          {{ 'cart.general.checkout' | t }}
+          {% render 'icon', icon: 'arrow-right' %}
+        </button>
+      </form>
+
+      <a href="{{ routes.cart_url }}" class="mini-cart__view-cart">{{ 'cart.general.view_cart' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.mini_cart.name",
+  "tag": "div",
+  "class": "section-mini-cart",
+  "settings": [
+    {
+      "type": "collection",
+      "id": "upsell_collection",
+      "label": "t:sections.mini_cart.settings.upsell_collection.label"
+    }
+  ]
+}
+{% endschema %}

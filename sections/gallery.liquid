@@ -1,0 +1,386 @@
+{% comment %}
+  Section: Gallery
+  Grille d'images avec legendes optionnelles et lien facultatif par image.
+  Les legendes sont rendues sous l'image et restent visibles au tactile :
+  le survol ne sert qu'a un leger zoom, jamais a reveler du contenu.
+{% endcomment %}
+
+{%- liquid
+  assign col_d = section.settings.columns_desktop
+  assign col_t = section.settings.columns_tablet
+  assign col_m = section.settings.columns_mobile
+
+  assign vw_d = 100 | divided_by: col_d
+  assign vw_t = 100 | divided_by: col_t
+  assign vw_m = 100 | divided_by: col_m
+
+  assign gap = section.settings.spacing
+  assign gap_mobile = gap | times: 0.6 | round
+
+  assign radius = section.settings.border_radius
+  assign ratio = section.settings.image_ratio
+-%}
+
+{%- style -%}
+  .gallery {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .gallery__inner {
+    {% if section.settings.full_width %}
+      max-width: none;
+      padding: 0 {{ gap }}px;
+    {% else %}
+      max-width: var(--container-width);
+      padding: 0 var(--container-padding);
+    {% endif %}
+    margin: 0 auto;
+  }
+
+  .gallery__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    text-align: center;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 var(--spacing-lg);
+  }
+
+  .gallery__grid {
+    display: grid;
+    grid-template-columns: repeat({{ col_d }}, minmax(0, 1fr));
+    gap: {{ gap }}px;
+    align-items: start;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .gallery__item {
+    display: block;
+    min-width: 0;
+  }
+
+  .gallery__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .gallery__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .gallery__media {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    {% if radius > 0 %}border-radius: {{ radius }}px;{% endif %}
+    background-color: var(--color-border);
+  }
+
+  .gallery__image,
+  .gallery__placeholder {
+    display: block;
+    width: 100%;
+  }
+
+  {%- if ratio == 'adapt' -%}
+    .gallery__image {
+      height: auto;
+    }
+
+    .gallery__media--placeholder {
+      aspect-ratio: 1 / 1;
+    }
+
+    .gallery__placeholder {
+      height: 100%;
+      object-fit: cover;
+    }
+  {%- else -%}
+    .gallery__media {
+      {% if ratio == 'square' %}aspect-ratio: 1 / 1;{% endif %}
+      {% if ratio == 'portrait' %}aspect-ratio: 3 / 4;{% endif %}
+      {% if ratio == 'landscape' %}aspect-ratio: 4 / 3;{% endif %}
+    }
+
+    .gallery__image,
+    .gallery__placeholder {
+      height: 100%;
+      object-fit: cover;
+    }
+  {%- endif -%}
+
+  .gallery__caption {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    margin-top: var(--spacing-xs);
+  }
+
+  /* Le zoom est purement decoratif : aucune information n'est cachee
+     hors survol, la legende reste lisible sur mobile. */
+  @media (hover: hover) and (pointer: fine) {
+    .gallery__image {
+      transition: transform var(--transition-slow);
+    }
+
+    .gallery__link:hover .gallery__image,
+    .gallery__link:focus-visible .gallery__image {
+      transform: scale(1.04);
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .gallery__grid {
+      grid-template-columns: repeat({{ col_t }}, minmax(0, 1fr));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .gallery__grid {
+      grid-template-columns: repeat({{ col_m }}, minmax(0, 1fr));
+      gap: {{ gap_mobile }}px;
+    }
+
+    {% if section.settings.full_width %}
+      .gallery__inner {
+        padding: 0 {{ gap_mobile }}px;
+      }
+    {% endif %}
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery__image {
+      transition: none;
+    }
+
+    .gallery__link:hover .gallery__image,
+    .gallery__link:focus-visible .gallery__image {
+      transform: none;
+    }
+  }
+{%- endstyle -%}
+
+<div class="gallery" data-section-id="{{ section.id }}">
+  <div class="gallery__inner">
+    {%- if section.settings.title != blank -%}
+      <h2 class="gallery__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      <ul class="gallery__grid" role="list" aria-label="{{ 'sections.gallery.aria_label' | t }}">
+        {%- for block in section.blocks -%}
+          {%- assign img = block.settings.image -%}
+          <li class="gallery__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="gallery__link">{%- endif -%}
+              <span class="gallery__media{% if img == blank %} gallery__media--placeholder{% endif %}">
+                {%- if img != blank -%}
+                  <img
+                    srcset="{%- if img.width >= 400 -%}{{ img | image_url: width: 400 }} 400w,{%- endif -%}
+                      {%- if img.width >= 700 -%}{{ img | image_url: width: 700 }} 700w,{%- endif -%}
+                      {%- if img.width >= 1000 -%}{{ img | image_url: width: 1000 }} 1000w,{%- endif -%}
+                      {%- if img.width >= 1400 -%}{{ img | image_url: width: 1400 }} 1400w,{%- endif -%}"
+                    src="{{ img | image_url: width: 1000 }}"
+                    sizes="(min-width: 990px) {{ vw_d }}vw, (min-width: 750px) {{ vw_t }}vw, {{ vw_m }}vw"
+                    alt="{{ img.alt | escape }}"
+                    class="gallery__image"
+                    loading="lazy"
+                    width="{{ img.width }}"
+                    height="{{ img.height }}"
+                  >
+                {%- else -%}
+                  {%- assign placeholder_name = 'lifestyle-' | append: forloop.index -%}
+                  {%- if forloop.index > 2 -%}
+                    {%- assign placeholder_name = 'lifestyle-1' -%}
+                  {%- endif -%}
+                  {{ placeholder_name | placeholder_svg_tag: 'gallery__placeholder' }}
+                {%- endif -%}
+              </span>
+
+              {%- if block.settings.caption != blank -%}
+                <span class="gallery__caption">{{ block.settings.caption | escape }}</span>
+              {%- endif -%}
+            {%- if block.settings.link != blank -%}</a>{%- endif -%}
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.gallery.name",
+  "tag": "section",
+  "class": "section-gallery",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.gallery.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.gallery.settings.title.label",
+      "default": "Galerie"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.gallery.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.gallery.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.gallery.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "label": "t:sections.gallery.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 0,
+      "max": 48,
+      "step": 2,
+      "default": 16,
+      "unit": "px",
+      "label": "t:sections.gallery.settings.spacing.label"
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "t:sections.gallery.settings.image_ratio.label",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.gallery.settings.image_ratio.options__1.label"
+        },
+        {
+          "value": "square",
+          "label": "t:sections.gallery.settings.image_ratio.options__2.label"
+        },
+        {
+          "value": "portrait",
+          "label": "t:sections.gallery.settings.image_ratio.options__3.label"
+        },
+        {
+          "value": "landscape",
+          "label": "t:sections.gallery.settings.image_ratio.options__4.label"
+        }
+      ],
+      "default": "portrait"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": false,
+      "label": "t:sections.gallery.settings.full_width.label",
+      "info": "t:sections.gallery.settings.full_width.info"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "default": 0,
+      "unit": "px",
+      "label": "t:sections.gallery.settings.border_radius.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.gallery.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.gallery.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.gallery.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.gallery.blocks.image.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.gallery.blocks.image.settings.image.label",
+          "info": "t:sections.gallery.blocks.image.settings.image.info"
+        },
+        {
+          "type": "text",
+          "id": "caption",
+          "label": "t:sections.gallery.blocks.image.settings.caption.label",
+          "info": "t:sections.gallery.blocks.image.settings.caption.info"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.gallery.blocks.image.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.gallery.presets.name",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

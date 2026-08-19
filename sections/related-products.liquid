@@ -1,0 +1,174 @@
+{% comment %}
+  Section: Produits associés
+{% endcomment %}
+
+{%- style -%}
+  .related-products {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .related-products__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    padding: 0 var(--container-padding);
+  }
+
+  .related-products__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    color: {{ section.settings.text_color }};
+  }
+
+  .related-products__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  @media screen and (max-width: 989px) {
+    .related-products__grid {
+      grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .related-products__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+      gap: {{ section.settings.grid_gap_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+
+{%- assign related_collection = collections[section.settings.collection] -%}
+
+<div class="related-products" data-section-id="{{ section.id }}">
+  <div class="related-products__header">
+    <h2 class="related-products__title">{{ section.settings.title }}</h2>
+  </div>
+
+  <div class="related-products__grid">
+    {%- if related_collection != blank -%}
+      {%- for product in related_collection.products limit: section.settings.products_to_show -%}
+        {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} API de recommandations Shopify : reellement lie au produit courant {%- endcomment -%}
+      <div
+        data-recommendations
+        data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
+      >
+        {%- if recommendations.performed and recommendations.products_count > 0 -%}
+          {%- for product in recommendations.products -%}
+            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+          {%- endfor -%}
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.related_products.name",
+  "tag": "section",
+  "class": "section-related-products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.related_products.settings.title.label",
+      "default": "Vous aimerez aussi"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.related_products.settings.collection.label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related_products.settings.products_to_show.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "t:sections.related_products.settings.show_vendor.label",
+      "default": false
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.related_products.settings.background_color.label",
+      "default": "#faf9f7"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.related_products.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.related_products.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.related_products.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.related_products.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px",
+      "label": "t:sections.related_products.settings.grid_gap.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "unit": "px",
+      "label": "t:sections.related_products.settings.grid_gap_mobile.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.related_products.presets.name",
+      "category": "Product"
+    }
+  ]
+}
+{% endschema %}

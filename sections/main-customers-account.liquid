@@ -1,0 +1,59 @@
+{% comment %}Section: Compte client{% endcomment %}
+<div class="page-shell page-shell--wide">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'customer.account.title' | t }}</h1>
+    <a href="{{ routes.account_logout_url }}" class="btn btn--link">{{ 'customer.log_out' | t }}</a>
+  </div>
+
+  <div class="account__grid">
+    <div class="account__orders">
+      <h2 class="customer__subtitle">{{ 'customer.orders.title' | t }}</h2>
+      {%- paginate customer.orders by 20 -%}
+        {%- if customer.orders.size > 0 -%}
+          <table class="account__table">
+            <thead>
+              <tr>
+                <th scope="col">{{ 'customer.orders.order_number' | t }}</th>
+                <th scope="col">{{ 'customer.orders.date' | t }}</th>
+                <th scope="col">{{ 'customer.orders.payment_status' | t }}</th>
+                <th scope="col">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                <th scope="col">{{ 'customer.orders.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {%- for order in customer.orders -%}
+                <tr>
+                  <td><a href="{{ order.customer_url }}">{{ order.name }}</a></td>
+                  <td>{{ order.created_at | date: format: 'date' }}</td>
+                  <td>{{ order.financial_status_label }}</td>
+                  <td>{{ order.fulfillment_status_label }}</td>
+                  <td>{{ order.total_net_amount | money }}</td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+          {%- if paginate.pages > 1 -%}{% render 'pagination', paginate: paginate %}{%- endif -%}
+        {%- else -%}
+          <p>{{ 'customer.orders.none' | t }}</p>
+        {%- endif -%}
+      {%- endpaginate -%}
+    </div>
+
+    <aside class="account__sidebar">
+      <h2 class="customer__subtitle">{{ 'customer.account.details' | t }}</h2>
+      {{ customer.default_address | format_address }}
+      <a href="{{ routes.account_addresses_url }}" class="btn btn--secondary">
+        {{ 'customer.account.view_addresses' | t }}
+      </a>
+    </aside>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_customers_account.name",
+  "tag": "section",
+  "class": "section-customers",
+  "settings": []
+}
+{% endschema %}

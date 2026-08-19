@@ -1,0 +1,556 @@
+{% comment %}
+  Section: Countdown
+  Compte a rebours jusqu'a une date et une heure donnees (fuseau de la boutique)
+  Le premier rendu est calcule cote Liquid pour eviter un flash de chiffres vides,
+  puis un script inline prend le relais et recale l'affichage sur l'horloge du visiteur.
+{% endcomment %}
+
+{%- liquid
+  assign target_date = section.settings.target_date | strip
+  assign target_time = section.settings.target_time | strip
+
+  if target_time == blank
+    assign target_time = '00:00'
+  endif
+
+  assign target_ts = 0
+  if target_date != blank
+    assign target_string = target_date | append: ' ' | append: target_time
+    assign target_ts = target_string | date: '%s' | times: 1
+  endif
+
+  assign now_ts = 'now' | date: '%s' | times: 1
+
+  assign has_target = false
+  assign remaining = 0
+  if target_ts > 0
+    assign has_target = true
+    assign remaining = target_ts | minus: now_ts
+  endif
+
+  assign is_expired = false
+  if has_target and remaining <= 0
+    assign is_expired = true
+    assign remaining = 0
+  endif
+
+  assign days = remaining | divided_by: 86400
+  assign day_rest = remaining | modulo: 86400
+  assign hours = day_rest | divided_by: 3600
+  assign hour_rest = day_rest | modulo: 3600
+  assign minutes = hour_rest | divided_by: 60
+  assign seconds = hour_rest | modulo: 60
+
+  assign days_display = days
+  if days < 10
+    assign days_display = days | prepend: '0'
+  endif
+  assign hours_display = hours
+  if hours < 10
+    assign hours_display = hours | prepend: '0'
+  endif
+  assign minutes_display = minutes
+  if minutes < 10
+    assign minutes_display = minutes | prepend: '0'
+  endif
+  assign seconds_display = seconds
+  if seconds < 10
+    assign seconds_display = seconds | prepend: '0'
+  endif
+
+  assign summary_now = 'sections.countdown.summary' | t: days: days, hours: hours, minutes: minutes
+  assign summary_template = 'sections.countdown.summary' | t: days: '%D', hours: '%H', minutes: '%M'
+
+  assign expired_announcement = section.settings.expired_message | strip
+  if expired_announcement == blank
+    assign expired_announcement = 'sections.countdown.finished' | t
+  endif
+
+  assign region_label = 'sections.countdown.aria_label' | t
+
+  comment
+    En expiration, la section disparait cote boutique si le marchand l'a demande,
+    mais reste visible dans l'editeur pour rester modifiable.
+  endcomment
+  assign render_section = true
+  if is_expired and section.settings.hide_when_expired
+    unless request.design_mode
+      assign render_section = false
+    endunless
+  endif
+
+  assign digit_surface = section.settings.text_color | color_mix: section.settings.background_color, 8
+  assign digit_border = section.settings.text_color | color_mix: section.settings.background_color, 22
+-%}
+
+{%- style -%}
+  .countdown {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  /* .countdown__timer declare display: grid : sans cette regle l'attribut
+     hidden serait neutralise par la declaration de display. */
+  .countdown[hidden],
+  .countdown [hidden] {
+    display: none !important;
+  }
+
+  .countdown__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    text-align: center;
+  }
+
+  .countdown__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: {{ section.settings.digits_color }};
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .countdown__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+  }
+
+  .countdown__text {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.75;
+    max-width: 56ch;
+    margin: var(--spacing-sm) auto 0;
+  }
+
+  .countdown__timer {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-sm);
+    max-width: 620px;
+    margin: var(--spacing-lg) auto 0;
+  }
+
+  .countdown__unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md) var(--spacing-sm);
+    background-color: {{ digit_surface }};
+    border: 1px solid {{ digit_border }};
+    border-radius: var(--radius);
+  }
+
+  .countdown__value {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 5vw, 3.25rem);
+    font-weight: 400;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1;
+    color: {{ section.settings.digits_color }};
+  }
+
+  .countdown__value--tick {
+    animation: countdown-tick 0.28s ease-out;
+  }
+
+  @keyframes countdown-tick {
+    from {
+      opacity: 0.35;
+      transform: translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .countdown__label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.6875rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+  }
+
+  .countdown__expired {
+    font-family: var(--font-heading);
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 400;
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+    margin: var(--spacing-lg) auto 0;
+    max-width: 56ch;
+  }
+
+  .countdown__button {
+    margin-top: var(--spacing-lg);
+  }
+
+  .countdown__button:focus-visible {
+    outline: 2px solid {{ section.settings.digits_color }};
+    outline-offset: 3px;
+  }
+
+  @media screen and (max-width: 749px) {
+    .countdown__timer {
+      gap: var(--spacing-xs);
+      margin-top: var(--spacing-md);
+    }
+
+    .countdown__unit {
+      padding: var(--spacing-sm) var(--spacing-xs);
+    }
+
+    .countdown__label {
+      font-size: 0.625rem;
+      letter-spacing: 0.08em;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .countdown__value--tick {
+      animation: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- if render_section -%}
+  <div
+    class="countdown"
+    id="Countdown-{{ section.id }}"
+    data-countdown="{{ section.id }}"
+    data-target="{{ target_ts }}"
+    data-hide-expired="{% if section.settings.hide_when_expired %}true{% else %}false{% endif %}"
+    data-design-mode="{% if request.design_mode %}true{% else %}false{% endif %}"
+    role="region"
+    aria-label="{{ region_label }}"
+  >
+    <div class="countdown__inner">
+      {%- if section.settings.pretitle != blank -%}
+        <p class="countdown__pretitle">{{ section.settings.pretitle | escape }}</p>
+      {%- endif -%}
+
+      {%- if section.settings.title != blank -%}
+        <h2 class="countdown__title">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.text != blank -%}
+        <p class="countdown__text">{{ section.settings.text | escape | newline_to_br }}</p>
+      {%- endif -%}
+
+      <div
+        class="countdown__timer"
+        data-countdown-timer
+        role="timer"
+        aria-live="off"
+        {% if is_expired %}hidden{% endif %}
+      >
+        <div class="countdown__unit">
+          <span class="countdown__value" data-unit="days">{{ days_display }}</span>
+          <span class="countdown__label">{{ 'sections.countdown.days' | t }}</span>
+        </div>
+        <div class="countdown__unit">
+          <span class="countdown__value" data-unit="hours">{{ hours_display }}</span>
+          <span class="countdown__label">{{ 'sections.countdown.hours' | t }}</span>
+        </div>
+        <div class="countdown__unit">
+          <span class="countdown__value" data-unit="minutes">{{ minutes_display }}</span>
+          <span class="countdown__label">{{ 'sections.countdown.minutes' | t }}</span>
+        </div>
+        <div class="countdown__unit">
+          <span class="countdown__value" data-unit="seconds">{{ seconds_display }}</span>
+          <span class="countdown__label">{{ 'sections.countdown.seconds' | t }}</span>
+        </div>
+      </div>
+
+      {%- comment -%}
+        Les chiffres ne sont jamais annonces (aria-live="off" sur role="timer").
+        Ce resume, lui, est mis a jour une fois par minute seulement.
+      {%- endcomment -%}
+      <p
+        class="visually-hidden"
+        data-countdown-summary
+        data-template="{{ summary_template | escape }}"
+        data-expired-text="{{ expired_announcement | escape }}"
+        aria-live="polite"
+      >
+        {%- if is_expired -%}
+          {{ expired_announcement }}
+        {%- else -%}
+          {{ summary_now }}
+        {%- endif -%}
+      </p>
+
+      {%- if section.settings.expired_message != blank -%}
+        <p class="countdown__expired" data-countdown-expired {% unless is_expired %}hidden{% endunless %}>
+          {{- section.settings.expired_message | escape -}}
+        </p>
+      {%- endif -%}
+
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a
+          class="btn btn--primary countdown__button"
+          href="{{ section.settings.button_link }}"
+        >
+          {{- section.settings.button_label | escape -}}
+        </a>
+      {%- endif -%}
+    </div>
+  </div>
+
+  {%- if has_target and is_expired == false -%}
+    <script>
+      (function () {
+        var root = document.querySelector('[data-countdown="{{ section.id }}"]');
+        if (!root) return;
+
+        /* Idempotence : si la section est rechargee dans l'editeur le noeud est neuf ;
+           si ce script est evalue deux fois sur le meme noeud, on sort. */
+        if (root.dataset.countdownInit === 'true') return;
+        root.dataset.countdownInit = 'true';
+
+        var targetSeconds = parseInt(root.getAttribute('data-target'), 10);
+        if (!targetSeconds) return;
+
+        var targetMs = targetSeconds * 1000;
+        var hideOnExpiry = root.getAttribute('data-hide-expired') === 'true';
+        var designMode = root.getAttribute('data-design-mode') === 'true';
+
+        var timerEl = root.querySelector('[data-countdown-timer]');
+        var summaryEl = root.querySelector('[data-countdown-summary]');
+        var expiredEl = root.querySelector('[data-countdown-expired]');
+
+        var summaryTemplate = summaryEl ? summaryEl.getAttribute('data-template') || '' : '';
+        var expiredText = summaryEl ? summaryEl.getAttribute('data-expired-text') || '' : '';
+
+        var units = {
+          days: root.querySelector('[data-unit="days"]'),
+          hours: root.querySelector('[data-unit="hours"]'),
+          minutes: root.querySelector('[data-unit="minutes"]'),
+          seconds: root.querySelector('[data-unit="seconds"]')
+        };
+
+        var motionQuery =
+          window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        var prefersReducedMotion = motionQuery ? motionQuery.matches : false;
+        if (motionQuery && typeof motionQuery.addEventListener === 'function') {
+          motionQuery.addEventListener('change', function (event) {
+            prefersReducedMotion = event.matches;
+          });
+        }
+
+        var interval = null;
+        var lastMinute = {{ minutes }};
+
+        function pad(value) {
+          return value < 10 ? '0' + value : String(value);
+        }
+
+        function setUnit(element, value) {
+          if (!element) return;
+          var text = pad(value);
+          if (element.textContent === text) return;
+          element.textContent = text;
+          if (prefersReducedMotion) return;
+          element.classList.remove('countdown__value--tick');
+          /* Reflow force : sans lui la classe reposee dans la meme frame ne rejoue pas. */
+          void element.offsetWidth;
+          element.classList.add('countdown__value--tick');
+        }
+
+        function updateSummary(days, hours, minutes) {
+          if (!summaryEl || !summaryTemplate) return;
+          summaryEl.textContent = summaryTemplate
+            .split('%D')
+            .join(days)
+            .split('%H')
+            .join(hours)
+            .split('%M')
+            .join(minutes);
+        }
+
+        function stop() {
+          if (interval !== null) {
+            clearInterval(interval);
+            interval = null;
+          }
+        }
+
+        function expire() {
+          stop();
+          setUnit(units.days, 0);
+          setUnit(units.hours, 0);
+          setUnit(units.minutes, 0);
+          setUnit(units.seconds, 0);
+
+          if (summaryEl && expiredText) summaryEl.textContent = expiredText;
+
+          if (hideOnExpiry && !designMode) {
+            root.hidden = true;
+            return;
+          }
+
+          if (timerEl) timerEl.hidden = true;
+          if (expiredEl) expiredEl.hidden = false;
+        }
+
+        function tick() {
+          /* Recalcul complet a chaque passage : l'affichage se recale tout seul
+             apres une mise en veille ou un onglet laisse en arriere-plan. */
+          var remaining = Math.floor((targetMs - Date.now()) / 1000);
+
+          if (remaining <= 0) {
+            expire();
+            return;
+          }
+
+          var days = Math.floor(remaining / 86400);
+          var hours = Math.floor((remaining % 86400) / 3600);
+          var minutes = Math.floor((remaining % 3600) / 60);
+          var seconds = remaining % 60;
+
+          setUnit(units.days, days);
+          setUnit(units.hours, hours);
+          setUnit(units.minutes, minutes);
+          setUnit(units.seconds, seconds);
+
+          if (minutes !== lastMinute) {
+            lastMinute = minutes;
+            updateSummary(days, hours, minutes);
+          }
+        }
+
+        tick();
+        if (interval === null && !root.hidden) {
+          interval = setInterval(tick, 1000);
+        }
+
+        document.addEventListener('shopify:section:unload', function (event) {
+          if (event.detail && event.detail.sectionId === '{{ section.id }}') stop();
+        });
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.countdown.name",
+  "tag": "section",
+  "class": "section-countdown",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.countdown.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "target_date",
+      "label": "t:sections.countdown.settings.target_date.label",
+      "info": "t:sections.countdown.settings.target_date.info",
+      "default": "2026-12-24"
+    },
+    {
+      "type": "text",
+      "id": "target_time",
+      "label": "t:sections.countdown.settings.target_time.label",
+      "info": "t:sections.countdown.settings.target_time.info",
+      "default": "23:59"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.countdown.settings.header__2.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.countdown.settings.pretitle.label",
+      "default": "Offre limitée"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.countdown.settings.title.label",
+      "default": "La vente privée se termine dans"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "t:sections.countdown.settings.text.label",
+      "default": "Profitez de −20 % sur toute la collection jusqu'à la fin du compte à rebours."
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.countdown.settings.button_label.label",
+      "default": "Découvrir la sélection"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.countdown.settings.button_link.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.countdown.settings.header__3.content"
+    },
+    {
+      "type": "text",
+      "id": "expired_message",
+      "label": "t:sections.countdown.settings.expired_message.label",
+      "info": "t:sections.countdown.settings.expired_message.info",
+      "default": "Cette offre est terminée. Merci à toutes et à tous."
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_when_expired",
+      "label": "t:sections.countdown.settings.hide_when_expired.label",
+      "info": "t:sections.countdown.settings.hide_when_expired.info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.countdown.settings.header__4.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.countdown.settings.background_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.countdown.settings.text_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "digits_color",
+      "label": "t:sections.countdown.settings.digits_color.label",
+      "info": "t:sections.countdown.settings.digits_color.info",
+      "default": "#ffffff"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.countdown.presets.name",
+      "category": "Promotional"
+    }
+  ]
+}
+{% endschema %}

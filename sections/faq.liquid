@@ -1,0 +1,361 @@
+{% comment %}
+  Section: FAQ
+  Questions frequentes en accordeon natif (details/summary)
+  Genere aussi le balisage structure FAQPage (JSON-LD)
+{% endcomment %}
+
+{%- style -%}
+  .faq {
+    padding: var(--spacing-xl) var(--container-padding);
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .faq__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+  }
+
+  .faq__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .faq__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .faq__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .faq__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .faq__list {
+    border-top: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.15 }};
+  }
+
+  .faq__item {
+    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.15 }};
+  }
+
+  .faq__question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-sm);
+    width: 100%;
+    padding: var(--spacing-md) 0;
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1.4;
+    color: {{ section.settings.text_color }};
+    cursor: pointer;
+    list-style: none;
+    transition: color var(--transition-fast);
+  }
+
+  .faq__question::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq__question:hover {
+    color: var(--color-accent-dark);
+  }
+
+  .faq__question:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 2px;
+  }
+
+  .faq__icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    color: var(--color-accent-dark);
+    transition: transform var(--transition-base);
+  }
+
+  .faq__icon .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .faq__item[open] .faq__icon {
+    transform: rotate(180deg);
+  }
+
+  .faq__answer {
+    padding: 0 0 var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+    max-width: 60ch;
+  }
+
+  .faq__answer > *:last-child {
+    margin-bottom: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__icon {
+      transition: none;
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .faq__question {
+      font-size: 1.0625rem;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .faq__header {
+      margin-bottom: var(--spacing-md);
+    }
+    .faq__question {
+      font-size: 1rem;
+      padding: var(--spacing-sm) 0;
+    }
+    .faq__answer {
+      padding-bottom: var(--spacing-sm);
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign faq_count = 0
+  for block in section.blocks
+    if block.type == 'question' and block.settings.question != blank
+      assign faq_count = faq_count | plus: 1
+    endif
+  endfor
+-%}
+
+<div
+  class="faq"
+  data-section-id="{{ section.id }}"
+  role="region"
+  {% if section.settings.title != blank %}
+    aria-labelledby="FaqTitle-{{ section.id }}"
+  {% else %}
+    aria-label="{{ 'sections.faq.aria_label' | t }}"
+  {% endif %}
+>
+  <div class="faq__inner">
+    {%- if section.settings.pretitle != blank or section.settings.title != blank or section.settings.description != blank -%}
+      <div class="faq__header">
+        {%- if section.settings.pretitle != blank -%}
+          <p class="faq__pretitle">{{ section.settings.pretitle | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="faq__title" id="FaqTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+          <p class="faq__description">{{ section.settings.description | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if faq_count > 0 -%}
+      <div class="faq__list">
+        {%- assign question_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'question' and block.settings.question != blank -%}
+            <details
+              class="faq__item"
+              id="FaqItem-{{ section.id }}-{{ block.id }}"
+              {% if section.settings.open_first and question_index == 0 %}open{% endif %}
+              {{ block.shopify_attributes }}
+            >
+              <summary class="faq__question">
+                <span class="faq__question-text">{{ block.settings.question | escape }}</span>
+                <span class="faq__icon" aria-hidden="true">
+                  {% render 'icon', icon: 'chevron-down' %}
+                </span>
+              </summary>
+
+              {%- if block.settings.answer != blank -%}
+                <div class="faq__answer rte">{{ block.settings.answer }}</div>
+              {%- endif -%}
+            </details>
+            {%- assign question_index = question_index | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{%- if faq_count > 0 -%}
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {%- assign ld_index = 0 -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'question' and block.settings.question != blank and block.settings.answer != blank -%}
+            {%- if ld_index > 0 -%},{%- endif -%}
+            {%- assign ld_question = block.settings.question | strip_html | strip_newlines -%}
+            {%- assign ld_answer = block.settings.answer | strip_newlines -%}
+            {
+              "@type": "Question",
+              "name": {{ ld_question | json }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ ld_answer | json }}
+              }
+            }
+            {%- assign ld_index = ld_index | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.faq.name",
+  "tag": "section",
+  "class": "section-faq",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.faq.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.faq.settings.pretitle.label",
+      "default": "Besoin d'aide"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.faq.settings.title.label",
+      "default": "Questions fréquentes"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "t:sections.faq.settings.description.label",
+      "default": "Livraison, retours, entretien : retrouvez ici les réponses aux questions que l'on nous pose le plus souvent."
+    },
+    {
+      "type": "checkbox",
+      "id": "open_first",
+      "label": "t:sections.faq.settings.open_first.label",
+      "info": "t:sections.faq.settings.open_first.info",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.faq.settings.header__2.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.faq.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.faq.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1200,
+      "step": 20,
+      "default": 800,
+      "unit": "px",
+      "label": "t:sections.faq.settings.max_width.label",
+      "info": "t:sections.faq.settings.max_width.info"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "question",
+      "name": "t:sections.faq.blocks.question.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "t:sections.faq.blocks.question.settings.question.label",
+          "default": "Quels sont les délais de livraison ?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "t:sections.faq.blocks.question.settings.answer.label",
+          "info": "t:sections.faq.blocks.question.settings.answer.info",
+          "default": "<p>Les commandes sont préparées sous 24 à 48 heures ouvrées, puis livrées en 2 à 4 jours en France métropolitaine.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.faq.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "question",
+          "settings": {
+            "question": "Quels sont les délais de livraison ?",
+            "answer": "<p>Les commandes sont préparées sous 24 à 48 heures ouvrées, puis livrées en 2 à 4 jours en France métropolitaine.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Puis-je retourner un article ?",
+            "answer": "<p>Vous disposez de 30 jours après réception pour nous renvoyer un article non porté, dans son emballage d'origine. Le remboursement est effectué sous 5 jours ouvrés.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Comment choisir ma taille ?",
+            "answer": "<p>Chaque fiche produit contient un guide des tailles détaillé. En cas d'hésitation entre deux tailles, nous vous conseillons de prendre la plus grande.</p>"
+          }
+        },
+        {
+          "type": "question",
+          "settings": {
+            "question": "Livrez-vous à l'international ?",
+            "answer": "<p>Oui, nous expédions dans toute l'Union européenne, en Suisse et au Royaume-Uni. Les frais et délais sont calculés à l'étape du paiement.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

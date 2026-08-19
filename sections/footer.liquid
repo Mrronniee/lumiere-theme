@@ -1,0 +1,330 @@
+{% comment %}
+  Section: Footer
+  Footer multi-colonnes avec liens, newsletter, réseaux sociaux
+{% endcomment %}
+
+{%- style -%}
+  .footer {
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+    padding: var(--spacing-xl) 0 var(--spacing-md);
+  }
+
+  .footer__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .footer__top {
+    display: grid;
+    {%- assign extra_columns = section.blocks.size | minus: 1 | at_least: 1 -%}
+    grid-template-columns: 2fr repeat({{ extra_columns }}, 1fr);
+    gap: var(--spacing-lg);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 1px solid {{ section.settings.border_color }};
+  }
+
+  .footer__brand {
+    max-width: 320px;
+  }
+
+  .footer__logo {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin-bottom: var(--spacing-sm);
+    color: {{ section.settings.text_color }};
+  }
+
+  .footer__description {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    opacity: 0.7;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .footer__socials {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .footer__social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid {{ section.settings.border_color }};
+    color: {{ section.settings.text_color }};
+    transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .footer__social-link:hover {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #ffffff;
+  }
+
+  .footer__column-title {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--spacing-md);
+    color: {{ section.settings.text_color }};
+  }
+
+  .footer__links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .footer__link {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    text-decoration: none;
+    padding: 0.35rem 0;
+    transition: opacity var(--transition-fast);
+  }
+
+  .footer__link:hover {
+    opacity: 1;
+  }
+
+  .footer__bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: var(--spacing-md);
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+  }
+
+  .footer__copyright {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    opacity: 0.5;
+  }
+
+  .footer__payments {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .footer__payment-icon {
+    height: 24px;
+    opacity: 0.6;
+  }
+
+  @media screen and (max-width: 989px) {
+    .footer__top {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .footer__brand {
+      grid-column: span 2;
+      max-width: 100%;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .footer__top {
+      grid-template-columns: 1fr;
+    }
+    .footer__brand {
+      grid-column: span 1;
+    }
+    .footer__bottom {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+{%- endstyle -%}
+
+<footer class="footer" data-section-id="{{ section.id }}">
+  <div class="footer__inner">
+    <div class="footer__top">
+      {%- for block in section.blocks -%}
+        {%- case block.type -%}
+          {%- when 'brand' -%}
+            <div class="footer__brand" {{ block.shopify_attributes }}>
+              {%- if block.settings.logo != blank -%}
+                <img
+                  src="{{ block.settings.logo | image_url: width: block.settings.logo_width }}"
+                  alt="{{ shop.name | escape }}"
+                  class="footer__logo-image"
+                  width="{{ block.settings.logo_width }}"
+                  height="{{ block.settings.logo_width | times: block.settings.logo.height | divided_by: block.settings.logo.width }}"
+                  loading="lazy"
+                >
+              {%- else -%}
+                <h3 class="footer__logo">{{ shop.name }}</h3>
+              {%- endif -%}
+
+              {%- if block.settings.description != blank -%}
+                <p class="footer__description">{{ block.settings.description | escape }}</p>
+              {%- endif -%}
+
+              <div class="footer__socials">
+                {%- if settings.social_instagram != blank -%}
+                  <a href="{{ settings.social_instagram }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Instagram' }}">
+                    {% render 'icon', icon: 'instagram' %}
+                  </a>
+                {%- endif -%}
+                {%- if settings.social_facebook != blank -%}
+                  <a href="{{ settings.social_facebook }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Facebook' }}">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                  </a>
+                {%- endif -%}
+                {%- if settings.social_pinterest != blank -%}
+                  <a href="{{ settings.social_pinterest }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Pinterest' }}">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                  </a>
+                {%- endif -%}
+                {%- if settings.social_tiktok != blank -%}
+                  <a href="{{ settings.social_tiktok }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'TikTok' }}">
+                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                  </a>
+                {%- endif -%}
+              </div>
+            </div>
+
+          {%- when 'link_list' -%}
+            <div class="footer__column" {{ block.shopify_attributes }}>
+              {%- if block.settings.title != blank -%}
+                <h4 class="footer__column-title">{{ block.settings.title | escape }}</h4>
+              {%- endif -%}
+              {%- if block.settings.menu != blank -%}
+                <ul class="footer__links">
+                  {%- for link in block.settings.menu.links -%}
+                    <li>
+                      <a href="{{ link.url }}" class="footer__link">{{ link.title }}</a>
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
+            </div>
+        {%- endcase -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="footer__bottom">
+      <p class="footer__copyright">
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | default: 'Tous droits réservés.' }}
+      </p>
+      <div class="footer__payments">
+        {%- for type in shop.enabled_payment_types -%}
+          {{ type | payment_type_svg_tag: class: 'footer__payment-icon' }}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "t:sections.footer.name",
+  "tag": "section",
+  "class": "section-footer",
+  "max_blocks": 5,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.footer.settings.background_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.footer.settings.text_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "t:sections.footer.settings.border_color.label",
+      "default": "#333333"
+    },
+    {
+      "type": "text",
+      "id": "copyright_text",
+      "label": "t:sections.footer.settings.copyright_text.label",
+      "default": "Tous droits réservés."
+    }
+  ],
+  "blocks": [
+    {
+      "type": "brand",
+      "name": "t:sections.footer.blocks.brand.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "t:sections.footer.blocks.brand.settings.logo.label"
+        },
+        {
+          "type": "range",
+          "id": "logo_width",
+          "min": 50,
+          "max": 250,
+          "step": 10,
+          "default": 150,
+          "unit": "px",
+          "label": "t:sections.footer.blocks.brand.settings.logo_width.label"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "t:sections.footer.blocks.brand.settings.description.label",
+          "default": "Maison de mode française fondée sur l'artisanat et l'intemporel. Chaque pièce raconte une histoire d'élégance et de passion."
+        }
+      ]
+    },
+    {
+      "type": "link_list",
+      "name": "t:sections.footer.blocks.link_list.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.footer.blocks.link_list.settings.title.label",
+          "default": "Liens rapides"
+        },
+        {
+          "type": "link_list",
+          "id": "menu",
+          "label": "t:sections.footer.blocks.link_list.settings.menu.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.footer.presets.name",
+      "blocks": [
+        {
+          "type": "brand"
+        },
+        {
+          "type": "link_list"
+        },
+        {
+          "type": "link_list"
+        },
+        {
+          "type": "link_list"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

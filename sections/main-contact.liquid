@@ -1,0 +1,402 @@
+{% comment %}
+  Section: Page contact
+  Formulaire de contact Shopify + coordonnées optionnelles
+{% endcomment %}
+
+{%- style -%}
+  .contact {
+    padding: var(--spacing-xl) var(--container-padding);
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  .contact__header {
+    max-width: 640px;
+    margin: 0 auto var(--spacing-lg);
+    text-align: center;
+  }
+
+  .contact__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .contact__intro {
+    font-family: var(--font-body);
+    color: var(--color-text-light);
+    line-height: 1.7;
+  }
+
+  .contact__grid {
+    display: grid;
+    grid-template-columns: {% if section.settings.show_details %}1.4fr 1fr{% else %}1fr{% endif %};
+    gap: var(--spacing-lg);
+    align-items: start;
+    max-width: {% if section.settings.show_details %}100%{% else %}640px{% endif %};
+    margin: 0 auto;
+  }
+
+  .contact__form {
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .contact__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .contact__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .contact__label {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+  }
+
+  .contact__label span {
+    color: var(--color-sale);
+  }
+
+  .contact__input,
+  .contact__textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--color-border);
+    background: #fff;
+    color: var(--color-text);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    transition: border-color var(--transition-fast);
+  }
+
+  .contact__input:focus,
+  .contact__textarea:focus {
+    border-color: var(--color-primary);
+  }
+
+  .contact__textarea {
+    min-height: 160px;
+    resize: vertical;
+  }
+
+  .contact__submit {
+    justify-self: start;
+    margin-top: var(--spacing-xs);
+  }
+
+  .contact__message {
+    padding: 1rem 1.25rem;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    border-left: 3px solid;
+  }
+
+  .contact__message--success {
+    border-color: #1e7a45;
+    background: rgba(30, 122, 69, 0.06);
+    color: #1e7a45;
+  }
+
+  .contact__message--error {
+    border-color: var(--color-sale);
+    background: rgba(192, 57, 43, 0.06);
+    color: var(--color-sale);
+  }
+
+  .contact__message ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+
+  .contact__details {
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    padding: var(--spacing-md);
+    display: grid;
+    gap: var(--spacing-sm);
+  }
+
+  .contact__detail-title {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-text-light);
+    margin-bottom: 0.25rem;
+  }
+
+  .contact__detail p,
+  .contact__detail a {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .contact__detail a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media screen and (max-width: 989px) {
+    .contact__grid { grid-template-columns: 1fr; }
+  }
+
+  @media screen and (max-width: 749px) {
+    .contact__row { grid-template-columns: 1fr; }
+  }
+{%- endstyle -%}
+
+<div class="contact" data-section-id="{{ section.id }}">
+  {%- if page.title != blank or section.settings.intro != blank -%}
+    <div class="contact__header">
+      <h1 class="contact__title">{{ page.title | default: section.settings.heading | escape }}</h1>
+      {%- if section.settings.intro != blank -%}
+        <div class="contact__intro rte">{{ section.settings.intro }}</div>
+      {%- endif -%}
+    </div>
+  {%- endif -%}
+
+  {%- if page.content != blank -%}
+    <div class="contact__header rte">{{ page.content }}</div>
+  {%- endif -%}
+
+  <div class="contact__grid">
+    {%- form 'contact', class: 'contact__form' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="contact__message contact__message--success" role="status" tabindex="-1" autofocus>
+          {{ 'contact.form.success' | t }}
+        </p>
+      {%- elsif form.errors -%}
+        <div class="contact__message contact__message--error" role="alert" tabindex="-1" autofocus>
+          <p>{{ 'contact.form.error_heading' | t }}</p>
+          <ul>
+            {%- for field in form.errors -%}
+              <li>
+                {%- if field == 'form' -%}
+                  {{ form.errors.messages[field] }}
+                {%- else -%}
+                  {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div class="contact__row">
+        <div class="contact__field">
+          <label class="contact__label" for="ContactName-{{ section.id }}">
+            {{ 'contact.form.name' | t }}
+          </label>
+          <input
+            type="text"
+            id="ContactName-{{ section.id }}"
+            name="contact[{{ 'contact.form.name' | t }}]"
+            class="contact__input"
+            value="{{ form.name }}"
+            autocomplete="name"
+          >
+        </div>
+
+        <div class="contact__field">
+          <label class="contact__label" for="ContactEmail-{{ section.id }}">
+            {{ 'contact.form.email' | t }} <span aria-hidden="true">*</span>
+          </label>
+          <input
+            type="email"
+            id="ContactEmail-{{ section.id }}"
+            name="contact[email]"
+            class="contact__input"
+            value="{{ form.email }}"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            spellcheck="false"
+            required
+            aria-required="true"
+          >
+        </div>
+      </div>
+
+      {%- if section.settings.show_phone -%}
+        <div class="contact__field">
+          <label class="contact__label" for="ContactPhone-{{ section.id }}">
+            {{ 'contact.form.phone' | t }}
+          </label>
+          <input
+            type="tel"
+            id="ContactPhone-{{ section.id }}"
+            name="contact[{{ 'contact.form.phone' | t }}]"
+            class="contact__input"
+            value="{{ form.phone }}"
+            autocomplete="tel"
+          >
+        </div>
+      {%- endif -%}
+
+      <div class="contact__field">
+        <label class="contact__label" for="ContactBody-{{ section.id }}">
+          {{ 'contact.form.message' | t }} <span aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="ContactBody-{{ section.id }}"
+          name="contact[body]"
+          class="contact__textarea"
+          required
+          aria-required="true"
+        >{{ form.body }}</textarea>
+      </div>
+
+      <button type="submit" class="btn btn--primary contact__submit">
+        {{ section.settings.button_label | default: 'Envoyer' }}
+      </button>
+    {%- endform -%}
+
+    {%- if section.settings.show_details -%}
+      <aside class="contact__details">
+        {%- for block in section.blocks -%}
+          {%- case block.type -%}
+            {%- when 'text' -%}
+              <div class="contact__detail" {{ block.shopify_attributes }}>
+                {%- if block.settings.title != blank -%}
+                  <p class="contact__detail-title">{{ block.settings.title | escape }}</p>
+                {%- endif -%}
+                <div class="rte">{{ block.settings.content }}</div>
+              </div>
+
+            {%- when 'email' -%}
+              <div class="contact__detail" {{ block.shopify_attributes }}>
+                {%- if block.settings.title != blank -%}
+                  <p class="contact__detail-title">{{ block.settings.title | escape }}</p>
+                {%- endif -%}
+                {%- if block.settings.email != blank -%}
+                  <a href="mailto:{{ block.settings.email }}">{{ block.settings.email }}</a>
+                {%- endif -%}
+              </div>
+
+            {%- when 'phone' -%}
+              <div class="contact__detail" {{ block.shopify_attributes }}>
+                {%- if block.settings.title != blank -%}
+                  <p class="contact__detail-title">{{ block.settings.title | escape }}</p>
+                {%- endif -%}
+                {%- if block.settings.phone != blank -%}
+                  <a href="tel:{{ block.settings.phone | remove: ' ' }}">{{ block.settings.phone }}</a>
+                {%- endif -%}
+              </div>
+          {%- endcase -%}
+        {%- endfor -%}
+      </aside>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_contact.name",
+  "tag": "section",
+  "class": "section-main-contact",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "t:sections.main_contact.settings.heading.label",
+      "info": "t:sections.main_contact.settings.heading.info",
+      "default": "Contact"
+    },
+    {
+      "type": "richtext",
+      "id": "intro",
+      "label": "t:sections.main_contact.settings.intro.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.main_contact.settings.button_label.label",
+      "default": "Envoyer"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_phone",
+      "label": "t:sections.main_contact.settings.show_phone.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_details",
+      "label": "t:sections.main_contact.settings.show_details.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "text",
+      "name": "t:sections.main_contact.blocks.text.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.main_contact.blocks.text.settings.title.label",
+          "default": "Adresse"
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "t:sections.main_contact.blocks.text.settings.content.label"
+        }
+      ]
+    },
+    {
+      "type": "email",
+      "name": "t:sections.main_contact.blocks.email.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.main_contact.blocks.email.settings.title.label",
+          "default": "E-mail"
+        },
+        {
+          "type": "text",
+          "id": "email",
+          "label": "t:sections.main_contact.blocks.email.settings.email.label"
+        }
+      ]
+    },
+    {
+      "type": "phone",
+      "name": "t:sections.main_contact.blocks.phone.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.main_contact.blocks.phone.settings.title.label",
+          "default": "Telephone"
+        },
+        {
+          "type": "text",
+          "id": "phone",
+          "label": "t:sections.main_contact.blocks.phone.settings.phone.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.main_contact.presets.name",
+      "blocks": [{ "type": "text" }, { "type": "email" }, { "type": "phone" }]
+    }
+  ]
+}
+{% endschema %}

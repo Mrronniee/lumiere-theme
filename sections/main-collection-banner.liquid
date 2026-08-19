@@ -1,0 +1,107 @@
+{% comment %}
+  Section: Bannière Collection
+{% endcomment %}
+
+{%- style -%}
+  .collection-banner {
+    position: relative;
+    min-height: 40vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .collection-banner__image {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .collection-banner__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .collection-banner__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 2;
+  }
+
+  .collection-banner__content {
+    position: relative;
+    z-index: 3;
+    padding: var(--spacing-lg) var(--container-padding);
+  }
+
+  .collection-banner__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 400;
+    color: #fff;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  /* Sans image de fond, le blanc serait illisible sur le fond du theme */
+  .collection-banner--plain { min-height: auto; padding: var(--spacing-lg) 0 0; }
+  .collection-banner--plain .collection-banner__title,
+  .collection-banner--plain .collection-banner__description { color: var(--color-text); }
+
+  .collection-banner__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: #fff;
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+  }
+
+{%- endstyle -%}
+
+<div class="collection-banner{% unless collection.image and section.settings.show_collection_image %} collection-banner--plain{% endunless %}">
+  {%- if collection.image and section.settings.show_collection_image -%}
+    <div class="collection-banner__image">
+      <img
+        srcset="{%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
+          {%- if collection.image.width >= 1100 -%}{{ collection.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+          {%- if collection.image.width >= 1500 -%}{{ collection.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+          {%- if collection.image.width >= 1920 -%}{{ collection.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
+        src="{{ collection.image | image_url: width: 1500 }}"
+        sizes="100vw"
+        alt="{{ collection.image.alt | escape }}"
+        loading="eager"
+        width="{{ collection.image.width }}"
+        height="{{ collection.image.height }}"
+      >
+    </div>
+    <div class="collection-banner__overlay"></div>
+  {%- endif -%}
+
+  <div class="collection-banner__content">
+    <h1 class="collection-banner__title">{{ collection.title | escape }}</h1>
+    {%- if collection.description != blank -%}
+      <p class="collection-banner__description">{{ collection.description }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_collection_banner.name",
+  "tag": "section",
+  "class": "section-collection-banner",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_collection_image",
+      "label": "t:sections.main_collection_banner.settings.show_collection_image.label",
+      "default": true
+    }
+  ]
+}
+{% endschema %}

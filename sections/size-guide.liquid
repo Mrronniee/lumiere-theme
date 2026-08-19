@@ -1,0 +1,482 @@
+{% comment %}
+  Section: Size guide
+  Tableau de mensurations accessible (table / caption / thead / scope)
+  Chaque block "row" = une ligne : libelle de taille + 5 colonnes de valeurs
+  Le tableau defile horizontalement sous 749px sans elargir la page
+{% endcomment %}
+
+{%- style -%}
+  .size-guide {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .size-guide__inner {
+    max-width: {{ section.settings.max_width }}px;
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .size-guide__header {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .size-guide__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .size-guide__intro {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.75;
+    max-width: 68ch;
+  }
+
+  .size-guide__hint {
+    display: none;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: {{ section.settings.text_color }};
+    opacity: 0.65;
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .size-guide__scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+
+  .size-guide__scroll:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 4px;
+  }
+
+  .size-guide__table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    text-align: left;
+  }
+
+  .size-guide__caption {
+    caption-side: top;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-align: left;
+    color: var(--color-accent-dark);
+    padding-bottom: var(--spacing-xs);
+  }
+
+  .size-guide__table th,
+  .size-guide__table td {
+    padding: 0.75rem var(--spacing-sm);
+    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.14 }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .size-guide__table thead th {
+    font-family: var(--font-heading);
+    font-size: 0.875rem;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.06 }};
+    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.28 }};
+    white-space: nowrap;
+  }
+
+  .size-guide__table tbody th {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .size-guide__table tbody td {
+    font-variant-numeric: tabular-nums;
+  }
+
+  .size-guide__table--striped tbody tr:nth-child(even) th,
+  .size-guide__table--striped tbody tr:nth-child(even) td {
+    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.04 }};
+  }
+
+  .size-guide__table tbody tr:last-child th,
+  .size-guide__table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  .size-guide__note {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    margin-top: var(--spacing-sm);
+    max-width: 68ch;
+  }
+
+  @media screen and (max-width: 749px) {
+    .size-guide {
+      padding: var(--spacing-lg) 0;
+    }
+
+    .size-guide__hint {
+      display: block;
+    }
+
+    .size-guide__table {
+      font-size: 0.875rem;
+    }
+
+    .size-guide__table th,
+    .size-guide__table td {
+      padding: 0.625rem var(--spacing-xs);
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign active_cols = ''
+  for i in (1..5)
+    assign heading_key = 'col_' | append: i | append: '_heading'
+    assign value_key = 'col_' | append: i
+    assign column_used = false
+    if section.settings[heading_key] != blank
+      assign column_used = true
+    else
+      for block in section.blocks
+        if block.settings[value_key] != blank
+          assign column_used = true
+          break
+        endif
+      endfor
+    endif
+    if column_used
+      assign active_cols = active_cols | append: i | append: ','
+    endif
+  endfor
+  assign active_cols = active_cols | split: ','
+
+  assign row_count = 0
+  for block in section.blocks
+    if block.type == 'row'
+      assign row_count = row_count | plus: 1
+    endif
+  endfor
+
+  if section.settings.unit == 'in'
+    assign unit_label = 'sections.size_guide.unit_inches' | t
+  else
+    assign unit_label = 'sections.size_guide.unit_cm' | t
+  endif
+  assign caption_text = 'sections.size_guide.caption' | t: unit: unit_label
+  assign table_label = 'sections.size_guide.table_label' | t
+
+  assign table_classes = 'size-guide__table'
+  if section.settings.striped
+    assign table_classes = 'size-guide__table size-guide__table--striped'
+  endif
+-%}
+
+<div
+  class="size-guide"
+  data-section-id="{{ section.id }}"
+  role="region"
+  {% if section.settings.title != blank %}
+    aria-labelledby="SizeGuideTitle-{{ section.id }}"
+  {% else %}
+    aria-label="{{ 'sections.size_guide.aria_label' | t }}"
+  {% endif %}
+>
+  <div class="size-guide__inner">
+    {%- if section.settings.title != blank or section.settings.intro != blank -%}
+      <div class="size-guide__header">
+        {%- if section.settings.title != blank -%}
+          <h2 class="size-guide__title" id="SizeGuideTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.intro != blank -%}
+          <p class="size-guide__intro">{{ section.settings.intro | escape | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if row_count > 0 and active_cols.size > 0 -%}
+      <p class="size-guide__hint">{{ 'sections.size_guide.scroll_hint' | t }}</p>
+
+      <div class="size-guide__scroll" tabindex="0" role="group" aria-label="{{ table_label }}">
+        <table class="{{ table_classes }}">
+          <caption class="size-guide__caption">{{ caption_text }}</caption>
+          <thead>
+            <tr>
+              <th scope="col">{{ section.settings.row_heading | escape }}</th>
+              {%- for col in active_cols -%}
+                {%- assign heading_key = 'col_' | append: col | append: '_heading' -%}
+                <th scope="col">{{ section.settings[heading_key] | escape }}</th>
+              {%- endfor -%}
+            </tr>
+          </thead>
+          <tbody>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'row' -%}
+                <tr {{ block.shopify_attributes }}>
+                  <th scope="row">{{ block.settings.label | escape }}</th>
+                  {%- for col in active_cols -%}
+                    {%- assign value_key = 'col_' | append: col -%}
+                    <td>{{ block.settings[value_key] | escape }}</td>
+                  {%- endfor -%}
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          </tbody>
+        </table>
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.note != blank -%}
+      <p class="size-guide__note">{{ section.settings.note | escape | newline_to_br }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.size_guide.name",
+  "tag": "section",
+  "class": "section-size-guide",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.size_guide.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.size_guide.settings.title.label",
+      "default": "Guide des tailles"
+    },
+    {
+      "type": "textarea",
+      "id": "intro",
+      "label": "t:sections.size_guide.settings.intro.label",
+      "default": "Mesurez-vous par-dessus vos sous-vêtements, sans serrer le mètre ruban. En cas d'hésitation entre deux tailles, choisissez la plus grande."
+    },
+    {
+      "type": "select",
+      "id": "unit",
+      "label": "t:sections.size_guide.settings.unit.label",
+      "info": "t:sections.size_guide.settings.unit.info",
+      "options": [
+        {
+          "value": "cm",
+          "label": "t:sections.size_guide.settings.unit.options__1.label"
+        },
+        {
+          "value": "in",
+          "label": "t:sections.size_guide.settings.unit.options__2.label"
+        }
+      ],
+      "default": "cm"
+    },
+    {
+      "type": "textarea",
+      "id": "note",
+      "label": "t:sections.size_guide.settings.note.label",
+      "info": "t:sections.size_guide.settings.note.info",
+      "default": "Les mensurations indiquées sont celles du corps, pas celles du vêtement. Une tolérance de 1 à 2 cm est possible selon les modèles."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.size_guide.settings.header__2.content"
+    },
+    {
+      "type": "text",
+      "id": "row_heading",
+      "label": "t:sections.size_guide.settings.row_heading.label",
+      "info": "t:sections.size_guide.settings.row_heading.info",
+      "default": "Taille"
+    },
+    {
+      "type": "text",
+      "id": "col_1_heading",
+      "label": "t:sections.size_guide.settings.col_1_heading.label",
+      "default": "Poitrine"
+    },
+    {
+      "type": "text",
+      "id": "col_2_heading",
+      "label": "t:sections.size_guide.settings.col_2_heading.label",
+      "default": "Tour de taille"
+    },
+    {
+      "type": "text",
+      "id": "col_3_heading",
+      "label": "t:sections.size_guide.settings.col_3_heading.label",
+      "default": "Hanches"
+    },
+    {
+      "type": "text",
+      "id": "col_4_heading",
+      "label": "t:sections.size_guide.settings.col_4_heading.label",
+      "default": "Longueur de manche"
+    },
+    {
+      "type": "text",
+      "id": "col_5_heading",
+      "label": "t:sections.size_guide.settings.col_5_heading.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.size_guide.settings.header__3.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "striped",
+      "label": "t:sections.size_guide.settings.striped.label",
+      "info": "t:sections.size_guide.settings.striped.info",
+      "default": true
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.size_guide.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.size_guide.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "default": 1000,
+      "unit": "px",
+      "label": "t:sections.size_guide.settings.max_width.label",
+      "info": "t:sections.size_guide.settings.max_width.info"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "row",
+      "name": "t:sections.size_guide.blocks.row.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.size_guide.blocks.row.settings.label.label",
+          "info": "t:sections.size_guide.blocks.row.settings.label.info",
+          "default": "S"
+        },
+        {
+          "type": "text",
+          "id": "col_1",
+          "label": "t:sections.size_guide.blocks.row.settings.col_1.label",
+          "default": "86 - 90"
+        },
+        {
+          "type": "text",
+          "id": "col_2",
+          "label": "t:sections.size_guide.blocks.row.settings.col_2.label",
+          "default": "68 - 72"
+        },
+        {
+          "type": "text",
+          "id": "col_3",
+          "label": "t:sections.size_guide.blocks.row.settings.col_3.label",
+          "default": "92 - 96"
+        },
+        {
+          "type": "text",
+          "id": "col_4",
+          "label": "t:sections.size_guide.blocks.row.settings.col_4.label",
+          "default": "60"
+        },
+        {
+          "type": "text",
+          "id": "col_5",
+          "label": "t:sections.size_guide.blocks.row.settings.col_5.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.size_guide.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "row",
+          "settings": {
+            "label": "XS",
+            "col_1": "82 - 86",
+            "col_2": "64 - 68",
+            "col_3": "88 - 92",
+            "col_4": "59"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "label": "S",
+            "col_1": "86 - 90",
+            "col_2": "68 - 72",
+            "col_3": "92 - 96",
+            "col_4": "60"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "label": "M",
+            "col_1": "90 - 94",
+            "col_2": "72 - 76",
+            "col_3": "96 - 100",
+            "col_4": "61"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "label": "L",
+            "col_1": "94 - 100",
+            "col_2": "76 - 82",
+            "col_3": "100 - 106",
+            "col_4": "62"
+          }
+        },
+        {
+          "type": "row",
+          "settings": {
+            "label": "XL",
+            "col_1": "100 - 106",
+            "col_2": "82 - 88",
+            "col_3": "106 - 112",
+            "col_4": "63"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,37 @@
+{% layout none %}
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>{{ 'gift_cards.issued.subtext' | t }} — {{ shop.name }}</title>
+  {{ content_for_header }}
+  {% render 'css-variables' %}
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+</head>
+<body class="template-gift-card">
+  <main class="page-shell page-shell--narrow" role="main">
+    <div class="page-shell__header">
+      {%- assign gift_card_value = gift_card.initial_value | money -%}
+      <h1 class="page-shell__title">
+        {{ 'gift_cards.issued.title' | t: value: gift_card_value, shop: shop.name }}
+      </h1>
+    </div>
+
+    <div class="gift-card">
+      <p class="gift-card__value">{{ gift_card.balance | money }}</p>
+      <p class="gift-card__code"><code>{{ gift_card.code | format_code }}</code></p>
+
+      <p class="gift-card__help">{{ 'gift_cards.issued.redeem' | t }}</p>
+
+      {%- if gift_card.expires_on -%}
+        {%- assign expiry = gift_card.expires_on | date: format: 'date' -%}
+        <p class="gift-card__expiry">{{ 'gift_cards.issued.expires_on' | t: expiry: expiry }}</p>
+      {%- endif -%}
+
+      <a href="{{ shop.url }}" class="btn btn--primary">{{ 'gift_cards.issued.shop_link' | t }}</a>
+      <button type="button" class="btn btn--link" onclick="window.print()">{{ 'gift_cards.issued.print' | t }}</button>
+    </div>
+  </main>
+</body>
+</html>

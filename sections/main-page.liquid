@@ -1,0 +1,94 @@
+{% comment %}
+  Section: Main Page
+  Template de page de contenu
+{% endcomment %}
+
+{%- style -%}
+  .main-page {
+    padding: var(--spacing-xl) 0;
+    max-width: 800px;
+    margin: 0 auto;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .main-page__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+  }
+
+  .main-page__content {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--color-text);
+  }
+
+  .main-page__content h2 {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-top: var(--spacing-lg);
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .main-page__content h3 {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 400;
+    margin-top: var(--spacing-md);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .main-page__content p {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .main-page__content ul,
+  .main-page__content ol {
+    margin-bottom: var(--spacing-sm);
+    padding-left: 1.5rem;
+  }
+
+  .main-page__content li {
+    margin-bottom: 0.35rem;
+  }
+
+  .main-page__content img {
+    margin: var(--spacing-md) 0;
+    border-radius: 4px;
+  }
+
+  .main-page__content a {
+    color: var(--color-accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .main-page__content blockquote {
+    border-left: 3px solid var(--color-accent);
+    padding-left: var(--spacing-md);
+    margin: var(--spacing-md) 0;
+    font-style: italic;
+    color: var(--color-text-light);
+  }
+{%- endstyle -%}
+
+<div class="main-page">
+  <h1 class="main-page__title">{{ page.title | escape }}</h1>
+  <div class="main-page__content">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_page.name",
+  "tag": "section",
+  "class": "section-main-page",
+  "settings": []
+}
+{% endschema %}

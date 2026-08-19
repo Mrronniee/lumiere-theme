@@ -1,0 +1,279 @@
+{% comment %}
+  Snippet: Shopify Markets Selectors
+  Selecteurs de langue, devise et pays
+  Usage: {% render 'markets-selectors' %}
+{% endcomment %}
+
+{%- if settings.show_language_selector or settings.show_currency_selector or settings.show_country_selector -%}
+  {%- style -%}
+    .markets-selectors {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .markets-selectors__group {
+      position: relative;
+    }
+
+    .markets-selectors__toggle {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-family: var(--font-body);
+      font-size: 0.8125rem;
+      border: 1px solid var(--color-border);
+      background: #fff;
+      color: var(--color-text);
+      cursor: pointer;
+      transition: border-color var(--transition-fast);
+    }
+
+    .markets-selectors__toggle:hover {
+      border-color: var(--color-primary);
+    }
+
+    .markets-selectors__toggle svg {
+      width: 14px;
+      height: 14px;
+      transition: transform var(--transition-fast);
+    }
+
+    .markets-selectors__group.is-open .markets-selectors__toggle svg {
+      transform: rotate(180deg);
+    }
+
+    .markets-selectors__dropdown {
+      position: absolute;
+      top: calc(100% + 0.5rem);
+      right: 0;
+      min-width: 200px;
+      background: #fff;
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+      z-index: var(--z-search);
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .markets-selectors__group.is-open .markets-selectors__dropdown {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .markets-selectors__item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      color: var(--color-text);
+      text-decoration: none;
+      transition: background var(--transition-fast);
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .markets-selectors__item:hover {
+      background: var(--color-background);
+    }
+
+    .markets-selectors__item.is-active {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+    }
+
+    .markets-selectors__code {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      padding: 0.1rem 0.25rem;
+      border: 1px solid var(--color-border);
+      border-radius: 2px;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .markets-selectors__item.is-active .markets-selectors__code {
+      border-color: currentColor;
+    }
+
+    .markets-selectors__label {
+      flex: 1;
+    }
+
+    .markets-selectors__check {
+      width: 16px;
+      height: 16px;
+      opacity: 0;
+    }
+
+    .markets-selectors__item.is-active .markets-selectors__check {
+      opacity: 1;
+    }
+
+    /* Banniere changement de marche */
+    .market-banner {
+      background: var(--color-primary);
+      color: var(--color-on-primary);
+      padding: 0.75rem var(--container-padding);
+      text-align: center;
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      display: none;
+    }
+
+    .market-banner.is-visible {
+      display: block;
+    }
+
+    .market-banner__link {
+      text-decoration: underline;
+      margin-left: 0.5rem;
+      font-weight: 500;
+      color: inherit;
+    }
+
+    .market-banner__close {
+      margin-left: 1rem;
+      opacity: 0.7;
+      color: inherit;
+      transition: opacity var(--transition-fast);
+    }
+
+    .market-banner__close:hover {
+      opacity: 1;
+    }
+  {%- endstyle -%}
+
+  <div class="markets-selectors">
+    {%- comment -%} SELECTEUR DE PAYS {%- endcomment -%}
+    {%- if settings.show_country_selector and localization.available_countries.size > 1 -%}
+      <div class="markets-selectors__group" data-market-dropdown>
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.country' | t }}">
+          {%- if settings.show_country_flags -%}
+            <span class="markets-selectors__code">{{ localization.country.iso_code }}</span>
+          {%- endif -%}
+          <span>{{ localization.country.name }}</span>
+          {% render 'icon', icon: 'chevron-down' %}
+        </button>
+        <div class="markets-selectors__dropdown">
+          {%- for country in localization.available_countries -%}
+            <button
+              type="button"
+              class="markets-selectors__item{% if country.iso_code == localization.country.iso_code %} is-active{% endif %}"
+              data-country-code="{{ country.iso_code }}"
+              {% if country.iso_code == localization.country.iso_code %}aria-current="true"{% endif %}
+            >
+              {%- if settings.show_country_flags -%}
+                <span class="markets-selectors__code">{{ country.iso_code }}</span>
+              {%- endif -%}
+              <span class="markets-selectors__label">{{ country.name }}</span>
+              <svg class="markets-selectors__check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} SELECTEUR DE LANGUE {%- endcomment -%}
+    {%- if settings.show_language_selector and localization.available_languages.size > 1 -%}
+      <div class="markets-selectors__group" data-market-dropdown>
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.language' | t }}">
+          {%- if settings.language_selector_style == 'flags' -%}
+            <span>{{ localization.language.iso_code | upcase }}</span>
+          {%- else -%}
+            <span>{{ localization.language.endonym_name | capitalize }}</span>
+          {%- endif -%}
+          {% render 'icon', icon: 'chevron-down' %}
+        </button>
+        <div class="markets-selectors__dropdown">
+          {%- for language in localization.available_languages -%}
+            <button
+              type="button"
+              class="markets-selectors__item{% if language.iso_code == localization.language.iso_code %} is-active{% endif %}"
+              lang="{{ language.iso_code }}"
+              data-language-code="{{ language.iso_code }}"
+              {% if language.iso_code == localization.language.iso_code %}aria-current="true"{% endif %}
+            >
+              <span class="markets-selectors__label">{{ language.endonym_name | capitalize }}</span>
+              <svg class="markets-selectors__check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} SELECTEUR DE DEVISE {%- endcomment -%}
+    {%- if settings.show_currency_selector and localization.available_countries.size > 1 -%}
+      <div class="markets-selectors__group" data-market-dropdown>
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.currency' | t }}">
+          {%- case settings.currency_format -%}
+            {%- when 'code' -%}
+              <span>{{ cart.currency.iso_code }}</span>
+            {%- when 'name' -%}
+              <span>{{ cart.currency.name }}</span>
+            {%- else -%}
+              <span>{{ cart.currency.symbol }} {{ cart.currency.iso_code }}</span>
+          {%- endcase -%}
+          {% render 'icon', icon: 'chevron-down' %}
+        </button>
+        <div class="markets-selectors__dropdown">
+          {%- for country in localization.available_countries -%}
+            <button
+              type="button"
+              class="markets-selectors__item{% if country.currency.iso_code == cart.currency.iso_code %} is-active{% endif %}"
+              data-country-code="{{ country.iso_code }}"
+            >
+              {%- if settings.show_currency_flags -%}
+                <span class="markets-selectors__code">{{ country.iso_code }}</span>
+              {%- endif -%}
+              <span class="markets-selectors__label">
+                {%- case settings.currency_format -%}
+                  {%- when 'code' -%}{{ country.currency.iso_code }}
+                  {%- when 'name' -%}{{ country.currency.name }}
+                  {%- else -%}{{ country.currency.symbol }} {{ country.currency.iso_code }}
+                {%- endcase -%}
+              </span>
+              <svg class="markets-selectors__check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+            </button>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%}
+    Formulaire de localisation. Sans return_to, Shopify redirige vers l'accueil
+    apres un changement de pays / langue / devise.
+  {%- endcomment -%}
+  {%- form 'localization', id: 'MarketForm', class: 'visually-hidden' -%}
+    <input type="hidden" name="return_to" value="{{ request.path }}">
+    <input type="hidden" name="country_code" data-market-country value="{{ localization.country.iso_code }}">
+    <input type="hidden" name="language_code" data-market-language value="{{ localization.language.iso_code }}">
+  {%- endform -%}
+
+  {%- comment -%} BANNIERE CHANGEMENT DE MARCHE {%- endcomment -%}
+  {%- if settings.show_market_banner -%}
+    <div class="market-banner" id="MarketBanner" data-market-banner role="status">
+      <span data-market-banner-text></span>
+      <button type="button" class="market-banner__link" data-market-banner-switch>{{ 'markets.switch' | t }}</button>
+      <button type="button" class="market-banner__close" data-market-banner-close aria-label="{{ 'accessibility.close' | t }}">
+        {% render 'icon', icon: 'close' %}
+      </button>
+    </div>
+  {%- endif -%}
+{%- endif -%}

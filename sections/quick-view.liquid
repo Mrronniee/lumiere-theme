@@ -1,0 +1,305 @@
+{% comment %}
+  Section: Quick View Modal
+  Modal invisible, remplie dynamiquement par JS
+{% endcomment %}
+
+{%- style -%}
+  .quick-view {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-base), visibility 0s linear var(--transition-base);
+    padding: var(--spacing-md);
+  }
+
+  .quick-view.is-active {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--transition-base), visibility 0s;
+  }
+
+  .quick-view__overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--modal-overlay, rgba(0,0,0,0.6));
+    backdrop-filter: blur(4px);
+  }
+
+  .quick-view__content {
+    position: relative;
+    background: #fff;
+    border-radius: var(--modal-radius, 0);
+    width: 100%;
+    max-width: var(--modal-width, 1000px);
+    max-height: 90vh;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    z-index: 1;
+    animation: quickViewIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes quickViewIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .quick-view__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+    box-shadow: var(--shadow-sm);
+    transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .quick-view__close:hover {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  .quick-view__gallery {
+    position: relative;
+    background: #f5f5f5;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+  }
+
+  .quick-view__gallery img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .quick-view__info {
+    padding: var(--spacing-lg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .quick-view__vendor {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .quick-view__title {
+    font-family: var(--font-heading);
+    font-size: 1.75rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .quick-view__price {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .quick-view__price-compare {
+    font-size: 1rem;
+    color: var(--color-text-light);
+    text-decoration: line-through;
+    margin-left: 0.75rem;
+  }
+
+  .quick-view__description {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: var(--color-text-light);
+    margin-bottom: var(--spacing-md);
+    flex: 1;
+  }
+
+  .quick-view__variants {
+    margin-bottom: var(--spacing-md);
+  }
+
+  .quick-view__actions {
+    display: flex;
+    gap: var(--spacing-sm);
+  }
+
+  .quick-view__qty {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--color-border);
+    height: 48px;
+  }
+
+  .quick-view__qty-btn {
+    width: 40px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+  }
+
+  .quick-view__qty-input {
+    width: 50px;
+    height: 100%;
+    text-align: center;
+    border: none;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    -moz-appearance: textfield;
+  }
+
+  .quick-view__qty-input::-webkit-outer-spin-button,
+  .quick-view__qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .quick-view__add-btn {
+    flex: 1;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .quick-view__add-btn:hover {
+    background: var(--color-accent);
+  }
+
+  .quick-view__link {
+    display: block;
+    text-align: center;
+    margin-top: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+  }
+
+  .quick-view__link:hover {
+    color: var(--color-primary);
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .quick-view__spinner {
+    display: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .quick-view__add-btn.is-loading .quick-view__spinner {
+    display: block;
+  }
+
+  .quick-view__add-btn.is-loading .quick-view__add-text {
+    display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .quick-view__content {
+      grid-template-columns: 1fr;
+      max-height: 85vh;
+    }
+    .quick-view__gallery {
+      aspect-ratio: 1;
+    }
+    .quick-view__info {
+      padding: var(--spacing-md);
+    }
+  }
+{%- endstyle -%}
+
+<div
+  class="quick-view"
+  id="QuickView"
+  data-quick-view
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="QuickViewTitle"
+  aria-hidden="true"
+>
+  <div class="quick-view__overlay" data-quick-view-close></div>
+
+  <div class="quick-view__content">
+    <button type="button" class="quick-view__close" data-quick-view-close aria-label="{{ 'accessibility.close' | t }}">
+      {% render 'icon', icon: 'close' %}
+    </button>
+
+    <div class="quick-view__gallery">
+      <img alt="" data-quick-view-image loading="lazy" width="600" height="800" hidden>
+    </div>
+
+    <div class="quick-view__info">
+      <span class="quick-view__vendor" data-quick-view-vendor></span>
+      <h2 class="quick-view__title" id="QuickViewTitle" data-quick-view-title></h2>
+      <div class="quick-view__price">
+        <span data-quick-view-price></span>
+        <span class="quick-view__price-compare" data-quick-view-compare hidden></span>
+      </div>
+      <p class="quick-view__description" data-quick-view-description></p>
+
+      <div class="quick-view__variants" data-quick-view-variants></div>
+
+      <div class="quick-view__actions">
+        <div class="quick-view__qty">
+          <button type="button" class="quick-view__qty-btn" data-qty="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
+          <label class="visually-hidden" for="QuickViewQty">{{ 'products.product.quantity' | t }}</label>
+          <input type="number" id="QuickViewQty" value="1" min="1" class="quick-view__qty-input" data-quick-view-qty>
+          <button type="button" class="quick-view__qty-btn" data-qty="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
+        </div>
+        <button type="button" class="quick-view__add-btn" data-quick-view-add>
+          <span class="quick-view__spinner" aria-hidden="true"></span>
+          <span class="quick-view__add-text" data-quick-view-add-text>{{ 'products.product.add_to_cart' | t }}</span>
+        </button>
+      </div>
+
+      <a href="" class="quick-view__link" data-quick-view-link>{{ 'products.product.view_details' | t }}</a>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.quick_view.name",
+  "tag": "div",
+  "class": "section-quick-view",
+  "settings": []
+}
+{% endschema %}

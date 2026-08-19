@@ -1,0 +1,73 @@
+{% comment %}
+  Section: Résultats de recherche
+{% endcomment %}
+
+<div class="page-shell page-shell--wide">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">
+      {%- if search.performed -%}
+        {{ 'general.search.results_for' | t }} &ldquo;{{ search.terms | escape }}&rdquo;
+      {%- else -%}
+        {{ 'general.search.title' | t }}
+      {%- endif -%}
+    </h1>
+    {%- if search.performed -%}
+      <p class="page-shell__subtitle">{{ 'general.search.results_count' | t: count: search.results_count }}</p>
+    {%- endif -%}
+  </div>
+
+  <form action="{{ routes.search_url }}" method="get" role="search" class="search-page__form">
+    <label class="visually-hidden" for="SearchPageInput">{{ 'general.search.search' | t }}</label>
+    <input
+      type="search"
+      id="SearchPageInput"
+      name="q"
+      value="{{ search.terms | escape }}"
+      placeholder="{{ 'general.search.placeholder' | t }}"
+      class="search-page__input"
+    >
+    <input type="hidden" name="type" value="{% if settings.search_include_pages %}product,page,article{% else %}product{% endif %}">
+    <button type="submit" class="search-page__submit">{{ 'general.search.search' | t }}</button>
+  </form>
+
+  {%- if search.performed -%}
+    {%- if search.results_count > 0 -%}
+      {%- paginate search.results by settings.search_results_per_page -%}
+        <div class="collection-grid__products search-page__results">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- else -%}
+              <article class="search-page__page">
+                <h2 class="search-page__page-title">
+                  <a href="{{ item.url }}">{{ item.title | escape }}</a>
+                </h2>
+                <p class="search-page__page-excerpt">{{ item.content | strip_html | truncatewords: 30 }}</p>
+              </article>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          {% render 'pagination', paginate: paginate %}
+        {%- endif -%}
+      {%- endpaginate -%}
+    {%- else -%}
+      <div class="page-shell__empty">
+        <p>{{ 'general.search.no_results' | t }} &ldquo;{{ search.terms | escape }}&rdquo;</p>
+        <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
+          {{ 'cart.general.continue_shopping' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_search.name",
+  "tag": "section",
+  "class": "section-main-search",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,228 @@
+{% comment %}
+  Section: Header
+  Navigation principale avec menu mobile, recherche, panier, wishlist, markets
+{% endcomment %}
+
+<header
+  class="header{% if settings.header_transparent_home and template.name == 'index' %} header--transparent{% endif %}"
+  data-section-id="{{ section.id }}"
+  data-section-type="header"
+  {% if settings.header_transparent_home and template.name == 'index' %}data-transparent-home{% endif %}
+>
+  <div class="header__wrapper">
+    <div class="header__inner">
+      {%- comment -%} Menu mobile {%- endcomment -%}
+      <button
+        type="button"
+        class="header__menu-toggle"
+        data-menu-toggle
+        aria-label="{{ 'accessibility.open_menu' | t }}"
+        aria-expanded="false"
+        aria-controls="MobileMenu"
+      >
+        {% render 'icon', icon: 'menu' %}
+      </button>
+
+      {%- comment -%} Logo {%- endcomment -%}
+      <div class="header__logo">
+        <a href="{{ routes.root_url }}" class="header__logo-link">
+          {%- if settings.logo != blank -%}
+            {%- liquid
+              assign logo_w = settings.logo_width | default: 100
+              assign logo_h = logo_w | times: settings.logo.height | divided_by: settings.logo.width
+            -%}
+            <img
+              src="{{ settings.logo | image_url: width: logo_w }}"
+              srcset="{{ settings.logo | image_url: width: logo_w }} 1x, {{ settings.logo | image_url: width: logo_w | times: 2 }} 2x"
+              alt="{{ shop.name | escape }}"
+              class="header__logo-image"
+              width="{{ logo_w }}"
+              height="{{ logo_h }}"
+            >
+          {%- else -%}
+            <span class="header__logo-text">{{ shop.name }}</span>
+          {%- endif -%}
+        </a>
+      </div>
+
+      {%- comment -%} Navigation desktop {%- endcomment -%}
+      <nav class="header__nav" aria-label="{{ 'accessibility.menu' | t }}">
+        <ul class="header__nav-list">
+          {%- for link in section.settings.menu.links -%}
+            <li class="header__nav-item{% if link.links != blank %} header__nav-item--has-dropdown{% endif %}">
+              {%- if link.links != blank -%}
+                <a
+                  href="{{ link.url }}"
+                  class="header__nav-link{% if link.active %} header__nav-link--active{% endif %}"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                  data-dropdown-trigger
+                >
+                  {{ link.title }}
+                  {% render 'icon', icon: 'chevron-down', class: 'header__nav-chevron' %}
+                </a>
+
+                <div class="header__dropdown">
+                  <div class="header__dropdown-inner">
+                    <ul class="header__dropdown-list">
+                      {%- for childlink in link.links -%}
+                        <li class="header__dropdown-item">
+                          <a href="{{ childlink.url }}" class="header__dropdown-link{% if childlink.active %} header__dropdown-link--active{% endif %}">
+                            {{ childlink.title }}
+                          </a>
+                          {%- if childlink.links != blank -%}
+                            <ul class="header__dropdown-sublist">
+                              {%- for grandchildlink in childlink.links -%}
+                                <li class="header__dropdown-subitem">
+                                  <a href="{{ grandchildlink.url }}" class="header__dropdown-sublink{% if grandchildlink.active %} header__dropdown-sublink--active{% endif %}">
+                                    {{ grandchildlink.title }}
+                                  </a>
+                                </li>
+                              {%- endfor -%}
+                            </ul>
+                          {%- endif -%}
+                        </li>
+                      {%- endfor -%}
+                    </ul>
+                  </div>
+                </div>
+              {%- else -%}
+                <a href="{{ link.url }}" class="header__nav-link{% if link.active %} header__nav-link--active{% endif %}">
+                  {{ link.title }}
+                </a>
+              {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+
+      {%- comment -%} Actions {%- endcomment -%}
+      <div class="header__actions">
+        {%- if settings.show_search -%}
+          <button type="button" class="header__action header__action--search" data-search-toggle aria-label="{{ 'general.search.search' | t }}" aria-expanded="false" aria-controls="SearchOverlay">
+            {% render 'icon', icon: 'search' %}
+          </button>
+        {%- endif -%}
+
+        {%- if settings.wishlist_enable and settings.show_wishlist -%}
+          <a href="{{ routes.root_url }}pages/wishlist" class="header__action header__action--wishlist" aria-label="{{ 'accessibility.wishlist' | t }}">
+            {% render 'icon', icon: 'heart' %}
+            <span class="header__wishlist-count" data-wishlist-count hidden>0</span>
+          </a>
+        {%- endif -%}
+
+        {%- if shop.customer_accounts_enabled and settings.show_account -%}
+          <a href="{{ routes.account_url }}" class="header__action header__action--account" aria-label="{{ 'customer.account.title' | t }}">
+            {% render 'icon', icon: 'user' %}
+          </a>
+        {%- endif -%}
+
+        <a
+          href="{{ routes.cart_url }}"
+          class="header__action header__action--cart"
+          {% if settings.cart_type == 'drawer' %}data-cart-toggle{% endif %}
+          aria-label="{{ 'cart.general.title' | t }}"
+        >
+          {% render 'icon', icon: 'cart' %}
+          <span class="header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+        </a>
+      </div>
+
+      {%- comment -%} Markets selectors {%- endcomment -%}
+      <div class="header__markets">
+        {% render 'markets-selectors' %}
+      </div>
+    </div>
+  </div>
+</header>
+
+{%- comment -%} Menu mobile {%- endcomment -%}
+<div class="mobile-menu__overlay" data-menu-overlay></div>
+<nav class="mobile-menu" id="MobileMenu" data-mobile-menu aria-label="{{ 'accessibility.menu' | t }}" aria-hidden="true">
+  <div class="mobile-menu__header">
+    <span class="mobile-menu__title">{{ 'accessibility.menu' | t }}</span>
+    <button type="button" class="mobile-menu__close" data-menu-close aria-label="{{ 'accessibility.close_menu' | t }}">
+      {% render 'icon', icon: 'close' %}
+    </button>
+  </div>
+
+  <ul class="mobile-menu__list">
+    {%- for link in section.settings.menu.links -%}
+      <li class="mobile-menu__item">
+        {%- if link.links != blank -%}
+          <button
+            type="button"
+            class="mobile-menu__link mobile-menu__link--parent"
+            data-submenu-toggle
+            aria-expanded="false"
+            aria-controls="MobileSubmenu-{{ forloop.index }}"
+          >
+            {{ link.title }}
+            {% render 'icon', icon: 'chevron-down', class: 'mobile-menu__chevron' %}
+          </button>
+          <ul class="mobile-menu__sublist" id="MobileSubmenu-{{ forloop.index }}" hidden>
+            <li>
+              <a href="{{ link.url }}" class="mobile-menu__sublink mobile-menu__sublink--all">{{ link.title }}</a>
+            </li>
+            {%- for childlink in link.links -%}
+              <li>
+                <a href="{{ childlink.url }}" class="mobile-menu__sublink">{{ childlink.title }}</a>
+              </li>
+            {%- endfor -%}
+          </ul>
+        {%- else -%}
+          <a href="{{ link.url }}" class="mobile-menu__link">{{ link.title }}</a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+
+  <div class="mobile-menu__footer">
+    {%- if shop.customer_accounts_enabled and settings.show_account -%}
+      <a href="{{ routes.account_url }}" class="mobile-menu__footer-link">{{ 'customer.account.title' | t }}</a>
+    {%- endif -%}
+    {%- if settings.wishlist_enable and settings.show_wishlist -%}
+      <a href="{{ routes.root_url }}pages/wishlist" class="mobile-menu__footer-link">{{ 'accessibility.wishlist' | t }}</a>
+    {%- endif -%}
+  </div>
+</nav>
+
+{%- comment -%} Overlay recherche {%- endcomment -%}
+{%- if settings.show_search -%}
+  <div class="search-overlay" id="SearchOverlay" data-search-overlay aria-hidden="true">
+    <div class="search-overlay__content">
+      <button type="button" class="search-overlay__close" data-search-close aria-label="{{ 'accessibility.close' | t }}">
+        {% render 'icon', icon: 'close' %}
+      </button>
+      <form action="{{ routes.search_url }}" method="get" role="search" class="search-overlay__form">
+        <label class="visually-hidden" for="SearchOverlayInput">{{ 'general.search.search' | t }}</label>
+        <input
+          type="search"
+          id="SearchOverlayInput"
+          name="q"
+          placeholder="{{ 'general.search.placeholder' | t }}"
+          class="search-overlay__input"
+          value="{{ search.terms | escape }}"
+        >
+        <input type="hidden" name="type" value="{% if settings.search_include_pages %}product,page,article{% else %}product{% endif %}">
+        <button type="submit" class="search-overlay__submit" aria-label="{{ 'general.search.submit' | t }}">
+          {% render 'icon', icon: 'arrow-right' %}
+        </button>
+      </form>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "t:sections.header.settings.menu.label",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

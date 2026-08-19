@@ -1,0 +1,711 @@
+{% comment %}
+  Section: Comparison
+  Tableau comparatif entre offres ou produits
+  Chaque colonne : titre, sous-titre, prix, mise en avant, bouton, 6 lignes de caracteristiques
+  Les libelles des 6 lignes sont definis au niveau de la section
+{% endcomment %}
+
+{%- liquid
+  assign bg_color = section.settings.background_color
+  assign txt_color = section.settings.text_color
+  assign hl_color = section.settings.highlight_color
+
+  assign border_color = txt_color | color_mix: bg_color, 18
+  assign head_surface = txt_color | color_mix: bg_color, 5
+  assign row_surface = txt_color | color_mix: bg_color, 3
+  assign hl_surface = hl_color | color_mix: bg_color, 10
+  assign hl_border = hl_color | color_mix: bg_color, 55
+
+  assign contrast_light = hl_color | color_contrast: '#ffffff'
+  assign contrast_dark = hl_color | color_contrast: '#1a1a1a'
+  assign on_highlight = '#1a1a1a'
+  if contrast_light > contrast_dark
+    assign on_highlight = '#ffffff'
+  endif
+-%}
+
+{%- style -%}
+  .comparison {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ bg_color }};
+  }
+
+  .comparison__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .comparison__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .comparison__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .comparison__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ txt_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .comparison__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ txt_color }};
+    opacity: 0.7;
+    max-width: 620px;
+    margin: 0 auto;
+  }
+
+  .comparison__scroller {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .comparison__scroller:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 4px;
+  }
+
+  .comparison__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-body);
+    color: {{ txt_color }};
+  }
+
+  .comparison__corner {
+    border-bottom: 1px solid {{ border_color }};
+  }
+
+  .comparison__col {
+    vertical-align: bottom;
+    width: 22%;
+    padding: var(--spacing-md) var(--spacing-sm);
+    text-align: center;
+    font-weight: 400;
+    background-color: {{ head_surface }};
+    border: 1px solid {{ border_color }};
+    border-bottom-width: 2px;
+  }
+
+  .comparison__col--highlight {
+    background-color: {{ hl_color }};
+    color: {{ on_highlight }};
+    border-color: {{ hl_border }};
+  }
+
+  .comparison__badge {
+    display: inline-block;
+    margin-bottom: var(--spacing-xs);
+    padding: 0.25rem 0.6rem;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background-color: {{ on_highlight }};
+    color: {{ hl_color }};
+    border-radius: var(--radius);
+  }
+
+  .comparison__col-title {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+
+  .comparison__col-subtitle {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    opacity: 0.75;
+  }
+
+  .comparison__col-price {
+    display: block;
+    margin-top: var(--spacing-xs);
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  .comparison__row-header {
+    padding: var(--spacing-sm) var(--spacing-sm) var(--spacing-sm) 0;
+    text-align: left;
+    font-weight: 400;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    border-bottom: 1px solid {{ border_color }};
+  }
+
+  .comparison__cell {
+    padding: var(--spacing-sm);
+    text-align: center;
+    vertical-align: middle;
+    border-left: 1px solid {{ border_color }};
+    border-right: 1px solid {{ border_color }};
+    border-bottom: 1px solid {{ border_color }};
+  }
+
+  .comparison__table tbody tr:nth-child(even) .comparison__cell,
+  .comparison__table tbody tr:nth-child(even) .comparison__row-header {
+    background-color: {{ row_surface }};
+  }
+
+  .comparison__cell--highlight,
+  .comparison__table tbody tr:nth-child(even) .comparison__cell--highlight {
+    background-color: {{ hl_surface }};
+    border-left-color: {{ hl_border }};
+    border-right-color: {{ hl_border }};
+  }
+
+  .comparison__mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .comparison__mark .icon {
+    width: 20px;
+    height: 20px;
+  }
+
+  .comparison__mark--yes {
+    color: var(--color-accent-dark);
+  }
+
+  .comparison__mark--no {
+    color: {{ txt_color }};
+    opacity: 0.35;
+  }
+
+  .comparison__detail {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    opacity: 0.8;
+  }
+
+  .comparison__foot-cell {
+    padding: var(--spacing-md) var(--spacing-sm);
+    text-align: center;
+    border-left: 1px solid {{ border_color }};
+    border-right: 1px solid {{ border_color }};
+    border-bottom: 1px solid {{ border_color }};
+  }
+
+  .comparison__foot-cell--highlight {
+    background-color: {{ hl_surface }};
+    border-left-color: {{ hl_border }};
+    border-right-color: {{ hl_border }};
+    border-bottom-color: {{ hl_border }};
+  }
+
+  .comparison__button {
+    width: 100%;
+    padding-left: var(--spacing-sm);
+    padding-right: var(--spacing-sm);
+  }
+
+  .comparison__note {
+    margin-top: var(--spacing-sm);
+    font-size: 0.8125rem;
+    color: {{ txt_color }};
+    opacity: 0.6;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .comparison__table tbody tr:hover .comparison__row-header,
+    .comparison__table tbody tr:hover .comparison__cell {
+      background-color: {{ head_surface }};
+    }
+
+    .comparison__table tbody tr:hover .comparison__cell--highlight {
+      background-color: {{ hl_surface }};
+    }
+  }
+
+  @media screen and (max-width: 989px) {
+    .comparison__table {
+      min-width: 720px;
+    }
+
+    .comparison__col-title {
+      font-size: 1.125rem;
+    }
+
+    .comparison__col-price {
+      font-size: 1.375rem;
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .comparison__header {
+      margin-bottom: var(--spacing-md);
+    }
+
+    .comparison__row-header,
+    .comparison__cell {
+      font-size: 0.875rem;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign column_count = 0
+  for block in section.blocks
+    if block.type == 'column'
+      assign column_count = column_count | plus: 1
+    endif
+  endfor
+
+  assign has_footer = false
+  for block in section.blocks
+    if block.type == 'column' and block.settings.button_label != blank and block.settings.button_link != blank
+      assign has_footer = true
+    endif
+  endfor
+
+  assign scroller_label = 'sections.comparison.scroller_label' | t
+  assign table_caption = 'sections.comparison.table_caption' | t
+  assign features_column = 'sections.comparison.features_column' | t
+  assign included_label = 'sections.comparison.included' | t
+  assign not_included_label = 'sections.comparison.not_included' | t
+  assign recommended_label = 'sections.comparison.recommended' | t
+  assign actions_label = 'sections.comparison.actions' | t
+-%}
+
+<div class="comparison" data-section-id="{{ section.id }}">
+  <div class="comparison__inner">
+    {%- if section.settings.pretitle != blank or section.settings.title != blank or section.settings.description != blank -%}
+      <div class="comparison__header">
+        {%- if section.settings.pretitle != blank -%}
+          <p class="comparison__pretitle">{{ section.settings.pretitle | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="comparison__title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+
+        {%- if section.settings.description != blank -%}
+          <p class="comparison__description">{{ section.settings.description | escape }}</p>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if column_count > 0 -%}
+      <div class="comparison__scroller" tabindex="0" role="region" aria-label="{{ scroller_label }}">
+        <table class="comparison__table">
+          <caption class="visually-hidden">{{ table_caption }}</caption>
+
+          <thead>
+            <tr>
+              <td class="comparison__corner">
+                <span class="visually-hidden">{{ features_column }}</span>
+              </td>
+
+              {%- for block in section.blocks -%}
+                {%- if block.type == 'column' -%}
+                  <th
+                    scope="col"
+                    class="comparison__col{% if block.settings.highlight %} comparison__col--highlight{% endif %}"
+                    {{ block.shopify_attributes }}
+                  >
+                    {%- if block.settings.highlight -%}
+                      <span class="comparison__badge">{{ recommended_label }}</span>
+                    {%- endif -%}
+
+                    {%- if block.settings.title != blank -%}
+                      <span class="comparison__col-title">{{ block.settings.title | escape }}</span>
+                    {%- endif -%}
+
+                    {%- if block.settings.subtitle != blank -%}
+                      <span class="comparison__col-subtitle">{{ block.settings.subtitle | escape }}</span>
+                    {%- endif -%}
+
+                    {%- if block.settings.price != blank -%}
+                      <span class="comparison__col-price">{{ block.settings.price | escape }}</span>
+                    {%- endif -%}
+                  </th>
+                {%- endif -%}
+              {%- endfor -%}
+            </tr>
+          </thead>
+
+          <tbody>
+            {%- for i in (1..6) -%}
+              {%- liquid
+                assign label_key = 'row_label_' | append: i
+                assign row_label = section.settings[label_key]
+                assign feature_key = 'feature_' | append: i
+                assign has_key = 'has_' | append: i
+              -%}
+
+              {%- if row_label != blank -%}
+                <tr>
+                  <th scope="row" class="comparison__row-header">{{ row_label | escape }}</th>
+
+                  {%- for block in section.blocks -%}
+                    {%- if block.type == 'column' -%}
+                      {%- liquid
+                        assign cell_detail = block.settings[feature_key]
+                        assign cell_has = block.settings[has_key]
+                      -%}
+                      <td class="comparison__cell{% if block.settings.highlight %} comparison__cell--highlight{% endif %}">
+                        {%- if cell_has -%}
+                          <span class="comparison__mark comparison__mark--yes">
+                            <span class="visually-hidden">{{ included_label }}</span>
+                            {% render 'icon', icon: 'check' %}
+                          </span>
+                        {%- else -%}
+                          <span class="comparison__mark comparison__mark--no">
+                            <span class="visually-hidden">{{ not_included_label }}</span>
+                            {% render 'icon', icon: 'close' %}
+                          </span>
+                        {%- endif -%}
+
+                        {%- if cell_detail != blank -%}
+                          <span class="comparison__detail">{{ cell_detail | escape }}</span>
+                        {%- endif -%}
+                      </td>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </tr>
+              {%- endif -%}
+            {%- endfor -%}
+          </tbody>
+
+          {%- if has_footer -%}
+            <tfoot>
+              <tr>
+                <td class="comparison__corner">
+                  <span class="visually-hidden">{{ actions_label }}</span>
+                </td>
+
+                {%- for block in section.blocks -%}
+                  {%- if block.type == 'column' -%}
+                    <td class="comparison__foot-cell{% if block.settings.highlight %} comparison__foot-cell--highlight{% endif %}">
+                      {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
+                        {%- liquid
+                          assign button_class = 'btn btn--secondary comparison__button'
+                          if block.settings.highlight
+                            assign button_class = 'btn btn--primary comparison__button'
+                          endif
+                        -%}
+                        <a class="{{ button_class }}" href="{{ block.settings.button_link }}">
+                          {{- block.settings.button_label | escape -}}
+                          {%- if block.settings.title != blank -%}
+                            <span class="visually-hidden"> {{ block.settings.title | escape }}</span>
+                          {%- endif -%}
+                        </a>
+                      {%- endif -%}
+                    </td>
+                  {%- endif -%}
+                {%- endfor -%}
+              </tr>
+            </tfoot>
+          {%- endif -%}
+        </table>
+      </div>
+
+      {%- if section.settings.note != blank -%}
+        <p class="comparison__note">{{ section.settings.note | escape }}</p>
+      {%- endif -%}
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.comparison.name",
+  "tag": "section",
+  "class": "section-comparison",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.comparison.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.comparison.settings.pretitle.label",
+      "default": "Nos formules"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.comparison.settings.title.label",
+      "default": "Comparer nos offres"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "t:sections.comparison.settings.description.label",
+      "default": "Trois formules, un même niveau d'exigence. Comparez ce qui est inclus et choisissez celle qui vous ressemble."
+    },
+    {
+      "type": "text",
+      "id": "note",
+      "label": "t:sections.comparison.settings.note.label",
+      "info": "t:sections.comparison.settings.note.info",
+      "default": "Prix TTC. Résiliable à tout moment."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.comparison.settings.header__2.content",
+      "info": "t:sections.comparison.settings.header__2.info"
+    },
+    {
+      "type": "text",
+      "id": "row_label_1",
+      "label": "t:sections.comparison.settings.row_label_1.label",
+      "default": "Livraison offerte"
+    },
+    {
+      "type": "text",
+      "id": "row_label_2",
+      "label": "t:sections.comparison.settings.row_label_2.label",
+      "default": "Retours gratuits sous 30 jours"
+    },
+    {
+      "type": "text",
+      "id": "row_label_3",
+      "label": "t:sections.comparison.settings.row_label_3.label",
+      "default": "Accès aux ventes privées"
+    },
+    {
+      "type": "text",
+      "id": "row_label_4",
+      "label": "t:sections.comparison.settings.row_label_4.label",
+      "default": "Personnalisation offerte"
+    },
+    {
+      "type": "text",
+      "id": "row_label_5",
+      "label": "t:sections.comparison.settings.row_label_5.label",
+      "default": "Service client prioritaire"
+    },
+    {
+      "type": "text",
+      "id": "row_label_6",
+      "label": "t:sections.comparison.settings.row_label_6.label",
+      "default": "Garantie étendue 2 ans"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.comparison.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.comparison.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.comparison.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "t:sections.comparison.settings.highlight_color.label",
+      "info": "t:sections.comparison.settings.highlight_color.info",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "column",
+      "name": "t:sections.comparison.blocks.column.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.comparison.blocks.column.settings.title.label",
+          "default": "Essentiel"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "t:sections.comparison.blocks.column.settings.subtitle.label",
+          "default": "Pour découvrir la maison"
+        },
+        {
+          "type": "text",
+          "id": "price",
+          "label": "t:sections.comparison.blocks.column.settings.price.label",
+          "info": "t:sections.comparison.blocks.column.settings.price.info",
+          "default": "29 €"
+        },
+        {
+          "type": "checkbox",
+          "id": "highlight",
+          "label": "t:sections.comparison.blocks.column.settings.highlight.label",
+          "info": "t:sections.comparison.blocks.column.settings.highlight.info",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "t:sections.comparison.blocks.column.settings.button_label.label",
+          "default": "Choisir cette formule"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "t:sections.comparison.blocks.column.settings.button_link.label"
+        },
+        {
+          "type": "header",
+          "content": "t:sections.comparison.blocks.column.settings.header__1.content",
+          "info": "t:sections.comparison.blocks.column.settings.header__1.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_1",
+          "label": "t:sections.comparison.blocks.column.settings.has_1.label",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "feature_1",
+          "label": "t:sections.comparison.blocks.column.settings.feature_1.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_2",
+          "label": "t:sections.comparison.blocks.column.settings.has_2.label",
+          "default": true
+        },
+        {
+          "type": "text",
+          "id": "feature_2",
+          "label": "t:sections.comparison.blocks.column.settings.feature_2.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_3",
+          "label": "t:sections.comparison.blocks.column.settings.has_3.label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "feature_3",
+          "label": "t:sections.comparison.blocks.column.settings.feature_3.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_4",
+          "label": "t:sections.comparison.blocks.column.settings.has_4.label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "feature_4",
+          "label": "t:sections.comparison.blocks.column.settings.feature_4.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_5",
+          "label": "t:sections.comparison.blocks.column.settings.has_5.label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "feature_5",
+          "label": "t:sections.comparison.blocks.column.settings.feature_5.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "has_6",
+          "label": "t:sections.comparison.blocks.column.settings.has_6.label",
+          "default": false
+        },
+        {
+          "type": "text",
+          "id": "feature_6",
+          "label": "t:sections.comparison.blocks.column.settings.feature_6.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.comparison.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "column",
+          "settings": {
+            "title": "Essentiel",
+            "subtitle": "Pour découvrir la maison",
+            "price": "29 €",
+            "highlight": false,
+            "button_label": "Choisir cette formule",
+            "has_1": true,
+            "has_2": true,
+            "has_3": false,
+            "has_4": false,
+            "has_5": false,
+            "has_6": false
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Signature",
+            "subtitle": "Notre formule la plus choisie",
+            "price": "59 €",
+            "highlight": true,
+            "button_label": "Choisir cette formule",
+            "has_1": true,
+            "has_2": true,
+            "has_3": true,
+            "has_4": false,
+            "has_5": true,
+            "has_6": true,
+            "feature_1": "Dès 50 €",
+            "feature_5": "Réponse sous 24 h"
+          }
+        },
+        {
+          "type": "column",
+          "settings": {
+            "title": "Atelier",
+            "subtitle": "Accompagnement sur mesure",
+            "price": "99 €",
+            "highlight": false,
+            "button_label": "Choisir cette formule",
+            "has_1": true,
+            "has_2": true,
+            "has_3": true,
+            "has_4": true,
+            "has_5": true,
+            "has_6": true,
+            "feature_5": "Conseiller dédié"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

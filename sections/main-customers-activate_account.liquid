@@ -1,0 +1,29 @@
+{% comment %}Section: Activation du compte{% endcomment %}
+<div class="page-shell page-shell--narrow">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'customer.activate_account.title' | t }}</h1>
+    <p class="page-shell__subtitle">{{ 'customer.activate_account.subtext' | t }}</p>
+  </div>
+
+  {%- form 'activate_customer_password', class: 'customer__form' -%}
+    {%- if form.errors -%}<div class="form__error">{{ form.errors | default_errors }}</div>{%- endif -%}
+
+    <label for="ActivatePassword">{{ 'customer.activate_account.password' | t }}</label>
+    <input type="password" id="ActivatePassword" name="customer[password]" autocomplete="new-password" required>
+
+    <label for="ActivatePasswordConfirm">{{ 'customer.activate_account.password_confirm' | t }}</label>
+    <input type="password" id="ActivatePasswordConfirm" name="customer[password_confirmation]" autocomplete="new-password" required>
+
+    <button type="submit" class="btn btn--primary">{{ 'customer.activate_account.submit' | t }}</button>
+    <button type="submit" name="decline" class="btn btn--link">{{ 'customer.activate_account.cancel' | t }}</button>
+  {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_customers_activate_account.name",
+  "tag": "section",
+  "class": "section-customers",
+  "settings": []
+}
+{% endschema %}

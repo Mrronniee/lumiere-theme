@@ -1,0 +1,439 @@
+{% comment %}
+  Section: Testimonials
+  Citations clients en grille responsive ou en carrousel a defilement natif
+  Chaque temoignage : citation, auteur, role/ville, note sur 5, photo optionnelle
+{% endcomment %}
+
+{%- liquid
+  assign columns_desktop = section.settings.columns_desktop
+  assign columns_tablet = section.settings.columns_tablet
+  assign columns_mobile = section.settings.columns_mobile
+  assign carousel_gap_desktop = columns_desktop | minus: 1
+  assign carousel_gap_tablet = columns_tablet | minus: 1
+  assign carousel_gap_mobile = columns_mobile | minus: 1
+  assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
+  assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
+-%}
+
+{%- style -%}
+  .testimonials {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .testimonials__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .testimonials__header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+  }
+
+  .testimonials__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .testimonials__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+  }
+
+  .testimonials__list {
+    display: grid;
+    grid-template-columns: repeat({{ columns_desktop }}, minmax(0, 1fr));
+    gap: var(--spacing-md);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .testimonials__item {
+    display: flex;
+  }
+
+  .testimonials__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: var(--spacing-md);
+    background-color: {{ card_surface }};
+    border: 1px solid {{ card_border }};
+    transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .testimonials__card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
+  .testimonials__stars {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .testimonials__star {
+    width: 16px;
+    height: 16px;
+    flex: 0 0 auto;
+    fill: {{ section.settings.text_color }};
+    opacity: 0.22;
+  }
+
+  .testimonials__star--filled {
+    fill: var(--color-accent);
+    opacity: 1;
+  }
+
+  .testimonials__quote {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.75;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+  }
+
+  .testimonials__author {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-top: auto;
+    padding-top: var(--spacing-xs);
+  }
+
+  .testimonials__avatar {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .testimonials__author-name {
+    display: block;
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: normal;
+    color: {{ section.settings.text_color }};
+  }
+
+  .testimonials__author-role {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.65;
+  }
+
+  .testimonials__list--carousel {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 0;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: var(--spacing-xs);
+  }
+
+  .testimonials__list--carousel:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .testimonials__list--carousel .testimonials__item {
+    flex: 0 0 calc((100% - (var(--spacing-md) * {{ carousel_gap_desktop }})) / {{ columns_desktop }});
+    scroll-snap-align: start;
+  }
+
+  @media screen and (max-width: 989px) {
+    .testimonials__list {
+      grid-template-columns: repeat({{ columns_tablet }}, minmax(0, 1fr));
+    }
+
+    .testimonials__list--carousel .testimonials__item {
+      flex: 0 0 calc((100% - (var(--spacing-md) * {{ carousel_gap_tablet }})) / {{ columns_tablet }});
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .testimonials__list {
+      grid-template-columns: repeat({{ columns_mobile }}, minmax(0, 1fr));
+    }
+
+    .testimonials__list--carousel .testimonials__item {
+      flex: 0 0 calc((100% - (var(--spacing-md) * {{ carousel_gap_mobile }})) / {{ columns_mobile }});
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .testimonials__card {
+      transition: none;
+    }
+  }
+{%- endstyle -%}
+
+<div class="testimonials" data-section-id="{{ section.id }}">
+  <div class="testimonials__inner">
+    {%- if section.settings.pretitle != blank or section.settings.title != blank -%}
+      <div class="testimonials__header">
+        {%- if section.settings.pretitle != blank -%}
+          <p class="testimonials__pretitle">{{ section.settings.pretitle | escape }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.title != blank -%}
+          <h2 class="testimonials__title">{{ section.settings.title | escape }}</h2>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.blocks.size > 0 -%}
+      {%- liquid
+        assign list_classes = 'testimonials__list'
+        if section.settings.layout == 'carousel'
+          assign list_classes = 'testimonials__list testimonials__list--carousel'
+        endif
+        assign carousel_label = 'sections.testimonials.carousel_label' | t
+      -%}
+
+      <ul
+        class="{{ list_classes }}"
+        {%- if section.settings.layout == 'carousel' %}
+          tabindex="0"
+          role="group"
+          aria-label="{{ carousel_label }}"
+        {%- endif %}
+      >
+        {%- for block in section.blocks -%}
+          {%- liquid
+            assign rating = block.settings.rating | at_least: 1 | at_most: 5
+            assign rating_label = 'sections.testimonials.rating' | t: rating: rating
+          -%}
+          <li class="testimonials__item" {{ block.shopify_attributes }}>
+            <figure class="testimonials__card">
+              {%- if section.settings.show_stars -%}
+                <div class="testimonials__stars">
+                  <span class="visually-hidden">{{ rating_label }}</span>
+                  {%- for i in (1..5) -%}
+                    <svg
+                      class="testimonials__star{% if i <= rating %} testimonials__star--filled{% endif %}"
+                      viewBox="0 0 24 24"
+                      width="16"
+                      height="16"
+                      aria-hidden="true"
+                      focusable="false"
+                    >
+                      <path d="M12 2.4l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5-5.8-3.1-5.8 3.1 1.1-6.5L2.6 9.2l6.5-.9z"/>
+                    </svg>
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+
+              {%- if block.settings.quote != blank -%}
+                <blockquote class="testimonials__quote">{{ block.settings.quote | escape | newline_to_br }}</blockquote>
+              {%- endif -%}
+
+              {%- if block.settings.author != blank or block.settings.role != blank or block.settings.image != blank -%}
+                <figcaption class="testimonials__author">
+                  {%- if block.settings.image != blank -%}
+                    <img
+                      srcset="{%- if block.settings.image.width >= 96 -%}{{ block.settings.image | image_url: width: 96 }} 96w,{%- endif -%}
+                        {%- if block.settings.image.width >= 144 -%}{{ block.settings.image | image_url: width: 144 }} 144w,{%- endif -%}
+                        {%- if block.settings.image.width >= 192 -%}{{ block.settings.image | image_url: width: 192 }} 192w,{%- endif -%}"
+                      src="{{ block.settings.image | image_url: width: 96 }}"
+                      sizes="48px"
+                      alt=""
+                      class="testimonials__avatar"
+                      loading="lazy"
+                      width="{{ block.settings.image.width }}"
+                      height="{{ block.settings.image.height }}"
+                    >
+                  {%- endif -%}
+
+                  <span>
+                    {%- if block.settings.author != blank -%}
+                      <cite class="testimonials__author-name">{{ block.settings.author | escape }}</cite>
+                    {%- endif -%}
+                    {%- if block.settings.role != blank -%}
+                      <span class="testimonials__author-role">{{ block.settings.role | escape }}</span>
+                    {%- endif -%}
+                  </span>
+                </figcaption>
+              {%- endif -%}
+            </figure>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.testimonials.name",
+  "tag": "section",
+  "class": "section-testimonials",
+  "max_blocks": 9,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.testimonials.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.testimonials.settings.pretitle.label",
+      "default": "Avis clients"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.testimonials.settings.title.label",
+      "default": "Ils parlent de nous"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.testimonials.settings.header__2.content"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "t:sections.testimonials.settings.layout.label",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:sections.testimonials.settings.layout.options__1.label"
+        },
+        {
+          "value": "carousel",
+          "label": "t:sections.testimonials.settings.layout.options__2.label"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.testimonials.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.testimonials.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 1,
+      "label": "t:sections.testimonials.settings.columns_mobile.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_stars",
+      "label": "t:sections.testimonials.settings.show_stars.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.testimonials.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.testimonials.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.testimonials.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "testimonial",
+      "name": "t:sections.testimonials.blocks.testimonial.name",
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "quote",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.quote.label",
+          "default": "Une qualité irréprochable et un service impeccable. Je recommande les yeux fermés."
+        },
+        {
+          "type": "text",
+          "id": "author",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.author.label",
+          "default": "Camille D."
+        },
+        {
+          "type": "text",
+          "id": "role",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.role.label",
+          "default": "Paris"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "min": 1,
+          "max": 5,
+          "step": 1,
+          "default": 5,
+          "label": "t:sections.testimonials.blocks.testimonial.settings.rating.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.image.label",
+          "info": "t:sections.testimonials.blocks.testimonial.settings.image.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.testimonials.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

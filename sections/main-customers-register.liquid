@@ -1,0 +1,38 @@
+{% comment %}Section: Création de compte{% endcomment %}
+<div class="page-shell page-shell--narrow">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'customer.register.title' | t }}</h1>
+  </div>
+
+  {%- form 'create_customer', class: 'customer__form' -%}
+    {%- if form.errors -%}<div class="form__error">{{ form.errors | default_errors }}</div>{%- endif -%}
+
+    <label for="RegisterFirstName">{{ 'customer.register.first_name' | t }}</label>
+    <input type="text" id="RegisterFirstName" name="customer[first_name]" autocomplete="given-name">
+
+    <label for="RegisterLastName">{{ 'customer.register.last_name' | t }}</label>
+    <input type="text" id="RegisterLastName" name="customer[last_name]" autocomplete="family-name">
+
+    <label for="RegisterEmail">{{ 'customer.register.email' | t }}</label>
+    <input type="email" id="RegisterEmail" name="customer[email]" autocomplete="email" required>
+
+    <label for="RegisterPassword">{{ 'customer.register.password' | t }}</label>
+    <input type="password" id="RegisterPassword" name="customer[password]" autocomplete="new-password" required>
+
+    <button type="submit" class="btn btn--primary">{{ 'customer.register.submit' | t }}</button>
+  {%- endform -%}
+
+  <p class="customer__alt">
+    {{ 'customer.register.already_have_account' | t }}
+    <a href="{{ routes.account_login_url }}">{{ 'customer.login.sign_in' | t }}</a>
+  </p>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_customers_register.name",
+  "tag": "section",
+  "class": "section-customers",
+  "settings": []
+}
+{% endschema %}

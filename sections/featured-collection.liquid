@@ -1,0 +1,345 @@
+{% comment %}
+  Section: Collection mise en avant
+  Affiche une grille de produits d'une collection sélectionnée
+  Avec filtres et animations au scroll
+{% endcomment %}
+
+{%- style -%}
+  .featured-collection {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .featured-collection__header {
+    text-align: {{ section.settings.text_alignment }};
+    margin-bottom: var(--spacing-lg);
+    padding: 0 var(--container-padding);
+  }
+
+  .featured-collection__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .featured-collection__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .featured-collection__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .featured-collection__grid {
+    display: grid;
+    grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    padding: 0 var(--container-padding);
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  .featured-collection__product {
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .js .featured-collection__product {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .js .featured-collection__product.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .featured-collection__footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    padding: 0 var(--container-padding);
+  }
+
+  .featured-collection__button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 2.5rem;
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    text-decoration: none;
+    background-color: {{ section.settings.button_bg }};
+    color: {{ section.settings.button_text }};
+    border: 1px solid {{ section.settings.button_border }};
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  }
+
+  .featured-collection__button:hover {
+    background-color: {{ section.settings.button_bg | color_darken: 10 }};
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  @media screen and (max-width: 989px) {
+    .featured-collection__grid {
+      grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .featured-collection__grid {
+      grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
+      gap: {{ section.settings.grid_gap_mobile }}px;
+    }
+  }
+{%- endstyle -%}
+
+<div class="featured-collection" data-section-id="{{ section.id }}">
+  <div class="featured-collection__header">
+    {%- if section.settings.pretitle != blank -%}
+      <p class="featured-collection__pretitle">{{ section.settings.pretitle | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.title != blank -%}
+      <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <p class="featured-collection__description">{{ section.settings.description | escape }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- assign collection = collections[section.settings.collection] -%}
+
+  {%- if collection != blank -%}
+    <div class="featured-collection__grid">
+      {%- for product in collection.products limit: section.settings.products_to_show -%}
+        <div class="featured-collection__product" data-animate>
+          {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+        </div>
+      {%- endfor -%}
+    </div>
+
+    {%- if section.settings.show_view_all and section.settings.collection != blank -%}
+      <div class="featured-collection__footer">
+        <a href="{{ collection.url }}" class="featured-collection__button">
+          {%- if section.settings.view_all_label != blank -%}
+            {{ section.settings.view_all_label }}
+          {%- else -%}
+            {{ 'collections.general.view_all' | t }}
+          {%- endif -%}
+          {% render 'icon', icon: 'arrow-right' %}
+        </a>
+      </div>
+    {%- endif -%}
+  {%- else -%}
+    <div class="featured-collection__grid">
+      {%- assign placeholder_count = section.settings.products_to_show | at_most: 6 -%}
+      {%- for i in (1..placeholder_count) -%}
+        <div class="featured-collection__product" data-animate>
+          <div class="product-card product-card--placeholder">
+            <div class="product-card__media">
+              {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+            </div>
+            <div class="product-card__info">
+              <span class="product-card__placeholder-line"></span>
+              <span class="product-card__placeholder-line product-card__placeholder-line--short"></span>
+            </div>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.featured_collection.name",
+  "tag": "section",
+  "class": "section-featured-collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.featured_collection.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.featured_collection.settings.pretitle.label",
+      "default": "Nouveautés"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.featured_collection.settings.title.label",
+      "default": "Notre Collection"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "t:sections.featured_collection.settings.description.label",
+      "default": "Des pièces intemporelles conçues avec soin et passion."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.featured_collection.settings.collection.label"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 12,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.featured_collection.settings.products_to_show.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "t:sections.featured_collection.settings.show_vendor.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "label": "t:sections.featured_collection.settings.show_view_all.label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "view_all_label",
+      "label": "t:sections.featured_collection.settings.view_all_label.label",
+      "default": "Voir tout"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.featured_collection.settings.header__2.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.featured_collection.settings.background_color.label",
+      "default": "#faf9f7"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.featured_collection.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "t:sections.featured_collection.settings.button_bg.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "t:sections.featured_collection.settings.button_text.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_border",
+      "label": "t:sections.featured_collection.settings.button_border.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.featured_collection.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.featured_collection.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.featured_collection.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.featured_collection.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.featured_collection.settings.header__3.content"
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 4,
+      "label": "t:sections.featured_collection.settings.columns_desktop.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 5,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.featured_collection.settings.columns_tablet.label"
+    },
+    {
+      "type": "range",
+      "id": "columns_mobile",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2,
+      "label": "t:sections.featured_collection.settings.columns_mobile.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "default": 24,
+      "unit": "px",
+      "label": "t:sections.featured_collection.settings.grid_gap.label"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap_mobile",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "unit": "px",
+      "label": "t:sections.featured_collection.settings.grid_gap_mobile.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured_collection.presets.name",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,79 @@
+{% comment %}Section: Détail de commande{% endcomment %}
+<div class="page-shell page-shell--wide">
+  {%- assign order_date = order.created_at | date: format: 'date' -%}
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'customer.order.title' | t: name: order.name }}</h1>
+    <p class="page-shell__subtitle">{{ 'customer.order.date_html' | t: date: order_date }}</p>
+  </div>
+
+  <table class="account__table">
+    <thead>
+      <tr>
+        <th scope="col">{{ 'customer.order.product' | t }}</th>
+        <th scope="col">{{ 'customer.order.sku' | t }}</th>
+        <th scope="col">{{ 'customer.order.price' | t }}</th>
+        <th scope="col">{{ 'customer.order.quantity' | t }}</th>
+        <th scope="col">{{ 'customer.order.total' | t }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {%- for line_item in order.line_items -%}
+        <tr>
+          <td>
+            <a href="{{ line_item.product.url }}">{{ line_item.title }}</a>
+          </td>
+          <td>{{ line_item.sku }}</td>
+          <td>{{ line_item.price | money }}</td>
+          <td>{{ line_item.quantity }}</td>
+          <td>{{ line_item.line_price | money }}</td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+    <tfoot>
+      <tr>
+        <th scope="row" colspan="4">{{ 'customer.order.subtotal' | t }}</th>
+        <td>{{ order.line_items_subtotal_price | money }}</td>
+      </tr>
+      {%- for shipping_method in order.shipping_methods -%}
+        <tr>
+          <th scope="row" colspan="4">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</th>
+          <td>{{ shipping_method.price | money }}</td>
+        </tr>
+      {%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}
+        <tr>
+          <th scope="row" colspan="4">{{ 'customer.order.tax' | t }} ({{ tax_line.title }})</th>
+          <td>{{ tax_line.price | money }}</td>
+        </tr>
+      {%- endfor -%}
+      <tr>
+        <th scope="row" colspan="4">{{ 'customer.order.total' | t }}</th>
+        <td>{{ order.total_net_amount | money }}</td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="account__addresses">
+    <div>
+      <h2 class="customer__subtitle">{{ 'customer.order.billing_address' | t }}</h2>
+      <p>{{ 'customer.order.payment_status' | t }}: {{ order.financial_status_label }}</p>
+      {{ order.billing_address | format_address }}
+    </div>
+    <div>
+      <h2 class="customer__subtitle">{{ 'customer.order.shipping_address' | t }}</h2>
+      <p>{{ 'customer.order.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+      {{ order.shipping_address | format_address }}
+    </div>
+  </div>
+
+  <a href="{{ routes.account_url }}" class="btn btn--link">{{ 'customer.account.return' | t }}</a>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.main_customers_order.name",
+  "tag": "section",
+  "class": "section-customers",
+  "settings": []
+}
+{% endschema %}

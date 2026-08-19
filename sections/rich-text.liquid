@@ -1,0 +1,314 @@
+{% comment %}
+  Section: Rich text
+  Bloc éditorial centré composé de blocks (pré-titre, titre, texte, bouton)
+  Largeur, alignement, couleurs et espacements réglables par le marchand
+{% endcomment %}
+
+{%- style -%}
+  .rich-text--{{ section.id }} {
+    background-color: {{ section.settings.background_color }};
+    padding-top: {{ section.settings.padding_top }}px;
+    padding-bottom: {{ section.settings.padding_bottom }}px;
+    padding-left: var(--container-padding);
+    padding-right: var(--container-padding);
+  }
+
+  .rich-text--{{ section.id }} .rich-text__inner {
+    max-width: {{ section.settings.content_width }}px;
+    margin: 0 auto;
+    text-align: {{ section.settings.text_alignment }};
+    color: {{ section.settings.text_color }};
+  }
+
+  .rich-text__block + .rich-text__block {
+    margin-top: var(--spacing-sm);
+  }
+
+  .rich-text__eyebrow {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+  }
+
+  .rich-text__heading {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.75rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: inherit;
+  }
+
+  .rich-text__text {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: inherit;
+  }
+
+  .rich-text__text > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .rich-text__buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-xs);
+    justify-content: flex-start;
+  }
+
+  .rich-text--center .rich-text__buttons {
+    justify-content: center;
+  }
+
+  .rich-text--right .rich-text__buttons {
+    justify-content: flex-end;
+  }
+
+  .rich-text__empty {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    color: var(--color-text-light);
+  }
+
+  @media screen and (max-width: 989px) {
+    .rich-text__heading {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .rich-text--{{ section.id }} {
+      padding-top: {{ section.settings.padding_top | times: 0.7 | round }}px;
+      padding-bottom: {{ section.settings.padding_bottom | times: 0.7 | round }}px;
+    }
+
+    .rich-text__buttons .btn {
+      width: 100%;
+    }
+  }
+{%- endstyle -%}
+
+<div
+  class="rich-text rich-text--{{ section.id }} rich-text--{{ section.settings.text_alignment }}"
+  data-section-id="{{ section.id }}"
+>
+  <div class="rich-text__inner">
+    {%- if section.blocks.size == 0 -%}
+      <p class="rich-text__empty">{{ 'sections.rich_text.no_blocks' | t }}</p>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+      {%- case block.type -%}
+        {%- when 'eyebrow' -%}
+          {%- if block.settings.text != blank -%}
+            <p class="rich-text__block rich-text__eyebrow" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </p>
+          {%- endif -%}
+
+        {%- when 'heading' -%}
+          {%- if block.settings.text != blank -%}
+            <h2 class="rich-text__block rich-text__heading" {{ block.shopify_attributes }}>
+              {{ block.settings.text | escape }}
+            </h2>
+          {%- endif -%}
+
+        {%- when 'text' -%}
+          {%- if block.settings.text != blank -%}
+            <div class="rich-text__block rich-text__text rte" {{ block.shopify_attributes }}>
+              {{ block.settings.text }}
+            </div>
+          {%- endif -%}
+
+        {%- when 'button' -%}
+          {%- if block.settings.label != blank -%}
+            {%- assign button_class = 'btn btn--secondary' -%}
+            {%- if block.settings.style == 'primary' -%}
+              {%- assign button_class = 'btn btn--primary' -%}
+            {%- endif -%}
+            <div class="rich-text__block rich-text__buttons" {{ block.shopify_attributes }}>
+              <a href="{{ block.settings.link | default: '#' }}" class="{{ button_class }}">
+                {{ block.settings.label | escape }}
+              </a>
+            </div>
+          {%- endif -%}
+      {%- endcase -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.rich_text.name",
+  "tag": "section",
+  "class": "section-rich-text",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.rich_text.settings.header__1.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.rich_text.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.rich_text.settings.text_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.rich_text.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 400,
+      "max": 900,
+      "step": 20,
+      "default": 720,
+      "unit": "px",
+      "label": "t:sections.rich_text.settings.content_width.label",
+      "info": "t:sections.rich_text.settings.content_width.info"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.rich_text.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.rich_text.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.rich_text.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.rich_text.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 64,
+      "unit": "px",
+      "label": "t:sections.rich_text.settings.padding_top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 160,
+      "step": 4,
+      "default": 64,
+      "unit": "px",
+      "label": "t:sections.rich_text.settings.padding_bottom.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "eyebrow",
+      "name": "t:sections.rich_text.blocks.eyebrow.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.rich_text.blocks.eyebrow.settings.text.label",
+          "default": "Notre maison"
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "name": "t:sections.rich_text.blocks.heading.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.rich_text.blocks.heading.settings.text.label",
+          "default": "Une mode pensée pour durer"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.rich_text.blocks.text.name",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "label": "t:sections.rich_text.blocks.text.settings.text.label",
+          "default": "<p>Chaque pièce est dessinée dans notre atelier et confectionnée en petites séries, avec des matières choisies pour leur tenue et leur toucher.</p>"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.rich_text.blocks.button.name",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "t:sections.rich_text.blocks.button.settings.label.label",
+          "default": "Découvrir la collection"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.rich_text.blocks.button.settings.link.label"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "t:sections.rich_text.blocks.button.settings.style.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.rich_text.blocks.button.settings.style.options__1.label"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.rich_text.blocks.button.settings.style.options__2.label"
+            }
+          ],
+          "default": "primary"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.rich_text.presets.name",
+      "category": "Text",
+      "blocks": [
+        {
+          "type": "eyebrow"
+        },
+        {
+          "type": "heading"
+        },
+        {
+          "type": "text"
+        },
+        {
+          "type": "button"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

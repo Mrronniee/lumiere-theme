@@ -1,0 +1,432 @@
+{% comment %}
+  Section: Logo list
+  Bande de logos partenaires, en grille centree ou en defilement continu.
+  Le defilement duplique la liste pour une boucle sans couture ; la copie est
+  masquee aux lecteurs d'ecran et desactivee en prefers-reduced-motion.
+{% endcomment %}
+
+{%- liquid
+  assign logo_height = section.settings.logo_height
+  assign logo_height_mobile = logo_height | times: 0.7 | round
+  if logo_height_mobile < 16
+    assign logo_height_mobile = 16
+  endif
+
+  assign logo_gap = section.settings.spacing
+  assign logo_gap_mobile = logo_gap | times: 0.6 | round
+  if logo_gap_mobile < 12
+    assign logo_gap_mobile = 12
+  endif
+
+  assign scroll_duration = section.blocks.size | times: 5
+  if scroll_duration < 20
+    assign scroll_duration = 20
+  endif
+
+  assign enable_scroll = section.settings.enable_scroll
+  if section.blocks.size < 3
+    assign enable_scroll = false
+  endif
+-%}
+
+{%- style -%}
+  .logo-list {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+    overflow: hidden;
+  }
+
+  .logo-list__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .logo-list__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.25rem, 2.2vw, 1.875rem);
+    font-weight: 400;
+    line-height: 1.3;
+    text-align: center;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 var(--spacing-lg);
+  }
+
+  .logo-list__group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: {{ logo_gap }}px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .logo-list__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-list__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .logo-list__link:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 4px;
+  }
+
+  .logo-list__image,
+  .logo-list__placeholder {
+    display: block;
+    height: {{ logo_height }}px;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .logo-list__placeholder {
+    opacity: 0.4;
+  }
+
+  {%- if section.settings.grayscale -%}
+    .logo-list__image {
+      filter: grayscale(100%);
+      opacity: 0.6;
+      transition: filter var(--transition-base), opacity var(--transition-base);
+    }
+
+    /* La desaturation ne masque aucun contenu : le logo reste lisible au tactile. */
+    @media (hover: hover) and (pointer: fine) {
+      .logo-list__item:hover .logo-list__image {
+        filter: grayscale(0%);
+        opacity: 1;
+      }
+    }
+
+    .logo-list__link:focus-visible .logo-list__image {
+      filter: grayscale(0%);
+      opacity: 1;
+    }
+  {%- endif -%}
+
+  {%- if enable_scroll -%}
+    .logo-list__marquee {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .logo-list__track {
+      display: flex;
+      width: max-content;
+      animation: logo-list-scroll {{ scroll_duration }}s linear infinite;
+    }
+
+    .logo-list__marquee .logo-list__group {
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+      width: max-content;
+      padding-right: {{ logo_gap }}px;
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+      .logo-list__marquee:hover .logo-list__track {
+        animation-play-state: paused;
+      }
+    }
+
+    .logo-list__marquee:focus-within .logo-list__track {
+      animation-play-state: paused;
+    }
+
+    @keyframes logo-list-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+  {%- endif -%}
+
+  @media screen and (max-width: 989px) {
+    .logo-list__title {
+      margin-bottom: var(--spacing-md);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .logo-list__group {
+      gap: {{ logo_gap_mobile }}px;
+    }
+
+    .logo-list__marquee .logo-list__group {
+      padding-right: {{ logo_gap_mobile }}px;
+    }
+
+    .logo-list__image,
+    .logo-list__placeholder {
+      height: {{ logo_height_mobile }}px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .logo-list__track {
+      animation: none;
+      width: 100%;
+    }
+
+    .logo-list__marquee {
+      overflow: visible;
+    }
+
+    .logo-list__marquee .logo-list__group {
+      flex-wrap: wrap;
+      justify-content: center;
+      width: 100%;
+      padding-right: 0;
+    }
+
+    .logo-list__group--clone {
+      display: none;
+    }
+
+    .logo-list__image {
+      transition: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- capture logo_items -%}
+  {%- for block in section.blocks -%}
+    {%- liquid
+      assign img = block.settings.image
+      assign logo_alt = block.settings.alt
+      if logo_alt == blank
+        assign logo_alt = img.alt
+      endif
+
+      assign disp_w = logo_height
+      if img != blank and img.aspect_ratio > 0
+        assign disp_w = img.aspect_ratio | times: logo_height | round
+      endif
+      if disp_w < 1
+        assign disp_w = logo_height
+      endif
+      assign disp_w2 = disp_w | times: 2
+      assign disp_w3 = disp_w | times: 3
+    -%}
+    <li class="logo-list__item" {{ block.shopify_attributes }}>
+      {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="logo-list__link">{%- endif -%}
+        {%- if img != blank -%}
+          <img
+            srcset="{{ img | image_url: width: disp_w }} {{ disp_w }}w
+              {%- if img.width >= disp_w2 -%}, {{ img | image_url: width: disp_w2 }} {{ disp_w2 }}w{%- endif -%}
+              {%- if img.width >= disp_w3 -%}, {{ img | image_url: width: disp_w3 }} {{ disp_w3 }}w{%- endif -%}"
+            src="{{ img | image_url: width: disp_w2 }}"
+            sizes="{{ disp_w }}px"
+            alt="{{ logo_alt | escape }}"
+            class="logo-list__image"
+            loading="lazy"
+            width="{{ disp_w }}"
+            height="{{ logo_height }}"
+          >
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}
+        {%- endif -%}
+      {%- if block.settings.link != blank -%}</a>{%- endif -%}
+    </li>
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if enable_scroll -%}
+  {%- capture logo_items_clone -%}
+    {%- for block in section.blocks -%}
+      {%- liquid
+        assign img = block.settings.image
+
+        assign disp_w = logo_height
+        if img != blank and img.aspect_ratio > 0
+          assign disp_w = img.aspect_ratio | times: logo_height | round
+        endif
+        if disp_w < 1
+          assign disp_w = logo_height
+        endif
+        assign disp_w2 = disp_w | times: 2
+        assign disp_w3 = disp_w | times: 3
+      -%}
+      <li class="logo-list__item">
+        {%- if img != blank -%}
+          <img
+            srcset="{{ img | image_url: width: disp_w }} {{ disp_w }}w
+              {%- if img.width >= disp_w2 -%}, {{ img | image_url: width: disp_w2 }} {{ disp_w2 }}w{%- endif -%}
+              {%- if img.width >= disp_w3 -%}, {{ img | image_url: width: disp_w3 }} {{ disp_w3 }}w{%- endif -%}"
+            src="{{ img | image_url: width: disp_w2 }}"
+            sizes="{{ disp_w }}px"
+            alt=""
+            class="logo-list__image"
+            loading="lazy"
+            width="{{ disp_w }}"
+            height="{{ logo_height }}"
+          >
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  {%- endcapture -%}
+{%- endif -%}
+
+<div class="logo-list" data-section-id="{{ section.id }}">
+  {%- if section.settings.title != blank -%}
+    <div class="logo-list__inner">
+      <h2 class="logo-list__title">{{ section.settings.title | escape }}</h2>
+    </div>
+  {%- endif -%}
+
+  {%- if section.blocks.size > 0 -%}
+    {%- if enable_scroll -%}
+      <div class="logo-list__marquee">
+        <div class="logo-list__track">
+          <ul class="logo-list__group" role="list" aria-label="{{ 'sections.logo_list.aria_label' | t }}">
+            {{ logo_items }}
+          </ul>
+          <ul class="logo-list__group logo-list__group--clone" role="list" aria-hidden="true">
+            {{ logo_items_clone }}
+          </ul>
+        </div>
+      </div>
+    {%- else -%}
+      <div class="logo-list__inner">
+        <ul class="logo-list__group" role="list" aria-label="{{ 'sections.logo_list.aria_label' | t }}">
+          {{ logo_items }}
+        </ul>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.logo_list.name",
+  "tag": "section",
+  "class": "section-logo-list",
+  "max_blocks": 15,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.logo_list.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.logo_list.settings.title.label",
+      "default": "Ils nous font confiance"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.logo_list.settings.header__2.content"
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 20,
+      "max": 120,
+      "step": 4,
+      "default": 48,
+      "unit": "px",
+      "label": "t:sections.logo_list.settings.logo_height.label"
+    },
+    {
+      "type": "range",
+      "id": "spacing",
+      "min": 8,
+      "max": 96,
+      "step": 4,
+      "default": 48,
+      "unit": "px",
+      "label": "t:sections.logo_list.settings.spacing.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "grayscale",
+      "default": true,
+      "label": "t:sections.logo_list.settings.grayscale.label",
+      "info": "t:sections.logo_list.settings.grayscale.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_scroll",
+      "default": false,
+      "label": "t:sections.logo_list.settings.enable_scroll.label",
+      "info": "t:sections.logo_list.settings.enable_scroll.info"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.logo_list.settings.header__3.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.logo_list.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.logo_list.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "t:sections.logo_list.blocks.logo.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.logo_list.blocks.logo.settings.image.label",
+          "info": "t:sections.logo_list.blocks.logo.settings.image.info"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.logo_list.blocks.logo.settings.link.label"
+        },
+        {
+          "type": "text",
+          "id": "alt",
+          "label": "t:sections.logo_list.blocks.logo.settings.alt.label",
+          "info": "t:sections.logo_list.blocks.logo.settings.alt.info"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.logo_list.presets.name",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        },
+        {
+          "type": "logo"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

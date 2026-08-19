@@ -1,0 +1,153 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "subtitle": "Nouvelle Collection 2026",
+        "title": "L'Élégance Redéfinie",
+        "description": "Découvrez notre nouvelle collection de pièces intemporelles, conçues pour sublimer votre silhouette avec raffinement.",
+        "button_label": "Découvrir la collection",
+        "button_link": "\/collections\/all",
+        "button_label_2": "Notre histoire",
+        "button_link_2": "\/pages\/a-propos",
+        "text_alignment": "center",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 0.4,
+        "overlay_direction": "to bottom",
+        "button_primary_bg": "#ffffff",
+        "button_primary_text": "#1a1a1a",
+        "button_secondary_text": "#ffffff",
+        "button_secondary_border": "#ffffff",
+        "button_secondary_bg": "#ffffff",
+        "height": 90,
+        "height_mobile": 70,
+        "show_scroll_indicator": true
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "pretitle": "Nouveautés",
+        "title": "Notre Collection",
+        "description": "Des pièces intemporelles conçues avec soin et passion.",
+        "collection": "frontpage",
+        "products_to_show": 4,
+        "show_vendor": false,
+        "show_view_all": true,
+        "view_all_label": "Voir tout",
+        "background_color": "#faf9f7",
+        "text_color": "#1a1a1a",
+        "button_bg": "#1a1a1a",
+        "button_text": "#ffffff",
+        "button_border": "#1a1a1a",
+        "text_alignment": "center",
+        "columns_desktop": 4,
+        "columns_tablet": 3,
+        "columns_mobile": 2,
+        "grid_gap": 24,
+        "grid_gap_mobile": 16
+      }
+    },
+    "lookbook": {
+      "type": "lookbook",
+      "settings": {
+        "pretitle": "Inspiration",
+        "title": "Le Lookbook",
+        "description": "Plongez dans notre univers à travers des looks soigneusement composés.",
+        "background_color": "#1a1a1a",
+        "text_color": "#ffffff",
+        "text_alignment": "center",
+        "grid_gap": 16
+      },
+      "blocks": {
+        "lookbook_1": {
+          "type": "image",
+          "settings": {
+            "title": "Look 01",
+            "subtitle": "Collection Printemps-Été",
+            "link_label": "Découvrir",
+            "link": "\/collections\/printemps-ete"
+          }
+        },
+        "lookbook_2": {
+          "type": "image",
+          "settings": {
+            "title": "Look 02",
+            "subtitle": "Soirée Élégante",
+            "link_label": "Découvrir",
+            "link": "\/collections\/soiree"
+          }
+        },
+        "lookbook_3": {
+          "type": "image",
+          "settings": {
+            "title": "Look 03",
+            "subtitle": "Essentiels",
+            "link_label": "Découvrir",
+            "link": "\/collections\/essentiels"
+          }
+        },
+        "lookbook_4": {
+          "type": "image",
+          "settings": {
+            "title": "Look 04",
+            "subtitle": "Accessoires",
+            "link_label": "Découvrir",
+            "link": "\/collections\/accessoires"
+          }
+        },
+        "lookbook_5": {
+          "type": "image",
+          "settings": {
+            "title": "Look 05",
+            "subtitle": "Mariage",
+            "link_label": "Découvrir",
+            "link": "\/collections\/mariage"
+          }
+        },
+        "lookbook_6": {
+          "type": "image",
+          "settings": {
+            "title": "Look 06",
+            "subtitle": "Cérémonie",
+            "link_label": "Découvrir",
+            "link": "\/collections\/ceremonie"
+          }
+        }
+      },
+      "block_order": [
+        "lookbook_1",
+        "lookbook_2",
+        "lookbook_3",
+        "lookbook_4",
+        "lookbook_5",
+        "lookbook_6"
+      ]
+    },
+    "newsletter": {
+      "type": "newsletter",
+      "settings": {
+        "pretitle": "Restez informé",
+        "title": "Rejoignez notre univers",
+        "description": "Inscrivez-vous pour recevoir en avant-première nos nouveautés, offres exclusives et conseils mode.",
+        "placeholder": "Votre adresse email",
+        "button_label": "S'inscrire",
+        "success_message": "Merci pour votre inscription !",
+        "disclaimer": "En vous inscrivant, vous acceptez notre politique de confidentialité.",
+        "background_color": "#f5f5f5",
+        "text_color": "#1a1a1a",
+        "input_bg": "#ffffff",
+        "input_border": "#e0e0e0",
+        "button_bg": "#1a1a1a",
+        "button_text": "#ffffff"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "featured_collection",
+    "lookbook",
+    "newsletter"
+  ]
+}

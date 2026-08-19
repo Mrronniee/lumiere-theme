@@ -1,0 +1,132 @@
+{% comment %}
+  CSS Variables dynamiques basées sur les paramètres du thème
+{% endcomment %}
+{%- liquid
+  comment
+    Densite : multiplie toute l'echelle d'espacement.
+  endcomment
+  case settings.theme_density
+    when 'compact'
+      assign density = 0.75
+    when 'spacieux'
+      assign density = 1.35
+    else
+      assign density = 1
+  endcase
+
+  case settings.theme_border_style
+    when 'aucun'
+      assign border_width = 0
+    when 'marque'
+      assign border_width = 2
+    else
+      assign border_width = 1
+  endcase
+
+  case settings.animation_style
+    when 'fade'
+      assign anim_shift = '0px'
+      assign anim_scale = '1'
+    when 'zoom'
+      assign anim_shift = '0px'
+      assign anim_scale = '0.94'
+    else
+      assign anim_shift = '30px'
+      assign anim_scale = '1'
+  endcase
+
+  assign c_primary = settings.color_primary | default: '#1a1a1a'
+  assign c_accent = settings.color_accent | default: '#c9a96e'
+  assign c_bg = settings.color_background | default: '#faf9f7'
+  assign c_text = settings.color_text | default: '#1a1a1a'
+-%}
+<style>
+  :root {
+    --color-primary: {{ c_primary }};
+    --color-primary-hover: {{ c_primary | color_lighten: 12 }};
+    --color-accent: {{ c_accent }};
+    --color-accent-dark: {{ c_accent | color_darken: 22 }};
+    --color-background: {{ c_bg }};
+    --color-text: {{ c_text }};
+    --color-text-light: {{ c_text | color_mix: c_bg, 55 }};
+    --color-border: {{ c_text | color_mix: c_bg, 12 }};
+    --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
+    --color-sale: #c0392b;
+    --color-on-primary: #ffffff;
+
+    --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
+    --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};
+
+    --spacing-xs: {{ 0.5 | times: density }}rem;
+    --spacing-sm: {{ 1.0 | times: density }}rem;
+    --spacing-md: {{ 2.0 | times: density }}rem;
+    --spacing-lg: {{ 4.0 | times: density }}rem;
+    --spacing-xl: {{ 8.0 | times: density }}rem;
+    --border-width: {{ border_width }}px;
+
+    --container-width: {{ settings.layout_container_width | default: 1440 }}px;
+    --container-padding: 2rem;
+    --section-spacing: {{ settings.layout_section_spacing | default: 64 }}px;
+    --radius: {{ settings.layout_corner_radius | default: 0 }}px;
+
+    --btn-radius: {{ settings.button_radius | default: 0 }}px;
+    --btn-border: {{ settings.button_border_width | default: 1 }}px;
+    --btn-transform: {% if settings.button_uppercase %}uppercase{% else %}none{% endif %};
+    --btn-spacing: {% if settings.button_uppercase %}0.05em{% else %}0{% endif %};
+
+    --badge-radius: {{ settings.badge_radius | default: 0 }}px;
+
+    --input-radius: {{ settings.input_radius | default: 0 }}px;
+    --input-border: {{ settings.input_border_width | default: 1 }}px;
+    --input-bg: {{ settings.input_background | default: '#ffffff' }};
+
+    --icon-stroke: {{ settings.icon_stroke_width | default: 15 | divided_by: 10.0 }};
+    --icon-size: {{ settings.icon_size | default: 24 }}px;
+
+    --drawer-width: {{ settings.drawer_width | default: 460 }}px;
+    --drawer-overlay: rgba(0, 0, 0, {{ settings.drawer_overlay_opacity | default: 50 | divided_by: 100.0 }});
+
+    --modal-overlay: rgba(0, 0, 0, {{ settings.modal_overlay_opacity | default: 60 | divided_by: 100.0 }});
+    --modal-radius: {{ settings.modal_radius | default: 0 }}px;
+    --modal-width: {{ settings.modal_max_width | default: 1000 }}px;
+
+    --swatch-size: {{ settings.swatch_size | default: 36 }}px;
+    --swatch-radius: {% if settings.swatch_shape == 'square' %}2px{% else %}50%{% endif %};
+
+    --anim-duration: {{ settings.animation_duration | default: 600 }}ms;
+    --anim-shift: {{ anim_shift }};
+    --anim-scale: {{ anim_scale }};
+
+    {%- case settings.product_card_aspect_ratio -%}
+      {%- when 'square' -%}--card-ratio: 1 / 1;
+      {%- when 'landscape' -%}--card-ratio: 4 / 3;
+      {%- else -%}--card-ratio: 3 / 4;
+    {%- endcase -%}
+    --card-align: {{ settings.product_card_text_alignment | default: 'left' }};
+
+    --transition-fast: 0.2s ease;
+    --transition-base: 0.3s ease;
+    --transition-slow: 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+
+    --z-header: 100;
+    --z-search: 1100;
+    --z-drawer: 1200;
+    --z-modal: 1300;
+  }
+
+  @media screen and (max-width: 749px) {
+    :root {
+      --container-padding: 1.5rem;
+      --spacing-lg: 2.5rem;
+      --spacing-xl: 4rem;
+    }
+  }
+
+  {%- if settings.custom_css != blank -%}
+    {{ settings.custom_css }}
+  {%- endif -%}
+</style>

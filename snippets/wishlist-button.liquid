@@ -1,0 +1,27 @@
+{% comment %}
+  Snippet: Bouton Wishlist
+  Le CSS vit dans theme.css : ce snippet est rendu une fois par carte produit,
+  un bloc {% style %} ici serait dupliqué autant de fois qu'il y a de produits.
+  Usage: {% render 'wishlist-button', product: product, class: 'wishlist-btn--card' %}
+{% endcomment %}
+
+{%- if settings.wishlist_enable -%}
+  <button
+    type="button"
+    class="wishlist-btn{% if class %} {{ class }}{% endif %}"
+    data-wishlist-btn
+    data-product-id="{{ product.id }}"
+    data-product-handle="{{ product.handle }}"
+    data-label-add="{{ 'accessibility.add_to_wishlist' | t | escape }}"
+    data-label-remove="{{ 'accessibility.remove_from_wishlist' | t | escape }}"
+    aria-pressed="false"
+    aria-label="{{ 'accessibility.add_to_wishlist' | t }}"
+  >
+    <svg class="wishlist-btn__icon wishlist-btn__icon--empty" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+    <svg class="wishlist-btn__icon wishlist-btn__icon--filled" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+    </svg>
+  </button>
+{%- endif -%}

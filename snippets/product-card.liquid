@@ -1,0 +1,109 @@
+{% comment %}
+  Carte produit réutilisable avec wishlist et quick view
+  Usage: {% render 'product-card', product: product, show_vendor: true %}
+{% endcomment %}
+
+{%- liquid
+  assign card_show_vendor = show_vendor
+  if show_vendor == nil
+    assign card_show_vendor = settings.product_card_show_vendor
+  endif
+-%}
+<div class="product-card{% if settings.badge_position == 'top-right' %} product-card--badge-right{% endif %}" data-product-id="{{ product.id }}">
+  <div class="product-card__media">
+    {%- if product.featured_media -%}
+      <a href="{{ product.url }}" class="product-card__media-link" tabindex="-1" aria-hidden="true">
+        <div class="product-card__image-wrapper">
+          <img
+            srcset="{%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+              {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+              {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
+              {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}"
+            src="{{ product.featured_media | image_url: width: 533 }}"
+            sizes="(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+            alt="{{ product.featured_media.alt | escape }}"
+            class="product-card__image"
+            loading="lazy"
+            width="{{ product.featured_media.width }}"
+            height="{{ product.featured_media.height }}"
+          >
+
+          {%- if product.media[1] != nil and settings.product_card_hover_image -%}
+            <img
+              srcset="{%- if product.media[1].width >= 165 -%}{{ product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if product.media[1].width >= 360 -%}{{ product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if product.media[1].width >= 533 -%}{{ product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}"
+              src="{{ product.media[1] | image_url: width: 533 }}"
+              sizes="(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+              alt=""
+              class="product-card__image product-card__image--hover"
+              loading="lazy"
+              width="{{ product.media[1].width }}"
+              height="{{ product.media[1].height }}"
+            >
+          {%- endif -%}
+        </div>
+      </a>
+    {%- else -%}
+      <div class="product-card__placeholder">
+        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      </div>
+    {%- endif -%}
+
+    {%- if product.compare_at_price > product.price -%}
+      <span class="product-card__badge product-card__badge--sale">{{ 'products.product.on_sale' | t }}</span>
+    {%- endif -%}
+
+    {%- unless product.available -%}
+      <span class="product-card__badge product-card__badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+    {%- endunless -%}
+
+    {%- comment -%}
+      Les boutons sont hors du lien produit : imbriquer un <button> dans un <a>
+      est invalide et rend le clic ambigu.
+    {%- endcomment -%}
+    {%- if settings.product_card_show_quick_add and product.available -%}
+      {%- if product.variants.size == 1 -%}
+        <button
+          type="button"
+          class="product-card__quick-add"
+          data-upsell-add
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+          aria-label="{{ 'products.product.quick_add' | t }}"
+        >
+          {% render 'icon', icon: 'arrow-right' %}
+        </button>
+      {%- endif -%}
+    {%- endif -%}
+
+    {%- if settings.product_enable_quick_view -%}
+      <button
+        type="button"
+        class="product-card__quick-view-btn"
+        data-quick-view-trigger
+        data-product-handle="{{ product.handle }}"
+        aria-label="{{ 'products.product.quick_view' | t }}"
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </button>
+    {%- endif -%}
+
+    {%- if settings.wishlist_enable and settings.product_card_show_wishlist -%}
+      {% render 'wishlist-button', product: product, class: 'wishlist-btn--card' %}
+    {%- endif -%}
+  </div>
+
+  <div class="product-card__info">
+    {%- if card_show_vendor and product.vendor != blank -%}
+      <span class="product-card__vendor">{{ product.vendor }}</span>
+    {%- endif -%}
+
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}" class="product-card__link">{{ product.title | escape }}</a>
+    </h3>
+
+    <div class="product-card__price">
+      {% render 'price', product: product %}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,361 @@
+{% comment %}
+  Section: Lookbook
+  Galerie immersive type editorial fashion
+  Avec grille asymétrique et effets parallaxe
+{% endcomment %}
+
+{%- style -%}
+  .lookbook {
+    padding: var(--spacing-xl) 0;
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .lookbook__header {
+    text-align: {{ section.settings.text_alignment }};
+    margin-bottom: var(--spacing-lg);
+    padding: 0 var(--container-padding);
+  }
+
+  .lookbook__pretitle {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .lookbook__title {
+    font-family: var(--font-heading);
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-sm);
+  }
+
+  .lookbook__description {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    opacity: 0.7;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .lookbook__grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: {{ section.settings.grid_gap }}px;
+    padding: 0 var(--container-padding);
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  .lookbook__item {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .lookbook__item:nth-child(1) { grid-column: span 7; grid-row: span 2; }
+  .lookbook__item:nth-child(2) { grid-column: span 5; }
+  .lookbook__item:nth-child(3) { grid-column: span 5; }
+  .lookbook__item:nth-child(4) { grid-column: span 4; }
+  .lookbook__item:nth-child(5) { grid-column: span 4; }
+  .lookbook__item:nth-child(6) { grid-column: span 4; }
+
+  .lookbook__item-image {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  .lookbook__item:hover .lookbook__item-image {
+    transform: scale(1.05);
+  }
+
+  .lookbook__item-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+    opacity: 1;
+    transition: opacity var(--transition-base);
+    display: flex;
+    align-items: flex-end;
+    padding: var(--spacing-md);
+  }
+
+  /* Au survol uniquement sur les appareils qui savent survoler ;
+     sur mobile le contenu reste visible et cliquable. */
+  @media (hover: hover) and (pointer: fine) {
+    .lookbook__item-overlay { opacity: 0; }
+    .lookbook__item:hover .lookbook__item-overlay,
+    .lookbook__item:focus-within .lookbook__item-overlay { opacity: 1; }
+  }
+
+  .lookbook__item-content {
+    color: #ffffff;
+    transform: translateY(0);
+    transition: transform var(--transition-base);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .lookbook__item-content { transform: translateY(20px); }
+    .lookbook__item:hover .lookbook__item-content,
+    .lookbook__item:focus-within .lookbook__item-content { transform: translateY(0); }
+  }
+
+  .lookbook__item-title {
+    font-family: var(--font-heading);
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 0.25rem;
+  }
+
+  .lookbook__item-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    opacity: 0.8;
+  }
+
+  .lookbook__item-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: var(--spacing-sm);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.5);
+    padding-bottom: 0.25rem;
+    transition: border-color var(--transition-fast);
+  }
+
+  .lookbook__item-link:hover {
+    border-color: #ffffff;
+  }
+
+  @media screen and (max-width: 989px) {
+    .lookbook__item:nth-child(1) { grid-column: span 12; grid-row: span 1; }
+    .lookbook__item:nth-child(2) { grid-column: span 6; }
+    .lookbook__item:nth-child(3) { grid-column: span 6; }
+    .lookbook__item:nth-child(4) { grid-column: span 6; }
+    .lookbook__item:nth-child(5) { grid-column: span 6; }
+    .lookbook__item:nth-child(6) { grid-column: span 12; }
+    .lookbook__item-image { min-height: 300px; }
+  }
+
+  @media screen and (max-width: 749px) {
+    .lookbook__item,
+    .lookbook__item:nth-child(n) {
+      grid-column: span 12 !important;
+    }
+    .lookbook__item-image { min-height: 350px; }
+  }
+{%- endstyle -%}
+
+<div class="lookbook" data-section-id="{{ section.id }}">
+  <div class="lookbook__header">
+    {%- if section.settings.pretitle != blank -%}
+      <p class="lookbook__pretitle">{{ section.settings.pretitle | escape }}</p>
+    {%- endif -%}
+
+    {%- if section.settings.title != blank -%}
+      <h2 class="lookbook__title">{{ section.settings.title | escape }}</h2>
+    {%- endif -%}
+
+    {%- if section.settings.description != blank -%}
+      <p class="lookbook__description">{{ section.settings.description | escape }}</p>
+    {%- endif -%}
+  </div>
+
+  <div class="lookbook__grid">
+    {%- for block in section.blocks -%}
+      <div class="lookbook__item" {{ block.shopify_attributes }}>
+        {%- if block.settings.image != blank -%}
+          <img
+            srcset="{%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+              {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+              {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+              {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+            src="{{ block.settings.image | image_url: width: 1100 }}"
+            sizes="(min-width: 1200px) 50vw, 100vw"
+            alt="{{ block.settings.image.alt | escape }}"
+            class="lookbook__item-image"
+            loading="lazy"
+            width="{{ block.settings.image.width }}"
+            height="{{ block.settings.image.height }}"
+          >
+        {%- else -%}
+          {{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+
+        <div class="lookbook__item-overlay">
+          <div class="lookbook__item-content">
+            {%- if block.settings.title != blank -%}
+              <h3 class="lookbook__item-title">{{ block.settings.title | escape }}</h3>
+            {%- endif -%}
+            {%- if block.settings.subtitle != blank -%}
+              <p class="lookbook__item-subtitle">{{ block.settings.subtitle | escape }}</p>
+            {%- endif -%}
+            {%- if block.settings.link != blank and block.settings.link_label != blank -%}
+              <a href="{{ block.settings.link }}" class="lookbook__item-link">
+                {{ block.settings.link_label | escape }}
+                {% render 'icon', icon: 'arrow-right' %}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.lookbook.name",
+  "tag": "section",
+  "class": "section-lookbook",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.lookbook.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "pretitle",
+      "label": "t:sections.lookbook.settings.pretitle.label",
+      "default": "Inspiration"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.lookbook.settings.title.label",
+      "default": "Le Lookbook"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "t:sections.lookbook.settings.description.label",
+      "default": "Plongez dans notre univers à travers des looks soigneusement composés."
+    },
+    {
+      "type": "header",
+      "content": "t:sections.lookbook.settings.header__2.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.lookbook.settings.background_color.label",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.lookbook.settings.text_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "t:sections.lookbook.settings.text_alignment.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.lookbook.settings.text_alignment.options__1.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.lookbook.settings.text_alignment.options__2.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.lookbook.settings.text_alignment.options__3.label"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 4,
+      "max": 32,
+      "step": 4,
+      "default": 16,
+      "unit": "px",
+      "label": "t:sections.lookbook.settings.grid_gap.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.lookbook.blocks.image.name",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.lookbook.blocks.image.settings.image.label"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "t:sections.lookbook.blocks.image.settings.title.label",
+          "default": "Look 01"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "t:sections.lookbook.blocks.image.settings.subtitle.label",
+          "default": "Collection Printemps-Été"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "t:sections.lookbook.blocks.image.settings.link_label.label",
+          "default": "Découvrir"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.lookbook.blocks.image.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.lookbook.presets.name",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        },
+        {
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

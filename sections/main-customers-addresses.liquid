@@ -1,0 +1,65 @@
+{% comment %}Section: Adresses client{% endcomment %}
+<div class="page-shell page-shell--narrow">
+  <div class="page-shell__header">
+    <h1 class="page-shell__title">{{ 'customer.addresses.title' | t }}</h1>
+    <a href="{{ routes.account_url }}" class="btn btn--link">{{ 'customer.account.return' | t }}</a>
+  </div>
+
+  <details class="address__new">
+    <summary class="btn btn--primary">{{ 'customer.addresses.add_new' | t }}</summary>
+    {%- form 'customer_address', customer.new_address, class: 'customer__form' -%}
+      {% render 'address-fields', form: form, prefix: 'AddressNew' %}
+      <button type="submit" class="btn btn--primary">{{ 'customer.addresses.add' | t }}</button>
+    {%- endform -%}
+  </details>
+
+  {%- if customer.addresses.size > 0 -%}
+    <ul class="address__list">
+      {%- for address in customer.addresses -%}
+        <li class="address__item">
+          {%- if address == customer.default_address -%}
+            <p class="address__default">{{ 'customer.addresses.default' | t }}</p>
+          {%- endif -%}
+          {{ address | format_address }}
+
+          <details>
+            <summary class="btn btn--link">{{ 'customer.addresses.edit' | t }}</summary>
+            {%- form 'customer_address', address, class: 'customer__form' -%}
+              {% render 'address-fields', form: form, prefix: address.id %}
+              <button type="submit" class="btn btn--primary">{{ 'customer.addresses.update' | t }}</button>
+            {%- endform -%}
+          </details>
+
+          <a
+            href="#"
+            class="btn btn--link"
+            data-address-delete
+            data-url="{{ address.url }}"
+            data-confirm="{{ 'customer.addresses.delete_confirm' | t }}"
+          >{{ 'customer.addresses.delete' | t }}</a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  {%- else -%}
+    <p>{{ 'customer.addresses.none' | t }}</p>
+  {%- endif -%}
+</div>
+
+<script>
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest('[data-address-delete]');
+    if (!link) return;
+    e.preventDefault();
+    if (!window.confirm(link.dataset.confirm)) return;
+    Shopify.postLink(link.dataset.url, { parameters: { _method: 'delete' } });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "t:sections.main_customers_addresses.name",
+  "tag": "section",
+  "class": "section-customers",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,44 @@
+{% comment %}
+  Section: Article de blog
+{% endcomment %}
+
+<article class="page-shell page-shell--narrow">
+  <div class="page-shell__header">
+    <time class="article__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
+      {{ 'blogs.article.posted_on' | t }} {{ article.published_at | date: format: 'date' }}
+    </time>
+    <h1 class="page-shell__title">{{ article.title | escape }}</h1>
+    {%- if article.author != blank -%}
+      <p class="article__author">{{ 'blogs.article.author' | t: author: article.author }}</p>
+    {%- endif -%}
+  </div>
+
+  {%- if article.image -%}
+    <img
+      class="article__image"
+      src="{{ article.image | image_url: width: 1500 }}"
+      srcset="{{ article.image | image_url: width: 750 }} 750w, {{ article.image | image_url: width: 1500 }} 1500w"
+      sizes="(min-width: 990px) 800px, 100vw"
+      alt="{{ article.image.alt | escape }}"
+      loading="eager"
+      width="{{ article.image.width }}"
+      height="{{ article.image.height }}"
+    >
+  {%- endif -%}
+
+  <div class="rte article__content">{{ article.content }}</div>
+
+  <a href="{{ blog.url }}" class="article__back">
+    {% render 'icon', icon: 'arrow-left' %}
+    {{ 'blogs.article.back_to_blog' | t: title: blog.title }}
+  </a>
+</article>
+
+{% schema %}
+{
+  "name": "t:sections.main_article.name",
+  "tag": "section",
+  "class": "section-main-article",
+  "settings": []
+}
+{% endschema %}

@@ -1,0 +1,444 @@
+{% comment %}
+  Section: Carte
+  Adresse, horaires et plan d'acces.
+  Aucun service tiers, aucune iframe, aucune cle API : le marchand depose une image
+  statique de plan et pointe vers l'application de cartes de son choix.
+  Choix RGPD assume : aucune donnee visiteur n'est transmise a un tiers au chargement.
+{% endcomment %}
+
+{%- style -%}
+  .map {
+    padding: var(--spacing-xl) var(--container-padding);
+    background-color: {{ section.settings.background_color }};
+  }
+
+  .map__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+    align-items: center;
+    max-width: var(--container-width);
+    margin: 0 auto;
+  }
+
+  .map__media {
+    position: relative;
+    order: 1;
+    overflow: hidden;
+    border: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.15 }};
+    border-radius: var(--radius);
+  }
+
+  .map__content {
+    order: 2;
+  }
+
+  .map--image-right .map__media {
+    order: 2;
+  }
+
+  .map--image-right .map__content {
+    order: 1;
+  }
+
+  .map__media-link {
+    display: block;
+    position: relative;
+    text-decoration: none;
+  }
+
+  .map__media-link:focus-visible {
+    outline: 2px solid var(--color-accent-dark);
+    outline-offset: 3px;
+  }
+
+  .map__image,
+  .map__media .placeholder-svg {
+    display: block;
+    width: 100%;
+    height: {{ section.settings.image_height }}px;
+    object-fit: cover;
+  }
+
+  .map__media .placeholder-svg {
+    background-color: var(--color-border);
+  }
+
+  .map__image {
+    transition: transform var(--transition-slow);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .map__media-link:hover .map__image {
+      transform: scale(1.03);
+    }
+  }
+
+  .map__badge {
+    position: absolute;
+    left: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text);
+    background-color: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--btn-radius);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .map__badge .icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .map__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    color: {{ section.settings.text_color }};
+    margin-bottom: var(--spacing-md);
+  }
+
+  .map__group + .map__group {
+    margin-top: var(--spacing-md);
+  }
+
+  .map__label {
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-accent-dark);
+    margin-bottom: var(--spacing-xs);
+  }
+
+  .map__address {
+    font-family: var(--font-body);
+    font-size: 1.0625rem;
+    font-style: normal;
+    line-height: 1.7;
+    color: {{ section.settings.text_color }};
+    margin: 0;
+  }
+
+  .map__hours {
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    color: {{ section.settings.text_color }};
+    opacity: 0.8;
+  }
+
+  .map__hours > *:last-child {
+    margin-bottom: 0;
+  }
+
+  .map__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+    margin-top: var(--spacing-md);
+  }
+
+  .map__actions .btn {
+    text-decoration: none;
+  }
+
+  @media screen and (max-width: 989px) {
+    .map__inner {
+      gap: var(--spacing-md);
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .map__inner {
+      grid-template-columns: 1fr;
+    }
+
+    .map__media,
+    .map--image-right .map__media {
+      order: 1;
+    }
+
+    .map__content,
+    .map--image-right .map__content {
+      order: 2;
+    }
+
+    .map__image,
+    .map__media .placeholder-svg {
+      height: {{ section.settings.image_height | times: 0.7 | round }}px;
+    }
+
+    .map__actions .btn {
+      flex: 1 1 100%;
+      justify-content: center;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .map__image {
+      transition: none;
+    }
+
+    .map__media-link:hover .map__image {
+      transform: none;
+    }
+  }
+{%- endstyle -%}
+
+{%- liquid
+  assign map_url = section.settings.map_url
+  assign directions_url = section.settings.directions_url
+  assign phone_raw = section.settings.phone | strip
+  assign phone_display = phone_raw | escape
+  assign phone_href = phone_raw | remove: ' ' | remove: '.' | remove: '-' | remove: '(' | remove: ')'
+  assign show_call = false
+  if section.settings.show_call and phone_raw != blank
+    assign show_call = true
+  endif
+
+  assign new_window_label = 'sections.map.new_window' | t
+  assign view_map_label = 'sections.map.view_map' | t
+  assign directions_label = 'sections.map.directions' | t
+  assign call_label = 'sections.map.call' | t: phone: phone_display
+  assign image_alt = section.settings.image.alt | default: view_map_label | escape
+-%}
+
+<div
+  class="map map--image-{{ section.settings.image_position }}"
+  data-section-id="{{ section.id }}"
+  role="region"
+  {% if section.settings.title != blank %}
+    aria-labelledby="MapTitle-{{ section.id }}"
+  {% else %}
+    aria-label="{{ 'sections.map.aria_label' | t }}"
+  {% endif %}
+>
+  <div class="map__inner">
+    <div class="map__media">
+      {%- if map_url != blank -%}
+        <a
+          class="map__media-link"
+          href="{{ map_url }}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {%- if section.settings.image != blank -%}
+            <img
+              srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+                {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+                {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+                {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+              src="{{ section.settings.image | image_url: width: 1100 }}"
+              sizes="(min-width: 750px) 50vw, 100vw"
+              alt="{{ image_alt }}"
+              class="map__image"
+              loading="lazy"
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+            >
+          {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            <span class="visually-hidden">{{ view_map_label }}</span>
+          {%- endif -%}
+
+          <span class="map__badge">
+            {% render 'icon', icon: 'arrow-right' %}
+            {{ view_map_label }}
+          </span>
+          <span class="visually-hidden">{{ new_window_label }}</span>
+        </a>
+      {%- else -%}
+        {%- if section.settings.image != blank -%}
+          <img
+            srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+              {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+              {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+              {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+            src="{{ section.settings.image | image_url: width: 1100 }}"
+            sizes="(min-width: 750px) 50vw, 100vw"
+            alt="{{ section.settings.image.alt | escape }}"
+            class="map__image"
+            loading="lazy"
+            width="{{ section.settings.image.width }}"
+            height="{{ section.settings.image.height }}"
+          >
+        {%- else -%}
+          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <div class="map__content">
+      {%- if section.settings.title != blank -%}
+        <h2 class="map__title" id="MapTitle-{{ section.id }}">{{ section.settings.title | escape }}</h2>
+      {%- endif -%}
+
+      {%- if section.settings.address != blank -%}
+        <div class="map__group">
+          <p class="map__label">{{ 'sections.map.address_label' | t }}</p>
+          <address class="map__address">{{ section.settings.address | escape | newline_to_br }}</address>
+        </div>
+      {%- endif -%}
+
+      {%- if section.settings.hours != blank -%}
+        <div class="map__group">
+          <p class="map__label">{{ 'sections.map.hours_label' | t }}</p>
+          <div class="map__hours rte">{{ section.settings.hours }}</div>
+        </div>
+      {%- endif -%}
+
+      {%- if directions_url != blank or show_call -%}
+        <div class="map__actions">
+          {%- if directions_url != blank -%}
+            <a
+              class="btn btn--primary"
+              href="{{ directions_url }}"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {{ directions_label }}
+              <span class="visually-hidden">{{ new_window_label }}</span>
+            </a>
+          {%- endif -%}
+
+          {%- if show_call -%}
+            <a class="btn btn--secondary" href="tel:{{ phone_href }}">
+              {{ call_label }}
+            </a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.map.name",
+  "tag": "section",
+  "class": "section-map",
+  "settings": [
+    {
+      "type": "header",
+      "content": "t:sections.map.settings.header__1.content"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "t:sections.map.settings.title.label",
+      "default": "Nous rendre visite"
+    },
+    {
+      "type": "textarea",
+      "id": "address",
+      "label": "t:sections.map.settings.address.label",
+      "info": "t:sections.map.settings.address.info",
+      "default": "Atelier Lumière\n18 rue des Archives\n75004 Paris"
+    },
+    {
+      "type": "richtext",
+      "id": "hours",
+      "label": "t:sections.map.settings.hours.label",
+      "default": "<p>Du mardi au samedi, 11h – 19h.<br/>Dimanche et lundi, sur rendez-vous.</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.map.settings.header__2.content"
+    },
+    {
+      "type": "url",
+      "id": "directions_url",
+      "label": "t:sections.map.settings.directions_url.label",
+      "info": "t:sections.map.settings.directions_url.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_call",
+      "label": "t:sections.map.settings.show_call.label",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "t:sections.map.settings.phone.label",
+      "info": "t:sections.map.settings.phone.info",
+      "default": "+33 1 42 71 08 09"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.map.settings.header__3.content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.map.settings.image.label",
+      "info": "t:sections.map.settings.image.info"
+    },
+    {
+      "type": "url",
+      "id": "map_url",
+      "label": "t:sections.map.settings.map_url.label",
+      "info": "t:sections.map.settings.map_url.info"
+    },
+    {
+      "type": "range",
+      "id": "image_height",
+      "min": 280,
+      "max": 700,
+      "step": 20,
+      "default": 460,
+      "unit": "px",
+      "label": "t:sections.map.settings.image_height.label"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.map.settings.image_position.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.map.settings.image_position.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.map.settings.image_position.options__2.label"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.map.settings.header__4.content"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.map.settings.background_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.map.settings.text_color.label",
+      "default": "#1a1a1a"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.map.presets.name",
+      "category": "Store information"
+    }
+  ]
+}
+{% endschema %}
