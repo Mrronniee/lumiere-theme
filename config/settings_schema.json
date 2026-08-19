@@ -1,11 +1,11 @@
 [
   {
     "name": "theme_info",
-    "theme_name": "Lumiere",
-    "theme_version": "1.0.0",
+    "theme_name": "LUMIERE",
+    "theme_version": "1.1.0",
     "theme_author": "KIOSK",
-    "theme_documentation_url": "https://kioskthemes.com/docs/lumiere",
-    "theme_support_url": "https://kioskthemes.com/support"
+    "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
+    "theme_support_url": "https://kioskthemes.com/support/"
   },
   {
     "name": "t:settings_schema.couleurs.name",

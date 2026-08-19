@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.1.0 — 2026-08-20
+
+### Added
+- Express payment buttons on the product page (Apple Pay, Google Pay, Shop Pay
+  and any other accelerated method enabled in the store). Buyers check out in a
+  single tap, without creating an account or typing card details.
+- Shop Pay Installments banner underneath the buttons, shown automatically when
+  the store is eligible.
+- New product section setting, **Show express payment buttons**, enabled by
+  default. Turn it off to keep a single add-to-cart flow.
+
 ## 1.0.0 — 2026-08-16
 
 First public release.
