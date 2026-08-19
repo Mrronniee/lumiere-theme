@@ -687,6 +687,18 @@
             </span>
           </button>
         </div>
+        {%- if section.settings.show_payment_button -%}
+          {% comment %}
+            Paiement express : Apple Pay, Google Pay, Shop Pay. Le client
+            paie en un geste, sans creer de compte. Le filtre payment_button
+            n'accepte que l'objet form d'un formulaire produit Liquid.
+          {% endcomment %}
+          <div class="lm-product__express">
+            {{ form | payment_button }}
+          </div>
+          {{ form | payment_terms }}
+        {%- endif -%}
+
       {%- endform -%}
 
       {%- comment -%} BLOCS DE CONTENU ÉDITABLES {%- endcomment -%}
@@ -761,6 +773,8 @@
   "tag": "section",
   "class": "section-main-product",
   "settings": [
+    { "type": "header", "content": "Paiement" },
+    { "type": "checkbox", "id": "show_payment_button", "label": "Show express payment buttons (Apple Pay, Shop Pay…)", "info": "Lets a customer pay in one tap, without creating an account.", "default": true },
     {
       "type": "checkbox",
       "id": "show_vendor",
