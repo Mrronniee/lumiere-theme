@@ -4,11 +4,11 @@
       "type": "hero",
       "settings": {
         "subtitle": "Nouvelle Collection 2026",
-        "title": "L'Élégance Redéfinie",
-        "description": "Découvrez notre nouvelle collection de pièces intemporelles, conçues pour sublimer votre silhouette avec raffinement.",
-        "button_label": "Découvrir la collection",
+        "title": "Elegance, redefined",
+        "description": "Discover our new collection of timeless pieces, cut to flatter and made to last.",
+        "button_label": "Discover the collection",
         "button_link": "\/collections\/all",
-        "button_label_2": "Notre histoire",
+        "button_label_2": "Our story",
         "button_link_2": "\/pages\/a-propos",
         "text_alignment": "center",
         "text_color": "#ffffff",
@@ -28,9 +28,9 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "pretitle": "Nouveautés",
-        "title": "Notre Collection",
-        "description": "Des pièces intemporelles conçues avec soin et passion.",
+        "pretitle": "New arrivals",
+        "title": "Our collection",
+        "description": "Timeless pieces, made with care.",
         "collection": "frontpage",
         "products_to_show": 4,
         "show_vendor": false,
@@ -53,8 +53,8 @@
       "type": "lookbook",
       "settings": {
         "pretitle": "Inspiration",
-        "title": "Le Lookbook",
-        "description": "Plongez dans notre univers à travers des looks soigneusement composés.",
+        "title": "The lookbook",
+        "description": "Step into our world through carefully composed looks.",
         "background_color": "#1a1a1a",
         "text_color": "#ffffff",
         "text_alignment": "center",
@@ -65,8 +65,8 @@
           "type": "image",
           "settings": {
             "title": "Look 01",
-            "subtitle": "Collection Printemps-Été",
-            "link_label": "Découvrir",
+            "subtitle": "Spring–Summer collection",
+            "link_label": "Discover",
             "link": "\/collections\/printemps-ete"
           }
         },
@@ -74,8 +74,8 @@
           "type": "image",
           "settings": {
             "title": "Look 02",
-            "subtitle": "Soirée Élégante",
-            "link_label": "Découvrir",
+            "subtitle": "Evening dress",
+            "link_label": "Discover",
             "link": "\/collections\/soiree"
           }
         },
@@ -84,7 +84,7 @@
           "settings": {
             "title": "Look 03",
             "subtitle": "Essentiels",
-            "link_label": "Découvrir",
+            "link_label": "Discover",
             "link": "\/collections\/essentiels"
           }
         },
@@ -93,7 +93,7 @@
           "settings": {
             "title": "Look 04",
             "subtitle": "Accessoires",
-            "link_label": "Découvrir",
+            "link_label": "Discover",
             "link": "\/collections\/accessoires"
           }
         },
@@ -102,7 +102,7 @@
           "settings": {
             "title": "Look 05",
             "subtitle": "Mariage",
-            "link_label": "Découvrir",
+            "link_label": "Discover",
             "link": "\/collections\/mariage"
           }
         },
@@ -110,8 +110,8 @@
           "type": "image",
           "settings": {
             "title": "Look 06",
-            "subtitle": "Cérémonie",
-            "link_label": "Découvrir",
+            "subtitle": "Occasionwear",
+            "link_label": "Discover",
             "link": "\/collections\/ceremonie"
           }
         }
@@ -128,13 +128,13 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "pretitle": "Restez informé",
-        "title": "Rejoignez notre univers",
-        "description": "Inscrivez-vous pour recevoir en avant-première nos nouveautés, offres exclusives et conseils mode.",
-        "placeholder": "Votre adresse email",
+        "pretitle": "Stay in the loop",
+        "title": "Join our world",
+        "description": "Sign up for early access to new arrivals, exclusive offers and style advice.",
+        "placeholder": "Your email address",
         "button_label": "S'inscrire",
-        "success_message": "Merci pour votre inscription !",
-        "disclaimer": "En vous inscrivant, vous acceptez notre politique de confidentialité.",
+        "success_message": "Thank you for signing up.",
+        "disclaimer": "By signing up you agree to our privacy policy.",
         "background_color": "#f5f5f5",
         "text_color": "#1a1a1a",
         "input_bg": "#ffffff",

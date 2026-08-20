@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — 2026-08-20
+
+### Fixed
+- 24 strings still in French in the home page template — hero, collection,
+  lookbook and newsletter — visible the moment the theme is installed.
+
 ## 1.2.0 — 2026-08-20
 
 ### Added
