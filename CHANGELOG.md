@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.2 — 2026-09-03
+
+### Fixed
+- 83 strings still in French across 19 files are now English, mostly section presets a merchant sees when adding a section: FAQ, offer comparison, multi-column, slideshow, reviews, tabs, map and newsletter. Prices in presets use the English currency format. No setting id, option value or template changed.
+
 ## 1.2.1 — 2026-08-20
 
 ### Fixed

@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.2.1",
+    "theme_version": "1.2.2",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -796,7 +796,7 @@
         "id": "swatch_map",
         "label": "t:settings_schema.nuanciers.settings.swatch_map.label",
         "info": "t:settings_schema.nuanciers.settings.swatch_map.info",
-        "default": "Ecru: #f0e9dd\nBleu marine: #1f2a44\nKaki: #6b6a4b\nBordeaux: #6d2231"
+        "default": "Ecru: #f0e9dd\nNavy: #1f2a44\nKhaki: #6b6a4b\nBordeaux: #6d2231"
       }
     ]
   },

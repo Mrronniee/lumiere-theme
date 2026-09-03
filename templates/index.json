@@ -3,7 +3,7 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "subtitle": "Nouvelle Collection 2026",
+        "subtitle": "New collection 2026",
         "title": "Elegance, redefined",
         "description": "Discover our new collection of timeless pieces, cut to flatter and made to last.",
         "button_label": "Discover the collection",
@@ -35,7 +35,7 @@
         "products_to_show": 4,
         "show_vendor": false,
         "show_view_all": true,
-        "view_all_label": "Voir tout",
+        "view_all_label": "View all",
         "background_color": "#faf9f7",
         "text_color": "#1a1a1a",
         "button_bg": "#1a1a1a",
@@ -83,7 +83,7 @@
           "type": "image",
           "settings": {
             "title": "Look 03",
-            "subtitle": "Essentiels",
+            "subtitle": "Essentials",
             "link_label": "Discover",
             "link": "\/collections\/essentiels"
           }
@@ -92,7 +92,7 @@
           "type": "image",
           "settings": {
             "title": "Look 04",
-            "subtitle": "Accessoires",
+            "subtitle": "Accessories",
             "link_label": "Discover",
             "link": "\/collections\/accessoires"
           }
@@ -101,7 +101,7 @@
           "type": "image",
           "settings": {
             "title": "Look 05",
-            "subtitle": "Mariage",
+            "subtitle": "Wedding",
             "link_label": "Discover",
             "link": "\/collections\/mariage"
           }
@@ -132,7 +132,7 @@
         "title": "Join our world",
         "description": "Sign up for early access to new arrivals, exclusive offers and style advice.",
         "placeholder": "Your email address",
-        "button_label": "S'inscrire",
+        "button_label": "Sign up",
         "success_message": "Thank you for signing up.",
         "disclaimer": "By signing up you agree to our privacy policy.",
         "background_color": "#f5f5f5",
