@@ -180,17 +180,17 @@
                 {%- endif -%}
                 {%- if settings.social_facebook != blank -%}
                   <a href="{{ settings.social_facebook }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Facebook' }}">
-                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                    <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                   </a>
                 {%- endif -%}
                 {%- if settings.social_pinterest != blank -%}
                   <a href="{{ settings.social_pinterest }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Pinterest' }}">
-                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                    <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
                   </a>
                 {%- endif -%}
                 {%- if settings.social_tiktok != blank -%}
                   <a href="{{ settings.social_tiktok }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'TikTok' }}">
-                    <svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+                    <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
                   </a>
                 {%- endif -%}
               </div>
@@ -217,7 +217,7 @@
 
     <div class="footer__bottom">
       <p class="footer__copyright">
-        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {{ section.settings.copyright_text | default: 'All rights reserved.' }}
+        &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {% if section.settings.copyright_text != blank %}{{ section.settings.copyright_text }}{% else %}{{ 'general.footer.rights_reserved' | t }}{% endif %}
       </p>
       {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
         <ul class="footer__payments" role="list" aria-label="{{ 'general.payment.methods' | t }}">
@@ -264,8 +264,7 @@
     {
       "type": "text",
       "id": "copyright_text",
-      "label": "t:sections.footer.settings.copyright_text.label",
-      "default": "All rights reserved."
+      "label": "t:sections.footer.settings.copyright_text.label"
     }
   ],
   "blocks": [

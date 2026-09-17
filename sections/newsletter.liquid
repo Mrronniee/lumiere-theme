@@ -21,7 +21,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     margin-bottom: var(--spacing-xs);
   }
 
@@ -111,17 +111,11 @@
 
 <div class="newsletter" data-section-id="{{ section.id }}">
   <div class="newsletter__inner">
-    {%- if section.settings.pretitle != blank -%}
-      <p class="newsletter__pretitle">{{ section.settings.pretitle | escape }}</p>
-    {%- endif -%}
+    <p class="newsletter__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.newsletter.default_pretitle' | t | escape }}{%- endif -%}</p>
 
-    {%- if section.settings.title != blank -%}
-      <h2 class="newsletter__title">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
+    <h2 class="newsletter__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.newsletter.default_title' | t | escape }}{%- endif -%}</h2>
 
-    {%- if section.settings.description != blank -%}
-      <p class="newsletter__description">{{ section.settings.description | escape }}</p>
-    {%- endif -%}
+    <p class="newsletter__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.newsletter.default_description' | t | escape }}{%- endif -%}</p>
 
     {%- form 'customer', class: 'newsletter__form' -%}
       <input type="hidden" name="contact[tags]" value="newsletter">
@@ -136,11 +130,11 @@
         autocorrect="off"
         autocapitalize="off"
         autocomplete="email"
-        placeholder="{{ section.settings.placeholder }}"
+        placeholder="{% if section.settings.placeholder != blank %}{{ section.settings.placeholder | escape }}{% else %}{{ 'sections.newsletter.default_placeholder' | t | escape }}{% endif %}"
         required
       >
       <button type="submit" class="newsletter__button" name="commit">
-        {{ section.settings.button_label }}
+        {%- if section.settings.button_label != blank -%}{{ section.settings.button_label | escape }}{%- else -%}{{ 'sections.newsletter.default_button' | t | escape }}{%- endif -%}
       </button>
 
       {%- if form.posted_successfully? -%}
@@ -155,9 +149,7 @@
       {%- endif -%}
     {%- endform -%}
 
-    {%- if section.settings.disclaimer != blank -%}
-      <p class="newsletter__disclaimer">{{ section.settings.disclaimer | escape }}</p>
-    {%- endif -%}
+    <p class="newsletter__disclaimer">{%- if section.settings.disclaimer != blank -%}{{ section.settings.disclaimer | escape }}{%- else -%}{{ 'sections.newsletter.default_disclaimer' | t | escape }}{%- endif -%}</p>
   </div>
 </div>
 
@@ -174,38 +166,32 @@
     {
       "type": "text",
       "id": "pretitle",
-      "label": "t:sections.newsletter.settings.pretitle.label",
-      "default": "Stay in the loop"
+      "label": "t:sections.newsletter.settings.pretitle.label"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "t:sections.newsletter.settings.title.label",
-      "default": "Join our world"
+      "label": "t:sections.newsletter.settings.title.label"
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "t:sections.newsletter.settings.description.label",
-      "default": "Sign up for early access to new arrivals, exclusive offers and style advice."
+      "label": "t:sections.newsletter.settings.description.label"
     },
     {
       "type": "text",
       "id": "placeholder",
-      "label": "t:sections.newsletter.settings.placeholder.label",
-      "default": "Your email address"
+      "label": "t:sections.newsletter.settings.placeholder.label"
     },
     {
       "type": "text",
       "id": "button_label",
-      "label": "t:sections.newsletter.settings.button_label.label",
-      "default": "Sign up"
+      "label": "t:sections.newsletter.settings.button_label.label"
     },
     {
       "type": "text",
       "id": "disclaimer",
-      "label": "t:sections.newsletter.settings.disclaimer.label",
-      "default": "By signing up you agree to our privacy policy."
+      "label": "t:sections.newsletter.settings.disclaimer.label"
     },
     {
       "type": "header",

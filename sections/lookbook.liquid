@@ -4,6 +4,33 @@
   Avec grille asymétrique et effets parallaxe
 {% endcomment %}
 
+{%- liquid
+  comment
+    Contraste (WCAG AA, 4.5:1) : le sur-titre est du TEXTE en couleur d'accent
+    pose sur le fond choisi pour la section — pas sur le fond du theme. On
+    derive donc ici une variante de l'accent ajustee a CE fond, en eclaircissant
+    si le fond est sombre et en assombrissant s'il est clair.
+  endcomment
+  assign lb_bg = section.settings.background_color | default: '#1a1a1a'
+  assign lb_accent = settings.color_accent | default: '#c9a96e'
+  assign lb_white_ratio = lb_bg | color_contrast: '#ffffff'
+  assign lb_bg_is_dark = false
+  if lb_white_ratio > 2.5
+    assign lb_bg_is_dark = true
+  endif
+  for i in (1..24)
+    assign lb_ratio = lb_accent | color_contrast: lb_bg
+    if lb_ratio >= 4.5
+      break
+    endif
+    if lb_bg_is_dark
+      assign lb_accent = lb_accent | color_lighten: 3
+    else
+      assign lb_accent = lb_accent | color_darken: 3
+    endif
+  endfor
+-%}
+
 {%- style -%}
   .lookbook {
     padding: var(--spacing-xl) 0;
@@ -22,7 +49,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: {{ lb_accent }};
     margin-bottom: var(--spacing-xs);
   }
 
@@ -164,17 +191,11 @@
 
 <div class="lookbook" data-section-id="{{ section.id }}">
   <div class="lookbook__header">
-    {%- if section.settings.pretitle != blank -%}
-      <p class="lookbook__pretitle">{{ section.settings.pretitle | escape }}</p>
-    {%- endif -%}
+    <p class="lookbook__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.lookbook.default_pretitle' | t | escape }}{%- endif -%}</p>
 
-    {%- if section.settings.title != blank -%}
-      <h2 class="lookbook__title">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
+    <h2 class="lookbook__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.lookbook.default_title' | t | escape }}{%- endif -%}</h2>
 
-    {%- if section.settings.description != blank -%}
-      <p class="lookbook__description">{{ section.settings.description | escape }}</p>
-    {%- endif -%}
+    <p class="lookbook__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.lookbook.default_description' | t | escape }}{%- endif -%}</p>
   </div>
 
   <div class="lookbook__grid">
@@ -200,15 +221,27 @@
 
         <div class="lookbook__item-overlay">
           <div class="lookbook__item-content">
-            {%- if block.settings.title != blank -%}
-              <h3 class="lookbook__item-title">{{ block.settings.title | escape }}</h3>
-            {%- endif -%}
+            {%- comment -%}
+              Le titre ne doit jamais dependre d'un defaut anglais code en dur :
+              s'il est vide on retombe sur la cle de traduction de la locale active.
+            {%- endcomment -%}
+            <h3 class="lookbook__item-title">
+              {%- if block.settings.title != blank -%}
+                {{- block.settings.title | escape -}}
+              {%- else -%}
+                {{- 'sections.lookbook.default_item_title' | t: number: forloop.index -}}
+              {%- endif -%}
+            </h3>
             {%- if block.settings.subtitle != blank -%}
               <p class="lookbook__item-subtitle">{{ block.settings.subtitle | escape }}</p>
             {%- endif -%}
-            {%- if block.settings.link != blank and block.settings.link_label != blank -%}
+            {%- if block.settings.link != blank -%}
               <a href="{{ block.settings.link }}" class="lookbook__item-link">
-                {{ block.settings.link_label | escape }}
+                {%- if block.settings.link_label != blank -%}
+                  {{- block.settings.link_label | escape -}}
+                {%- else -%}
+                  {{- 'sections.lookbook.default_link_label' | t -}}
+                {%- endif -%}
                 {% render 'icon', icon: 'arrow-right' %}
               </a>
             {%- endif -%}
@@ -233,20 +266,17 @@
     {
       "type": "text",
       "id": "pretitle",
-      "label": "t:sections.lookbook.settings.pretitle.label",
-      "default": "Inspiration"
+      "label": "t:sections.lookbook.settings.pretitle.label"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "t:sections.lookbook.settings.title.label",
-      "default": "The lookbook"
+      "label": "t:sections.lookbook.settings.title.label"
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "t:sections.lookbook.settings.description.label",
-      "default": "Step into our world through carefully composed looks."
+      "label": "t:sections.lookbook.settings.description.label"
     },
     {
       "type": "header",
@@ -308,20 +338,17 @@
         {
           "type": "text",
           "id": "title",
-          "label": "t:sections.lookbook.blocks.image.settings.title.label",
-          "default": "Look 01"
+          "label": "t:sections.lookbook.blocks.image.settings.title.label"
         },
         {
           "type": "text",
           "id": "subtitle",
-          "label": "t:sections.lookbook.blocks.image.settings.subtitle.label",
-          "default": "Spring–Summer collection"
+          "label": "t:sections.lookbook.blocks.image.settings.subtitle.label"
         },
         {
           "type": "text",
           "id": "link_label",
-          "label": "t:sections.lookbook.blocks.image.settings.link_label.label",
-          "default": "Discover"
+          "label": "t:sections.lookbook.blocks.image.settings.link_label.label"
         },
         {
           "type": "url",

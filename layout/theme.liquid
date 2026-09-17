@@ -67,7 +67,8 @@
       cart_update_url: '{{ routes.cart_update_url }}',
       cart_url: '{{ routes.cart_url }}',
       search_url: '{{ routes.search_url }}',
-      predictive_search_url: '{{ routes.predictive_search_url }}'
+      predictive_search_url: '{{ routes.predictive_search_url }}',
+      root_url: '{{ routes.root_url }}'
     };
     window.themeStrings = {
       addToCart: {{ 'products.product.add_to_cart' | t | json }},
@@ -106,6 +107,19 @@
   {%- if settings.product_enable_quick_view -%}
     {% section 'quick-view' %}
   {%- endif -%}
+
+  {%- comment -%}
+    Region d'annonces creee au chargement, pas au moment de l'ajout au panier :
+    un conteneur aria-live insere ET rempli dans le meme tick n'est pas observe
+    par les lecteurs d'ecran, et l'annonce restait muette.
+  {%- endcomment -%}
+  <div
+    id="ThemeNotifications"
+    class="theme-notifications"
+    role="status"
+    aria-live="polite"
+    aria-atomic="false"
+  ></div>
 
   <ul hidden>
     <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>

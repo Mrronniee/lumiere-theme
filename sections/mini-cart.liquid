@@ -53,6 +53,10 @@
   }
 
   .mini-cart__title {
+    /* Titre promu en <h2> (hierarchie du dialogue) : on neutralise les marges
+       et le bloc du navigateur pour garder « Panier (2) » sur une seule ligne. */
+    display: inline;
+    margin: 0;
     font-family: var(--font-heading);
     font-size: 1.25rem;
     font-weight: 400;
@@ -71,7 +75,7 @@
   }
 
   .mini-cart__close:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-text);
   }
 
   .mini-cart__body {
@@ -396,12 +400,13 @@
   id="MiniCart"
   role="dialog"
   aria-modal="true"
-  aria-labelledby="MiniCartTitle"
+  aria-label="{{ 'cart.general.title' | t | escape }}"
+  tabindex="-1"
   aria-hidden="true"
 >
   <div class="mini-cart__header">
     <div>
-      <span class="mini-cart__title" id="MiniCartTitle">{{ 'cart.general.title' | t }}</span>
+      <h2 class="mini-cart__title" id="MiniCartTitle">{{ 'cart.general.title' | t }}</h2>
       <span class="mini-cart__count" data-cart-count-text>({{ cart.item_count }})</span>
     </div>
     <button type="button" class="mini-cart__close" data-mini-cart-close aria-label="{{ 'accessibility.close' | t }}">

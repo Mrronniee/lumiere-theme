@@ -25,6 +25,9 @@
       "previous": "Previous page",
       "next": "Next page",
       "page": "Page {{ number }}"
+    },
+    "footer": {
+      "rights_reserved": "All rights reserved."
     }
   },
   "accessibility": {
@@ -80,7 +83,12 @@
       }
     },
     "lookbook": {
-      "view_look": "View look"
+      "view_look": "View look",
+      "default_pretitle": "Inspiration",
+      "default_title": "The lookbook",
+      "default_description": "Step into our world through carefully composed looks.",
+      "default_item_title": "Look {{ number }}",
+      "default_link_label": "Discover"
     },
     "rich_text": {
       "no_blocks": "Add an eyebrow, a heading, text or a button to build this section."
@@ -179,6 +187,30 @@
     },
     "custom_liquid": {
       "empty": "Add your Liquid or HTML code in this section's settings. This message is only visible in the theme editor."
+    },
+    "hero": {
+      "default_pretitle": "New collection 2026",
+      "default_title": "Elegance, redefined",
+      "default_description": "Discover our new collection of timeless pieces, cut to flatter and made to last.",
+      "default_button": "Discover the collection",
+      "default_button_2": "Our story"
+    },
+    "featured_collection": {
+      "default_pretitle": "New arrivals",
+      "default_title": "Our collection",
+      "default_description": "Timeless pieces, made with care.",
+      "default_view_all": "View all"
+    },
+    "newsletter": {
+      "default_pretitle": "Stay in the loop",
+      "default_title": "Join our world",
+      "default_description": "Sign up for early access to new arrivals, exclusive offers and style advice.",
+      "default_placeholder": "Your email address",
+      "default_button": "Sign up",
+      "default_disclaimer": "By signing up you agree to our privacy policy."
+    },
+    "related_products": {
+      "default_title": "You may also like"
     }
   },
   "cart": {
@@ -235,7 +267,7 @@
       },
       "from_price_html": "From {{ price }}",
       "price": {
-          "unit_price": "Unit price",
+        "unit_price": "Unit price",
         "regular_price": "Regular price",
         "sale_price": "Sale price"
       }

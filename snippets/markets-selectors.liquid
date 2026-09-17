@@ -268,6 +268,21 @@
 
   {%- comment -%} BANNIERE CHANGEMENT DE MARCHE {%- endcomment -%}
   {%- if settings.show_market_banner -%}
+    {%- comment -%}
+      /browsing_context_suggestions.json renvoie le nom du pays dans la langue
+      par defaut de la boutique, pas dans la locale affichee : en anglais on
+      obtenait « You seem to be in Suisse. ». On expose donc les noms rendus par
+      Shopify DANS la locale courante, indexes par code ISO ; le JS s'en sert au
+      lieu du nom renvoye par l'endpoint.
+    {%- endcomment -%}
+    <script type="application/json" data-market-country-names>
+      {
+        {%- for country in localization.available_countries -%}
+          {%- unless forloop.first -%},{%- endunless -%}
+          {{ country.iso_code | json }}: {{ country.name | json }}
+        {%- endfor -%}
+      }
+    </script>
     <div class="market-banner" id="MarketBanner" data-market-banner role="status">
       <span data-market-banner-text></span>
       <button type="button" class="market-banner__link" data-market-banner-switch>{{ 'markets.switch' | t }}</button>

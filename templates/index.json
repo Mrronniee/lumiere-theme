@@ -3,13 +3,13 @@
     "hero": {
       "type": "hero",
       "settings": {
-        "subtitle": "New collection 2026",
-        "title": "Elegance, redefined",
-        "description": "Discover our new collection of timeless pieces, cut to flatter and made to last.",
-        "button_label": "Discover the collection",
-        "button_link": "\/collections\/all",
-        "button_label_2": "Our story",
-        "button_link_2": "\/pages\/a-propos",
+        "subtitle": "",
+        "title": "",
+        "description": "",
+        "button_label": "",
+        "button_link": "/collections/all",
+        "button_label_2": "",
+        "button_link_2": "/pages/a-propos",
         "text_alignment": "center",
         "text_color": "#ffffff",
         "overlay_color": "#000000",
@@ -28,14 +28,14 @@
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "pretitle": "New arrivals",
-        "title": "Our collection",
-        "description": "Timeless pieces, made with care.",
+        "pretitle": "",
+        "title": "",
+        "description": "",
         "collection": "frontpage",
         "products_to_show": 4,
         "show_vendor": false,
         "show_view_all": true,
-        "view_all_label": "View all",
+        "view_all_label": "",
         "background_color": "#faf9f7",
         "text_color": "#1a1a1a",
         "button_bg": "#1a1a1a",
@@ -52,9 +52,9 @@
     "lookbook": {
       "type": "lookbook",
       "settings": {
-        "pretitle": "Inspiration",
-        "title": "The lookbook",
-        "description": "Step into our world through carefully composed looks.",
+        "pretitle": "",
+        "title": "",
+        "description": "",
         "background_color": "#1a1a1a",
         "text_color": "#ffffff",
         "text_alignment": "center",
@@ -64,55 +64,55 @@
         "lookbook_1": {
           "type": "image",
           "settings": {
-            "title": "Look 01",
-            "subtitle": "Spring–Summer collection",
-            "link_label": "Discover",
-            "link": "\/collections\/printemps-ete"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/printemps-ete"
           }
         },
         "lookbook_2": {
           "type": "image",
           "settings": {
-            "title": "Look 02",
-            "subtitle": "Evening dress",
-            "link_label": "Discover",
-            "link": "\/collections\/soiree"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/soiree"
           }
         },
         "lookbook_3": {
           "type": "image",
           "settings": {
-            "title": "Look 03",
-            "subtitle": "Essentials",
-            "link_label": "Discover",
-            "link": "\/collections\/essentiels"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/essentiels"
           }
         },
         "lookbook_4": {
           "type": "image",
           "settings": {
-            "title": "Look 04",
-            "subtitle": "Accessories",
-            "link_label": "Discover",
-            "link": "\/collections\/accessoires"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/accessoires"
           }
         },
         "lookbook_5": {
           "type": "image",
           "settings": {
-            "title": "Look 05",
-            "subtitle": "Wedding",
-            "link_label": "Discover",
-            "link": "\/collections\/mariage"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/mariage"
           }
         },
         "lookbook_6": {
           "type": "image",
           "settings": {
-            "title": "Look 06",
-            "subtitle": "Occasionwear",
-            "link_label": "Discover",
-            "link": "\/collections\/ceremonie"
+            "title": "",
+            "subtitle": "",
+            "link_label": "",
+            "link": "/collections/ceremonie"
           }
         }
       },
@@ -128,13 +128,12 @@
     "newsletter": {
       "type": "newsletter",
       "settings": {
-        "pretitle": "Stay in the loop",
-        "title": "Join our world",
-        "description": "Sign up for early access to new arrivals, exclusive offers and style advice.",
-        "placeholder": "Your email address",
-        "button_label": "Sign up",
-        "success_message": "Thank you for signing up.",
-        "disclaimer": "By signing up you agree to our privacy policy.",
+        "pretitle": "",
+        "title": "",
+        "description": "",
+        "placeholder": "",
+        "button_label": "",
+        "disclaimer": "",
         "background_color": "#f5f5f5",
         "text_color": "#1a1a1a",
         "input_bg": "#ffffff",

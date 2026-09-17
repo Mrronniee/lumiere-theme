@@ -905,6 +905,13 @@
         },
         "enable_video_looping": {
           "label": "Loop videos"
+        },
+        "header__payment": {
+          "content": "Payment"
+        },
+        "show_payment_button": {
+          "label": "Show express payment buttons (Apple Pay, Shop Pay…)",
+          "info": "Lets a customer pay in one tap, without creating an account."
         }
       },
       "blocks": {
@@ -999,10 +1006,14 @@
         "intent": {
           "label": "Recommendation type",
           "info": "Complementary products are the ones you pair by hand in the free Shopify Search & Discovery app. Add this section a second time to show both.",
-          "options__1": { "label": "Related products (automatic)" },
-          "options__2": { "label": "Complementary products (Search & Discovery)" }
+          "options__1": {
+            "label": "Related products (automatic)"
+          },
+          "options__2": {
+            "label": "Complementary products (Search & Discovery)"
+          }
         },
-"title": {
+        "title": {
           "label": "Heading"
         },
         "collection": {
@@ -1037,7 +1048,9 @@
         }
       },
       "presets": {
-        "complementary": { "name": "Complementary products" },
+        "complementary": {
+          "name": "Complementary products"
+        },
         "name": "Related products"
       }
     },
@@ -2323,6 +2336,13 @@
             "col_5": {
               "label": "Column 5 value"
             }
+          },
+          "presets": {
+            "xs": "XS",
+            "s": "S",
+            "m": "M",
+            "l": "L",
+            "xl": "XL"
           }
         }
       },

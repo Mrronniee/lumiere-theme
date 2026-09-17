@@ -22,7 +22,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     margin-bottom: var(--spacing-xs);
   }
 
@@ -113,17 +113,11 @@
 
 <div class="featured-collection" data-section-id="{{ section.id }}">
   <div class="featured-collection__header">
-    {%- if section.settings.pretitle != blank -%}
-      <p class="featured-collection__pretitle">{{ section.settings.pretitle | escape }}</p>
-    {%- endif -%}
+    <p class="featured-collection__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.featured_collection.default_pretitle' | t | escape }}{%- endif -%}</p>
 
-    {%- if section.settings.title != blank -%}
-      <h2 class="featured-collection__title">{{ section.settings.title | escape }}</h2>
-    {%- endif -%}
+    <h2 class="featured-collection__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.featured_collection.default_title' | t | escape }}{%- endif -%}</h2>
 
-    {%- if section.settings.description != blank -%}
-      <p class="featured-collection__description">{{ section.settings.description | escape }}</p>
-    {%- endif -%}
+    <p class="featured-collection__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.featured_collection.default_description' | t | escape }}{%- endif -%}</p>
   </div>
 
   {%- assign collection = collections[section.settings.collection] -%}
@@ -182,20 +176,17 @@
     {
       "type": "text",
       "id": "pretitle",
-      "label": "t:sections.featured_collection.settings.pretitle.label",
-      "default": "New arrivals"
+      "label": "t:sections.featured_collection.settings.pretitle.label"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "t:sections.featured_collection.settings.title.label",
-      "default": "Our collection"
+      "label": "t:sections.featured_collection.settings.title.label"
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "t:sections.featured_collection.settings.description.label",
-      "default": "Timeless pieces, made with care."
+      "label": "t:sections.featured_collection.settings.description.label"
     },
     {
       "type": "collection",
@@ -226,8 +217,7 @@
     {
       "type": "text",
       "id": "view_all_label",
-      "label": "t:sections.featured_collection.settings.view_all_label.label",
-      "default": "View all"
+      "label": "t:sections.featured_collection.settings.view_all_label.label"
     },
     {
       "type": "header",

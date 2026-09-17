@@ -85,39 +85,116 @@
       return response.json();
     },
 
-    /** Piege le focus dans un conteneur ouvert (drawer, modale). */
+    /**
+     * Piege le focus dans un conteneur ouvert (drawer, modale).
+     *
+     * Le piege est pose au niveau du document (phase de capture) et non sur le
+     * conteneur : un overlay tiers insere apres le drawer dans le DOM (banniere
+     * de consentement Shopify, widget de chat, barre d'apercu) reste sinon dans
+     * l'ordre de tabulation et le focus s'en echappe des la premiere touche Tab.
+     * Un garde `focusin` rattrape en plus tout focus pose hors du dialogue,
+     * quelle qu'en soit l'origine (clic, script tiers, autofocus).
+     */
     trapFocus(container, firstFocus) {
       // Une reouverture ne doit pas empiler un second piege sur le premier.
       utils.releaseFocus(container);
       const selector =
-        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select, textarea, [tabindex]:not([tabindex="-1"])';
-      // offsetParent vaut null dans un conteneur position:fixed : on teste
-      // la presence de boites de rendu, qui marche dans tous les cas.
-      const focusable = () =>
-        Array.from(container.querySelectorAll(selector)).filter(
-          (el) => el.getClientRects().length > 0 && !el.hasAttribute('hidden')
-        );
+        'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-      const handler = (e) => {
+      /**
+       * Elements reellement atteignables : rendus, non caches, non retires de
+       * l'ordre de tabulation, et hors sous-arbre aria-hidden (le voile/scrim
+       * n'est de toute facon pas dans le conteneur).
+       */
+      const focusable = () =>
+        Array.from(container.querySelectorAll(selector)).filter((el) => {
+          if (el.getClientRects().length === 0) return false;
+          if (el.hasAttribute('hidden') || el.hasAttribute('disabled')) return false;
+          if (el.getAttribute('aria-hidden') === 'true') return false;
+          if (el.tabIndex < 0) return false;
+          if (el.closest('[aria-hidden="true"]') && el.closest('[aria-hidden="true"]') !== container) return false;
+          return true;
+        });
+
+      const fallback = () => {
+        if (!container.hasAttribute('tabindex')) container.setAttribute('tabindex', '-1');
+        container.focus();
+      };
+
+      const keydown = (e) => {
         if (e.key !== 'Tab') return;
+        // Conteneur remplace/retire par un re-rendu : le piege n'a plus d'objet.
+        if (!container.isConnected) {
+          utils.releaseFocus(container);
+          return;
+        }
         const items = focusable();
-        if (!items.length) return;
+        if (!items.length) {
+          e.preventDefault();
+          fallback();
+          return;
+        }
         const first = items[0];
         const last = items[items.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
+        const active = document.activeElement;
+        // Focus hors du dialogue (overlay tiers, body apres un re-rendu) :
+        // on le ramene dans le panneau au lieu de laisser filer la tabulation.
+        if (!container.contains(active)) {
+          e.preventDefault();
+          (e.shiftKey ? last : first).focus();
+          return;
+        }
+        if (e.shiftKey && (active === first || active === container)) {
           e.preventDefault();
           last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
+        } else if (!e.shiftKey && active === last) {
           e.preventDefault();
           first.focus();
         }
       };
 
-      container.addEventListener('keydown', handler);
-      container._releaseFocusTrap = () => container.removeEventListener('keydown', handler);
-      // Au frame suivant : a t=0 les transitions de visibility heritees ne sont
-      // pas encore resolues et l'element n'est pas focusable.
-      requestAnimationFrame(() => (firstFocus || focusable()[0])?.focus());
+      const focusin = (e) => {
+        if (!container.isConnected) {
+          utils.releaseFocus(container);
+          return;
+        }
+        if (container.contains(e.target)) return;
+        const items = focusable();
+        if (items.length) items[0].focus();
+        else fallback();
+      };
+
+      // Capture : on passe avant les gestionnaires des overlays tiers.
+      document.addEventListener('keydown', keydown, true);
+      document.addEventListener('focusin', focusin, true);
+      container._releaseFocusTrap = () => {
+        document.removeEventListener('keydown', keydown, true);
+        document.removeEventListener('focusin', focusin, true);
+      };
+
+      // Deplacement du focus dans le dialogue. Un seul frame ne suffit pas :
+      // a t=0 les transitions de visibility heritees ne sont pas encore
+      // resolues et l'element n'est pas encore focusable. On reessaie sur
+      // quelques frames, puis on se rabat sur le conteneur lui-meme pour que
+      // le focus quitte toujours le declencheur.
+      let attempts = 0;
+      const placeFocus = () => {
+        // Deja pose (ou deplace par l'utilisateur) : on ne vole pas le focus.
+        if (attempts > 0 && container.contains(document.activeElement)) return;
+        const items = focusable();
+        const wanted = firstFocus && items.indexOf(firstFocus) !== -1 ? firstFocus : items[0];
+        if (wanted) {
+          wanted.focus();
+          if (container.contains(document.activeElement)) return;
+        }
+        if (++attempts < 8) {
+          requestAnimationFrame(placeFocus);
+          return;
+        }
+        fallback();
+      };
+      placeFocus();
+      requestAnimationFrame(placeFocus);
     },
 
     releaseFocus(container) {
@@ -136,25 +213,42 @@
   // NOTIFICATIONS
   // ============================================
   const Notify = {
+    /**
+     * La region live est posee par layout/theme.liquid des le chargement.
+     * On ne la cree ici qu'en secours (page sans layout, apercu partiel) et,
+     * dans ce cas, on differe l'insertion du texte d'un tick : un conteneur
+     * aria-live cree et rempli dans le meme tick n'est pas annonce.
+     */
+    region() {
+      let region = document.getElementById('ThemeNotifications');
+      if (region) return { region, fresh: false };
+      region = document.createElement('div');
+      region.id = 'ThemeNotifications';
+      region.className = 'theme-notifications';
+      region.setAttribute('role', 'status');
+      region.setAttribute('aria-live', 'polite');
+      region.setAttribute('aria-atomic', 'false');
+      document.body.appendChild(region);
+      return { region, fresh: true };
+    },
+
     show(message, type) {
       if (!message) return;
-      let region = document.getElementById('ThemeNotifications');
-      if (!region) {
-        region = document.createElement('div');
-        region.id = 'ThemeNotifications';
-        region.className = 'theme-notifications';
-        region.setAttribute('role', 'status');
-        region.setAttribute('aria-live', 'polite');
-        document.body.appendChild(region);
-      }
+      const { region, fresh } = this.region();
       const note = document.createElement('div');
       note.className = 'theme-notification' + (type === 'error' ? ' theme-notification--error' : '');
-      note.textContent = message;
-      region.appendChild(note);
-      setTimeout(() => {
-        note.classList.add('is-leaving');
-        setTimeout(() => note.remove(), 300);
-      }, 2600);
+      const emit = () => {
+        // textContent pose APRES l'insertion du noeud : le lecteur d'ecran voit
+        // une mutation de la region deja observee, donc une annonce reelle.
+        region.appendChild(note);
+        note.textContent = message;
+        setTimeout(() => {
+          note.classList.add('is-leaving');
+          setTimeout(() => note.remove(), 300);
+        }, 2600);
+      };
+      if (fresh) setTimeout(emit, 50);
+      else emit();
     }
   };
 
@@ -325,9 +419,9 @@
     bindEvents() {
       document.addEventListener('click', (e) => {
         const toggle = e.target.closest('[data-cart-toggle]');
-        if (toggle && this.drawer) {
+        if (toggle) {
           e.preventDefault();
-          this.open();
+          this.open(toggle);
           return;
         }
 
@@ -372,9 +466,19 @@
         this.updateItem(input.closest('[data-cart-item]'), value);
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.state.isOpen) this.close();
-      });
+      // Echap : on se fie a l'etat rendu (classe) plutot qu'au seul drapeau
+      // interne, pour fermer meme si le tiroir a ete ouvert autrement.
+      document.addEventListener(
+        'keydown',
+        (e) => {
+          if (e.key !== 'Escape' && e.key !== 'Esc') return;
+          const drawer = this.drawer || document.querySelector('[data-mini-cart]');
+          if (!this.state.isOpen && !drawer?.classList.contains('is-open')) return;
+          e.preventDefault();
+          this.close();
+        },
+        true
+      );
 
       document.addEventListener('submit', (e) => {
         const form = e.target.closest('[data-type="add-to-cart-form"]');
@@ -385,9 +489,30 @@
       });
     },
 
-    open() {
-      if (!this.drawer) return;
-      this.lastFocus = document.activeElement;
+    /**
+     * Toujours repartir du noeud REELLEMENT dans le document : une reference
+     * mise en cache peut avoir ete detachee par un rendu Section Rendering API,
+     * et le piege de focus se serait alors arme sur un tiroir fantome.
+     * On supprime aussi les doublons eventuels : deux [data-mini-cart] dans le
+     * DOM donnent deux dialogues et un ordre de tabulation imprevisible.
+     */
+    resolveDrawer() {
+      const all = document.querySelectorAll('[data-mini-cart]');
+      for (let i = 1; i < all.length; i += 1) all[i].remove();
+      this.drawer = all[0] || null;
+      const overlays = document.querySelectorAll('[data-mini-cart-overlay]');
+      for (let i = 1; i < overlays.length; i += 1) overlays[i].remove();
+      this.overlay = overlays[0] || null;
+      return this.drawer;
+    },
+
+    open(trigger) {
+      if (!this.resolveDrawer()) return;
+      const active = document.activeElement;
+      this.lastFocus =
+        trigger ||
+        (active && active !== document.body && active !== document.documentElement ? active : null) ||
+        document.querySelector('[data-cart-toggle]');
       this.state.isOpen = true;
       this.drawer.classList.add('is-open');
       this.drawer.setAttribute('aria-hidden', 'false');
@@ -404,10 +529,21 @@
       this.overlay?.classList.remove('is-visible');
       utils.lockScroll(false);
       utils.releaseFocus(this.drawer);
-      this.lastFocus?.focus();
+      // Le declencheur peut avoir ete remplace par un re-rendu de section :
+      // on retombe alors sur le bouton panier du header.
+      const candidate = this.lastFocus;
+      const usable =
+        candidate &&
+        candidate.isConnected &&
+        candidate !== document.body &&
+        candidate.getClientRects().length > 0 &&
+        !candidate.disabled;
+      const back = usable ? candidate : document.querySelector('[data-cart-toggle]') || document.querySelector('.header__action--cart');
+      back?.focus();
+      this.lastFocus = null;
     },
 
-    /** Re-rend le contenu du drawer et les compteurs a partir du serveur. */
+    /** Re-rend le drawer et les compteurs a partir du serveur. */
     async refresh() {
       try {
         const sections = await utils.fetchSections(['mini-cart']);
@@ -442,7 +578,11 @@
         /* silencieux : l'affichage du drawer fait deja foi */
       }
 
-      this.drawer = document.querySelector('[data-mini-cart]');
+      this.resolveDrawer();
+      // innerHTML a remplace les elements focusables : on rearme le piege.
+      if (this.drawer && this.state.isOpen) {
+        utils.trapFocus(this.drawer, this.drawer.querySelector('[data-mini-cart-close]'));
+      }
       Wishlist.updateUI();
     },
 
@@ -461,6 +601,10 @@
 
     async addItem(form) {
       const submitBtn = form.querySelector('[data-add-to-cart]');
+      // Le bouton est desactive pendant la requete : le focus retombe sur
+      // <body>. On memorise le declencheur maintenant pour pouvoir lui rendre
+      // le focus a la fermeture du tiroir.
+      const trigger = submitBtn || form;
       submitBtn?.classList.add('is-loading');
       submitBtn && (submitBtn.disabled = true);
 
@@ -479,7 +623,7 @@
         }
 
         await this.refresh();
-        this.open();
+        this.open(trigger);
         Notify.show(strings.cartAdded);
       } catch (error) {
         console.error('Could not add to cart:', error);
@@ -836,6 +980,42 @@
      * Suggestion de marche via l'endpoint Shopify, pas de service tiers :
      * aucune IP n'est envoyee en dehors de la boutique.
      */
+    /**
+     * Nom du pays DANS la locale affichee.
+     * L'endpoint Shopify renvoie le nom dans la langue par defaut de la
+     * boutique (« Suisse » sur une page anglaise) : on prefere donc les noms
+     * rendus par Liquid dans la locale courante, puis Intl.DisplayNames, et en
+     * dernier recours seulement le nom renvoye par l'endpoint.
+     * @param {string} isoCode - code pays ISO 3166-1 alpha-2
+     * @param {string} fallback - nom renvoye par l'endpoint
+     * @returns {string}
+     */
+    localizedCountryName(isoCode, fallback) {
+      const code = (isoCode || '').toUpperCase();
+      if (!code) return fallback;
+
+      const node = document.querySelector('[data-market-country-names]');
+      if (node) {
+        try {
+          const names = JSON.parse(node.textContent);
+          if (names[code]) return names[code];
+        } catch (e) {
+          /* JSON illisible : on continue avec les replis */
+        }
+      }
+
+      try {
+        const locale = window.themeLocale || document.documentElement.lang;
+        const display = new Intl.DisplayNames([locale], { type: 'region' });
+        const name = display.of(code);
+        if (name && name !== code) return name;
+      } catch (e) {
+        /* Intl.DisplayNames indisponible */
+      }
+
+      return fallback;
+    },
+
     async suggestMarket() {
       const banner = document.getElementById('MarketBanner');
       if (!banner) return;
@@ -846,21 +1026,32 @@
       }
 
       try {
-        const res = await fetch(`${window.shopUrl || ''}/browsing_context_suggestions.json`);
+        /*
+         * L'endpoint renvoie le nom du pays dans la langue de l'URL appelee.
+         * Appele sur window.shopUrl (racine sans prefixe de locale), il repond
+         * toujours dans la langue par defaut de la boutique : d'ou « Suisse »
+         * sur la page anglaise. On passe donc par routes.root_url, qui porte
+         * le prefixe de la locale affichee (/en, /fr...).
+         */
+        const root = (window.routes && window.routes.root_url) || '/';
+        const endpoint = `${root.replace(/\/$/, '')}/browsing_context_suggestions.json`;
+        const res = await fetch(endpoint);
         if (!res.ok) return;
         const data = await res.json();
         const suggested = data.detected_values && data.detected_values.country;
         if (!suggested || !suggested.handle) return;
 
+        const detected = String(suggested.handle).toUpperCase();
         const current = document.querySelector('[data-country-code][aria-current="true"]');
-        if (current && current.dataset.countryCode === suggested.handle) return;
+        if (current && (current.dataset.countryCode || '').toUpperCase() === detected) return;
 
         const text = banner.querySelector('[data-market-banner-text]');
         const switchBtn = banner.querySelector('[data-market-banner-switch]');
         if (!text || !switchBtn) return;
 
-        text.textContent = utils.interpolate(strings.marketBanner, 'country', suggested.name);
-        switchBtn.dataset.detectedCountry = suggested.handle;
+        const countryName = this.localizedCountryName(detected, suggested.name);
+        text.textContent = utils.interpolate(strings.marketBanner, 'country', countryName);
+        switchBtn.dataset.detectedCountry = detected;
         banner.classList.add('is-visible');
       } catch (e) {
         /* suggestion indisponible : on n'affiche rien */

@@ -25,6 +25,9 @@
       "previous": "Page précédente",
       "next": "Page suivante",
       "page": "Page {{ number }}"
+    },
+    "footer": {
+      "rights_reserved": "Tous droits réservés."
     }
   },
   "accessibility": {
@@ -80,13 +83,18 @@
       }
     },
     "lookbook": {
-      "view_look": "Voir le look"
+      "view_look": "Voir le look",
+      "default_pretitle": "Inspiration",
+      "default_title": "Le lookbook",
+      "default_description": "Entrez dans notre univers à travers des silhouettes composées avec soin.",
+      "default_item_title": "Look {{ number }}",
+      "default_link_label": "Découvrir"
     },
     "rich_text": {
       "no_blocks": "Ajoutez un pré-titre, un titre, du texte ou un bouton pour composer cette section."
     },
     "testimonials": {
-      "rating": "Note : {{ rating }} sur 5",
+      "rating": "Note : {{ rating }} sur 5",
       "carousel_label": "Témoignages clients, liste défilante horizontalement"
     },
     "faq": {
@@ -132,7 +140,7 @@
       "hours": "Heures",
       "minutes": "Minutes",
       "seconds": "Secondes",
-      "summary": "Temps restant : {{ days }} jours, {{ hours }} heures, {{ minutes }} minutes.",
+      "summary": "Temps restant : {{ days }} jours, {{ hours }} heures, {{ minutes }} minutes.",
       "finished": "Le compte à rebours est terminé."
     },
     "tabs": {
@@ -149,15 +157,15 @@
     },
     "reviews": {
       "aria_label": "Avis clients",
-      "rating": "Note : {{ rating }} sur 5",
-      "average_aria": "Note moyenne : {{ rating }} sur 5",
+      "rating": "Note : {{ rating }} sur 5",
+      "average_aria": "Note moyenne : {{ rating }} sur 5",
       "average_value": "{{ rating }} / 5",
       "based_on": {
         "one": "Basé sur {{ count }} avis",
         "other": "Basé sur {{ count }} avis"
       },
       "verified": "Achat vérifié",
-      "product_label": "Produit concerné :"
+      "product_label": "Produit concerné :"
     },
     "map": {
       "aria_label": "Nous trouver",
@@ -179,6 +187,30 @@
     },
     "custom_liquid": {
       "empty": "Ajoutez votre code Liquid ou HTML dans les réglages de cette section. Ce message n'est visible que dans l'éditeur de thème."
+    },
+    "hero": {
+      "default_pretitle": "Nouvelle collection 2026",
+      "default_title": "L'élégance, redéfinie",
+      "default_description": "Découvrez notre nouvelle collection de pièces intemporelles, coupées pour sublimer et faites pour durer.",
+      "default_button": "Découvrir la collection",
+      "default_button_2": "Notre histoire"
+    },
+    "featured_collection": {
+      "default_pretitle": "Nouveautés",
+      "default_title": "Notre collection",
+      "default_description": "Des pièces intemporelles, façonnées avec soin.",
+      "default_view_all": "Tout voir"
+    },
+    "newsletter": {
+      "default_pretitle": "Restons en lien",
+      "default_title": "Rejoignez notre univers",
+      "default_description": "Inscrivez-vous pour accéder en avant-première aux nouveautés, aux offres exclusives et à nos conseils de style.",
+      "default_placeholder": "Votre adresse e-mail",
+      "default_button": "S'inscrire",
+      "default_disclaimer": "En vous inscrivant, vous acceptez notre politique de confidentialité."
+    },
+    "related_products": {
+      "default_title": "Vous aimerez aussi"
     }
   },
   "cart": {
@@ -202,7 +234,7 @@
       "update": "Mettre à jour",
       "upsell_title": "Complétez votre look",
       "free_shipping_progress_html": "Plus que <strong>{{ amount }}</strong> pour la livraison gratuite",
-      "free_shipping_success": "Livraison gratuite débloquée !",
+      "free_shipping_success": "Livraison gratuite débloquée !",
       "cart_error": "Une erreur est survenue lors de la mise à jour du panier. Veuillez réessayer.",
       "cart_quantity_error_html": "Vous ne pouvez ajouter que {{ quantity }} de cet article au panier."
     },
@@ -213,7 +245,7 @@
       "total": "Total"
     },
     "notification": {
-      "added": "Ajouté au panier !",
+      "added": "Ajouté au panier !",
       "error": "Impossible d'ajouter au panier"
     }
   },
@@ -235,7 +267,7 @@
       },
       "from_price_html": "À partir de {{ price }}",
       "price": {
-          "unit_price": "Prix à l’unité",
+        "unit_price": "Prix à l’unité",
         "regular_price": "Prix régulier",
         "sale_price": "Prix soldé"
       }
@@ -249,14 +281,14 @@
     },
     "share": "Partager",
     "share_title": "Mes favoris",
-    "share_text": "J'ai {{ count }} articles dans mes favoris !",
+    "share_text": "J'ai {{ count }} articles dans mes favoris !",
     "clear": "Vider les favoris",
-    "clear_confirm": "Vider vos favoris ?",
+    "clear_confirm": "Vider vos favoris ?",
     "empty_title": "Votre liste de favoris est vide",
     "empty_text": "Ajoutez vos articles préférés en cliquant sur le cœur.",
     "empty_link": "Découvrir les produits",
-    "added": "Ajouté aux favoris !",
-    "link_copied": "Lien copié !"
+    "added": "Ajouté aux favoris !",
+    "link_copied": "Lien copié !"
   },
   "blogs": {
     "article": {
@@ -313,7 +345,7 @@
       "add_new": "Ajouter une adresse",
       "edit": "Modifier",
       "delete": "Supprimer",
-      "delete_confirm": "Voulez-vous vraiment supprimer cette adresse ?",
+      "delete_confirm": "Voulez-vous vraiment supprimer cette adresse ?",
       "default": "Adresse par défaut",
       "set_default": "Définir comme adresse par défaut",
       "first_name": "Prénom",
@@ -335,7 +367,7 @@
       "title": "Connexion",
       "email": "E-mail",
       "password": "Mot de passe",
-      "forgot_password": "Mot de passe oublié ?",
+      "forgot_password": "Mot de passe oublié ?",
       "sign_in": "Se connecter",
       "create_account": "Créer un compte",
       "guest_title": "Continuer en tant qu'invité",
@@ -355,7 +387,7 @@
       "email": "E-mail",
       "password": "Mot de passe",
       "submit": "Créer",
-      "already_have_account": "Vous avez déjà un compte ?"
+      "already_have_account": "Vous avez déjà un compte ?"
     },
     "activate_account": {
       "title": "Activer le compte",
@@ -376,7 +408,7 @@
   },
   "gift_cards": {
     "issued": {
-      "title": "Voici votre carte-cadeau de {{ value }} pour {{ shop }} !",
+      "title": "Voici votre carte-cadeau de {{ value }} pour {{ shop }} !",
       "subtext": "Votre carte-cadeau",
       "expires_on": "Expire le {{ expiry }}",
       "redeem": "Utilisez ce code à la caisse pour utiliser votre carte-cadeau",
@@ -390,15 +422,15 @@
     "message": "Saisissez le mot de passe pour accéder à la boutique.",
     "password_label": "Mot de passe",
     "submit": "Entrer",
-    "admin_link": "Vous êtes le propriétaire de la boutique ?",
+    "admin_link": "Vous êtes le propriétaire de la boutique ?",
     "login_form_error": "Mot de passe incorrect, veuillez réessayer."
   },
   "newsletter": {
-    "success": "Merci pour votre inscription !",
+    "success": "Merci pour votre inscription !",
     "email_label": "Adresse e-mail"
   },
   "markets": {
-    "banner_html": "Vous semblez être en {{ country }}. Changer de marché ?",
+    "banner_html": "Vous semblez être en {{ country }}. Changer de marché ?",
     "switch": "Changer",
     "country": "Pays",
     "language": "Langue",
@@ -412,7 +444,7 @@
       "message": "Message",
       "send": "Envoyer",
       "success": "Merci, votre message a bien été envoyé. Nous vous répondrons rapidement.",
-      "error_heading": "Merci de corriger les points suivants :"
+      "error_heading": "Merci de corriger les points suivants :"
     }
   }
 }

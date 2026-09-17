@@ -192,7 +192,7 @@ ul, ol {
 
 .header__nav-link:hover,
 .header__nav-link--active {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .header__nav-chevron {
@@ -242,7 +242,7 @@ ul, ol {
 }
 
 .header__dropdown-link:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .header__dropdown-sublist {
@@ -281,7 +281,7 @@ ul, ol {
 }
 
 .header__action:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .header__cart-count {
@@ -364,7 +364,7 @@ ul, ol {
 }
 
 .search-overlay__submit:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* ============================================

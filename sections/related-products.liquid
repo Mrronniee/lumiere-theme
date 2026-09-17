@@ -48,7 +48,13 @@
 
 <div class="related-products" data-section-id="{{ section.id }}">
   <div class="related-products__header">
-    <h2 class="related-products__title">{{ section.settings.title }}</h2>
+    <h2 class="related-products__title">
+      {%- if section.settings.title != blank -%}
+        {{- section.settings.title -}}
+      {%- else -%}
+        {{- 'sections.related_products.default_title' | t -}}
+      {%- endif -%}
+    </h2>
   </div>
 
   <div class="related-products__grid">
@@ -98,8 +104,7 @@
     {
       "type": "text",
       "id": "title",
-      "label": "t:sections.related_products.settings.title.label",
-      "default": "You may also like"
+      "label": "t:sections.related_products.settings.title.label"
     },
     {
       "type": "collection",

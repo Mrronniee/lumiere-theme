@@ -39,6 +39,44 @@
   assign c_accent = settings.color_accent | default: '#c9a96e'
   assign c_bg = settings.color_background | default: '#faf9f7'
   assign c_text = settings.color_text | default: '#1a1a1a'
+
+  comment
+    Accessibilite (WCAG AA, 4.5:1) : l'accent et le gris secondaire du theme
+    servent aussi de couleur de texte (sur-titres, comptages, references).
+    On derive donc deux jetons dedies au TEXTE, ajustes juste ce qu'il faut
+    pour atteindre 4.5:1 sur le fond du thème, sans toucher a --color-accent
+    (aplats, bordures, boutons) qui garde l'identite de la marque.
+    Si le fond est sombre on eclaircit au lieu d'assombrir.
+  endcomment
+  assign white_on_bg = c_bg | color_contrast: '#ffffff'
+  assign bg_is_dark = false
+  if white_on_bg > 2.5
+    assign bg_is_dark = true
+  endif
+
+  assign c_accent_text = c_accent
+  for i in (1..24)
+    assign ratio = c_accent_text | color_contrast: c_bg
+    if ratio >= 4.5
+      break
+    endif
+    if bg_is_dark
+      assign c_accent_text = c_accent_text | color_lighten: 3
+    else
+      assign c_accent_text = c_accent_text | color_darken: 3
+    endif
+  endfor
+
+  assign light_weight = 55
+  assign c_text_light = c_text | color_mix: c_bg, light_weight
+  for i in (1..15)
+    assign ratio = c_text_light | color_contrast: c_bg
+    if ratio >= 4.5
+      break
+    endif
+    assign light_weight = light_weight | plus: 3
+    assign c_text_light = c_text | color_mix: c_bg, light_weight
+  endfor
 -%}
 <style>
   :root {
@@ -46,9 +84,10 @@
     --color-primary-hover: {{ c_primary | color_lighten: 12 }};
     --color-accent: {{ c_accent }};
     --color-accent-dark: {{ c_accent | color_darken: 22 }};
+    --color-accent-text: {{ c_accent_text }};
     --color-background: {{ c_bg }};
     --color-text: {{ c_text }};
-    --color-text-light: {{ c_text | color_mix: c_bg, 55 }};
+    --color-text-light: {{ c_text_light }};
     --color-border: {{ c_text | color_mix: c_bg, 12 }};
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: #c0392b;

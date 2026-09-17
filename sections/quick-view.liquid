@@ -101,7 +101,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     margin-bottom: var(--spacing-xs);
   }
 
@@ -253,6 +253,7 @@
   role="dialog"
   aria-modal="true"
   aria-labelledby="QuickViewTitle"
+  aria-label="{{ 'products.product.quick_view' | t | escape }}"
   aria-hidden="true"
 >
   <div class="quick-view__overlay" data-quick-view-close></div>

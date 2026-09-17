@@ -38,6 +38,14 @@
     z-index: 2;
   }
 
+  /* Plancher de lisibilite : garantit le contraste du texte clair sur une image claire. */
+  .hero__overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 22, 18, 0.45);
+  }
+
   .hero__content {
     position: relative;
     z-index: 3;
@@ -181,28 +189,65 @@
 
   <div class="hero__overlay"></div>
 
+  {%- comment -%}
+    Un reglage rempli d'espaces n'est pas `blank` pour Liquid : sans strip, le
+    titre principal se rend sans texte et la page perd son h1. Les replis
+    passent par les locales, puis par le nom de la boutique en dernier recours.
+  {%- endcomment -%}
+  {%- liquid
+    assign hero_pretitle = section.settings.subtitle | strip
+    assign hero_title = section.settings.title | strip
+    assign hero_description = section.settings.description | strip
+    assign hero_button_label = section.settings.button_label | strip
+    assign hero_button_label_2 = section.settings.button_label_2 | strip
+    if hero_pretitle == blank
+      assign hero_pretitle = 'sections.hero.default_pretitle' | t
+    endif
+    if hero_title == blank
+      assign hero_title = 'sections.hero.default_title' | t | strip
+    endif
+    if hero_title == blank
+      assign hero_title = shop.name
+    endif
+    if hero_description == blank
+      assign hero_description = 'sections.hero.default_description' | t
+    endif
+    if hero_button_label == blank
+      assign hero_button_label = 'sections.hero.default_button' | t
+    endif
+    if hero_button_label_2 == blank
+      assign hero_button_label_2 = 'sections.hero.default_button_2' | t
+    endif
+  -%}
+
   <div class="hero__content">
-    {%- if section.settings.subtitle != blank -%}
-      <p class="hero__pretitle">{{ section.settings.subtitle | escape }}</p>
+    <p class="hero__pretitle">{{ hero_pretitle | escape }}</p>
+
+    {%- comment -%}
+      Un seul h1 par page : le hero porte le titre principal sur l'accueil,
+      ailleurs (page, collection, article...) le titre de la page tient ce role
+      et le hero redescend en h2 pour ne pas casser la hierarchie.
+    {%- endcomment -%}
+    {%- if request.page_type == 'index' -%}
+      <h1 class="hero__title">{{ hero_title }}</h1>
+    {%- else -%}
+      <h2 class="hero__title">{{ hero_title }}</h2>
     {%- endif -%}
 
-    <h1 class="hero__title">{{ section.settings.title | escape }}</h1>
+    <p class="hero__subtitle">{{ hero_description | escape }}</p>
 
-    {%- if section.settings.description != blank -%}
-      <p class="hero__subtitle">{{ section.settings.description | escape }}</p>
-    {%- endif -%}
-
-    {%- if section.settings.button_label != blank or section.settings.button_label_2 != blank -%}
+    {%- comment -%} Le lien pilote l'affichage du bouton ; le libelle vient des locales s'il est vide. {%- endcomment -%}
+    {%- if section.settings.button_link != blank or section.settings.button_link_2 != blank -%}
       <div class="hero__buttons">
-        {%- if section.settings.button_label != blank -%}
+        {%- if section.settings.button_link != blank -%}
           <a href="{{ section.settings.button_link }}" class="hero__button hero__button--primary">
-            {{ section.settings.button_label | escape }}
+            {{ hero_button_label | escape }}
             {% render 'icon', icon: 'arrow-right' %}
           </a>
         {%- endif -%}
-        {%- if section.settings.button_label_2 != blank -%}
+        {%- if section.settings.button_link_2 != blank -%}
           <a href="{{ section.settings.button_link_2 }}" class="hero__button hero__button--secondary">
-            {{ section.settings.button_label_2 | escape }}
+            {{ hero_button_label_2 | escape }}
           </a>
         {%- endif -%}
       </div>
@@ -229,20 +274,17 @@
     {
       "type": "text",
       "id": "subtitle",
-      "label": "t:sections.hero.settings.subtitle.label",
-      "default": "New collection"
+      "label": "t:sections.hero.settings.subtitle.label"
     },
     {
       "type": "text",
       "id": "title",
-      "label": "t:sections.hero.settings.title.label",
-      "default": "Elegance, redefined"
+      "label": "t:sections.hero.settings.title.label"
     },
     {
       "type": "textarea",
       "id": "description",
-      "label": "t:sections.hero.settings.description.label",
-      "default": "Discover our new collection of timeless pieces, cut to flatter and made to last."
+      "label": "t:sections.hero.settings.description.label"
     },
     {
       "type": "header",
@@ -266,8 +308,7 @@
     {
       "type": "text",
       "id": "button_label",
-      "label": "t:sections.hero.settings.button_label.label",
-      "default": "Discover the collection"
+      "label": "t:sections.hero.settings.button_label.label"
     },
     {
       "type": "url",
@@ -277,8 +318,7 @@
     {
       "type": "text",
       "id": "button_label_2",
-      "label": "t:sections.hero.settings.button_label_2.label",
-      "default": "Our story"
+      "label": "t:sections.hero.settings.button_label_2.label"
     },
     {
       "type": "url",

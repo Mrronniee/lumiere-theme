@@ -905,6 +905,13 @@
         },
         "enable_video_looping": {
           "label": "Lecture en boucle des videos"
+        },
+        "header__payment": {
+          "content": "Paiement"
+        },
+        "show_payment_button": {
+          "label": "Afficher les boutons de paiement express (Apple Pay, Shop Pay…)",
+          "info": "Permet au client de payer en un geste, sans créer de compte."
         }
       },
       "blocks": {
@@ -999,10 +1006,14 @@
         "intent": {
           "label": "Type de recommandation",
           "info": "Les produits complémentaires sont ceux que vous associez à la main dans l’application gratuite Shopify Search & Discovery. Ajoutez la section une deuxième fois pour afficher les deux.",
-          "options__1": { "label": "Produits similaires (automatique)" },
-          "options__2": { "label": "Produits complémentaires (Search & Discovery)" }
+          "options__1": {
+            "label": "Produits similaires (automatique)"
+          },
+          "options__2": {
+            "label": "Produits complémentaires (Search & Discovery)"
+          }
         },
-"title": {
+        "title": {
           "label": "Titre"
         },
         "collection": {
@@ -1037,7 +1048,9 @@
         }
       },
       "presets": {
-        "complementary": { "name": "Produits complémentaires" },
+        "complementary": {
+          "name": "Produits complémentaires"
+        },
         "name": "Produits associés"
       }
     },
@@ -2323,6 +2336,13 @@
             "col_5": {
               "label": "Valeur colonne 5"
             }
+          },
+          "presets": {
+            "xs": "XS",
+            "s": "S",
+            "m": "M",
+            "l": "L",
+            "xl": "XL"
           }
         }
       },

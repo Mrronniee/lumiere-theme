@@ -38,7 +38,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: var(--color-accent);
+    color: var(--color-accent-text);
     margin-bottom: var(--spacing-xs);
   }
 
@@ -147,7 +147,9 @@
     display: flex;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
-    scroll-padding-left: 0;
+    /* Aligne l'ancrage scroll-snap sur le padding du conteneur parent,
+       sinon le carrousel se pre-defile au chargement. */
+    scroll-padding-inline-start: var(--container-padding);
     -webkit-overflow-scrolling: touch;
     padding-bottom: var(--spacing-xs);
   }

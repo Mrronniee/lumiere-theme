@@ -1,5 +1,33 @@
 # Changelog
 
+## 1.2.3 — 2026-09-17
+
+### Fixed
+- Cart drawer, keyboard and screen readers: focus now moves into the drawer
+  when it opens, stays inside it while you press Tab (even with a cookie banner
+  or chat widget on the page), and returns to the button that opened it when
+  you close it. Escape always closes the drawer, including after adding a
+  product or changing a quantity. The drawer is announced by name.
+- "Added to cart" and other messages are now read aloud by screen readers.
+- Text contrast: headings, eyebrows, links on hover and secondary grey text are
+  adjusted automatically to stay readable (WCAG AA) on the colours you pick,
+  light or dark, without changing your accent colour on buttons and borders.
+  The lookbook eyebrow follows the lookbook's own background colour.
+- The hero keeps its text readable over light photos, and uses a single main
+  heading per page: the hero title is the page heading on the home page only.
+- Decorative icons (header, footer, trust badges) are no longer read out by
+  screen readers. The quick view window is announced by name.
+- Market suggestion banner: the country name now appears in the shopper's
+  language ("Switzerland" on the English store, "Suisse" on the French one).
+- Default texts of the hero, featured collection, lookbook, newsletter,
+  related products and footer copyright now come from the theme's language
+  files, so a French store shows them in French. Your own texts are unchanged.
+- Settings still in English in the French editor are translated: express
+  payment buttons on the product page and size guide rows.
+- French punctuation uses the proper non-breaking space before ":", "?" and "!".
+- The map section's example address is a neutral placeholder.
+- Testimonial and tab carousels no longer start slightly scrolled on page load.
+
 ## 1.2.2 — 2026-09-03
 
 ### Fixed
