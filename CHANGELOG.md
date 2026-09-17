@@ -27,6 +27,10 @@
 - French punctuation uses the proper non-breaking space before ":", "?" and "!".
 - The map section's example address is a neutral placeholder.
 - Testimonial and tab carousels no longer start slightly scrolled on page load.
+- Apostrophes showed up literally as "&#39;" in some translated texts — the
+  newsletter button, titles and placeholder, the featured collection and
+  lookbook headings, the video banner, and the cart and quick view labels.
+  They now display as apostrophes.
 
 ## 1.2.2 — 2026-09-03
 

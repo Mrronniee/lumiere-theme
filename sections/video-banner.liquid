@@ -241,7 +241,7 @@
         data-video-embed
         data-video-type="{{ section.settings.video_url.type | escape }}"
         data-video-id="{{ section.settings.video_url.id | escape }}"
-        data-iframe-title="{{ 'sections.video_banner.iframe_title' | t | escape }}"
+        data-iframe-title="{{ 'sections.video_banner.iframe_title' | t }}"
         {% if section.settings.autoplay %}data-autoplay="true"{% endif %}
       {% endif %}
     >
@@ -291,8 +291,8 @@
           type="button"
           class="video-banner__control"
           data-video-toggle
-          data-label-play="{{ 'sections.video_banner.play' | t | escape }}"
-          data-label-pause="{{ 'sections.video_banner.pause' | t | escape }}"
+          data-label-play="{{ 'sections.video_banner.play' | t }}"
+          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
           aria-label="{{ 'sections.video_banner.pause' | t }}"
         >
           <span class="video-banner__icon" data-icon-pause>

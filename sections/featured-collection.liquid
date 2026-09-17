@@ -113,11 +113,11 @@
 
 <div class="featured-collection" data-section-id="{{ section.id }}">
   <div class="featured-collection__header">
-    <p class="featured-collection__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.featured_collection.default_pretitle' | t | escape }}{%- endif -%}</p>
+    <p class="featured-collection__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.featured_collection.default_pretitle' | t }}{%- endif -%}</p>
 
-    <h2 class="featured-collection__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.featured_collection.default_title' | t | escape }}{%- endif -%}</h2>
+    <h2 class="featured-collection__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.featured_collection.default_title' | t }}{%- endif -%}</h2>
 
-    <p class="featured-collection__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.featured_collection.default_description' | t | escape }}{%- endif -%}</p>
+    <p class="featured-collection__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.featured_collection.default_description' | t }}{%- endif -%}</p>
   </div>
 
   {%- assign collection = collections[section.settings.collection] -%}

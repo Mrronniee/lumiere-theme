@@ -111,11 +111,11 @@
 
 <div class="newsletter" data-section-id="{{ section.id }}">
   <div class="newsletter__inner">
-    <p class="newsletter__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.newsletter.default_pretitle' | t | escape }}{%- endif -%}</p>
+    <p class="newsletter__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.newsletter.default_pretitle' | t }}{%- endif -%}</p>
 
-    <h2 class="newsletter__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.newsletter.default_title' | t | escape }}{%- endif -%}</h2>
+    <h2 class="newsletter__title">{%- if section.settings.title != blank -%}{{ section.settings.title | escape }}{%- else -%}{{ 'sections.newsletter.default_title' | t }}{%- endif -%}</h2>
 
-    <p class="newsletter__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.newsletter.default_description' | t | escape }}{%- endif -%}</p>
+    <p class="newsletter__description">{%- if section.settings.description != blank -%}{{ section.settings.description | escape }}{%- else -%}{{ 'sections.newsletter.default_description' | t }}{%- endif -%}</p>
 
     {%- form 'customer', class: 'newsletter__form' -%}
       <input type="hidden" name="contact[tags]" value="newsletter">
@@ -130,11 +130,11 @@
         autocorrect="off"
         autocapitalize="off"
         autocomplete="email"
-        placeholder="{% if section.settings.placeholder != blank %}{{ section.settings.placeholder | escape }}{% else %}{{ 'sections.newsletter.default_placeholder' | t | escape }}{% endif %}"
+        placeholder="{% if section.settings.placeholder != blank %}{{ section.settings.placeholder | escape }}{% else %}{{ 'sections.newsletter.default_placeholder' | t }}{% endif %}"
         required
       >
       <button type="submit" class="newsletter__button" name="commit">
-        {%- if section.settings.button_label != blank -%}{{ section.settings.button_label | escape }}{%- else -%}{{ 'sections.newsletter.default_button' | t | escape }}{%- endif -%}
+        {%- if section.settings.button_label != blank -%}{{ section.settings.button_label | escape }}{%- else -%}{{ 'sections.newsletter.default_button' | t }}{%- endif -%}
       </button>
 
       {%- if form.posted_successfully? -%}
@@ -149,7 +149,7 @@
       {%- endif -%}
     {%- endform -%}
 
-    <p class="newsletter__disclaimer">{%- if section.settings.disclaimer != blank -%}{{ section.settings.disclaimer | escape }}{%- else -%}{{ 'sections.newsletter.default_disclaimer' | t | escape }}{%- endif -%}</p>
+    <p class="newsletter__disclaimer">{%- if section.settings.disclaimer != blank -%}{{ section.settings.disclaimer | escape }}{%- else -%}{{ 'sections.newsletter.default_disclaimer' | t }}{%- endif -%}</p>
   </div>
 </div>
 
