@@ -1,0 +1,163 @@
+{% comment %}
+  Section: Recherche predictive
+  Rendue uniquement par la Section Rendering API :
+  routes.predictive_search_url ?q=...&section_id=predictive-search
+  assets/theme.js (PredictiveSearch) deplace les groupes et options ci-dessous
+  dans la liste role="listbox" de la superposition de recherche du header, et
+  lit data-count / data-status pour l'etat vide et la region aria-live.
+  Sans preset : elle ne s'ajoute pas depuis l'editeur de theme.
+{% endcomment %}
+
+{%- if predictive_search.performed -%}
+  {%- liquid
+    assign ps = predictive_search.resources
+    assign ps_total = ps.products.size | plus: ps.collections.size | plus: ps.pages.size | plus: ps.articles.size
+    if ps_total > 0
+      assign ps_status = 'general.search.suggestions_count' | t: count: ps_total, terms: predictive_search.terms
+    else
+      assign ps_status = 'general.search.suggestions_empty' | t: terms: predictive_search.terms
+    endif
+
+    comment
+      Le lien « voir tous » reprend le type du formulaire classique, pour que
+      /search affiche la meme chose qu'une recherche lancee avec Entree.
+    endcomment
+    if settings.search_include_pages
+      assign ps_search_type = 'product,page,article'
+    else
+      assign ps_search_type = 'product'
+    endif
+    assign ps_index = 0
+  -%}
+  <div
+    class="predictive-search__results"
+    data-predictive-search-results
+    data-count="{{ ps_total }}"
+    data-status="{{ ps_status }}"
+  >
+    <div data-predictive-search-options>
+      {%- if ps.products.size > 0 -%}
+        <div class="predictive-search__group" role="group" aria-labelledby="PredictiveSearchHeading-products">
+          <p class="predictive-search__heading" id="PredictiveSearchHeading-products" aria-hidden="true">
+            {{- 'general.search.products' | t -}}
+          </p>
+          {%- for ps_product in ps.products -%}
+            {%- assign ps_index = ps_index | plus: 1 -%}
+            <a
+              class="predictive-search__option predictive-search__option--product"
+              id="PredictiveSearchOption-{{ ps_index }}"
+              href="{{ ps_product.url }}"
+              role="option"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              <div class="predictive-search__thumb">
+                {%- if ps_product.featured_image != blank -%}
+                  {{
+                    ps_product.featured_image
+                    | image_url: width: 120
+                    | image_tag:
+                      loading: 'lazy',
+                      alt: '',
+                      widths: '60, 120',
+                      sizes: '60px',
+                      class: 'predictive-search__image'
+                  }}
+                {%- endif -%}
+              </div>
+              <div class="predictive-search__text">
+                <span class="predictive-search__title">{{ ps_product.title | escape }}</span>
+                <div class="predictive-search__price">{% render 'price', product: ps_product %}</div>
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if ps.collections.size > 0 -%}
+        <div class="predictive-search__group" role="group" aria-labelledby="PredictiveSearchHeading-collections">
+          <p class="predictive-search__heading" id="PredictiveSearchHeading-collections" aria-hidden="true">
+            {{- 'general.search.collections' | t -}}
+          </p>
+          {%- for ps_collection in ps.collections -%}
+            {%- assign ps_index = ps_index | plus: 1 -%}
+            <a
+              class="predictive-search__option"
+              id="PredictiveSearchOption-{{ ps_index }}"
+              href="{{ ps_collection.url }}"
+              role="option"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              <span class="predictive-search__title">{{ ps_collection.title | escape }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if ps.pages.size > 0 -%}
+        <div class="predictive-search__group" role="group" aria-labelledby="PredictiveSearchHeading-pages">
+          <p class="predictive-search__heading" id="PredictiveSearchHeading-pages" aria-hidden="true">
+            {{- 'general.search.pages' | t -}}
+          </p>
+          {%- for ps_page in ps.pages -%}
+            {%- assign ps_index = ps_index | plus: 1 -%}
+            <a
+              class="predictive-search__option"
+              id="PredictiveSearchOption-{{ ps_index }}"
+              href="{{ ps_page.url }}"
+              role="option"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              <span class="predictive-search__title">{{ ps_page.title | escape }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- if ps.articles.size > 0 -%}
+        <div class="predictive-search__group" role="group" aria-labelledby="PredictiveSearchHeading-articles">
+          <p class="predictive-search__heading" id="PredictiveSearchHeading-articles" aria-hidden="true">
+            {{- 'general.search.articles' | t -}}
+          </p>
+          {%- for ps_article in ps.articles -%}
+            {%- assign ps_index = ps_index | plus: 1 -%}
+            <a
+              class="predictive-search__option"
+              id="PredictiveSearchOption-{{ ps_index }}"
+              href="{{ ps_article.url }}"
+              role="option"
+              aria-selected="false"
+              tabindex="-1"
+            >
+              <span class="predictive-search__title">{{ ps_article.title | escape }}</span>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- assign ps_index = ps_index | plus: 1 -%}
+      <a
+        class="predictive-search__option predictive-search__option--all"
+        id="PredictiveSearchOption-{{ ps_index }}"
+        href="{{ routes.search_url }}?q={{ predictive_search.terms | url_encode }}&amp;type={{ ps_search_type | url_encode }}&amp;options%5Bprefix%5D=last"
+        role="option"
+        aria-selected="false"
+        tabindex="-1"
+      >
+        <span class="predictive-search__title">{{ 'general.search.view_all' | t: terms: predictive_search.terms }}</span>
+        {% render 'icon', icon: 'arrow-right', class: 'predictive-search__arrow' %}
+      </a>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.predictive_search.name",
+  "tag": "div",
+  "class": "section-predictive-search",
+  "settings": []
+}
+{% endschema %}

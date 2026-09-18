@@ -13,7 +13,19 @@
         "one": "{{ count }} résultat",
         "other": "{{ count }} résultats"
       },
-      "submit": "Lancer la recherche"
+      "submit": "Lancer la recherche",
+      "suggestions_label": "Suggestions de recherche",
+      "suggestions_hint": "Des suggestions s'affichent pendant la saisie. Utilisez les flèches haut et bas pour les parcourir et Entrée pour en ouvrir une.",
+      "suggestions_count": {
+        "one": "{{ count }} suggestion pour « {{ terms }} »",
+        "other": "{{ count }} suggestions pour « {{ terms }} »"
+      },
+      "suggestions_empty": "Aucune suggestion pour « {{ terms }} »",
+      "products": "Produits",
+      "collections": "Collections",
+      "pages": "Pages",
+      "articles": "Articles",
+      "view_all": "Voir tous les résultats pour « {{ terms }} »"
     },
     "404": {
       "title": "Page non trouvée",

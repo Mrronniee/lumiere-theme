@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.2.4",
+    "theme_version": "1.3.0",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -803,6 +803,13 @@
   {
     "name": "t:settings_schema.recherche.name",
     "settings": [
+      {
+        "type": "checkbox",
+        "id": "predictive_search_enable",
+        "default": true,
+        "label": "t:settings_schema.recherche.settings.predictive_search_enable.label",
+        "info": "t:settings_schema.recherche.settings.predictive_search_enable.info"
+      },
       {
         "type": "range",
         "id": "search_results_per_page",

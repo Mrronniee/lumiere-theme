@@ -13,7 +13,19 @@
         "one": "{{ count }} result",
         "other": "{{ count }} results"
       },
-      "submit": "Submit search"
+      "submit": "Submit search",
+      "suggestions_label": "Search suggestions",
+      "suggestions_hint": "Suggestions appear as you type. Use the up and down arrow keys to browse them and Enter to open one.",
+      "suggestions_count": {
+        "one": "{{ count }} suggestion for “{{ terms }}”",
+        "other": "{{ count }} suggestions for “{{ terms }}”"
+      },
+      "suggestions_empty": "No suggestions for “{{ terms }}”",
+      "products": "Products",
+      "collections": "Collections",
+      "pages": "Pages",
+      "articles": "Articles",
+      "view_all": "View all results for “{{ terms }}”"
     },
     "404": {
       "title": "Page not found",

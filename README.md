@@ -11,7 +11,7 @@ contact — running this exact theme. No signup, nothing to install.
 
 **[kioskthemes.com](https://kioskthemes.com)** · [All themes](https://kioskthemes.com/themes/) · [Setup guide](https://kioskthemes.com/docs/lumiere/) · [Support](https://kioskthemes.com/support/)
 
-- **Version**: 1.2.3
+- **Version**: 1.3.0
 - **Author**: Kiosk
 - **Licence**: see [LICENSE.md](LICENSE.md)
 - **Languages**: English (default) and French
@@ -22,7 +22,8 @@ contact — running this exact theme. No signup, nothing to install.
 | --- | --- |
 | Storefront | full-width hero, featured collection, image with text, rich text, newsletter |
 | Shopping | product page with variant picker and size guide, collection with filters and sorting, cart drawer, quick view |
-| Content | journal (blog), about and contact pages, predictive search |
+| Content | journal (blog), about and contact pages |
+| Search | predictive search in the header: products (image, title, price), collections, pages and journal articles appear as you type, with a link to all results; full keyboard and screen reader support; can be turned off in **Theme settings → Search** |
 | Extras | wishlist, currency and country selector, sticky add-to-cart on mobile |
 
 Every section is standalone: add, reorder or remove it from the theme editor

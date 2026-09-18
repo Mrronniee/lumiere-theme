@@ -457,6 +457,10 @@
     "recherche": {
       "name": "Recherche",
       "settings": {
+        "predictive_search_enable": {
+          "label": "Activer la recherche prédictive",
+          "info": "Propose des produits, collections, pages et articles dans la recherche pendant la saisie"
+        },
         "search_results_per_page": {
           "label": "Resultats par page"
         },
@@ -2714,6 +2718,9 @@
       "presets": {
         "name": "Contenu personnalisé"
       }
+    },
+    "predictive_search": {
+      "name": "Recherche prédictive"
     }
   }
 }

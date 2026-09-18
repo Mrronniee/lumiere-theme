@@ -1,6 +1,6 @@
 /**
  * LUMIERE — Theme Shopify Mode
- * Wishlist, Quick View, Markets, panier AJAX
+ * Wishlist, Quick View, Markets, panier AJAX, recherche predictive
  */
 
 (function () {
@@ -1349,6 +1349,259 @@
   };
 
   // ============================================
+  // RECHERCHE PREDICTIVE (combobox + listbox)
+  // ============================================
+  /**
+   * Amelioration progressive du champ de la superposition de recherche.
+   * Sans JavaScript, ou si la recherche predictive est desactivee dans
+   * l'editeur (aucun [data-predictive-search] rendu), le formulaire envoie
+   * simplement vers /search.
+   *
+   * Les resultats sont rendus cote Shopify par sections/predictive-search.liquid
+   * (Section Rendering API), donc traduits et formates par la boutique.
+   * Motif WAI-ARIA : le focus reste dans le champ, l'option active est
+   * designee par aria-activedescendant.
+   */
+  const PredictiveSearch = {
+    MIN_CHARS: 2,
+    DELAY: 250,
+
+    init() {
+      const panel = document.querySelector('[data-predictive-search]');
+      const input = document.querySelector('[data-predictive-search-input]');
+      if (!panel || !input || !routes.predictive_search_url) return;
+      // Deja branche sur ces elements (initAll est rappele par l'editeur).
+      if (panel === this.panel && input === this.input) return;
+
+      this.abort();
+      this.panel = panel;
+      this.input = input;
+      this.list = panel.querySelector('[data-predictive-search-list]');
+      this.empty = panel.querySelector('[data-predictive-search-empty]');
+      this.status = document.querySelector('[data-predictive-search-status]');
+      this.cache = new Map();
+      this.activeIndex = -1;
+      this.lastTerms = '';
+      if (!this.list) return;
+
+      const hint = document.getElementById('PredictiveSearchHint');
+      input.setAttribute('role', 'combobox');
+      input.setAttribute('aria-autocomplete', 'list');
+      input.setAttribute('aria-haspopup', 'listbox');
+      input.setAttribute('aria-expanded', 'false');
+      input.setAttribute('aria-controls', this.list.id);
+      input.setAttribute('autocomplete', 'off');
+      if (hint) input.setAttribute('aria-describedby', hint.id);
+
+      input.addEventListener('input', () => this.onInput());
+      input.addEventListener('keydown', (e) => this.onKeydown(e));
+      input.addEventListener('focus', () => this.onFocus());
+      input.addEventListener('blur', (e) => {
+        if (this.panel.contains(e.relatedTarget)) return;
+        this.close();
+      });
+      // Un clic dans la liste (option, barre de defilement) ne doit pas retirer
+      // le focus du champ : sinon le blur ferme la liste avant que le clic
+      // n'atteigne le lien.
+      panel.addEventListener('mousedown', (e) => e.preventDefault());
+    },
+
+    onInput() {
+      clearTimeout(this.timer);
+      // L'option active correspondait a l'ancien texte : Entree doit maintenant
+      // lancer la recherche du nouveau, pas ouvrir un resultat perime.
+      this.setActive(-1);
+      const terms = this.input.value.trim();
+      if (terms.length < this.MIN_CHARS) {
+        this.abort();
+        this.clear();
+        return;
+      }
+      this.timer = setTimeout(() => this.request(terms), this.DELAY);
+    },
+
+    onFocus() {
+      // Retour dans le champ (reouverture de la superposition, Tab arriere) :
+      // on rouvre la liste si elle correspond toujours au texte saisi.
+      if (this.list.children.length && this.input.value.trim() === this.lastTerms) this.open();
+    },
+
+    abort() {
+      clearTimeout(this.timer);
+      if (this.controller) this.controller.abort();
+      this.controller = null;
+    },
+
+    async request(terms) {
+      if (this.cache.has(terms)) {
+        this.render(terms, this.cache.get(terms));
+        return;
+      }
+      // Une seule requete a la fois : la precedente est obsolete.
+      if (this.controller) this.controller.abort();
+      const controller = new AbortController();
+      this.controller = controller;
+
+      const url = new URL(routes.predictive_search_url, window.location.origin);
+      url.searchParams.set('q', terms);
+      url.searchParams.set('section_id', 'predictive-search');
+      url.searchParams.set('resources[type]', 'product,collection,page,article');
+      url.searchParams.set('resources[limit]', '4');
+      url.searchParams.set('resources[limit_scope]', 'each');
+
+      try {
+        const response = await fetch(url.toString(), { signal: controller.signal });
+        if (!response.ok) throw new Error(`Predictive search failed: ${response.status}`);
+        const html = await response.text();
+        this.cache.set(terms, html);
+        // Le texte a change pendant la requete : ce resultat n'est plus le bon.
+        if (this.input.value.trim() !== terms) return;
+        this.render(terms, html);
+      } catch (error) {
+        if (error.name === 'AbortError') return;
+        this.clear();
+      } finally {
+        if (this.controller === controller) this.controller = null;
+      }
+    },
+
+    render(terms, html) {
+      const doc = new DOMParser().parseFromString(html, 'text/html');
+      const results = doc.querySelector('[data-predictive-search-results]');
+      const source = results && results.querySelector('[data-predictive-search-options]');
+      if (!results || !source) {
+        this.clear();
+        return;
+      }
+
+      const nodes = Array.from(source.children).map((node) => document.importNode(node, true));
+      this.list.replaceChildren(...nodes);
+      this.lastTerms = terms;
+
+      const count = parseInt(results.dataset.count, 10) || 0;
+      const status = results.dataset.status || '';
+      if (this.empty) {
+        this.empty.textContent = count ? '' : status;
+        this.empty.hidden = count > 0;
+      }
+
+      this.setActive(-1);
+      // Superposition fermee entre-temps : on garde les resultats sans les ouvrir.
+      if (document.activeElement !== this.input) return;
+      this.open();
+      this.announce(status);
+    },
+
+    options() {
+      return this.list ? Array.from(this.list.querySelectorAll('[role="option"]')) : [];
+    },
+
+    isOpen() {
+      return Boolean(this.panel) && !this.panel.hidden;
+    },
+
+    open() {
+      if (!this.panel) return;
+      this.panel.hidden = false;
+      this.input.setAttribute('aria-expanded', 'true');
+    },
+
+    close() {
+      if (!this.panel) return;
+      this.panel.hidden = true;
+      this.input.setAttribute('aria-expanded', 'false');
+      this.setActive(-1);
+    },
+
+    clear() {
+      if (!this.list) return;
+      this.list.replaceChildren();
+      this.lastTerms = '';
+      if (this.empty) {
+        this.empty.textContent = '';
+        this.empty.hidden = true;
+      }
+      this.close();
+      if (this.status) this.status.textContent = '';
+    },
+
+    /** Vide puis remplit la region : sans ce temps mort, rien n'est annonce. */
+    announce(message) {
+      if (!this.status) return;
+      this.status.textContent = '';
+      window.requestAnimationFrame(() => {
+        this.status.textContent = message;
+      });
+    },
+
+    setActive(index) {
+      const options = this.options();
+      this.activeIndex = index >= 0 && index < options.length ? index : -1;
+      options.forEach((option, i) => {
+        const active = i === this.activeIndex;
+        option.classList.toggle('is-active', active);
+        option.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+      if (this.activeIndex < 0) {
+        this.input?.removeAttribute('aria-activedescendant');
+        return;
+      }
+      const current = options[this.activeIndex];
+      this.input.setAttribute('aria-activedescendant', current.id);
+      current.scrollIntoView({ block: 'nearest' });
+    },
+
+    onKeydown(e) {
+      // Saisie en cours dans un IME (accents composes, japonais...) : Entree,
+      // Echap et les fleches appartiennent a l'IME, pas a la liste.
+      if (e.isComposing || e.keyCode === 229) return;
+      const options = this.options();
+      // Les fleches ne rouvrent la liste que si elle correspond au texte du
+      // champ : Echap, en fermant la superposition, vide le champ de recherche
+      // (comportement du navigateur, sans evenement input) et laisse l'ancienne
+      // liste en place.
+      const current = options.length > 0 && this.input.value.trim() === this.lastTerms;
+      switch (e.key) {
+        case 'ArrowDown':
+          if (!current) return;
+          e.preventDefault();
+          if (!this.isOpen()) this.open();
+          this.setActive(this.activeIndex + 1 >= options.length ? 0 : this.activeIndex + 1);
+          break;
+        case 'ArrowUp':
+          if (!current) return;
+          e.preventDefault();
+          if (!this.isOpen()) this.open();
+          this.setActive(this.activeIndex <= 0 ? options.length - 1 : this.activeIndex - 1);
+          break;
+        case 'Enter': {
+          // Aucune option active : le formulaire classique part vers /search.
+          if (!this.isOpen() || this.activeIndex < 0) return;
+          const option = options[this.activeIndex];
+          if (!option || !option.href) return;
+          e.preventDefault();
+          window.location.assign(option.href);
+          break;
+        }
+        case 'Escape':
+        case 'Esc':
+          // Premier Echap : ferme la liste seulement. Le suivant remonte
+          // jusqu'au header, qui ferme la superposition comme avant.
+          if (!this.isOpen()) return;
+          e.preventDefault();
+          e.stopPropagation();
+          this.close();
+          break;
+        case 'Tab':
+          this.close();
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+  // ============================================
   // HEADER : menu mobile, recherche, scroll
   // ============================================
   const Header = {
@@ -1462,6 +1715,8 @@
 
     closeSearch() {
       if (!this.search) return;
+      PredictiveSearch.abort();
+      PredictiveSearch.close();
       this.search.classList.remove('is-active');
       this.search.setAttribute('aria-hidden', 'true');
       document.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'false');
@@ -1558,6 +1813,7 @@
   // ============================================
   function initAll(scope) {
     Header.init();
+    PredictiveSearch.init();
     Cart.init();
     Wishlist.init();
     QuickView.init();

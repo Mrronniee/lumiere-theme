@@ -187,7 +187,13 @@
   </div>
 </nav>
 
-{%- comment -%} Overlay recherche {%- endcomment -%}
+{%- comment -%}
+  Overlay recherche. Le formulaire classique vers /search reste la base : sans
+  JavaScript, ou recherche predictive desactivee, Entree lance la recherche.
+  Recherche predictive (assets/theme.js, PredictiveSearch) : le champ devient
+  un combobox et la liste ci-dessous recoit les resultats rendus par
+  sections/predictive-search.liquid.
+{%- endcomment -%}
 {%- if settings.show_search -%}
   <div class="search-overlay" id="SearchOverlay" data-search-overlay aria-hidden="true">
     <div class="search-overlay__content">
@@ -203,12 +209,29 @@
           placeholder="{{ 'general.search.placeholder' | t }}"
           class="search-overlay__input"
           value="{{ search.terms | escape }}"
+          {% if settings.predictive_search_enable %}data-predictive-search-input{% endif %}
         >
         <input type="hidden" name="type" value="{% if settings.search_include_pages %}product,page,article{% else %}product{% endif %}">
+        <input type="hidden" name="options[prefix]" value="last">
         <button type="submit" class="search-overlay__submit" aria-label="{{ 'general.search.submit' | t }}">
           {% render 'icon', icon: 'arrow-right' %}
         </button>
       </form>
+
+      {%- if settings.predictive_search_enable -%}
+        <p class="visually-hidden" id="PredictiveSearchHint">{{ 'general.search.suggestions_hint' | t }}</p>
+        <div class="predictive-search" data-predictive-search hidden>
+          <p class="predictive-search__empty" data-predictive-search-empty hidden></p>
+          <div
+            class="predictive-search__list"
+            id="PredictiveSearchListbox"
+            role="listbox"
+            aria-label="{{ 'general.search.suggestions_label' | t }}"
+            data-predictive-search-list
+          ></div>
+        </div>
+        <p class="visually-hidden" role="status" aria-live="polite" aria-atomic="true" data-predictive-search-status></p>
+      {%- endif -%}
     </div>
   </div>
 {%- endif -%}

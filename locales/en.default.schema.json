@@ -457,6 +457,10 @@
     "recherche": {
       "name": "Search",
       "settings": {
+        "predictive_search_enable": {
+          "label": "Enable predictive search",
+          "info": "Suggests products, collections, pages and articles in the search overlay as shoppers type"
+        },
         "search_results_per_page": {
           "label": "Results per page"
         },
@@ -2714,6 +2718,9 @@
       "presets": {
         "name": "Custom Liquid"
       }
+    },
+    "predictive_search": {
+      "name": "Predictive search"
     }
   }
 }

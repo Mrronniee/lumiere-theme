@@ -367,6 +367,143 @@ ul, ol {
   color: var(--color-accent-text);
 }
 
+/* Recherche predictive — liste sous le champ de la superposition.
+   En position absolue : le champ reste centre pendant la frappe au lieu de
+   remonter a chaque resultat. Couleurs de texte : uniquement les jetons
+   garantis a 4.5:1 sur le fond (--color-text, --color-text-light,
+   --color-accent-text), jamais de fond teinte sous le texte secondaire. */
+.predictive-search {
+  position: absolute;
+  top: 100%;
+  inset-inline: var(--container-padding);
+  max-height: calc(50vh - 4rem);
+  max-height: calc(50dvh - 4rem);
+  margin-top: 0.5rem;
+  padding-bottom: var(--spacing-xs);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--color-background);
+}
+
+.predictive-search__group + .predictive-search__group {
+  margin-top: var(--spacing-xs);
+}
+
+.predictive-search__heading {
+  padding: 0.75rem 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+
+.predictive-search__option {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 44px;
+  padding: 0.625rem 0.75rem;
+  border-inline-start: 2px solid transparent;
+  color: var(--color-text);
+  transition: border-color var(--transition-fast);
+}
+
+.predictive-search__option:hover,
+.predictive-search__option.is-active {
+  border-inline-start-color: var(--color-accent-text);
+}
+
+.predictive-search__option:hover .predictive-search__title,
+.predictive-search__option.is-active .predictive-search__title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.predictive-search__thumb {
+  flex: 0 0 3.75rem;
+  aspect-ratio: var(--card-ratio, 3 / 4);
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--color-border);
+}
+
+.predictive-search__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.predictive-search__text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.predictive-search__title {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.predictive-search__price {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+}
+
+.predictive-search__price .price {
+  gap: 0.5rem;
+}
+
+/* « Epuise » : l'opacite 0.6 de la fiche produit tombe sous 4.5:1 sur le
+   fond clair par defaut ; ici on passe par le jeton de texte secondaire. */
+.predictive-search__price .price__sold-out {
+  opacity: 1;
+  color: var(--color-text-light);
+}
+
+.predictive-search__option--all {
+  justify-content: space-between;
+  margin-top: var(--spacing-xs);
+  padding-block: 1rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.predictive-search__option--all .predictive-search__title {
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.predictive-search__arrow {
+  flex-shrink: 0;
+  width: 1.125rem;
+  height: 1.125rem;
+  color: var(--color-accent-text);
+}
+
+.predictive-search__empty {
+  padding: var(--spacing-sm) 0.75rem 0.25rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  color: var(--color-text-light);
+}
+
+@media (forced-colors: active) {
+  .predictive-search__option.is-active {
+    outline: 2px solid Highlight;
+    outline-offset: -2px;
+  }
+}
+
 /* ============================================
    PRODUCT CARD
    ============================================ */

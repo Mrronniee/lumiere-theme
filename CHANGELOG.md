@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.3.0 — 2026-09-19
+
+### Added
+- Predictive search in the header search: from the second letter typed,
+  matching products (image, title and price), collections, pages and journal
+  articles appear under the field, followed by a "View all results" link to
+  the search page. Results come from your store in the shopper's language and
+  currency. New setting: **Theme settings → Search → Enable predictive
+  search** (on by default).
+- Keyboard and screen readers: the up and down arrow keys move through the
+  suggestions, Enter opens the highlighted one, and Escape closes the list
+  (a second Escape closes the search, as before). The number of suggestions
+  is read aloud as it changes.
+
+### Changed
+- Pressing Enter in the header search now also finds products from the
+  beginning of the last word ("dres" finds "dress"), matching the
+  suggestions. Without JavaScript, or with predictive search turned off, the
+  search form still takes shoppers to the search page.
+
 ## 1.2.4 — 2026-09-18
 
 ### Fixed
