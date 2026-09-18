@@ -57,18 +57,18 @@
       document.documentElement.classList.add('animations-on');
     {%- endif -%}
     window.Shopify = window.Shopify || {};
-    Shopify.currency = { active: '{{ shop.currency }}', rate: '{{ shop.currency }}' };
-    window.shopUrl = '{{ shop.url }}';
-    window.themeLocale = '{{ request.locale.iso_code }}';
+    Shopify.currency = { active: {{ shop.currency | json }}, rate: {{ shop.currency | json }} };
+    window.shopUrl = {{ shop.url | json }};
+    window.themeLocale = {{ request.locale.iso_code | json }};
     window.themeMoneyFormat = {{ shop.money_format | json }};
     window.routes = {
-      cart_add_url: '{{ routes.cart_add_url }}',
-      cart_change_url: '{{ routes.cart_change_url }}',
-      cart_update_url: '{{ routes.cart_update_url }}',
-      cart_url: '{{ routes.cart_url }}',
-      search_url: '{{ routes.search_url }}',
-      predictive_search_url: '{{ routes.predictive_search_url }}',
-      root_url: '{{ routes.root_url }}'
+      cart_add_url: {{ routes.cart_add_url | json }},
+      cart_change_url: {{ routes.cart_change_url | json }},
+      cart_update_url: {{ routes.cart_update_url | json }},
+      cart_url: {{ routes.cart_url | json }},
+      search_url: {{ routes.search_url | json }},
+      predictive_search_url: {{ routes.predictive_search_url | json }},
+      root_url: {{ routes.root_url | json }}
     };
     window.themeStrings = {
       addToCart: {{ 'products.product.add_to_cart' | t | json }},

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.4 — 2026-09-18
+
+### Fixed
+- Cart and predictive search: the store's currency, address, language and the
+  cart/search endpoints were written as plain quoted text in the page script.
+  On a store with an apostrophe, quote or accent in its name or domain, or on
+  a non-English storefront, this could silently break "Add to cart" and
+  search. These values are now passed through safely, so the cart and search
+  keep working whatever the store's address or language.
+
 ## 1.2.3 — 2026-09-17
 
 ### Fixed
