@@ -54,5 +54,5 @@ paid. Every theme is built by hand, tested on a live store, and ships with a
 written setup guide.
 
 Found a bug or have a question?
-[Open an issue](https://github.com/bauertronniecontact-oss/lumiere-theme/issues)
+[Open an issue](https://github.com/Mrronniee/lumiere-theme/issues)
 or [write to the counter](https://kioskthemes.com/support/).
