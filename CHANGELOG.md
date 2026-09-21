@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.1 — 2026-09-21
+
+### Fixed
+- Order page of classic customer accounts: the price and total of each item
+  now include the automatic discounts and discount codes applied to that
+  item. Before, a discounted item was shown at its price before the
+  discount, so the item totals did not add up to the subtotal below them.
+
 ## 1.3.0 — 2026-09-19
 
 ### Added

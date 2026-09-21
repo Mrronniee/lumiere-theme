@@ -23,9 +23,9 @@
             <a href="{{ line_item.product.url }}">{{ line_item.title }}</a>
           </td>
           <td>{{ line_item.sku }}</td>
-          <td>{{ line_item.price | money }}</td>
+          <td>{{ line_item.final_price | money }}</td>
           <td>{{ line_item.quantity }}</td>
-          <td>{{ line_item.line_price | money }}</td>
+          <td>{{ line_item.final_line_price | money }}</td>
         </tr>
       {%- endfor -%}
     </tbody>
