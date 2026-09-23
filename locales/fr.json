@@ -58,18 +58,13 @@
     "decrease_quantity": "Diminuer la quantité",
     "increase_quantity": "Augmenter la quantité",
     "quantity": "Quantité",
-    "open_filters": "Ouvrir les filtres",
     "close_filters": "Fermer les filtres",
     "grid_view": "Affichage en grille",
     "list_view": "Affichage en liste",
-    "quick_view": "Aperçu rapide",
-    "cart": "Panier",
-    "account": "Compte",
     "wishlist": "Favoris",
     "add_to_wishlist": "Ajouter aux favoris",
     "remove_from_wishlist": "Retirer des favoris",
-    "social_link": "Suivez-nous sur {{ name }}",
-    "change_market": "Changer de pays, de langue ou de devise"
+    "social_link": "Suivez-nous sur {{ name }}"
   },
   "sections": {
     "header": {
@@ -98,7 +93,6 @@
       }
     },
     "lookbook": {
-      "view_look": "Voir le look",
       "default_pretitle": "Inspiration",
       "default_title": "Le lookbook",
       "default_description": "Entrez dans notre univers à travers des silhouettes composées avec soin.",
@@ -213,8 +207,7 @@
     "featured_collection": {
       "default_pretitle": "Nouveautés",
       "default_title": "Notre collection",
-      "default_description": "Des pièces intemporelles, façonnées avec soin.",
-      "default_view_all": "Tout voir"
+      "default_description": "Des pièces intemporelles, façonnées avec soin."
     },
     "newsletter": {
       "default_pretitle": "Restons en lien",
@@ -253,8 +246,7 @@
       "upsell_title": "Complétez votre look",
       "free_shipping_progress_html": "Plus que <strong>{{ amount }}</strong> pour la livraison gratuite",
       "free_shipping_success": "Livraison gratuite débloquée !",
-      "cart_error": "Une erreur est survenue lors de la mise à jour du panier. Veuillez réessayer.",
-      "cart_quantity_error_html": "Vous ne pouvez ajouter que {{ quantity }} de cet article au panier."
+      "cart_error": "Une erreur est survenue lors de la mise à jour du panier. Veuillez réessayer."
     },
     "label": {
       "product": "Produit",
@@ -375,12 +367,10 @@
       "address2": "Complément d'adresse",
       "city": "Ville",
       "country": "Pays",
-      "province": "Région",
       "zip": "Code postal",
       "phone": "Téléphone",
       "add": "Ajouter l'adresse",
       "update": "Mettre à jour l'adresse",
-      "cancel": "Annuler",
       "none": "Vous n'avez aucune adresse enregistrée."
     },
     "login": {
@@ -433,8 +423,7 @@
       "expires_on": "Expire le {{ expiry }}",
       "redeem": "Utilisez ce code à la caisse pour utiliser votre carte-cadeau",
       "shop_link": "Commencer mes achats",
-      "print": "Imprimer",
-      "qr_image_alt": "Code QR — scannez pour utiliser la carte-cadeau"
+      "print": "Imprimer"
     }
   },
   "password_page": {
@@ -462,7 +451,6 @@
       "email": "E-mail",
       "phone": "Téléphone",
       "message": "Message",
-      "send": "Envoyer",
       "success": "Merci, votre message a bien été envoyé. Nous vous répondrons rapidement.",
       "error_heading": "Merci de corriger les points suivants :"
     }

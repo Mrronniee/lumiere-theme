@@ -25,11 +25,11 @@
       "settings": {
         "font_heading": {
           "label": "Police des titres",
-          "info": "Utilisee pour les titres de sections, hero, produits"
+          "info": "Utilisée pour les titres de sections, hero, produits"
         },
         "font_body": {
           "label": "Police du corps",
-          "info": "Utilisee pour le texte courant, boutons, navigation"
+          "info": "Utilisée pour le texte courant, boutons, navigation"
         }
       }
     },
@@ -38,7 +38,7 @@
       "settings": {
         "logo": {
           "label": "Logo",
-          "info": "Format SVG ou PNG transparent recommande"
+          "info": "Format SVG ou PNG transparent recommandé"
         },
         "logo_width": {
           "label": "Largeur du logo (desktop)"
@@ -50,7 +50,7 @@
       }
     },
     "en_tete": {
-      "name": "En-tete",
+      "name": "En-tête",
       "settings": {
         "header_transparent_home": {
           "label": "Header transparent sur l'accueil",
@@ -63,7 +63,7 @@
           "label": "Afficher le compte client"
         },
         "show_wishlist": {
-          "label": "Afficher la wishlist"
+          "label": "Afficher les favoris"
         }
       }
     },
@@ -77,27 +77,27 @@
           "label": "Bouton ajout rapide"
         },
         "product_card_show_wishlist": {
-          "label": "Bouton wishlist sur les cartes"
+          "label": "Bouton favoris sur les cartes"
         },
         "product_enable_quick_view": {
-          "label": "Activer le quick view",
+          "label": "Activer l'aperçu rapide",
           "info": "Apercu rapide depuis les listes de produits"
         }
       }
     },
     "wishlist": {
-      "name": "Wishlist",
+      "name": "Favoris",
       "settings": {
         "wishlist_enable": {
-          "label": "Activer la wishlist"
+          "label": "Activer les favoris"
         },
         "wishlist_show_share": {
-          "label": "Bouton partager la wishlist"
+          "label": "Bouton partager les favoris"
         }
       }
     },
     "reseaux_sociaux": {
-      "name": "Reseaux sociaux",
+      "name": "Réseaux sociaux",
       "settings": {
         "social_instagram": {
           "label": "Instagram"
@@ -117,20 +117,20 @@
       "name": "Shopify Markets",
       "settings": {
         "show_country_selector": {
-          "label": "Selecteur de pays",
+          "label": "Sélecteur de pays",
           "info": "Pour les taxes et frais de port"
         },
         "show_country_flags": {
           "label": "Drapeaux des pays"
         },
         "show_language_selector": {
-          "label": "Selecteur de langue",
-          "info": "Necessite Shopify Markets configure"
+          "label": "Sélecteur de langue",
+          "info": "Nécessite Shopify Markets configuré"
         },
         "language_selector_style": {
-          "label": "Style du selecteur",
+          "label": "Style du sélecteur",
           "options__1": {
-            "label": "Dropdown"
+            "label": "Liste déroulante"
           },
           "options__2": {
             "label": "Drapeaux"
@@ -140,8 +140,8 @@
           }
         },
         "show_currency_selector": {
-          "label": "Selecteur de devise",
-          "info": "Necessite Shopify Markets configure"
+          "label": "Sélecteur de devise",
+          "info": "Nécessite Shopify Markets configuré"
         },
         "show_currency_flags": {
           "label": "Afficher les drapeaux"
@@ -362,14 +362,14 @@
       }
     },
     "icones": {
-      "name": "Icones",
+      "name": "Icônes",
       "settings": {
         "icon_stroke_width": {
           "label": "Epaisseur du trait",
           "info": "15 correspond a un trait de 1,5 px"
         },
         "icon_size": {
-          "label": "Taille des icones"
+          "label": "Taille des icônes"
         }
       }
     },
@@ -413,10 +413,10 @@
       }
     },
     "selecteurs_de_variantes": {
-      "name": "Selecteurs de variantes",
+      "name": "Sélecteurs de variantes",
       "settings": {
         "variant_style": {
-          "label": "Style du selecteur",
+          "label": "Style du sélecteur",
           "options__1": {
             "label": "Boutons"
           },
@@ -462,7 +462,7 @@
           "info": "Propose des produits, collections, pages et articles dans la recherche pendant la saisie"
         },
         "search_results_per_page": {
-          "label": "Resultats par page"
+          "label": "Résultats par page"
         },
         "search_include_pages": {
           "label": "Inclure les pages et articles",
@@ -570,7 +570,7 @@
       }
     },
     "footer": {
-      "name": "Footer",
+      "name": "Pied de page",
       "settings": {
         "show_payment_icons": {
           "label": "Afficher les logos des moyens de paiement"
@@ -614,13 +614,10 @@
             }
           }
         }
-      },
-      "presets": {
-        "name": "Footer"
       }
     },
     "header": {
-      "name": "Header",
+      "name": "En-tête",
       "settings": {
         "menu": {
           "label": "Menu"
@@ -908,7 +905,7 @@
           "label": "Activer le zoom sur les images"
         },
         "enable_video_looping": {
-          "label": "Lecture en boucle des videos"
+          "label": "Lecture en boucle des vidéos"
         },
         "header__payment": {
           "content": "Paiement"
@@ -941,13 +938,6 @@
       "settings": {
         "upsell_collection": {
           "label": "Collection d'upsells"
-        },
-        "header__1": {
-          "content": "Livraison gratuite"
-        },
-        "free_shipping_threshold": {
-          "label": "Seuil livraison gratuite (centimes)",
-          "info": "10000 = 100 EUR. Mettre 0 pour desactiver la barre de progression."
         }
       }
     },
@@ -1002,7 +992,7 @@
       }
     },
     "quick_view": {
-      "name": "Quick View"
+      "name": "Aperçu rapide"
     },
     "related_products": {
       "name": "Produits associés",
@@ -1059,7 +1049,7 @@
       }
     },
     "wishlist": {
-      "name": "Wishlist",
+      "name": "Favoris",
       "settings": {
         "columns_desktop": {
           "label": "Colonnes (desktop)"
@@ -1078,7 +1068,7 @@
         }
       },
       "presets": {
-        "name": "Wishlist"
+        "name": "Favoris"
       }
     },
     "main_contact": {
@@ -1095,7 +1085,7 @@
           "label": "Texte du bouton"
         },
         "show_phone": {
-          "label": "Afficher le champ telephone"
+          "label": "Afficher le champ téléphone"
         },
         "show_details": {
           "label": "Afficher la colonne coordonnees"
@@ -1131,7 +1121,7 @@
               "label": "Titre"
             },
             "phone": {
-              "label": "Numero de telephone"
+              "label": "Numéro de téléphone"
             }
           }
         }
@@ -1466,7 +1456,8 @@
         },
         "video_url": {
           "label": "URL vidéo externe",
-          "info": "YouTube ou Vimeo. Le lecteur tiers n'est chargé qu'au moment de la lecture."
+          "info": "YouTube ou Vimeo. Le lecteur tiers n'est chargé qu'au moment de la lecture.",
+          "placeholder": "https://www.youtube.com/watch?v=..."
         },
         "cover_image": {
           "label": "Image de couverture",
@@ -1654,7 +1645,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Format recommandé : 1200 x 1600 px. Renseignez le texte alternatif depuis la bibliothèque de contenus."
+              "info": "Format recommandé : 1200 x 1600 px. Renseignez le texte alternatif depuis la bibliothèque de contenus."
             },
             "caption": {
               "label": "Légende",
@@ -2076,7 +2067,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Format recommandé : 2400 x 1600 px."
+              "info": "Format recommandé : 2400 x 1600 px."
             },
             "image_mobile": {
               "label": "Image mobile",
@@ -2265,7 +2256,7 @@
         },
         "unit": {
           "label": "Unité de mesure",
-          "info": "Purement informatif : l'unité est rappelée au-dessus du tableau, les valeurs restent saisies à la main.",
+          "info": "Purement informatif : l'unité est rappelée au-dessus du tableau, les valeurs restent saisies à la main.",
           "options__1": {
             "label": "Centimètres"
           },
@@ -2414,7 +2405,7 @@
             },
             "date": {
               "label": "Date",
-              "info": "Texte libre, affiché tel quel. Exemple : 12 mars 2026."
+              "info": "Texte libre, affiché tel quel. Exemple : 12 mars 2026."
             },
             "product": {
               "label": "Produit associé",
@@ -2466,7 +2457,7 @@
         },
         "image": {
           "label": "Image de la carte",
-          "info": "Déposez une image statique de votre plan (capture exportée, plan dessiné, illustration). Ce thème n'intègre volontairement aucune carte tierce ni iframe : aucune donnée de vos visiteurs n'est transmise à un service externe au chargement de la page, et aucune clé API n'est nécessaire (choix RGPD)."
+          "info": "Déposez une image statique de votre plan (capture exportée, plan dessiné, illustration). Ce thème n'intègre volontairement aucune carte tierce ni iframe : aucune donnée de vos visiteurs n'est transmise à un service externe au chargement de la page, et aucune clé API n'est nécessaire (choix RGPD)."
         },
         "map_url": {
           "label": "Lien vers la carte externe",
@@ -2632,7 +2623,7 @@
         },
         "divider_style": {
           "label": "Style",
-          "info": "« Espace vide » n'affiche aucun filet : seuls les espacements sont appliqués.",
+          "info": "« Espace vide » n'affiche aucun filet : seuls les espacements sont appliqués.",
           "options__1": {
             "label": "Espace vide"
           },
@@ -2688,7 +2679,7 @@
         },
         "width": {
           "label": "Largeur",
-          "info": "« Pleine largeur » supprime les marges latérales : votre code gère lui-même son espacement.",
+          "info": "« Pleine largeur » supprime les marges latérales : votre code gère lui-même son espacement.",
           "options__1": {
             "label": "Pleine largeur"
           },

@@ -58,18 +58,13 @@
     "decrease_quantity": "Decrease quantity",
     "increase_quantity": "Increase quantity",
     "quantity": "Quantity",
-    "open_filters": "Open filters",
     "close_filters": "Close filters",
     "grid_view": "Grid view",
     "list_view": "List view",
-    "quick_view": "Quick view",
-    "cart": "Cart",
-    "account": "Account",
     "wishlist": "Wishlist",
     "add_to_wishlist": "Add to wishlist",
     "remove_from_wishlist": "Remove from wishlist",
-    "social_link": "Follow us on {{ name }}",
-    "change_market": "Change country, language or currency"
+    "social_link": "Follow us on {{ name }}"
   },
   "sections": {
     "header": {
@@ -98,7 +93,6 @@
       }
     },
     "lookbook": {
-      "view_look": "View look",
       "default_pretitle": "Inspiration",
       "default_title": "The lookbook",
       "default_description": "Step into our world through carefully composed looks.",
@@ -213,8 +207,7 @@
     "featured_collection": {
       "default_pretitle": "New arrivals",
       "default_title": "Our collection",
-      "default_description": "Timeless pieces, made with care.",
-      "default_view_all": "View all"
+      "default_description": "Timeless pieces, made with care."
     },
     "newsletter": {
       "default_pretitle": "Stay in the loop",
@@ -253,8 +246,7 @@
       "upsell_title": "Complete your look",
       "free_shipping_progress_html": "Only <strong>{{ amount }}</strong> away from free shipping",
       "free_shipping_success": "Free shipping unlocked!",
-      "cart_error": "An error occurred while updating your cart. Please try again.",
-      "cart_quantity_error_html": "You can only add {{ quantity }} of this item to your cart."
+      "cart_error": "An error occurred while updating your cart. Please try again."
     },
     "label": {
       "product": "Product",
@@ -375,12 +367,10 @@
       "address2": "Address 2",
       "city": "City",
       "country": "Country",
-      "province": "Province",
       "zip": "Postal / ZIP code",
       "phone": "Phone",
       "add": "Add address",
       "update": "Update address",
-      "cancel": "Cancel",
       "none": "You have no saved addresses."
     },
     "login": {
@@ -433,8 +423,7 @@
       "expires_on": "Expires on {{ expiry }}",
       "redeem": "Use this code at checkout to redeem your gift card",
       "shop_link": "Start shopping",
-      "print": "Print",
-      "qr_image_alt": "QR code — scan to redeem the gift card"
+      "print": "Print"
     }
   },
   "password_page": {
@@ -462,7 +451,6 @@
       "email": "Email",
       "phone": "Phone",
       "message": "Message",
-      "send": "Send",
       "success": "Thanks, your message has been sent. We will get back to you shortly.",
       "error_heading": "Please correct the following:"
     }

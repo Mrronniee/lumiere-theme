@@ -267,27 +267,42 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.625rem;
+    gap: 0;
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
+  /* Cible tactile de 24 x 24 px (exigence Theme Store) : le bouton fait la
+     taille minimale, le rond visible de 10 px est dessine en ::before. */
   .slideshow__dot {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .slideshow__dot::before {
+    content: '';
     display: block;
     width: 10px;
     height: 10px;
-    padding: 0;
     border: 1px solid var(--color-text);
     border-radius: 50%;
     background-color: var(--color-background);
     opacity: 0.55;
-    cursor: pointer;
     box-shadow: var(--shadow-sm);
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
   }
 
-  .slideshow__dot.is-active {
+  .slideshow__dot.is-active::before {
     opacity: 1;
     transform: scale(1.35);
     background-color: var(--color-primary);
@@ -296,7 +311,10 @@
 
   .slideshow__dot:focus-visible {
     outline: 2px solid var(--color-text);
-    outline-offset: 4px;
+    outline-offset: 2px;
+  }
+
+  .slideshow__dot:focus-visible::before {
     opacity: 1;
   }
 
@@ -334,7 +352,8 @@
     .slideshow--fade .slideshow__slide.is-active,
     .slideshow__button,
     .slideshow__arrow,
-    .slideshow__dot {
+    .slideshow__dot,
+    .slideshow__dot::before {
       transition: none;
     }
   }
@@ -846,6 +865,7 @@
           "type": "text",
           "id": "button_label",
           "label": "t:sections.slideshow.blocks.slide.settings.button_label.label",
+          "info": "t:sections.slideshow.blocks.slide.settings.button_label.info",
           "default": "Discover"
         },
         {

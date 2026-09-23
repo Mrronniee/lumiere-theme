@@ -231,7 +231,7 @@ ul, ol {
 .header__dropdown-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.25rem;
 }
 
 .header__dropdown-link {
@@ -246,11 +246,11 @@ ul, ol {
 }
 
 .header__dropdown-sublist {
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   padding-left: 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0;
 }
 
 .header__dropdown-sublink {
@@ -872,6 +872,45 @@ ul, ol {
 /* ============================================
    FOCUS VISIBLE — indicateur unique pour tout le theme
    ============================================ */
+/* ============================================
+   CIBLES TACTILES : 24 x 24 px minimum (Theme Store, WCAG 2.5.8)
+   Les boutons a icone gardent la taille minimale meme si le marchand reduit
+   les icones a 16 px ; les boutons texte et les liens de sous-menus recoivent
+   une hauteur minimale sans changer la mise en page.
+   ============================================ */
+.header__action,
+.header__menu-toggle,
+.mobile-menu__close,
+.search-overlay__close,
+.search-overlay__submit,
+.mini-cart__close,
+.market-banner__close,
+.collection-filters__close,
+.cart-items__remove-btn {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+.header__dropdown-link,
+.header__dropdown-sublink,
+.mobile-menu__footer-link {
+  display: inline-block;
+  padding: 0.25rem 0;
+}
+
+.cart-items__product-remove,
+.mini-cart__item-remove,
+.lookbook__item-link,
+.collection-filters__title {
+  min-height: 24px;
+}
+
+.announcement-bar__link,
+.market-banner__link {
+  padding: 0.25rem 0;
+  margin: -0.25rem 0;
+}
+
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
@@ -1090,7 +1129,7 @@ ul, ol {
   border-top: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 0.25rem;
 }
 
 .mobile-menu__footer-link {

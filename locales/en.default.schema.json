@@ -614,9 +614,6 @@
             }
           }
         }
-      },
-      "presets": {
-        "name": "Footer"
       }
     },
     "header": {
@@ -941,13 +938,6 @@
       "settings": {
         "upsell_collection": {
           "label": "Upsell collection"
-        },
-        "header__1": {
-          "content": "Free shipping"
-        },
-        "free_shipping_threshold": {
-          "label": "Free shipping threshold (cents)",
-          "info": "10000 = 100.00. Set to 0 to hide the progress bar."
         }
       }
     },
@@ -1466,7 +1456,8 @@
         },
         "video_url": {
           "label": "External video URL",
-          "info": "YouTube or Vimeo. The third-party player only loads when playback starts."
+          "info": "YouTube or Vimeo. The third-party player only loads when playback starts.",
+          "placeholder": "https://www.youtube.com/watch?v=..."
         },
         "cover_image": {
           "label": "Cover image",
