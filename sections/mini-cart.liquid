@@ -416,7 +416,7 @@
   <div class="mini-cart__header">
     <div>
       <h2 class="mini-cart__title" id="MiniCartTitle">{{ 'cart.general.title' | t }}</h2>
-      <span class="mini-cart__count" data-cart-count-text>({{ cart.item_count }})</span>
+      <span class="mini-cart__count" data-cart-count-text data-cart-item-count="{{ cart.item_count }}">({{ cart.item_count }})</span>
     </div>
     <button type="button" class="mini-cart__close" data-mini-cart-close aria-label="{{ 'accessibility.close' | t }}">
       {% render 'icon', icon: 'close' %}

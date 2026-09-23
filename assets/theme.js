@@ -608,45 +608,69 @@
     },
 
     /**
-     * Re-rend depuis le serveur (Section Rendering API) tout ce qui affiche le
-     * panier : le tiroir et, sur la page panier, les sections lignes et
-     * recapitulatif (data-cart-section). Exigence Theme Store : toutes les
-     * lignes et le total se rafraichissent quand une quantite change, une ligne
-     * supprimee disparait. Le compteur du header, hors de ces sections, est mis
-     * a jour depuis /cart.js.
+     * Sections a re-rendre apres une mutation du panier : le tiroir et, sur la
+     * page panier, les sections lignes et recapitulatif (data-cart-section).
      */
-    async refresh() {
-      const focusMemo = this.rememberFocus();
+    sectionsWanted() {
       const wanted = [];
       if (document.querySelector('[data-mini-cart]')) wanted.push('mini-cart');
       document.querySelectorAll('[data-cart-section][data-section-id]').forEach((el) => {
         const id = el.dataset.sectionId;
         if (id && wanted.indexOf(id) === -1) wanted.push(id);
       });
+      return wanted;
+    },
 
-      let sectionsRendered = false;
-      if (wanted.length) {
+    /** Parametres a joindre a une requete du Cart API pour recevoir ces sections. */
+    sectionsRequest() {
+      return { sections: this.sectionsWanted(), sections_url: window.location.pathname };
+    },
+
+    /**
+     * Re-rend tout ce qui affiche le panier. Exigence Theme Store : toutes les
+     * lignes et le total se rafraichissent quand une quantite change, une ligne
+     * supprimee disparait.
+     *
+     * Les sections sont de preference celles renvoyees par la requete de
+     * mutation elle-meme (parametre `sections` du Cart API) : un GET
+     * `?sections=` lance juste apres pouvait encore rendre l'ancien panier
+     * (vu le 23/09/2026 : quantite 2 sur le serveur, ligne encore a 1).
+     * Le compteur du header vient du panier renvoye par la mutation, sinon du
+     * tiroir re-rendu, sinon de /cart.js.
+     * @param {{sections?: Object, cart?: Object}} [fresh]
+     */
+    async refresh(fresh) {
+      const focusMemo = this.rememberFocus();
+      const wanted = this.sectionsWanted();
+      let sections = fresh && fresh.sections && typeof fresh.sections === 'object' ? fresh.sections : null;
+      if (wanted.length && (!sections || wanted.some((id) => !sections[id]))) {
         try {
-          const sections = await utils.fetchSections(wanted);
-          if (sections['mini-cart']) this.replaceDrawer(sections['mini-cart']);
-          wanted
-            .filter((id) => id !== 'mini-cart' && sections[id])
-            .forEach((id) => this.replaceSection(id, sections[id]));
-          sectionsRendered = true;
+          sections = await utils.fetchSections(wanted);
         } catch (e) {
           console.error('Could not refresh the cart:', e);
+          sections = null;
         }
       }
 
-      // Compteur du header, et totaux en secours si le re-rendu a echoue
-      try {
-        const res = await fetch(`${routes.cart_url || '/cart'}.js`);
-        if (res.ok) {
-          const cart = await res.json();
-          this.updateCounters(cart, !sectionsRendered);
+      if (sections) {
+        if (sections['mini-cart']) this.replaceDrawer(sections['mini-cart']);
+        wanted
+          .filter((id) => id !== 'mini-cart' && sections[id])
+          .forEach((id) => this.replaceSection(id, sections[id]));
+      }
+
+      const cart = fresh && fresh.cart && typeof fresh.cart.item_count === 'number' ? fresh.cart : null;
+      if (cart) {
+        this.updateCounters(cart, !sections);
+      } else if (sections && sections['mini-cart'] && this.countFromDrawer(sections['mini-cart']) !== null) {
+        this.updateCounters({ item_count: this.countFromDrawer(sections['mini-cart']) }, false);
+      } else {
+        try {
+          const res = await fetch(`${routes.cart_url || '/cart'}.js`);
+          if (res.ok) this.updateCounters(await res.json(), !sections);
+        } catch (e) {
+          /* silencieux : les sections re-rendues font deja foi */
         }
-      } catch (e) {
-        /* silencieux : les sections re-rendues font deja foi */
       }
 
       this.resolveDrawer();
@@ -656,6 +680,15 @@
         utils.trapFocus(this.drawer, restored || this.drawer.querySelector('[data-mini-cart-close]'));
       }
       Wishlist.updateUI();
+    },
+
+    /** Nombre d'articles lu dans le tiroir re-rendu (data-cart-item-count), sinon null. */
+    countFromDrawer(markup) {
+      const parsed = new DOMParser().parseFromString(markup, 'text/html');
+      const el = parsed.querySelector('[data-cart-item-count]');
+      if (!el) return null;
+      const value = parseInt(el.getAttribute('data-cart-item-count'), 10);
+      return Number.isNaN(value) ? null : value;
     },
 
     /** Remplace le contenu du tiroir en conservant son etat ouvert. */
@@ -766,6 +799,9 @@
 
       try {
         const formData = new FormData(form);
+        const wanted = this.sectionsRequest();
+        formData.append('sections', wanted.sections.join(','));
+        formData.append('sections_url', wanted.sections_url);
         const response = await fetch(routes.cart_add_url || '/cart/add', {
           method: 'POST',
           headers: { Accept: 'application/javascript' },
@@ -778,7 +814,7 @@
           return;
         }
 
-        await this.refresh();
+        await this.refresh({ sections: data.sections });
         this.open(trigger);
         Notify.show(strings.cartAdded);
       } catch (error) {
@@ -797,14 +833,14 @@
         const response = await fetch(routes.cart_add_url || '/cart/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ items: [{ id: Number(variantId), quantity: 1 }] })
+          body: JSON.stringify(Object.assign({ items: [{ id: Number(variantId), quantity: 1 }] }, this.sectionsRequest()))
         });
         const data = await response.json();
         if (!response.ok) {
           Notify.show(data.description || strings.cartAddError, 'error');
           return;
         }
-        await this.refresh();
+        await this.refresh({ sections: data.sections });
         Notify.show(strings.cartAdded);
       } catch (error) {
         console.error('Ajout upsell impossible:', error);
@@ -826,7 +862,7 @@
         const response = await fetch(routes.cart_change_url || '/cart/change', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify(body)
+          body: JSON.stringify(Object.assign(body, this.sectionsRequest()))
         });
         const data = await response.json();
 
@@ -834,7 +870,7 @@
           Notify.show(data.description || strings.cartError, 'error');
           return;
         }
-        await this.refresh();
+        await this.refresh({ sections: data.sections, cart: data });
       } catch (error) {
         console.error('Could not update the cart:', error);
         Notify.show(strings.cartError, 'error');
@@ -1024,14 +1060,14 @@
         const response = await fetch(routes.cart_add_url || '/cart/add', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-          body: JSON.stringify({ items: [{ id: variantId, quantity: quantity }] })
+          body: JSON.stringify(Object.assign({ items: [{ id: variantId, quantity: quantity }] }, Cart.sectionsRequest()))
         });
         const data = await response.json();
         if (!response.ok) {
           Notify.show(data.description || strings.cartAddError, 'error');
           return;
         }
-        await Cart.refresh();
+        await Cart.refresh({ sections: data.sections });
         this.close();
         Cart.open();
         Notify.show(strings.cartAdded);
