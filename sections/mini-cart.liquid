@@ -174,6 +174,15 @@
     margin-bottom: var(--spacing-xs);
   }
 
+  .mini-cart__item-properties {
+    list-style: none;
+    margin: 0 0 var(--spacing-xs);
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+
   .mini-cart__item-price {
     font-family: var(--font-body);
     font-size: 0.9375rem;
@@ -438,11 +447,22 @@
               {%- unless item.product.has_only_default_variant -%}
                 <span class="mini-cart__item-variant">{{ item.variant.title }}</span>
               {%- endunless -%}
+              {%- if item.properties.size > 0 -%}
+                <ul class="mini-cart__item-properties">
+                  {%- for property in item.properties -%}
+                    {%- assign property_first_char = property.first | slice: 0 -%}
+                    {%- unless property.last == blank or property_first_char == '_' -%}
+                      <li>{{ property.first }}: {{ property.last }}</li>
+                    {%- endunless -%}
+                  {%- endfor -%}
+                </ul>
+              {%- endif -%}
               <span class="mini-cart__item-price">{{ item.final_line_price | money }}</span>
               <div class="mini-cart__item-actions">
                 <div class="mini-cart__item-qty">
                   <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--minus" data-qty-change="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
-                  <input type="number" value="{{ item.quantity }}" min="0" class="mini-cart__item-qty-input" data-qty-input aria-label="{{ 'accessibility.quantity' | t }}">
+                  <label class="visually-hidden" for="MiniCartQty-{{ forloop.index }}">{{ 'accessibility.quantity' | t }}</label>
+                  <input type="number" id="MiniCartQty-{{ forloop.index }}" value="{{ item.quantity }}" min="0" class="mini-cart__item-qty-input" data-qty-input>
                   <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--plus" data-qty-change="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
                 </div>
                 <button type="button" class="mini-cart__item-remove" data-remove-item>{{ 'cart.general.remove' | t }}</button>
@@ -541,7 +561,7 @@
         <span class="mini-cart__subtotal-value" data-cart-subtotal>{{ cart.total_price | money }}</span>
       </div>
 
-      <p class="mini-cart__note">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+      <p class="mini-cart__note">{% render 'cart-taxes-note' %}</p>
 
       {%- comment -%}
         Formulaire autonome : le drawer est présent sur toutes les pages, il ne peut pas

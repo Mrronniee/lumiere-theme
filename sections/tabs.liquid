@@ -354,7 +354,7 @@
 
   <script>
     (function () {
-      var root = document.getElementById('Tabs-{{ section.id }}');
+      var root = document.getElementById('Tabs-' + {{ section.id | json }});
       if (!root || root.getAttribute('data-tabs-init') === 'true') return;
 
       var list = root.querySelector('[data-tabs-list]');

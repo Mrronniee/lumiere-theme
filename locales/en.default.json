@@ -38,6 +38,9 @@
       "next": "Next page",
       "page": "Page {{ number }}"
     },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\""
+    },
     "footer": {
       "rights_reserved": "All rights reserved."
     }
@@ -237,6 +240,9 @@
       "calculated_at_checkout": "Calculated at checkout",
       "discounts": "Discounts",
       "taxes_and_shipping_at_checkout": "Taxes and shipping calculated at checkout.",
+      "taxes_included_and_shipping_policy_html": "Tax included. <a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
+      "taxes_included_but_shipping_at_checkout": "Tax included. Shipping calculated at checkout.",
+      "taxes_and_shipping_policy_at_checkout_html": "Taxes and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
       "note": "Order note",
       "note_placeholder": "Special delivery instructions...",
       "summary": "Summary",
@@ -278,6 +284,8 @@
         "other": "{{ count }} left in stock"
       },
       "from_price_html": "From {{ price }}",
+      "include_taxes": "Tax included.",
+      "shipping_policy_html": "<a href=\"{{ link }}\">Shipping</a> calculated at checkout.",
       "price": {
         "unit_price": "Unit price",
         "regular_price": "Regular price",

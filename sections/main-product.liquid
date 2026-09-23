@@ -140,6 +140,19 @@
 
   .product-info__price { margin-bottom: var(--spacing-md); }
 
+  .product-info__price + .product-info__tax {
+    margin: calc(var(--spacing-md) * -1 + var(--spacing-xs)) 0 var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+
+  .product-info__tax a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
   .product-info__price-amount {
     font-family: var(--font-heading);
     font-size: 1.5rem;
@@ -572,6 +585,21 @@
           </span>
         </span>
       </div>
+
+      {%- comment -%}
+        Mention des taxes (cart.taxes_included, exigence Theme Store) et lien vers
+        la politique de livraison quand la boutique en a une.
+      {%- endcomment -%}
+      {%- if cart.taxes_included or shop.shipping_policy.body != blank -%}
+        <p class="product-info__tax">
+          {%- if cart.taxes_included -%}
+            {{ 'products.product.include_taxes' | t }}
+          {%- endif -%}
+          {%- if shop.shipping_policy.body != blank %}
+            {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+          {%- endif -%}
+        </p>
+      {%- endif -%}
 
       {%- form 'product', product, id: 'ProductForm', class: 'product-form', data-type: 'add-to-cart-form' -%}
         <input type="hidden" name="id" value="{{ current_variant.id }}" data-product-variant-id>

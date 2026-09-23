@@ -22,15 +22,27 @@
     },
 
     /**
-     * Formate un montant en centimes avec le money_format de la boutique.
-     * Ne suppose aucune locale : c'est Shopify qui fournit le gabarit.
+     * Formate un montant en centimes comme la boutique l'affiche.
+     * Modele prefere : l'echantillon rendu par Liquid dans la devise AFFICHEE
+     * (window.themeMoneySample = {{ 123456 | money }}), dont on deduit symbole,
+     * separateurs et decimales. Le money_format brut ne connait que la devise
+     * de base : sur un prix converti par Markets il aurait ecrit « € » devant
+     * des dollars. Repli sur ce format si l'echantillon manque.
      */
     formatMoney(cents) {
-      const format = window.themeMoneyFormat || '${{amount}}';
       if (typeof cents === 'string') cents = cents.replace('.', '');
-
-      const placeholder = /\{\{\s*(\w+)\s*\}\}/;
       const value = Number(cents) || 0;
+
+      const pattern = utils.moneyPattern();
+      if (pattern) {
+        const parts = (value / 100).toFixed(pattern.decimals).split('.');
+        const grouped = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + pattern.thousands);
+        const number = parts[1] !== undefined ? grouped + pattern.decimal + parts[1] : grouped;
+        return pattern.prefix + number + pattern.suffix;
+      }
+
+      const format = window.themeMoneyFormat || '${{amount}}';
+      const placeholder = /\{\{\s*(\w+)\s*\}\}/;
 
       function group(number, precision, thousands, decimal) {
         const fixed = (number / 100.0).toFixed(precision);
@@ -69,9 +81,47 @@
       return format.replace(placeholder, formatted);
     },
 
+    /**
+     * Deduit de l'echantillon (1 234,56 rendu par Liquid) le prefixe (symbole),
+     * le suffixe, le separateur de milliers, celui des decimales et leur nombre.
+     * Calcule une fois ; null si l'echantillon manque ou n'est pas lisible.
+     */
+    moneyPattern() {
+      if (utils._moneyPattern !== undefined) return utils._moneyPattern;
+      const sample = window.themeMoneySample;
+      const match = typeof sample === 'string' ? sample.match(/\d[\d.,'\u00a0\u202f ]*\d|\d/) : null;
+      if (!match) {
+        utils._moneyPattern = null;
+        return null;
+      }
+      const digits = match[0];
+      const dec = digits.match(/([.,])(\d{2})$/);
+      const decimals = dec ? 2 : 0;
+      const intDigits = dec ? digits.slice(0, -3) : digits;
+      const thousandsMatch = intDigits.match(/[^\d]/);
+      utils._moneyPattern = {
+        prefix: sample.slice(0, match.index),
+        suffix: sample.slice(match.index + digits.length),
+        decimal: dec ? dec[1] : '',
+        decimals: decimals,
+        thousands: thousandsMatch ? thousandsMatch[0] : ''
+      };
+      return utils._moneyPattern;
+    },
+
     /** Remplace [token] dans une chaine traduite. */
     interpolate(str, token, value) {
       return (str || '').replace('[' + token + ']', value);
+    },
+
+    /**
+     * Prefixe un chemin de la boutique avec la locale affichee : routes.root_url
+     * vaut « / » dans la langue principale et « /en » (sans barre finale) ailleurs.
+     * Sans lui, une fiche chargee depuis /en revenait dans la langue par defaut.
+     */
+    localizedPath(path) {
+      const root = (routes.root_url || '/').replace(/\/$/, '');
+      return root + path;
     },
 
     /**
@@ -365,7 +415,7 @@
       const cards = await Promise.all(
         this.items.map(async (item) => {
           try {
-            const res = await fetch(`${window.location.origin}/products/${item.handle}?view=card`);
+            const res = await fetch(utils.localizedPath(`/products/${item.handle}?view=card`));
             if (!res.ok) return null;
             const html = await res.text();
             return html;
@@ -466,6 +516,20 @@
         this.updateItem(input.closest('[data-cart-item]'), value);
       });
 
+      // Note de commande : enregistree sur le panier des la saisie, pour partir
+      // aussi depuis le formulaire du tiroir (qui ne contient pas le champ).
+      document.addEventListener('change', (e) => {
+        const note = e.target.closest('[data-cart-section] textarea[name="note"]');
+        if (!note) return;
+        fetch(routes.cart_update_url || '/cart/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ note: note.value })
+        }).catch(() => {
+          /* la note part de toute facon avec le formulaire de la page panier */
+        });
+      });
+
       // Echap : on se fie a l'etat rendu (classe) plutot qu'au seul drapeau
       // interne, pour fermer meme si le tiroir a ete ouvert autrement.
       document.addEventListener(
@@ -543,56 +607,148 @@
       this.lastFocus = null;
     },
 
-    /** Re-rend le drawer et les compteurs a partir du serveur. */
+    /**
+     * Re-rend depuis le serveur (Section Rendering API) tout ce qui affiche le
+     * panier : le tiroir et, sur la page panier, les sections lignes et
+     * recapitulatif (data-cart-section). Exigence Theme Store : toutes les
+     * lignes et le total se rafraichissent quand une quantite change, une ligne
+     * supprimee disparait. Le compteur du header, hors de ces sections, est mis
+     * a jour depuis /cart.js.
+     */
     async refresh() {
-      try {
-        const sections = await utils.fetchSections(['mini-cart']);
-        const markup = sections['mini-cart'];
-        if (markup) {
-          const parsed = new DOMParser().parseFromString(markup, 'text/html');
-          const fresh = parsed.querySelector('[data-mini-cart]');
-          const freshOverlay = parsed.querySelector('[data-mini-cart-overlay]');
-          const current = document.querySelector('[data-mini-cart]');
-          if (fresh && current) {
-            const wasOpen = current.classList.contains('is-open');
-            current.innerHTML = fresh.innerHTML;
-            if (wasOpen) {
-              current.classList.add('is-open');
-              current.setAttribute('aria-hidden', 'false');
-            }
-          }
-          if (freshOverlay && this.overlay) this.overlay.className = this.overlay.className;
+      const focusMemo = this.rememberFocus();
+      const wanted = [];
+      if (document.querySelector('[data-mini-cart]')) wanted.push('mini-cart');
+      document.querySelectorAll('[data-cart-section][data-section-id]').forEach((el) => {
+        const id = el.dataset.sectionId;
+        if (id && wanted.indexOf(id) === -1) wanted.push(id);
+      });
+
+      let sectionsRendered = false;
+      if (wanted.length) {
+        try {
+          const sections = await utils.fetchSections(wanted);
+          if (sections['mini-cart']) this.replaceDrawer(sections['mini-cart']);
+          wanted
+            .filter((id) => id !== 'mini-cart' && sections[id])
+            .forEach((id) => this.replaceSection(id, sections[id]));
+          sectionsRendered = true;
+        } catch (e) {
+          console.error('Could not refresh the cart:', e);
         }
-      } catch (e) {
-        console.error('Could not refresh the cart:', e);
       }
 
-      // Compteurs presents hors du drawer (header, page panier)
+      // Compteur du header, et totaux en secours si le re-rendu a echoue
       try {
         const res = await fetch(`${routes.cart_url || '/cart'}.js`);
         if (res.ok) {
           const cart = await res.json();
-          this.updateCounters(cart);
+          this.updateCounters(cart, !sectionsRendered);
         }
       } catch (e) {
-        /* silencieux : l'affichage du drawer fait deja foi */
+        /* silencieux : les sections re-rendues font deja foi */
       }
 
       this.resolveDrawer();
+      const restored = this.restoreFocus(focusMemo);
       // innerHTML a remplace les elements focusables : on rearme le piege.
       if (this.drawer && this.state.isOpen) {
-        utils.trapFocus(this.drawer, this.drawer.querySelector('[data-mini-cart-close]'));
+        utils.trapFocus(this.drawer, restored || this.drawer.querySelector('[data-mini-cart-close]'));
       }
       Wishlist.updateUI();
     },
 
-    updateCounters(cart) {
+    /** Remplace le contenu du tiroir en conservant son etat ouvert. */
+    replaceDrawer(markup) {
+      const parsed = new DOMParser().parseFromString(markup, 'text/html');
+      const fresh = parsed.querySelector('[data-mini-cart]');
+      const current = document.querySelector('[data-mini-cart]');
+      if (!fresh || !current) return;
+      const wasOpen = current.classList.contains('is-open');
+      current.innerHTML = fresh.innerHTML;
+      if (wasOpen) {
+        current.classList.add('is-open');
+        current.setAttribute('aria-hidden', 'false');
+      }
+    },
+
+    /**
+     * Remplace une section de la page panier par son rendu frais. Shopify la
+     * renvoie avec son conteneur #shopify-section-<id> : on ne remplace que
+     * l'interieur pour garder le conteneur en place.
+     */
+    replaceSection(id, markup) {
+      const parsed = new DOMParser().parseFromString(markup, 'text/html');
+      const wrapperId = `shopify-section-${id}`;
+      let current = document.getElementById(wrapperId);
+      const fresh = parsed.getElementById(wrapperId);
+      // La note en cours de saisie n'est pas encore sur le serveur : on la garde.
+      const typedNote = current && current.querySelector('textarea[name="note"]');
+      const typed = typedNote ? typedNote.value : null;
+      if (current && fresh) {
+        current.innerHTML = fresh.innerHTML;
+      } else {
+        const currentRoot = document.querySelector(`[data-cart-section][data-section-id="${id}"]`);
+        const freshRoot = parsed.querySelector(`[data-cart-section][data-section-id="${id}"]`);
+        if (!currentRoot || !freshRoot) return;
+        currentRoot.replaceWith(freshRoot);
+        current = freshRoot;
+      }
+      if (typed !== null) {
+        const freshNote = current.querySelector('textarea[name="note"]');
+        if (freshNote && freshNote.value !== typed) freshNote.value = typed;
+      }
+    },
+
+    /**
+     * Le re-rendu detruit l'element qui avait le focus (bouton +/-, champ
+     * quantite, supprimer). On memorise la ligne (cle) et la commande pour
+     * reposer le focus au meme endroit ; a defaut sur la premiere quantite
+     * restante ; a defaut sur le titre (panier vide) ou le bouton fermer.
+     */
+    rememberFocus() {
+      const active = document.activeElement;
+      if (!active || active === document.body) return null;
+      const item = active.closest('[data-cart-item]');
+      if (!item) return null;
+      let control = null;
+      if (active.matches('[data-qty-change]')) control = `[data-qty-change="${active.dataset.qtyChange}"]`;
+      else if (active.matches('[data-qty-input]')) control = '[data-qty-input]';
+      else if (active.matches('[data-remove-item]')) control = '[data-remove-item]';
+      return { key: item.dataset.key, control, inDrawer: Boolean(active.closest('[data-mini-cart]')) };
+    },
+
+    restoreFocus(memo) {
+      if (!memo) return null;
+      const drawer = document.querySelector('[data-mini-cart]');
+      const inDrawer = (el) => Boolean(drawer && drawer.contains(el));
+      const pick = (selector) =>
+        Array.from(document.querySelectorAll(selector)).find((el) => inDrawer(el) === memo.inDrawer) || null;
+
+      let target = null;
+      if (memo.key && memo.control) target = pick(`[data-cart-item][data-key="${memo.key}"] ${memo.control}`);
+      if (!target) target = pick('[data-cart-item] [data-qty-input]');
+      if (!target) {
+        target = memo.inDrawer ? pick('[data-mini-cart-close]') : pick('.cart-items__title, .cart-items__empty-title');
+        if (target && !target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+      }
+      if (!target) return null;
+      target.focus({ preventScroll: true });
+      return document.activeElement === target ? target : null;
+    },
+
+    /**
+     * Compteurs du header. Les totaux ne sont reformates en JS qu'en secours
+     * (re-rendu impossible) : le serveur les rend dans la devise affichee.
+     */
+    updateCounters(cart, withTotals) {
       document.querySelectorAll('[data-cart-count]').forEach((el) => {
         el.textContent = cart.item_count;
       });
       document.querySelectorAll('[data-cart-count-text]').forEach((el) => {
         el.textContent = `(${cart.item_count})`;
       });
+      if (!withTotals) return;
       const total = utils.formatMoney(cart.total_price);
       document.querySelectorAll('[data-cart-subtotal], [data-cart-total]').forEach((el) => {
         el.textContent = total;
@@ -736,7 +892,7 @@
 
     async open(handle) {
       try {
-        const response = await fetch(`${window.location.origin}/products/${handle}.js`);
+        const response = await fetch(utils.localizedPath(`/products/${handle}.js`));
         if (!response.ok) throw new Error(response.status);
         const product = await response.json();
         this.product = product;
@@ -775,7 +931,7 @@
       } catch (error) {
         console.error('Quick view unavailable:', error);
         // Repli : on laisse le client aller sur la fiche produit.
-        window.location.href = `${window.location.origin}/products/${handle}`;
+        window.location.href = utils.localizedPath(`/products/${handle}`);
       }
     },
 

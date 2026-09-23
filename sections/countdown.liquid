@@ -315,7 +315,8 @@
   {%- if has_target and is_expired == false -%}
     <script>
       (function () {
-        var root = document.querySelector('[data-countdown="{{ section.id }}"]');
+        var sectionId = {{ section.id | json }};
+        var root = document.querySelector('[data-countdown="' + sectionId + '"]');
         if (!root) return;
 
         /* Idempotence : si la section est rechargee dans l'editeur le noeud est neuf ;
@@ -440,7 +441,7 @@
         }
 
         document.addEventListener('shopify:section:unload', function (event) {
-          if (event.detail && event.detail.sectionId === '{{ section.id }}') stop();
+          if (event.detail && event.detail.sectionId === sectionId) stop();
         });
       })();
     </script>

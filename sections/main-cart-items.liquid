@@ -79,6 +79,15 @@
     color: var(--color-text-light);
   }
 
+  .cart-items__properties {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    color: var(--color-text-light);
+  }
+
   .cart-items__product-remove {
     font-family: var(--font-body);
     font-size: 0.75rem;
@@ -213,7 +222,7 @@
   }
 {%- endstyle -%}
 
-<div class="cart-items" data-section-id="{{ section.id }}">
+<div class="cart-items" data-cart-section data-section-id="{{ section.id }}">
   <h1 class="cart-items__title">{{ 'cart.general.title' | t }}</h1>
 
   {%- if cart.item_count > 0 -%}
@@ -251,7 +260,9 @@
               {%- if item.properties.size > 0 -%}
                 <ul class="cart-items__properties">
                   {%- for property in item.properties -%}
-                    {%- unless property.last == blank or property.first[0] == '_' -%}
+                    {%- comment -%} `chaine[0]` vaut nil en Liquid : les proprietes cachees (_x) restaient visibles {%- endcomment -%}
+                    {%- assign property_first_char = property.first | slice: 0 -%}
+                    {%- unless property.last == blank or property_first_char == '_' -%}
                       <li>{{ property.first }}: {{ property.last }}</li>
                     {%- endunless -%}
                   {%- endfor -%}

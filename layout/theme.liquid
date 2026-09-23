@@ -14,7 +14,7 @@
 
   <title>
     {{ page_title }}
-    {%- if current_tags %} &ndash; tagged "{{ current_tags | join: ', ' }}"{% endif -%}
+    {%- if current_tags -%}{%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags }}{% endif -%}
     {%- if current_page != 1 %} &ndash; {{ 'general.pagination.page' | t: number: current_page }}{% endif -%}
     {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
   </title>
@@ -57,10 +57,15 @@
       document.documentElement.classList.add('animations-on');
     {%- endif -%}
     window.Shopify = window.Shopify || {};
-    Shopify.currency = { active: {{ shop.currency | json }}, rate: {{ shop.currency | json }} };
+    // Devise affichee et taux : poses par content_for_header, on ne les ecrase pas
+    // (le taux valait le code devise, et les apps qui le lisent se trompaient).
+    window.Shopify.currency = window.Shopify.currency || { active: {{ cart.currency.iso_code | json }}, rate: '1.0' };
     window.shopUrl = {{ shop.url | json }};
     window.themeLocale = {{ request.locale.iso_code | json }};
     window.themeMoneyFormat = {{ shop.money_format | json }};
+    // Echantillon rendu dans la devise AFFICHEE (Markets) : theme.js en deduit
+    // symbole, separateurs et decimales au lieu du money_format de la devise de base.
+    window.themeMoneySample = {{ 123456 | money | json }};
     window.routes = {
       cart_add_url: {{ routes.cart_add_url | json }},
       cart_change_url: {{ routes.cart_change_url | json }},

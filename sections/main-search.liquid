@@ -42,7 +42,13 @@
                 <h2 class="search-page__page-title">
                   <a href="{{ item.url }}">{{ item.title | escape }}</a>
                 </h2>
-                <p class="search-page__page-excerpt">{{ item.content | strip_html | truncatewords: 30 }}</p>
+                <p class="search-page__page-excerpt">
+                  {%- if item.object_type == 'article' -%}
+                    {{ item.excerpt_or_content | strip_html | truncatewords: 30 }}
+                  {%- else -%}
+                    {{ item.content | strip_html | truncatewords: 30 }}
+                  {%- endif -%}
+                </p>
               </article>
             {%- endif -%}
           {%- endfor -%}

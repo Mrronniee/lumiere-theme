@@ -339,7 +339,7 @@
 
 <script>
   (function () {
-    var root = document.getElementById('VideoBanner-{{ section.id }}');
+    var root = document.getElementById('VideoBanner-' + {{ section.id | json }});
     if (!root) return;
 
     var prefersReducedMotion =

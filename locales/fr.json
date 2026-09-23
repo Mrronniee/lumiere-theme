@@ -38,6 +38,9 @@
       "next": "Page suivante",
       "page": "Page {{ number }}"
     },
+    "meta": {
+      "tags": "Étiqueté « {{ tags }} »"
+    },
     "footer": {
       "rights_reserved": "Tous droits réservés."
     }
@@ -237,6 +240,9 @@
       "calculated_at_checkout": "Calculé à la caisse",
       "discounts": "Réductions",
       "taxes_and_shipping_at_checkout": "Taxes et frais de livraison calculés à la caisse.",
+      "taxes_included_and_shipping_policy_html": "Taxes incluses. <a href=\"{{ link }}\">Frais de livraison</a> calculés à la caisse.",
+      "taxes_included_but_shipping_at_checkout": "Taxes incluses. Frais de livraison calculés à la caisse.",
+      "taxes_and_shipping_policy_at_checkout_html": "Taxes et <a href=\"{{ link }}\">frais de livraison</a> calculés à la caisse.",
       "note": "Note de commande",
       "note_placeholder": "Instructions spéciales pour la livraison...",
       "summary": "Récapitulatif",
@@ -278,6 +284,8 @@
         "other": "{{ count }} restants en stock"
       },
       "from_price_html": "À partir de {{ price }}",
+      "include_taxes": "Taxes incluses.",
+      "shipping_policy_html": "<a href=\"{{ link }}\">Frais de livraison</a> calculés à la caisse.",
       "price": {
         "unit_price": "Prix à l’unité",
         "regular_price": "Prix régulier",

@@ -3,6 +3,18 @@
   Navigation principale avec menu mobile, recherche, panier, wishlist, markets
 {% endcomment %}
 
+{%- liquid
+  comment
+    routes.root_url vaut « / » dans la langue principale et « /en » (sans barre
+    finale) dans les autres : une concatenation directe donnait « /enpages/wishlist ».
+  endcomment
+  assign wishlist_url = routes.root_url
+  assign root_last_char = wishlist_url | slice: -1
+  unless root_last_char == '/'
+    assign wishlist_url = wishlist_url | append: '/'
+  endunless
+  assign wishlist_url = wishlist_url | append: 'pages/wishlist'
+-%}
 <header
   class="header{% if settings.header_transparent_home and template.name == 'index' %} header--transparent{% endif %}"
   data-section-id="{{ section.id }}"
@@ -105,16 +117,22 @@
         {%- endif -%}
 
         {%- if settings.wishlist_enable and settings.show_wishlist -%}
-          <a href="{{ routes.root_url }}pages/wishlist" class="header__action header__action--wishlist" aria-label="{{ 'accessibility.wishlist' | t }}">
+          <a href="{{ wishlist_url }}" class="header__action header__action--wishlist" aria-label="{{ 'accessibility.wishlist' | t }}">
             {% render 'icon', icon: 'heart' %}
             <span class="header__wishlist-count" data-wishlist-count hidden>0</span>
           </a>
         {%- endif -%}
 
         {%- if shop.customer_accounts_enabled and settings.show_account -%}
-          <a href="{{ routes.account_url }}" class="header__action header__action--account" aria-label="{{ 'customer.account.title' | t }}">
-            {% render 'icon', icon: 'user' %}
-          </a>
+          {%- comment -%}
+            Composant Shopify <shopify-account> (exige par le Theme Store depuis le
+            30/07/2026, visible sur bureau et mobile) : avatar, feuille de compte et
+            connexion sans quitter la boutique. Shopify charge lui-meme son script ;
+            le menu est celui des comptes clients, modifiable dans Navigation.
+          {%- endcomment -%}
+          <div class="header__action header__action--account">
+            <shopify-account menu="customer-account-main-menu"></shopify-account>
+          </div>
         {%- endif -%}
 
         <a
@@ -182,7 +200,7 @@
       <a href="{{ routes.account_url }}" class="mobile-menu__footer-link">{{ 'customer.account.title' | t }}</a>
     {%- endif -%}
     {%- if settings.wishlist_enable and settings.show_wishlist -%}
-      <a href="{{ routes.root_url }}pages/wishlist" class="mobile-menu__footer-link">{{ 'accessibility.wishlist' | t }}</a>
+      <a href="{{ wishlist_url }}" class="mobile-menu__footer-link">{{ 'accessibility.wishlist' | t }}</a>
     {%- endif -%}
   </div>
 </nav>

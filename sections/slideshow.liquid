@@ -528,7 +528,8 @@
   {%- if has_controls -%}
     <script>
       (function () {
-        var root = document.querySelector('[data-slideshow="{{ section.id }}"]');
+        var sectionId = {{ section.id | json }};
+        var root = document.querySelector('[data-slideshow="' + sectionId + '"]');
         if (!root) return;
         /* Idempotence : si la section est rechargee dans l'editeur, le noeud
            est neuf ; si ce script est evalue deux fois sur le meme noeud, on sort. */

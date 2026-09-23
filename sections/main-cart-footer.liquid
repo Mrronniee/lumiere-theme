@@ -120,8 +120,13 @@
   }
 {%- endstyle -%}
 
+{%- comment -%}
+  Conteneur rendu meme panier vide : theme.js le retrouve (data-cart-section)
+  pour re-rendre le recapitulatif apres chaque changement de quantite.
+{%- endcomment -%}
+<div data-cart-section data-section-id="{{ section.id }}">
 {%- if cart.item_count > 0 -%}
-<div class="cart-footer" data-section-id="{{ section.id }}">
+<div class="cart-footer">
   <div class="cart-footer__grid">
     {%- if settings.cart_show_note -%}
     <div class="cart-footer__note">
@@ -161,7 +166,7 @@
         <span data-cart-total>{{ cart.total_price | money }}</span>
       </div>
 
-      <p class="cart-footer__note-shipping">{{ 'cart.general.taxes_and_shipping_at_checkout' | t }}</p>
+      <p class="cart-footer__note-shipping">{% render 'cart-taxes-note' %}</p>
 
       <button type="submit" name="checkout" class="cart-footer__checkout" form="CartForm">
         {{ 'cart.general.checkout' | t }}
@@ -171,6 +176,7 @@
   </div>
 </div>
 {%- endif -%}
+</div>
 
 {% schema %}
 {
