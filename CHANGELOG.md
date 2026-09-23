@@ -1,5 +1,55 @@
 # Changelog
 
+## 1.4.0 — 2026-09-23
+
+### Added
+- Account component in the header: Shopify's `<shopify-account>` replaces the
+  account icon, on desktop and mobile. Shoppers sign in (passwordless, Shop,
+  social providers) and open their account menu without leaving the store.
+  Colours and fonts follow the theme settings. Required by the Shopify Theme
+  Store since 30 July 2026.
+- "Tax included" notice: the product page, the quick view, the cart page and
+  the cart drawer now say whether taxes are included in the prices (a store
+  setting), with a link to your shipping policy when you have one.
+- The cart drawer shows line item properties (personalisation, engraving…),
+  like the cart page.
+- The order note is saved to the cart as soon as it is typed, so it also
+  reaches checkout when the shopper checks out from the drawer.
+
+### Changed
+- Cart page: every line, the totals and the discounts refresh after each
+  quantity change or removal. The refreshed sections come back with the cart
+  request itself, so they can never show an older cart. Keyboard focus stays
+  on the control that was used, and a note being typed is kept.
+- Prices updated by JavaScript (variant change, quick view) follow the currency
+  shown to the shopper (Shopify Markets), not only the store currency.
+- Footer: a fresh install shows the brand block and a "Quick links" column
+  using the `footer` menu; the section can no longer be added a second time
+  from the theme editor.
+- The product page title is larger than the section titles below it, so the
+  heading levels stay visually distinct.
+- Theme editor in French: translated and accented labels (En-tête, Pied de
+  page, Liste déroulante, Aperçu rapide, Favoris); two helper texts are now
+  shown under the countdown and slideshow button settings.
+
+### Fixed
+- The header wishlist link on a translated page went to "/enpages/wishlist"
+  (404).
+- Wishlist cards and the quick view loaded the product in the store's default
+  language on translated pages.
+- Hidden line item properties (names starting with "_") were displayed in the
+  cart.
+- The theme overwrote Shopify's currency object (`Shopify.currency.rate` became
+  the currency code), which could mislead apps reading it.
+- Closing the search, the mobile menu, the quick view, the image zoom or the
+  filters now returns keyboard focus to the button that opened them, even
+  when that button had not received focus (Safari, mouse users).
+- Accessibility: the cart drawer quantity field and the collection filter
+  checkboxes have an id and a label; slideshow dots, product card titles,
+  text buttons and sub-menu links reach 24 × 24 px touch targets; the page
+  title of a tagged collection no longer contains a hard-coded English word;
+  search results show article excerpts.
+
 ## 1.3.1 — 2026-09-21
 
 ### Fixed
