@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.4.1 — 2026-09-23
+
+### Fixed
+- Collection page: the filter panel was hidden from screen readers on desktop
+  (it carried `aria-hidden="true"` although it is always visible there). It
+  is now hidden only while the mobile filter drawer is closed.
+- Header: the cart and wishlist links and the country, language and currency
+  selectors now have accessible names that include their visible text
+  (item count, country, language, currency).
+- Contrast: the newsletter disclaimer and the option counts in the filters
+  were too light (3.25:1 and 1.94:1 measured); both now pass 4.5:1.
+- Heading order: product cards are level-2 headings under the page title of
+  the collection, search and wishlist pages, level-3 elsewhere.
+
+### Changed
+- The first four product cards of a collection or search page load their
+  image immediately, the first one with high priority, instead of lazily.
+- Product card images request a size that matches the number of columns
+  set for mobile.
+
 ## 1.4.0 — 2026-09-23
 
 ### Added

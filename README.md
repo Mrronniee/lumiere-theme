@@ -11,7 +11,7 @@ contact — running this exact theme. No signup, nothing to install.
 
 **[kioskthemes.com](https://kioskthemes.com)** · [All themes](https://kioskthemes.com/themes/) · [Setup guide](https://kioskthemes.com/docs/lumiere/) · [Support](https://kioskthemes.com/support/)
 
-- **Version**: 1.4.0
+- **Version**: 1.4.1
 - **Author**: Kiosk
 - **Licence**: see [LICENSE.md](LICENSE.md)
 - **Languages**: English (default) and French
