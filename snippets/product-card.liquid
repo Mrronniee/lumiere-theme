@@ -1,6 +1,11 @@
 {% comment %}
   Carte produit réutilisable avec wishlist et quick view
   Usage: {% render 'product-card', product: product, show_vendor: true %}
+  Parametres optionnels :
+    heading        : niveau de titre ('h3' par defaut ; 'h2' sous un h1 de page)
+    lazy           : false pour charger l'image immediatement (cartes visibles au chargement)
+    priority       : true pour fetchpriority="high" (premiere carte de la page)
+    columns_mobile : colonnes de la grille en mobile (2 par defaut), pour l'attribut sizes
 {% endcomment %}
 
 {%- liquid
@@ -8,6 +13,14 @@
   if show_vendor == nil
     assign card_show_vendor = settings.product_card_show_vendor
   endif
+  assign card_heading = heading | default: 'h3'
+  assign card_loading = 'lazy'
+  if lazy == false
+    assign card_loading = 'eager'
+  endif
+  assign card_columns_mobile = columns_mobile | default: 2
+  assign card_mobile_vw = 100 | divided_by: card_columns_mobile
+  assign card_sizes = '(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, ' | append: card_mobile_vw | append: 'vw'
 -%}
 <div class="product-card{% if settings.badge_position == 'top-right' %} product-card--badge-right{% endif %}" data-product-id="{{ product.id }}">
   <div class="product-card__media">
@@ -20,10 +33,11 @@
               {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
               {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}"
             src="{{ product.featured_media | image_url: width: 533 }}"
-            sizes="(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+            sizes="{{ card_sizes }}"
             alt="{{ product.featured_media.alt | escape }}"
             class="product-card__image"
-            loading="lazy"
+            loading="{{ card_loading }}"
+            {% if priority %}fetchpriority="high"{% endif %}
             width="{{ product.featured_media.width }}"
             height="{{ product.featured_media.height }}"
           >
@@ -34,7 +48,7 @@
                 {%- if product.media[1].width >= 360 -%}{{ product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
                 {%- if product.media[1].width >= 533 -%}{{ product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}"
               src="{{ product.media[1] | image_url: width: 533 }}"
-              sizes="(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+              sizes="{{ card_sizes }}"
               alt=""
               class="product-card__image product-card__image--hover"
               loading="lazy"
@@ -98,9 +112,9 @@
       <span class="product-card__vendor">{{ product.vendor }}</span>
     {%- endif -%}
 
-    <h3 class="product-card__title">
+    <{{ card_heading }} class="product-card__title">
       <a href="{{ product.url }}" class="product-card__link">{{ product.title | escape }}</a>
-    </h3>
+    </{{ card_heading }}>
 
     <div class="product-card__price">
       {% render 'price', product: product %}

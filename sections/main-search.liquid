@@ -36,7 +36,14 @@
         <div class="collection-grid__products search-page__results">
           {%- for item in search.results -%}
             {%- if item.object_type == 'product' -%}
-              {% render 'product-card', product: item %}
+              {%- liquid
+                assign card_lazy = true
+                if forloop.index <= 4
+                  assign card_lazy = false
+                endif
+                assign card_priority = forloop.first
+              -%}
+              {% render 'product-card', product: item, heading: 'h2', lazy: card_lazy, priority: card_priority %}
             {%- else -%}
               <article class="search-page__page">
                 <h2 class="search-page__page-title">

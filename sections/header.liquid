@@ -117,7 +117,8 @@
         {%- endif -%}
 
         {%- if settings.wishlist_enable and settings.show_wishlist -%}
-          <a href="{{ wishlist_url }}" class="header__action header__action--wishlist" aria-label="{{ 'accessibility.wishlist' | t }}">
+          <a href="{{ wishlist_url }}" class="header__action header__action--wishlist">
+            <span class="visually-hidden">{{ 'accessibility.wishlist' | t }}</span>
             {% render 'icon', icon: 'heart' %}
             <span class="header__wishlist-count" data-wishlist-count hidden>0</span>
           </a>
@@ -139,8 +140,9 @@
           href="{{ routes.cart_url }}"
           class="header__action header__action--cart"
           {% if settings.cart_type == 'drawer' %}data-cart-toggle{% endif %}
-          aria-label="{{ 'cart.general.title' | t }}"
         >
+          {%- comment -%} Nom accessible = libelle masque + compteur visible (axe : label-content-name-mismatch) {%- endcomment -%}
+          <span class="visually-hidden">{{ 'cart.general.title' | t }}</span>
           {% render 'icon', icon: 'cart' %}
           <span class="header__cart-count" data-cart-count>{{ cart.item_count }}</span>
         </a>

@@ -60,7 +60,7 @@
   <div class="related-products__grid">
     {%- if related_collection != blank -%}
       {%- for product in related_collection.products limit: section.settings.products_to_show -%}
-        {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+        {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
       {%- endfor -%}
     {%- else -%}
       {%- comment -%} API de recommandations Shopify : reellement lie au produit courant {%- endcomment -%}
@@ -70,7 +70,7 @@
       >
         {%- if recommendations.performed and recommendations.products_count > 0 -%}
           {%- for product in recommendations.products -%}
-            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
           {%- endfor -%}
         {%- endif -%}
       </div>

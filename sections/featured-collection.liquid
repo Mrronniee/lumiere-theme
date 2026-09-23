@@ -126,7 +126,7 @@
     <div class="featured-collection__grid">
       {%- for product in collection.products limit: section.settings.products_to_show -%}
         <div class="featured-collection__product" data-animate>
-          {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+          {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
         </div>
       {%- endfor -%}
     </div>

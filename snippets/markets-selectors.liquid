@@ -163,7 +163,8 @@
     {%- comment -%} SELECTEUR DE PAYS {%- endcomment -%}
     {%- if settings.show_country_selector and localization.available_countries.size > 1 -%}
       <div class="markets-selectors__group" data-market-dropdown>
-        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.country' | t }}">
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false">
+          <span class="visually-hidden">{{ 'markets.country' | t }}: </span>
           {%- if settings.show_country_flags -%}
             <span class="markets-selectors__code">{{ localization.country.iso_code }}</span>
           {%- endif -%}
@@ -192,7 +193,8 @@
     {%- comment -%} SELECTEUR DE LANGUE {%- endcomment -%}
     {%- if settings.show_language_selector and localization.available_languages.size > 1 -%}
       <div class="markets-selectors__group" data-market-dropdown>
-        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.language' | t }}">
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false">
+          <span class="visually-hidden">{{ 'markets.language' | t }}: </span>
           {%- if settings.language_selector_style == 'flags' -%}
             <span>{{ localization.language.iso_code | upcase }}</span>
           {%- else -%}
@@ -220,7 +222,8 @@
     {%- comment -%} SELECTEUR DE DEVISE {%- endcomment -%}
     {%- if settings.show_currency_selector and localization.available_countries.size > 1 -%}
       <div class="markets-selectors__group" data-market-dropdown>
-        <button type="button" class="markets-selectors__toggle" aria-expanded="false" aria-label="{{ 'markets.currency' | t }}">
+        <button type="button" class="markets-selectors__toggle" aria-expanded="false">
+          <span class="visually-hidden">{{ 'markets.currency' | t }}: </span>
           {%- case settings.currency_format -%}
             {%- when 'code' -%}
               <span>{{ cart.currency.iso_code }}</span>

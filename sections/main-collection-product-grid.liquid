@@ -174,7 +174,6 @@
   .collection-filters__option-count {
     margin-left: auto;
     font-size: 0.75rem;
-    opacity: 0.5;
   }
 
   .collection-filters__swatch {
@@ -389,7 +388,11 @@
   <div class="collection-grid__body{% if collection.filters.size == 0 %} collection-grid__body--no-filters{% endif %}">
     {%- if collection.filters.size > 0 -%}
       <div class="collection-filters__overlay" data-filter-overlay></div>
-      <aside class="collection-filters" id="CollectionFilters" data-filters aria-hidden="true" aria-label="{{ 'sections.collection.filters' | t }}">
+      {%- comment -%}
+        aria-hidden n'est pose que par theme.js, en mode tiroir (< 990 px) et
+        panneau ferme : sur bureau le panneau est visible en permanence.
+      {%- endcomment -%}
+      <aside class="collection-filters" id="CollectionFilters" data-filters aria-label="{{ 'sections.collection.filters' | t }}">
         <button type="button" class="collection-filters__close" data-filter-close aria-label="{{ 'accessibility.close_filters' | t }}">
           {% render 'icon', icon: 'close' %}
         </button>
@@ -495,7 +498,18 @@
       {%- if collection.products.size > 0 -%}
         <div class="collection-grid__products" data-products-grid>
           {%- for product in collection.products -%}
-            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor %}
+            {%- liquid
+              comment
+                Les premieres cartes sont au-dessus de la ligne de flottaison : chargement
+                immediat, la premiere en priorite (Lighthouse : lcp-lazy-loaded).
+              endcomment
+              assign card_lazy = true
+              if forloop.index <= 4
+                assign card_lazy = false
+              endif
+              assign card_priority = forloop.first
+            -%}
+            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, heading: 'h2', lazy: card_lazy, priority: card_priority, columns_mobile: section.settings.columns_mobile %}
           {%- endfor -%}
         </div>
 

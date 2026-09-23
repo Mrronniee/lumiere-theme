@@ -1492,6 +1492,14 @@
       this.overlay = section.querySelector('[data-filter-overlay]');
       this.productsGrid = section.querySelector('[data-products-grid]');
 
+      // Sur bureau (990 px et plus) le panneau de filtres est visible en
+      // permanence : le masquer aux lecteurs d'ecran rendait les filtres
+      // inaccessibles (axe : aria-hidden-focus). En dessous c'est un tiroir,
+      // masque tant qu'il est ferme.
+      this.drawerQuery = window.matchMedia('(max-width: 989px)');
+      this.syncFiltersHidden();
+      this.drawerQuery.addEventListener('change', () => this.syncFiltersHidden());
+
       section.addEventListener('click', (e) => {
         if (e.target.closest('[data-filter-toggle]')) return this.openFilters();
         if (e.target.closest('[data-filter-close]') || e.target.closest('[data-filter-overlay]')) {
@@ -1551,9 +1559,16 @@
       if (this.filters) utils.trapFocus(this.filters, this.filters.querySelector('[data-filter-close]'));
     },
 
+    syncFiltersHidden() {
+      if (!this.filters) return;
+      const open = this.filters.classList.contains('is-open');
+      if (this.drawerQuery && this.drawerQuery.matches && !open) this.filters.setAttribute('aria-hidden', 'true');
+      else this.filters.removeAttribute('aria-hidden');
+    },
+
     closeFilters() {
       this.filters?.classList.remove('is-open');
-      this.filters?.setAttribute('aria-hidden', 'true');
+      this.syncFiltersHidden();
       this.overlay?.classList.remove('is-visible');
       utils.lockScroll(false);
       utils.releaseFocus(this.filters);
