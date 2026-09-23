@@ -132,7 +132,9 @@
 
   .product-info__title {
     font-family: var(--font-heading);
-    font-size: clamp(1.75rem, 3vw, 2.5rem);
+    /* Plus grande que les titres h2 de section (clamp(1.75rem, 3vw, 2.5rem)) :
+       le Theme Store exige des h1-h6 visuellement distincts sur la meme page. */
+    font-size: clamp(2rem, 3.5vw, 3rem);
     font-weight: 400;
     line-height: 1.2;
     margin-bottom: var(--spacing-sm);

@@ -513,6 +513,8 @@ ul, ol {
 
 .product-card__link {
   display: block;
+  /* Cible tactile de 24 px : le lien seul faisait 21 px de haut */
+  padding: 0.15rem 0;
 }
 
 .product-card__media {

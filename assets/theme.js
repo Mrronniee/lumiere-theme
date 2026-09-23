@@ -254,6 +254,24 @@
       }
     },
 
+    /**
+     * Rend le focus au declencheur d'un dialogue. Si rien d'utile n'avait le
+     * focus a l'ouverture (clic souris sous Safari, ouverture par script), on
+     * retombe sur le bouton qui ouvre ce dialogue : jamais sur un champ devenu
+     * invisible.
+     */
+    focusBack(candidate, fallbackSelector) {
+      const usable =
+        candidate &&
+        candidate !== document.body &&
+        candidate !== document.documentElement &&
+        candidate.isConnected &&
+        candidate.getClientRects().length > 0 &&
+        !candidate.disabled;
+      const target = usable ? candidate : document.querySelector(fallbackSelector);
+      if (target && typeof target.focus === 'function') target.focus();
+    },
+
     lockScroll(lock) {
       document.body.style.overflow = lock ? 'hidden' : '';
     }
@@ -899,7 +917,7 @@
         const trigger = e.target.closest('[data-quick-view-trigger]');
         if (trigger) {
           e.preventDefault();
-          if (trigger.dataset.productHandle) this.open(trigger.dataset.productHandle);
+          if (trigger.dataset.productHandle) this.open(trigger.dataset.productHandle, trigger);
           return;
         }
         if (!this.modal) return;
@@ -926,7 +944,7 @@
       });
     },
 
-    async open(handle) {
+    async open(handle, trigger) {
       try {
         const response = await fetch(utils.localizedPath(`/products/${handle}.js`));
         if (!response.ok) throw new Error(response.status);
@@ -959,7 +977,8 @@
         this.renderOptions();
         this.renderVariantState();
 
-        this.lastFocus = document.activeElement;
+        const active = document.activeElement;
+        this.lastFocus = active && active !== document.body ? active : trigger || null;
         this.modal.classList.add('is-active');
         this.modal.setAttribute('aria-hidden', 'false');
         utils.lockScroll(true);
@@ -1084,7 +1103,7 @@
       this.modal.setAttribute('aria-hidden', 'true');
       utils.lockScroll(false);
       utils.releaseFocus(this.modal);
-      this.lastFocus?.focus();
+      utils.focusBack(this.lastFocus, '[data-quick-view-trigger]');
     }
   };
 
@@ -1455,7 +1474,7 @@
       this.modal.setAttribute('aria-hidden', 'true');
       utils.lockScroll(false);
       utils.releaseFocus(this.modal);
-      this.lastFocus?.focus();
+      utils.focusBack(this.lastFocus, '.product-gallery__zoom');
     }
   };
 
@@ -1524,6 +1543,7 @@
     },
 
     openFilters() {
+      this.lastFocus = document.activeElement;
       this.filters?.classList.add('is-open');
       this.filters?.setAttribute('aria-hidden', 'false');
       this.overlay?.classList.add('is-visible');
@@ -1537,6 +1557,7 @@
       this.overlay?.classList.remove('is-visible');
       utils.lockScroll(false);
       utils.releaseFocus(this.filters);
+      utils.focusBack(this.lastFocus, '[data-filter-toggle]');
     }
   };
 
@@ -1892,7 +1913,7 @@
       document.querySelector('[data-menu-toggle]')?.setAttribute('aria-expanded', 'false');
       utils.lockScroll(false);
       utils.releaseFocus(this.menu);
-      this.lastFocus?.focus();
+      utils.focusBack(this.lastFocus, '[data-menu-toggle]');
     },
 
     openSearch() {
@@ -1914,7 +1935,7 @@
       document.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'false');
       utils.lockScroll(false);
       utils.releaseFocus(this.search);
-      this.searchLastFocus?.focus();
+      utils.focusBack(this.searchLastFocus, '[data-search-toggle]');
     },
 
     /**
