@@ -108,7 +108,9 @@
   .lookbook__item-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 50%);
+    /* Voile sur toute la hauteur du texte : l'ancien degrade (0,6 a transparent
+       a mi-hauteur) laissait le titre sur l'image claire (1,9:1 mesure). */
+    background: linear-gradient(to top, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.58) 40%, rgba(0,0,0,0) 80%);
     opacity: 1;
     transition: opacity var(--transition-base);
     display: flex;

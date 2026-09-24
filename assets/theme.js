@@ -261,15 +261,17 @@
      * invisible.
      */
     focusBack(candidate, fallbackSelector) {
-      const usable =
-        candidate &&
-        candidate !== document.body &&
-        candidate !== document.documentElement &&
-        candidate.isConnected &&
-        candidate.getClientRects().length > 0 &&
-        !candidate.disabled;
-      const target = usable ? candidate : document.querySelector(fallbackSelector);
-      if (target && typeof target.focus === 'function') target.focus();
+      // Un element present mais invisible (visibility: hidden) refuse le focus sans
+      // erreur : on verifie que le focus a pris, sinon on se rabat sur le bouton.
+      const tryFocus = (el) => {
+        if (!el || el === document.body || el === document.documentElement) return false;
+        if (!el.isConnected || el.disabled || el.getClientRects().length === 0) return false;
+        if (typeof el.focus !== 'function') return false;
+        el.focus();
+        return document.activeElement === el;
+      };
+      if (tryFocus(candidate)) return;
+      tryFocus(document.querySelector(fallbackSelector));
     },
 
     lockScroll(lock) {
