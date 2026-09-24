@@ -549,6 +549,14 @@ ul, ol {
   opacity: 1;
 }
 
+/* Sans survol possible (ecrans tactiles), l'image de survol ne sert pas : masquee,
+   elle n'est pas telechargee (chargement differe + display: none). */
+@media (hover: none) {
+  .product-card__image--hover {
+    display: none;
+  }
+}
+
 .product-card:hover .product-card__image:not(.product-card__image--hover) {
   transform: scale(1.03);
 }

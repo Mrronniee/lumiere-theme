@@ -18,9 +18,19 @@
   if lazy == false
     assign card_loading = 'eager'
   endif
+  comment
+    Largeur reellement affichee en mobile : la grille retire les marges du
+    conteneur (2 x 1,5rem) et l'espace entre colonnes (1rem par defaut). Avec
+    « 50vw » le navigateur demandait 360,5 px sur un ecran de 412 px en densite
+    1,75 et prenait la variante 533w pour une carte de 174 px (Lighthouse).
+  endcomment
   assign card_columns_mobile = columns_mobile | default: 2
-  assign card_mobile_vw = 100 | divided_by: card_columns_mobile
-  assign card_sizes = '(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, ' | append: card_mobile_vw | append: 'vw'
+  if card_columns_mobile > 1
+    assign card_mobile_size = 'calc((100vw - 4rem) / ' | append: card_columns_mobile | append: ')'
+  else
+    assign card_mobile_size = 'calc(100vw - 3rem)'
+  endif
+  assign card_sizes = '(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, ' | append: card_mobile_size
 -%}
 <div class="product-card{% if settings.badge_position == 'top-right' %} product-card--badge-right{% endif %}" data-product-id="{{ product.id }}">
   <div class="product-card__media">
