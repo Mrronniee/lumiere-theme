@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.4.2 — 2026-09-24
+
+### Fixed
+- Hero: the small line above the heading (pre-title) had no styling of its
+  own and showed in the page's dark text colour on the dark hero (2.3:1
+  measured). It now uses the theme's pre-title style, in the hero's text
+  colour.
+- Lookbook: the gradient behind each look's title and link now covers the
+  whole text area. On light images the title fell to 1.9:1.
+- Closing a dialog always returns keyboard focus to the button that opened
+  it, even when the element that had focus before cannot take it back.
+
+### Changed
+- Product card images request the size actually displayed on phones
+  (margins and column gap deducted): about half the image weight of a
+  collection page on mobile.
+- On touch screens, the second (hover) image of product cards is no longer
+  downloaded.
+- Product page gallery: a 720 px image size between 550 and 1100 px, and a
+  mobile size that matches the gallery width.
+
 ## 1.4.1 — 2026-09-23
 
 ### Fixed
