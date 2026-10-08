@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.4.3 — 2026-10-08
+
+### Security
+- Quick view: product option names and values are inserted as text, never
+  as HTML.
+- Product page: option names, values and the selected value, and the colour
+  of option swatches, are HTML-escaped. So is the variant title in the cart
+  page and the cart drawer.
+- Security issues can be reported privately through
+  https://kioskthemes.com/support/ rather than in a public issue.
+
+### Fixed
+- Line item properties (engraving, personalisation…) were never displayed,
+  neither on the cart page nor in the cart drawer. They now are; hidden
+  properties (names starting with "_") stay hidden.
+- Quick view opened from a collection page: option buttons were unstyled
+  (13 px native radio buttons). They now look and behave as on the product
+  page.
+
 ## 1.4.2 — 2026-09-24
 
 ### Fixed
