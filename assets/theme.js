@@ -1000,7 +1000,7 @@
     renderOptions() {
       const container = this.modal.querySelector('[data-quick-view-variants]');
       if (!container) return;
-      container.innerHTML = '';
+      container.replaceChildren();
       if (!this.product.options || this.product.variants.length <= 1) return;
 
       const names = this.product.options.map((o) => (typeof o === 'string' ? o : o.name));
@@ -1013,25 +1013,50 @@
         return seen;
       };
 
+      // Construit par le DOM (textContent, setAttribute) : un nom ou une valeur
+      // d'option ne peut jamais etre interprete comme du HTML.
       names.forEach((name, i) => {
         const selected = this.currentVariant.options[i];
         const wrapper = document.createElement('div');
         wrapper.className = 'product-variant';
-        wrapper.innerHTML = `
-          <span class="product-variant__label">${name}</span>
-          <div class="product-variant__options" role="radiogroup" aria-label="${name}">
-            ${valuesFor(i)
-              .map((value, vi) => {
-                const id = `qv-opt-${i}-${vi}`;
-                return `<div class="product-variant__option">
-                  <input type="radio" name="qv-option-${i}" value="${value.replace(/"/g, '&quot;')}"
-                    id="${id}" class="product-variant__option-input" data-quick-view-option data-option-index="${i}"
-                    ${value === selected ? 'checked' : ''}>
-                  <label for="${id}" class="product-variant__option-label">${value}</label>
-                </div>`;
-              })
-              .join('')}
-          </div>`;
+
+        const label = document.createElement('span');
+        label.className = 'product-variant__label';
+        label.textContent = name;
+
+        const group = document.createElement('div');
+        group.className = 'product-variant__options';
+        group.setAttribute('role', 'radiogroup');
+        group.setAttribute('aria-label', name);
+
+        valuesFor(i).forEach((value, vi) => {
+          const id = `qv-opt-${i}-${vi}`;
+          const option = document.createElement('div');
+          option.className = 'product-variant__option';
+
+          const input = document.createElement('input');
+          input.type = 'radio';
+          input.name = `qv-option-${i}`;
+          input.value = value;
+          input.id = id;
+          input.className = 'product-variant__option-input';
+          input.setAttribute('data-quick-view-option', '');
+          input.setAttribute('data-option-index', String(i));
+          if (value === selected) {
+            input.defaultChecked = true;
+            input.checked = true;
+          }
+
+          const optionLabel = document.createElement('label');
+          optionLabel.htmlFor = id;
+          optionLabel.className = 'product-variant__option-label';
+          optionLabel.textContent = value;
+
+          option.append(input, optionLabel);
+          group.appendChild(option);
+        });
+
+        wrapper.append(label, group);
         container.appendChild(wrapper);
       });
     },

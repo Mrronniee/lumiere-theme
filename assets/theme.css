@@ -980,6 +980,122 @@ ul, ol {
 .btn--link:hover { color: var(--color-primary); }
 
 /* ============================================
+   SELECTEUR DE VARIANTES (fiche produit et apercu rapide)
+   Ici et non dans la section produit : l'apercu rapide s'ouvre aussi sur
+   les pages collection, ou ses options restaient en boutons radio bruts
+   de 13 px, sous la cible tactile de 24 px.
+   ============================================ */
+.product-variants { margin-bottom: var(--spacing-md); }
+.product-variant { margin-bottom: var(--spacing-sm); }
+
+.product-variant__label {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.product-variant__label span {
+  font-weight: 400;
+  opacity: 0.6;
+  text-transform: none;
+  margin-left: 0.25rem;
+}
+
+.product-variant__options { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.product-variant__select {
+  width: 100%;
+  max-width: 320px;
+  height: 48px;
+  padding: 0 2.5rem 0 1rem;
+  border: var(--input-border, 1px) solid var(--color-border);
+  border-radius: var(--input-radius, 0);
+  background-color: var(--input-bg, #fff);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+.product-variant__option { position: relative; }
+
+.product-variant__option-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.product-variant__option-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  height: 48px;
+  padding: 0 1rem;
+  border: 1px solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  cursor: pointer;
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  background: #fff;
+}
+
+.product-variant__option-input:checked + .product-variant__option-label {
+  border-color: var(--color-primary);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* Indicateur de focus : sans lui le selecteur est inutilisable au clavier */
+.product-variant__option-input:focus-visible + .product-variant__option-label {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.product-variant__option-input:disabled + .product-variant__option-label {
+  opacity: 0.4;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.product-variant__option-label:hover { border-color: var(--color-primary); }
+
+/* Swatch couleur : la pastille garde un fond neutre si la valeur
+   n'est pas une couleur CSS valide (« Bleu marine », « Ecru »...) */
+.product-variant__option-label--color {
+  width: var(--swatch-size, 36px);
+  height: var(--swatch-size, 36px);
+  min-width: var(--swatch-size, 36px);
+  padding: 0;
+  border-radius: var(--swatch-radius, 50%);
+  border: 2px solid var(--color-border);
+  overflow: hidden;
+}
+
+.product-variant__option-input:checked + .product-variant__option-label--color {
+  border-color: var(--color-primary);
+  background: #fff;
+}
+
+.product-variant__swatch {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--swatch-radius, 50%);
+  background-color: #e8e8e8;
+}
+
+/* ============================================
    BOUTON WISHLIST
    ============================================ */
 .wishlist-btn {

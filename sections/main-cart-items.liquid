@@ -255,18 +255,24 @@
             <div class="cart-items__product-info">
               <a href="{{ item.url }}" class="cart-items__product-title">{{ item.product.title | escape }}</a>
               {%- unless item.product.has_only_default_variant -%}
-                <span class="cart-items__product-variant">{{ item.variant.title }}</span>
+                <span class="cart-items__product-variant">{{ item.variant.title | escape }}</span>
               {%- endunless -%}
-              {%- if item.properties.size > 0 -%}
-                <ul class="cart-items__properties">
-                  {%- for property in item.properties -%}
-                    {%- comment -%} `chaine[0]` vaut nil en Liquid : les proprietes cachees (_x) restaient visibles {%- endcomment -%}
-                    {%- assign property_first_char = property.first | slice: 0 -%}
-                    {%- unless property.last == blank or property_first_char == '_' -%}
-                      <li>{{ property.first }}: {{ property.last }}</li>
-                    {%- endunless -%}
-                  {%- endfor -%}
-                </ul>
+              {%- comment -%}
+                `item.properties.size` ne repond pas chez Shopify : la liste ne
+                s'affichait jamais. Elle est construite, puis affichee seulement si
+                elle contient une propriete visible (les cachees commencent par _ ;
+                `chaine[0]` vaut nil en Liquid, d'ou le slice).
+              {%- endcomment -%}
+              {%- capture item_properties -%}
+                {%- for property in item.properties -%}
+                  {%- assign property_first_char = property.first | slice: 0 -%}
+                  {%- unless property.last == blank or property_first_char == '_' -%}
+                    <li>{{ property.first }}: {{ property.last }}</li>
+                  {%- endunless -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+              {%- if item_properties != blank -%}
+                <ul class="cart-items__properties">{{ item_properties }}</ul>
               {%- endif -%}
               <button type="button" class="cart-items__product-remove" data-remove-item>
                 {{ 'cart.general.remove' | t }}
