@@ -56,3 +56,5 @@ written setup guide.
 Found a bug or have a question?
 [Open an issue](https://github.com/Mrronniee/lumiere-theme/issues)
 or [write to the counter](https://kioskthemes.com/support/).
+
+Security issue? Do not open a public issue — write to https://kioskthemes.com/support/
