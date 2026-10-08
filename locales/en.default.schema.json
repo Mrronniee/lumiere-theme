@@ -2713,5 +2713,16 @@
     "predictive_search": {
       "name": "Predictive search"
     }
+  },
+  "categories": {
+    "blog": "Blog",
+    "collection": "Collection",
+    "image": "Image",
+    "layout": "Layout",
+    "product": "Product",
+    "promotional": "Promotional",
+    "store_information": "Store information",
+    "text": "Text",
+    "video": "Video"
   }
 }

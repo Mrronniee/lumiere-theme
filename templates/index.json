@@ -9,7 +9,7 @@
         "button_label": "",
         "button_link": "/collections/all",
         "button_label_2": "",
-        "button_link_2": "/pages/a-propos",
+        "button_link_2": "",
         "text_alignment": "center",
         "text_color": "#ffffff",
         "overlay_color": "#000000",
@@ -67,7 +67,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/printemps-ete"
+            "link": "/collections/all"
           }
         },
         "lookbook_2": {
@@ -76,7 +76,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/soiree"
+            "link": "/collections/all"
           }
         },
         "lookbook_3": {
@@ -85,7 +85,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/essentiels"
+            "link": "/collections/all"
           }
         },
         "lookbook_4": {
@@ -94,7 +94,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/accessoires"
+            "link": "/collections/all"
           }
         },
         "lookbook_5": {
@@ -103,7 +103,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/mariage"
+            "link": "/collections/all"
           }
         },
         "lookbook_6": {
@@ -112,7 +112,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/ceremonie"
+            "link": "/collections/all"
           }
         }
       },

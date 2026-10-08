@@ -18,6 +18,12 @@
 - Quick view opened from a collection page: option buttons were unstyled
   (13 px native radio buttons). They now look and behave as on the product
   page.
+- Home page as installed: the six lookbook links and the hero's second
+  button pointed to pages and collections that do not exist on a new store
+  (page not found). The lookbook links now open the catalogue; the second
+  hero button appears once you give it a link.
+- Theme editor in French: section categories in the "Add section" picker are
+  translated.
 
 ## 1.4.2 — 2026-09-24
 
