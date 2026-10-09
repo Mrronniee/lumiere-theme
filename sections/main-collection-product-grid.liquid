@@ -29,8 +29,11 @@
 
   .collection-grid__controls {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--spacing-sm);
     align-items: center;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .collection-grid__filter-toggle {
@@ -57,6 +60,8 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
+    min-width: 0;
+    max-width: 100%;
   }
 
   .collection-grid__layout {
@@ -342,6 +347,12 @@
     }
     .collection-grid__products--list .product-card {
       grid-template-columns: 1fr;
+    }
+    .collection-grid__controls {
+      width: 100%;
+    }
+    .collection-grid__sort {
+      flex: 1 1 8rem;
     }
   }
 {%- endstyle -%}

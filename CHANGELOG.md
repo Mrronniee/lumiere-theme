@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.4.4 — 2026-10-09
+
+### Fixed
+- Collection page on phones: the filter, sort and grid/list controls pushed
+  the page 20 px wider than the screen, with sideways scrolling and the
+  list-view button cut off. They now fit and wrap when space runs out.
+- Search page on phones: the search button stuck out of the screen. The
+  field now shrinks to leave it room.
+- Header on very narrow screens (320 px): the icons pushed the page wider
+  than the screen. The logo now gives way to the icons.
+- Keyboard: the "Skip to content" link stayed invisible when focused. It now
+  appears at the top of the page.
+- Keyboard: the focus ring was invisible on dark surfaces (footer, lookbook
+  links, market banner). It now has a light inner ring and a dark outer ring,
+  visible on any background.
+- Hover contrast: checkout, quick view "Add to cart", empty cart and 404
+  buttons turned white text on the light gold accent (2.2:1). They now darken
+  on hover instead.
+
 ## 1.4.3 — 2026-10-08
 
 ### Security

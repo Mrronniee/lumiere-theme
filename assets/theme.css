@@ -820,6 +820,22 @@ ul, ol {
   gap: 1rem;
 }
 
+/* Petits écrans (320 px) : le logo cède la place aux actions, rien ne déborde */
+@media screen and (max-width: 479px) {
+  .header__inner { gap: 0.5rem; }
+  .header__actions { gap: 0.75rem; }
+  .header__logo { flex-shrink: 1; min-width: 0; }
+  .header__logo-link { overflow: hidden; }
+  .header__logo-image { max-width: 100%; height: auto; }
+  .header__logo-text {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1.25rem;
+  }
+}
+
 /* ============================================
    NOTIFICATIONS PANIER
    ============================================ */
@@ -921,14 +937,17 @@ ul, ol {
   margin: -0.25rem 0;
 }
 
+/* Anneau en deux tons : le blanc intérieur se voit sur fond sombre, le sombre extérieur sur fond clair */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 2px;
+  box-shadow: 0 0 0 2px #fff;
 }
 
 .header--transparent :where(a, button):focus-visible {
   outline-color: #fff;
+  box-shadow: 0 0 0 2px var(--color-primary);
 }
 
 /* ============================================
@@ -1349,12 +1368,14 @@ ul, ol {
 .search-page__form { display: flex; gap: 0.5rem; margin-bottom: var(--spacing-lg); }
 .search-page__input {
   flex: 1;
+  min-width: 0;
   padding: 1rem;
   border: 1px solid var(--color-border);
   font-family: var(--font-body);
   font-size: 0.9375rem;
 }
 .search-page__submit {
+  flex-shrink: 0;
   padding: 1rem 2rem;
   background: var(--color-primary);
   color: var(--color-on-primary);
@@ -1362,6 +1383,9 @@ ul, ol {
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+}
+@media screen and (max-width: 749px) {
+  .search-page__submit { padding: 1rem 1.25rem; }
 }
 .search-page__page { grid-column: 1 / -1; padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--color-border); }
 .search-page__page-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 400; }
