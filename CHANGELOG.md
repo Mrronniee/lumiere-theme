@@ -18,6 +18,13 @@
 - Hover contrast: checkout, quick view "Add to cart", empty cart and 404
   buttons turned white text on the light gold accent (2.2:1). They now darken
   on hover instead.
+- Phones and tablets: the wishlist heart on product cards was invisible on
+  touch screens (it only appeared on mouse hover) while still receiving taps
+  and keyboard focus. It is now always shown on touch screens.
+- Search and newsletter fields: the placeholder text was too faint (1.9:1 and
+  3.3:1). It now reaches the 4.5:1 contrast ratio.
+- Newsletter email field: the focus ring was removed, leaving only a faint
+  border change. It now shows the theme's focus ring.
 
 ## 1.4.3 — 2026-10-08
 

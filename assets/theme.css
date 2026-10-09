@@ -353,8 +353,8 @@ ul, ol {
 }
 
 .search-overlay__input::placeholder {
-  color: var(--color-primary);
-  opacity: 0.3;
+  color: var(--color-text-light);
+  opacity: 1;
 }
 
 .search-overlay__submit {
@@ -740,15 +740,9 @@ ul, ol {
   top: 1rem;
   right: 1rem;
   z-index: 3;
-  opacity: 0;
-  transform: translateY(-10px);
   transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
 }
-
-.product-card:hover .wishlist-btn--card {
-  opacity: 1;
-  transform: translateY(0);
-}
+/* Masqué jusqu'au survol seulement avec une souris : voir le bloc (hover: hover) plus bas. */
 
 /* ============================================
    HEADER WISHLIST COUNT
