@@ -1,23 +1,23 @@
 {
   "liquid-validator": {
-    "version": "1.4.3",
+    "version": "1.4.4",
     "date": "2026-10-09",
     "verdict": "passé",
     "resume": "Contrôle complet code 0, 12 contrôles OK, Theme Check 0 ERROR, 0 WARNING, 0 INFO sur 66 fichiers, 0 BLOQUANT, 0 ALERTE.",
-    "commit": "259e097"
+    "commit": "15bbe2a"
   },
   "theme-bilingue-checker": {
-    "version": "1.4.3",
+    "version": "1.4.4",
     "date": "2026-10-09",
     "verdict": "passé",
     "resume": "Statique seulement : 314/314 clés boutique et 918/918 clés éditeur en EN et FR, 0 clé t: orpheline, 0 reste anglais en FR, 0 mot français en EN, 0 BLOQUANT, 0 ALERTE.",
-    "commit": "259e097"
+    "commit": "15bbe2a"
   },
   "theme-editeur-checker": {
-    "version": "1.4.3",
+    "version": "1.4.4",
     "date": "2026-10-09",
     "verdict": "passé",
-    "resume": "52 sections, 28 presets, 402 réglages de section et 75 réglages globaux contrôlés, 20 gabarits JSON cohérents, 875 clés t: toutes traduites, 0 BLOQUANT, 0 ALERTE.",
-    "commit": "259e097"
+    "resume": "52 sections, 28 presets, 477 réglages de section et 75 réglages globaux contrôlés, 20 gabarits JSON cohérents, 918 clés t: traduites, 0 BLOQUANT, 0 ALERTE.",
+    "commit": "15bbe2a"
   }
 }
