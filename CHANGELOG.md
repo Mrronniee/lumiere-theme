@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.4.5 — 2026-10-13
+
+### Fixed
+- Theme package: `config/settings_data.json` was missing. Shopify requires it
+  in every theme. It is now included and keeps every setting at its default
+  value, so the theme looks the same as before once installed.
+
 ## 1.4.4 — 2026-10-09
 
 ### Fixed
