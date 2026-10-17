@@ -562,7 +562,7 @@
                   {%- endif -%}
                   <div>
                     <p class="mini-cart__upsell-title">{{ product.title | escape }}</p>
-                    <p class="mini-cart__upsell-price">{{ product.price | money }}</p>
+                    <p class="mini-cart__upsell-price">{% render 'money', amount: product.price %}</p>
                   </div>
                   <button type="button" class="mini-cart__upsell-add" data-upsell-add data-variant-id="{{ product.selected_or_first_available_variant.id }}">
                     {{ 'products.product.add_to_cart' | t }}
@@ -595,7 +595,7 @@
 
       <div class="mini-cart__subtotal">
         <span class="mini-cart__subtotal-label">{{ 'cart.general.subtotal' | t }}</span>
-        <span class="mini-cart__subtotal-value" data-cart-subtotal>{{ cart.total_price | money }}</span>
+        <span class="mini-cart__subtotal-value" data-cart-subtotal>{% render 'money', amount: cart.total_price %}</span>
       </div>
 
       <p class="mini-cart__note">{% render 'cart-taxes-note' %}</p>

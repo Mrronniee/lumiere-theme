@@ -12,8 +12,8 @@
     assign progress = cart.total_price | times: 100 | divided_by: threshold
     assign progress = progress | at_most: 100
     assign remaining = threshold | minus: cart.total_price
-    assign remaining_money = remaining | money
   -%}
+  {%- capture remaining_money -%}{% render 'money', amount: remaining %}{%- endcapture -%}
   <div class="{{ klass }}">
     {%- if cart.total_price >= threshold -%}
       <p class="{{ klass }}-text">{{ 'cart.general.free_shipping_success' | t }}</p>

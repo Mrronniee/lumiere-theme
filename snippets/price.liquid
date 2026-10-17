@@ -20,16 +20,13 @@
   assign compare_at_price = product.compare_at_price
   assign price = product.price
   assign available = product.available
-  if settings.price_show_currency_code
-    assign money_price = price | money_with_currency
-  else
-    assign money_price = price | money
-  endif
   assign on_sale = false
   if compare_at_price > price
     assign on_sale = true
   endif
 -%}
+{%- comment -%} Un seul endroit decide du code devise : snippets/money.liquid. {%- endcomment -%}
+{%- capture money_price -%}{% render 'money', amount: price %}{%- endcapture -%}
 
 <div class="price
   {%- if available == false %} price--sold-out{% endif -%}
@@ -47,7 +44,7 @@
     </span>
 
     <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
-    <s class="price__compare">{{ compare_at_price | money }}</s>
+    <s class="price__compare">{% render 'money', amount: compare_at_price %}</s>
 
     {%- if show_badge -%}
       <span class="price__badge-sale">
@@ -68,7 +65,7 @@
   {%- if unit_variant.unit_price_measurement -%}
     <span class="price__unit">
       <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
-      {{ unit_variant.unit_price | money }} / {% if unit_variant.unit_price_measurement.reference_value != 1 %}{{ unit_variant.unit_price_measurement.reference_value }} {% endif %}{{ unit_variant.unit_price_measurement.reference_unit }}
+      {% render 'money', amount: unit_variant.unit_price %} / {% if unit_variant.unit_price_measurement.reference_value != 1 %}{{ unit_variant.unit_price_measurement.reference_value }} {% endif %}{{ unit_variant.unit_price_measurement.reference_unit }}
     </span>
   {%- endif -%}
 

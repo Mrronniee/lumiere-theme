@@ -1,0 +1,17 @@
+{% comment %}
+  Un montant, formaté selon le réglage « afficher le code devise »
+  (settings.price_show_currency_code).
+
+  Seul snippets/price.liquid respectait ce réglage : le panier, le tiroir, le
+  récapitulatif et les filtres écrivaient tout en `| money`, donc une ligne de
+  panier affichait « €38,00 » pendant que la collection affichait
+  « €24,00 EUR » (mesuré sur la démo 1.5.1). Un seul endroit décide désormais.
+
+  Usage : {% render 'money', amount: item.final_price %}
+          {%- capture x -%}{% render 'money', amount: v %}{%- endcapture -%}
+{% endcomment %}
+{%- if settings.price_show_currency_code -%}
+  {{- amount | money_with_currency -}}
+{%- else -%}
+  {{- amount | money -}}
+{%- endif -%}

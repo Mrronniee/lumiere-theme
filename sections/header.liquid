@@ -24,6 +24,14 @@
     assign wishlist_url = wishlist_url | append: 'pages/wishlist'
   endif
 -%}
+{%- comment -%}
+  Bandeau de changement de marche : pleine largeur, AVANT l'en-tete, jamais
+  dans .header__inner (il y ecrasait la navigation). Place au-dessus de
+  l'en-tete sticky, il ne compte pas dans --header-height, donc il ne decale
+  pas le premier bloc de l'accueil quand le JavaScript l'affiche.
+{%- endcomment -%}
+{% render 'market-banner' %}
+
 <header
   class="header{% if settings.header_transparent_home and template.name == 'index' %} header--transparent{% endif %}"
   data-section-id="{{ section.id }}"

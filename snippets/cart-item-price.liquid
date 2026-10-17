@@ -29,23 +29,23 @@
   {%- if original != final -%}
     <span class="{{ klass }}__sale">
       <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
-      {{ final | money }}
+      {% render 'money', amount: final %}
     </span>
     <s class="{{ klass }}__original">
       <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
-      {{ original | money }}
+      {% render 'money', amount: original %}
     </s>
   {%- else -%}
     <span class="{{ klass }}__regular">
       <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
-      {{ final | money }}
+      {% render 'money', amount: final %}
     </span>
   {%- endif -%}
 
   {%- if item.unit_price_measurement -%}
     <span class="{{ klass }}__unit">
       <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
-      {{ item.unit_price | money }} /
+      {% render 'money', amount: item.unit_price %} /
       {%- if item.unit_price_measurement.reference_value != 1 %} {{ item.unit_price_measurement.reference_value }}{% endif -%}
       {{ ' ' }}{{ item.unit_price_measurement.reference_unit }}
     </span>
@@ -54,7 +54,7 @@
   {%- if item.line_level_discount_allocations.size > 0 -%}
     <ul class="{{ klass }}__discounts" role="list">
       {%- for allocation in item.line_level_discount_allocations -%}
-        <li>{{ allocation.discount_application.title }} (&minus;{{ allocation.amount | money }})</li>
+        <li>{{ allocation.discount_application.title }} (&minus;{% render 'money', amount: allocation.amount %})</li>
       {%- endfor -%}
     </ul>
   {%- endif -%}

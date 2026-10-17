@@ -23,32 +23,32 @@
             <a href="{{ line_item.product.url }}">{{ line_item.title }}</a>
           </td>
           <td>{{ line_item.sku }}</td>
-          <td>{{ line_item.final_price | money }}</td>
+          <td>{% render 'money', amount: line_item.final_price %}</td>
           <td>{{ line_item.quantity }}</td>
-          <td>{{ line_item.final_line_price | money }}</td>
+          <td>{% render 'money', amount: line_item.final_line_price %}</td>
         </tr>
       {%- endfor -%}
     </tbody>
     <tfoot>
       <tr>
         <th scope="row" colspan="4">{{ 'customer.order.subtotal' | t }}</th>
-        <td>{{ order.line_items_subtotal_price | money }}</td>
+        <td>{% render 'money', amount: order.line_items_subtotal_price %}</td>
       </tr>
       {%- for shipping_method in order.shipping_methods -%}
         <tr>
           <th scope="row" colspan="4">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</th>
-          <td>{{ shipping_method.price | money }}</td>
+          <td>{% render 'money', amount: shipping_method.price %}</td>
         </tr>
       {%- endfor -%}
       {%- for tax_line in order.tax_lines -%}
         <tr>
           <th scope="row" colspan="4">{{ 'customer.order.tax' | t }} ({{ tax_line.title }})</th>
-          <td>{{ tax_line.price | money }}</td>
+          <td>{% render 'money', amount: tax_line.price %}</td>
         </tr>
       {%- endfor -%}
       <tr>
         <th scope="row" colspan="4">{{ 'customer.order.total' | t }}</th>
-        <td>{{ order.total_net_amount | money }}</td>
+        <td>{% render 'money', amount: order.total_net_amount %}</td>
       </tr>
     </tfoot>
   </table>

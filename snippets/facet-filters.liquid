@@ -53,9 +53,11 @@
           {%- if filter.type == 'price_range' -%}
             {%- if filter.min_value.value or filter.max_value.value -%}
               {%- liquid
-                assign price_from = filter.min_value.value | default: 0 | money
-                assign price_to = filter.max_value.value | default: filter.range_max | money
+                assign from_amount = filter.min_value.value | default: 0
+                assign to_amount = filter.max_value.value | default: filter.range_max
               -%}
+              {%- capture price_from -%}{% render 'money', amount: from_amount %}{%- endcapture -%}
+              {%- capture price_to -%}{% render 'money', amount: to_amount %}{%- endcapture -%}
               <a href="{{ filter.url_to_remove }}" class="collection-filters__active-tag">
                 {{ filter.label }}: {{ price_from }} &ndash; {{ price_to }}
                 {% render 'icon', icon: 'close' %}

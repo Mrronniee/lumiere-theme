@@ -152,6 +152,10 @@ ul, ol {
 .header__menu-toggle {
   display: none;
   padding: 0.5rem;
+  /* Un <button> ne herite PAS de la couleur du texte : sans cette ligne l'UA
+     applique « color: buttontext », donc du noir, et l'icone (stroke
+     currentColor) restait noire meme sur l'en-tete transparent. */
+  color: var(--color-primary);
 }
 
 .header__logo {
@@ -943,14 +947,16 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 
 body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__logo-text,
 body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__nav-link,
-body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action {
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action,
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__menu-toggle {
   color: #fff;
 }
 
 /* Au survol on souligne au lieu de passer a l accent : l accent est une
    couleur reglee par le marchand, qui tombait a 2,1:1 sur le voile. */
 body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__nav-link:hover,
-body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action:hover {
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action:hover,
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__menu-toggle:hover {
   color: #fff;
   text-decoration: underline;
 }

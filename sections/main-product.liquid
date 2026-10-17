@@ -460,10 +460,10 @@
           {%- assign on_sale = true -%}
         {%- endif -%}
         <span class="product-info__price-amount{% if on_sale %} product-info__price-amount--sale{% endif %}">
-          {{ current_variant.price | money }}
+          {% render 'money', amount: current_variant.price %}
         </span>
         <span class="product-info__price-compare"{% unless on_sale %} hidden{% endunless %}>
-          {%- if on_sale %}{{ current_variant.compare_at_price | money }}{% endif -%}
+          {%- if on_sale %}{% render 'money', amount: current_variant.compare_at_price %}{% endif -%}
         </span>
         <span class="product-info__price-badge"{% unless on_sale %} hidden{% endunless %}>
           {%- if on_sale -%}
@@ -474,7 +474,7 @@
           <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
           <span data-unit-price-text>
             {%- if current_variant.unit_price_measurement -%}
-              {{ current_variant.unit_price | money }} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }} {% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
+              {% render 'money', amount: current_variant.unit_price %} / {% if current_variant.unit_price_measurement.reference_value != 1 %}{{ current_variant.unit_price_measurement.reference_value }} {% endif %}{{ current_variant.unit_price_measurement.reference_unit }}
             {%- endif -%}
           </span>
         </span>
@@ -769,7 +769,7 @@
     {
       {%- for v in product.variants -%}
         "{{ v.id }}": {
-          "unit": {% if v.unit_price_measurement %}{{ v.unit_price | money | json }}{% else %}null{% endif %},
+          "unit": {% if v.unit_price_measurement %}{%- capture v_unit -%}{% render 'money', amount: v.unit_price %}{%- endcapture -%}{{ v_unit | strip | json }}{% else %}null{% endif %},
           "ref": {% if v.unit_price_measurement %}{{ v.unit_price_measurement.reference_value | json }}{% else %}null{% endif %},
           "measure": {% if v.unit_price_measurement %}{{ v.unit_price_measurement.reference_unit | json }}{% else %}null{% endif %}
         }{%- unless forloop.last -%},{%- endunless -%}

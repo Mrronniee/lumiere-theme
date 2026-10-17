@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.5.2 — 2026-10-17
+
+### Fixed
+- Home page on phones with a transparent header: the menu button was invisible
+  over the hero image. The button kept the browser's own black, so only its
+  three bars were there, in black on a dark photo. It is now white like the
+  rest of the header, and dark like the rest of it everywhere else.
+- Market suggestion banner ("You seem to be in …") pushed the desktop menu
+  aside: it was laid out inside the header row, which squeezed the navigation
+  to a sixth of the page and broke link labels mid-word. It is now a
+  full-width band above the header, like the announcement bar. It also shows
+  on phones now, where it used to be hidden.
+- "Show currency code" in theme settings now reaches every price. It only
+  applied to product and collection prices; the cart, the cart drawer, the
+  order summary, the price filter, the free-shipping bar, the gift card page
+  and the prices redrawn by JavaScript all left the code out, so one line read
+  "€38.00" while the collection read "€24.00 EUR". Every price in the theme now
+  goes through one place.
+
 ## 1.5.1 — 2026-10-17
 
 ### Fixed

@@ -12,14 +12,14 @@
 <body class="template-gift-card">
   <main class="page-shell page-shell--narrow" role="main">
     <div class="page-shell__header">
-      {%- assign gift_card_value = gift_card.initial_value | money -%}
+      {%- capture gift_card_value -%}{% render 'money', amount: gift_card.initial_value %}{%- endcapture -%}
       <h1 class="page-shell__title">
         {{ 'gift_cards.issued.title' | t: value: gift_card_value, shop: shop.name }}
       </h1>
     </div>
 
     <div class="gift-card">
-      <p class="gift-card__value">{{ gift_card.balance | money }}</p>
+      <p class="gift-card__value">{% render 'money', amount: gift_card.balance %}</p>
       <p class="gift-card__code"><code>{{ gift_card.code | format_code }}</code></p>
 
       {%- comment -%}

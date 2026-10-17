@@ -51,6 +51,7 @@
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
 
+  {%- capture money_sample -%}{% render 'money', amount: 123456 %}{%- endcapture -%}
   <script>
     document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
     {%- if settings.enable_animations -%}
@@ -64,8 +65,11 @@
     window.themeLocale = {{ request.locale.iso_code | json }};
     window.themeMoneyFormat = {{ shop.money_format | json }};
     // Echantillon rendu dans la devise AFFICHEE (Markets) : theme.js en deduit
-    // symbole, separateurs et decimales au lieu du money_format de la devise de base.
-    window.themeMoneySample = {{ 123456 | money | json }};
+    // symbole, separateurs, decimales ET suffixe au lieu du money_format de la
+    // devise de base. Il passe par snippets/money.liquid, donc il porte le code
+    // devise quand le reglage le demande : formatMoney le rend alors partout
+    // (panier re-rendu, changement de variante), sans logique en plus.
+    window.themeMoneySample = {{ money_sample | strip | json }};
     window.routes = {
       cart_add_url: {{ routes.cart_add_url | json }},
       cart_change_url: {{ routes.cart_change_url | json }},

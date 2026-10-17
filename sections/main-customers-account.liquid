@@ -27,7 +27,7 @@
                   <td>{{ order.created_at | date: format: 'date' }}</td>
                   <td>{{ order.financial_status_label }}</td>
                   <td>{{ order.fulfillment_status_label }}</td>
-                  <td>{{ order.total_net_amount | money }}</td>
+                  <td>{% render 'money', amount: order.total_net_amount %}</td>
                 </tr>
               {%- endfor -%}
             </tbody>

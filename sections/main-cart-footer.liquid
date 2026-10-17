@@ -176,7 +176,7 @@
 
       <div class="cart-footer__line cart-footer__line--subtotal">
         <span>{{ 'cart.general.subtotal' | t }}</span>
-        <span data-cart-subtotal>{{ cart.total_price | money }}</span>
+        <span data-cart-subtotal>{% render 'money', amount: cart.total_price %}</span>
       </div>
 
       <div class="cart-footer__line">
@@ -187,13 +187,13 @@
       {%- if cart.total_discounts > 0 -%}
         <div class="cart-footer__line">
           <span>{{ 'cart.general.discounts' | t }}</span>
-          <span class="cart-footer__discount">-{{ cart.total_discounts | money }}</span>
+          <span class="cart-footer__discount">&minus;{% render 'money', amount: cart.total_discounts %}</span>
         </div>
       {%- endif -%}
 
       <div class="cart-footer__line cart-footer__line--total">
         <span>{{ 'cart.general.total' | t }}</span>
-        <span data-cart-total>{{ cart.total_price | money }}</span>
+        <span data-cart-total>{% render 'money', amount: cart.total_price %}</span>
       </div>
 
       <p class="cart-footer__note-shipping">{% render 'cart-taxes-note' %}</p>

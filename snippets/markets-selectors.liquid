@@ -125,39 +125,7 @@
       opacity: 1;
     }
 
-    /* Banniere changement de marche */
-    .market-banner {
-      background: var(--color-primary);
-      color: var(--color-on-primary);
-      padding: 0.75rem var(--container-padding);
-      text-align: center;
-      font-family: var(--font-body);
-      font-size: 0.875rem;
-      display: none;
-    }
-
-    .market-banner.is-visible {
-      display: block;
-    }
-
-    .market-banner__link {
-      text-decoration: underline;
-      margin-left: 0.5rem;
-      font-weight: 500;
-      color: inherit;
-    }
-
-    .market-banner__close {
-      margin-left: 1rem;
-      opacity: 0.7;
-      color: inherit;
-      transition: opacity var(--transition-fast);
-    }
-
-    .market-banner__close:hover {
-      opacity: 1;
-    }
-  {%- endstyle -%}
+    /* Banniere changement de marche */  {%- endstyle -%}
 
   <div class="markets-selectors">
     {%- comment -%} SELECTEUR DE PAYS {%- endcomment -%}
@@ -269,29 +237,9 @@
     <input type="hidden" name="language_code" data-market-language value="{{ localization.language.iso_code }}">
   {%- endform -%}
 
-  {%- comment -%} BANNIERE CHANGEMENT DE MARCHE {%- endcomment -%}
-  {%- if settings.show_market_banner -%}
-    {%- comment -%}
-      /browsing_context_suggestions.json renvoie le nom du pays dans la langue
-      par defaut de la boutique, pas dans la locale affichee : en anglais on
-      obtenait « You seem to be in Suisse. ». On expose donc les noms rendus par
-      Shopify DANS la locale courante, indexes par code ISO ; le JS s'en sert au
-      lieu du nom renvoye par l'endpoint.
-    {%- endcomment -%}
-    <script type="application/json" data-market-country-names>
-      {
-        {%- for country in localization.available_countries -%}
-          {%- unless forloop.first -%},{%- endunless -%}
-          {{ country.iso_code | json }}: {{ country.name | json }}
-        {%- endfor -%}
-      }
-    </script>
-    <div class="market-banner" id="MarketBanner" data-market-banner role="status">
-      <span data-market-banner-text></span>
-      <button type="button" class="market-banner__link" data-market-banner-switch>{{ 'markets.switch' | t }}</button>
-      <button type="button" class="market-banner__close" data-market-banner-close aria-label="{{ 'accessibility.close' | t }}">
-        {% render 'icon', icon: 'close' %}
-      </button>
-    </div>
-  {%- endif -%}
+  {%- comment -%}
+    Le bandeau de changement de marche est rendu par snippets/market-banner.liquid,
+    HORS de la rangee de l'en-tete : ici, il entrait dans le flex de
+    .header__inner et ecrasait la navigation.
+  {%- endcomment -%}
 {%- endif -%}
