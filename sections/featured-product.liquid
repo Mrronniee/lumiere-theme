@@ -102,10 +102,22 @@
       </div>
 
       <div class="featured-product__info">
-        {%- if section.settings.show_vendor == 'yes' or section.settings.show_vendor == 'inherit' and settings.product_card_show_vendor -%}
-          {%- if featured.vendor != blank -%}
-            <span class="product-card__vendor">{{ featured.vendor }}</span>
-          {%- endif -%}
+        {%- comment -%}
+          Liquid ne connait pas les parentheses et evalue de droite a gauche :
+          une condition « a or b and c » sur une seule ligne ne dit pas ce
+          qu'on croit. On calcule donc la valeur avant de l'afficher.
+        {%- endcomment -%}
+        {%- liquid
+          assign montrer_marque = settings.product_card_show_vendor
+          if section.settings.show_vendor == 'yes'
+            assign montrer_marque = true
+          endif
+          if section.settings.show_vendor == 'no'
+            assign montrer_marque = false
+          endif
+        -%}
+        {%- if montrer_marque and featured.vendor != blank -%}
+          <span class="product-card__vendor">{{ featured.vendor }}</span>
         {%- endif -%}
 
         <h2 class="featured-product__title">{{ featured.title | escape }}</h2>
