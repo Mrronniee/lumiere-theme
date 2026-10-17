@@ -239,7 +239,8 @@
           "label": "Afficher la note de commande"
         },
         "cart_show_free_shipping": {
-          "label": "Afficher la barre de livraison gratuite"
+          "label": "Afficher la barre de livraison gratuite",
+          "info": "Désactivé par défaut : l’activer promet la livraison offerte à vos clients."
         },
         "cart_free_shipping_threshold": {
           "label": "Seuil de livraison gratuite (centimes)",
@@ -395,7 +396,7 @@
           "info": "Affiche EUR a cote du montant, utile en multi-devises"
         },
         "price_show_from": {
-          "label": "Afficher « a partir de »",
+          "label": "Afficher « a partir de »",
           "info": "Sur les produits dont le prix varie selon la variante"
         },
         "price_sale_style": {
@@ -450,7 +451,7 @@
         },
         "swatch_map": {
           "label": "Correspondance couleurs",
-          "info": "Une par ligne, au format « Nom: #hexa ». Les noms absents de la liste tombent sur un gris neutre."
+          "info": "Une par ligne, au format « Nom: #hexa ». Les noms absents de la liste tombent sur un gris neutre."
         }
       }
     },
@@ -508,7 +509,11 @@
           "label": "Nombre de produits à afficher"
         },
         "show_vendor": {
-          "label": "Afficher la marque"
+          "label": "Afficher la marque",
+          "info": "« Hériter » reprend le réglage global, dans Réglages du thème > Cartes de produit.",
+          "options__inherit": "Hériter des réglages du thème",
+          "options__yes": "Oui",
+          "options__no": "Non"
         },
         "show_view_all": {
           "label": "Afficher le bouton 'Voir tout'"
@@ -599,7 +604,8 @@
               "label": "Largeur du logo"
             },
             "description": {
-              "label": "Description"
+              "label": "Description",
+              "info": "Affichée dans le pied de page, sur toutes les pages. Traduisez-la dans Paramètres > Langues."
             }
           }
         },
@@ -607,7 +613,8 @@
           "name": "Liste de liens",
           "settings": {
             "title": {
-              "label": "Titre de la colonne"
+              "label": "Titre de la colonne",
+              "info": "Laissez vide pour utiliser le libellé traduit par défaut."
             },
             "menu": {
               "label": "Menu"
@@ -834,7 +841,11 @@
           "label": "Produits par page"
         },
         "show_vendor": {
-          "label": "Afficher la marque"
+          "label": "Afficher la marque",
+          "info": "« Hériter » reprend le réglage global, dans Réglages du thème > Cartes de produit.",
+          "options__inherit": "Hériter des réglages du thème",
+          "options__yes": "Oui",
+          "options__no": "Non"
         },
         "header__1": {
           "content": "Grille"
@@ -1017,7 +1028,11 @@
           "label": "Nombre de produits"
         },
         "show_vendor": {
-          "label": "Afficher la marque"
+          "label": "Afficher la marque",
+          "info": "« Hériter » reprend le réglage global, dans Réglages du thème > Cartes de produit.",
+          "options__inherit": "Hériter des réglages du thème",
+          "options__yes": "Oui",
+          "options__no": "Non"
         },
         "background_color": {
           "label": "Couleur de fond"
@@ -1493,7 +1508,7 @@
         },
         "height": {
           "label": "Hauteur (desktop)",
-          "info": "S'applique à la disposition « Vidéo en fond »."
+          "info": "S'applique à la disposition « Vidéo en fond »."
         },
         "height_mobile": {
           "label": "Hauteur (mobile)"
@@ -1512,7 +1527,7 @@
         },
         "overlay_opacity": {
           "label": "Opacité de l'overlay",
-          "info": "S'applique à la disposition « Vidéo en fond »."
+          "info": "S'applique à la disposition « Vidéo en fond »."
         },
         "button_bg": {
           "label": "Fond du bouton"
@@ -1860,7 +1875,7 @@
           "label": "Afficher l'auteur"
         },
         "show_view_all": {
-          "label": "Afficher le bouton « Voir tout »",
+          "label": "Afficher le bouton « Voir tout »",
           "info": "Le bouton renvoie vers le blog sélectionné."
         },
         "view_all_label": {
@@ -2442,7 +2457,7 @@
           "content": "Actions"
         },
         "directions_url": {
-          "label": "Lien « Itinéraire »",
+          "label": "Lien « Itinéraire »",
           "info": "Collez le lien d'itinéraire préparé dans votre application de cartes. Il s'ouvre dans un nouvel onglet."
         },
         "show_call": {
@@ -2556,11 +2571,11 @@
             },
             "price": {
               "label": "Prix",
-              "info": "Texte libre, par exemple « 29 € » ou « Sur devis »."
+              "info": "Texte libre, par exemple « 29 € » ou « Sur devis »."
             },
             "highlight": {
               "label": "Mettre cette colonne en avant",
-              "info": "Ajoute un badge « Recommandé » et applique la couleur de mise en avant."
+              "info": "Ajoute un badge « Recommandé » et applique la couleur de mise en avant."
             },
             "button_label": {
               "label": "Texte du bouton"
@@ -2623,7 +2638,7 @@
         },
         "divider_style": {
           "label": "Style",
-          "info": "« Espace vide » n'affiche aucun filet : seuls les espacements sont appliqués.",
+          "info": "« Espace vide » n'affiche aucun filet : seuls les espacements sont appliqués.",
           "options__1": {
             "label": "Espace vide"
           },
@@ -2679,7 +2694,7 @@
         },
         "width": {
           "label": "Largeur",
-          "info": "« Pleine largeur » supprime les marges latérales : votre code gère lui-même son espacement.",
+          "info": "« Pleine largeur » supprime les marges latérales : votre code gère lui-même son espacement.",
           "options__1": {
             "label": "Pleine largeur"
           },
@@ -2712,6 +2727,53 @@
     },
     "predictive_search": {
       "name": "Recherche prédictive"
+    },
+    "apps": {
+      "name": "Applications",
+      "settings": {
+        "padding_top": {
+          "label": "Marge intérieure du haut"
+        },
+        "padding_bottom": {
+          "label": "Marge intérieure du bas"
+        }
+      },
+      "presets": {
+        "name": "Applications"
+      }
+    },
+    "featured_product": {
+      "name": "Produit mis en avant",
+      "settings": {
+        "product": {
+          "label": "Produit"
+        },
+        "show_description": {
+          "label": "Afficher la description"
+        },
+        "show_vendor": {
+          "label": "Afficher la marque",
+          "info": "« Hériter » reprend le réglage global, dans Réglages du thème > Cartes de produit.",
+          "options__inherit": "Hériter des réglages du thème",
+          "options__yes": "Oui",
+          "options__no": "Non"
+        },
+        "background_color": {
+          "label": "Arrière-plan"
+        },
+        "text_color": {
+          "label": "Texte"
+        },
+        "padding_top": {
+          "label": "Marge intérieure du haut"
+        },
+        "padding_bottom": {
+          "label": "Marge intérieure du bas"
+        }
+      },
+      "presets": {
+        "name": "Produit mis en avant"
+      }
     }
   },
   "categories": {

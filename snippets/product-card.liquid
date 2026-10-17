@@ -1,6 +1,6 @@
 {% comment %}
   Carte produit réutilisable avec wishlist et quick view
-  Usage: {% render 'product-card', product: product, show_vendor: true %}
+  Usage: {% render 'product-card', product: product, show_vendor: 'inherit' %}
   Parametres optionnels :
     heading        : niveau de titre ('h3' par defaut ; 'h2' sous un h1 de page)
     lazy           : false pour charger l'image immediatement (cartes visibles au chargement)
@@ -9,9 +9,18 @@
 {% endcomment %}
 
 {%- liquid
-  assign card_show_vendor = show_vendor
-  if show_vendor == nil
-    assign card_show_vendor = settings.product_card_show_vendor
+  comment
+    Marque : le reglage global s'applique PARTOUT. Chaque section choisit
+    « heriter » (defaut), « oui » ou « non ». Avant la 1.5.0 les sections
+    passaient toujours leur propre case a cocher, donc le reglage global
+    n'agissait que dans la recherche, seule a ne pas passer l'argument.
+  endcomment
+  assign card_show_vendor = settings.product_card_show_vendor
+  if show_vendor == 'yes' or show_vendor == true
+    assign card_show_vendor = true
+  endif
+  if show_vendor == 'no'
+    assign card_show_vendor = false
   endif
   assign card_heading = heading | default: 'h3'
   assign card_loading = 'lazy'

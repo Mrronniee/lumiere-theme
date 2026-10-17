@@ -1,0 +1,33 @@
+{%- comment -%}
+  Bloc d'erreurs d'un formulaire, rendu partout de la meme facon : role=alert
+  pour que le lecteur d'ecran l'annonce, tabindex=-1 + autofocus pour que le
+  focus y arrive apres l'envoi, et un id stable pour que chaque champ en faute
+  pointe dessus avec aria-describedby.
+
+  Parametres :
+    form  (obligatoire) l'objet form du {% form %} englobant
+    id    (obligatoire) id du conteneur, cible des aria-describedby
+    class (facultatif)  classe en plus de .form__error
+{%- endcomment -%}
+{%- if form.errors -%}
+  <div
+    id="{{ id }}"
+    class="form__error{% if class != blank %} {{ class }}{% endif %}"
+    role="alert"
+    tabindex="-1"
+    autofocus
+  >
+    <p class="form__error-heading">{{ 'general.forms.error_heading' | t }}</p>
+    <ul class="form__error-list">
+      {%- for field in form.errors -%}
+        <li>
+          {%- if field == 'form' -%}
+            {{ form.errors.messages[field] }}
+          {%- else -%}
+            {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

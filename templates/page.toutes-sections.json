@@ -1,0 +1,571 @@
+{
+  "sections": {
+    "rich_text": {
+      "type": "rich-text",
+      "blocks": {
+        "eyebrow_1": {
+          "type": "eyebrow"
+        },
+        "heading_1": {
+          "type": "heading"
+        },
+        "text_1": {
+          "type": "text"
+        },
+        "button_1": {
+          "type": "button",
+          "settings": {
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "eyebrow_1",
+        "heading_1",
+        "text_1",
+        "button_1"
+      ]
+    },
+    "image_with_text": {
+      "type": "image-with-text",
+      "settings": {
+        "button_link": "/collections/all"
+      }
+    },
+    "multi_column": {
+      "type": "multi-column",
+      "blocks": {
+        "column_1": {
+          "type": "column",
+          "settings": {
+            "title": "Sustainable materials",
+            "text": "<p>Fabrics selected from European ateliers, traced from thread to finished garment.</p>",
+            "link_label": "Learn more",
+            "link": "/collections/all"
+          }
+        },
+        "column_2": {
+          "type": "column",
+          "settings": {
+            "title": "Local production",
+            "text": "<p>Each piece is assembled in small runs, as close as possible to our partner ateliers.</p>",
+            "link_label": "Learn more",
+            "link": "/collections/all"
+          }
+        },
+        "column_3": {
+          "type": "column",
+          "settings": {
+            "title": "Delivered with care",
+            "text": "<p>Dispatch within 48 hours, recycled packaging and free returns for 30 days.</p>",
+            "link_label": "Learn more",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "column_1",
+        "column_2",
+        "column_3"
+      ]
+    },
+    "slideshow": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_1": {
+          "type": "slide",
+          "settings": {
+            "pretitle": "New collection",
+            "title": "Everyday elegance",
+            "text": "Timeless pieces, made to last and to be worn season after season.",
+            "button_label": "Discover",
+            "button_link": "/collections/all"
+          }
+        },
+        "slide_2": {
+          "type": "slide",
+          "settings": {
+            "pretitle": "Limited edition",
+            "title": "The winter wardrobe",
+            "text": "Soft wools, clean cuts and responsible materials, in limited quantities.",
+            "button_label": "View the selection",
+            "button_link": "/collections/all"
+          }
+        },
+        "slide_3": {
+          "type": "slide",
+          "settings": {
+            "pretitle": "Savoir-faire",
+            "title": "Made in Europe",
+            "text": "Every piece is made in partner ateliers, to our exacting standards.",
+            "button_label": "Our story",
+            "button_link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "slide_1",
+        "slide_2",
+        "slide_3"
+      ]
+    },
+    "video_banner": {
+      "type": "video-banner"
+    },
+    "featured_product": {
+      "type": "featured-product"
+    },
+    "featured_collections": {
+      "type": "featured-collections",
+      "blocks": {
+        "collection_1": {
+          "type": "collection"
+        },
+        "collection_2": {
+          "type": "collection"
+        },
+        "collection_3": {
+          "type": "collection"
+        }
+      },
+      "block_order": [
+        "collection_1",
+        "collection_2",
+        "collection_3"
+      ]
+    },
+    "blog_posts": {
+      "type": "blog-posts"
+    },
+    "gallery": {
+      "type": "gallery",
+      "blocks": {
+        "image_1": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        },
+        "image_2": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        },
+        "image_3": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        },
+        "image_4": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        },
+        "image_5": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        },
+        "image_6": {
+          "type": "image",
+          "settings": {
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "image_1",
+        "image_2",
+        "image_3",
+        "image_4",
+        "image_5",
+        "image_6"
+      ]
+    },
+    "logo_list": {
+      "type": "logo-list",
+      "blocks": {
+        "logo_1": {
+          "type": "logo"
+        },
+        "logo_2": {
+          "type": "logo"
+        },
+        "logo_3": {
+          "type": "logo"
+        },
+        "logo_4": {
+          "type": "logo"
+        },
+        "logo_5": {
+          "type": "logo"
+        }
+      },
+      "block_order": [
+        "logo_1",
+        "logo_2",
+        "logo_3",
+        "logo_4",
+        "logo_5"
+      ]
+    },
+    "testimonials": {
+      "type": "testimonials",
+      "blocks": {
+        "testimonial_1": {
+          "type": "testimonial"
+        },
+        "testimonial_2": {
+          "type": "testimonial"
+        },
+        "testimonial_3": {
+          "type": "testimonial"
+        }
+      },
+      "block_order": [
+        "testimonial_1",
+        "testimonial_2",
+        "testimonial_3"
+      ]
+    },
+    "reviews": {
+      "type": "reviews",
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "heading": "Exactly what I hoped for",
+            "text": "The cut is perfect and the fabric holds up beautifully in the wash. Delivered in three days, carefully packed.",
+            "author": "Camille D.",
+            "date": "March 12, 2026",
+            "verified": true
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "rating": 5,
+            "heading": "Quality you can see",
+            "text": "The finishing is impeccable, you can feel the difference from the first try-on. I'll order again without hesitation.",
+            "author": "Julien M.",
+            "date": "February 28, 2026",
+            "verified": true
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "rating": 4,
+            "heading": "Very happy with the service",
+            "text": "I exchanged for another size, the process was simple and the refund quick. One star off for the shipping time.",
+            "author": "Sophie L.",
+            "date": "February 16, 2026",
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3"
+      ]
+    },
+    "trust_badges": {
+      "type": "trust-badges",
+      "blocks": {
+        "item_1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "title": "Free shipping",
+            "text": "Free shipping on orders over €100."
+          }
+        },
+        "item_2": {
+          "type": "item",
+          "settings": {
+            "icon": "refresh",
+            "title": "30-day returns",
+            "text": "Change your mind, we'll take care of the rest."
+          }
+        },
+        "item_3": {
+          "type": "item",
+          "settings": {
+            "icon": "lock",
+            "title": "Secure payment",
+            "text": "Encrypted and protected transactions."
+          }
+        },
+        "item_4": {
+          "type": "item",
+          "settings": {
+            "icon": "headset",
+            "title": "Personalised advice",
+            "text": "Our team is on hand Monday to Friday."
+          }
+        }
+      },
+      "block_order": [
+        "item_1",
+        "item_2",
+        "item_3",
+        "item_4"
+      ]
+    },
+    "comparison": {
+      "type": "comparison",
+      "blocks": {
+        "column_1": {
+          "type": "column",
+          "settings": {
+            "title": "Essential",
+            "subtitle": "A first taste of the house",
+            "price": "€29",
+            "highlight": false,
+            "button_label": "Choose this plan",
+            "has_1": true,
+            "has_2": true,
+            "has_3": false,
+            "has_4": false,
+            "has_5": false,
+            "has_6": false,
+            "button_link": "/collections/all"
+          }
+        },
+        "column_2": {
+          "type": "column",
+          "settings": {
+            "title": "Signature",
+            "subtitle": "Our most popular offer",
+            "price": "€59",
+            "highlight": true,
+            "button_label": "Choose this plan",
+            "has_1": true,
+            "has_2": true,
+            "has_3": true,
+            "has_4": false,
+            "has_5": true,
+            "has_6": true,
+            "feature_1": "From €50",
+            "feature_5": "Response within 24 hours",
+            "button_link": "/collections/all"
+          }
+        },
+        "column_3": {
+          "type": "column",
+          "settings": {
+            "title": "Atelier",
+            "subtitle": "Tailored support",
+            "price": "€99",
+            "highlight": false,
+            "button_label": "Choose this plan",
+            "has_1": true,
+            "has_2": true,
+            "has_3": true,
+            "has_4": true,
+            "has_5": true,
+            "has_6": true,
+            "feature_5": "Dedicated advisor",
+            "button_link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "column_1",
+        "column_2",
+        "column_3"
+      ]
+    },
+    "countdown": {
+      "type": "countdown",
+      "settings": {
+        "button_link": "/collections/all"
+      }
+    },
+    "faq": {
+      "type": "faq",
+      "blocks": {
+        "question_1": {
+          "type": "question",
+          "settings": {
+            "question": "How long does delivery take?",
+            "answer": "<p>Orders are prepared within 24 to 48 working hours, then delivered in 2 to 4 days.</p>"
+          }
+        },
+        "question_2": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return an item?",
+            "answer": "<p>You have 30 days after receipt to return an unworn item to us, in its original packaging. Refunds are issued within 5 working days.</p>"
+          }
+        },
+        "question_3": {
+          "type": "question",
+          "settings": {
+            "question": "How do I choose my size?",
+            "answer": "<p>Every product page includes a detailed size guide. If you are between two sizes, we recommend taking the larger one.</p>"
+          }
+        },
+        "question_4": {
+          "type": "question",
+          "settings": {
+            "question": "Do you ship internationally?",
+            "answer": "<p>Yes, we ship throughout the European Union, Switzerland and the United Kingdom. Shipping costs and delivery times are calculated at checkout.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "question_1",
+        "question_2",
+        "question_3",
+        "question_4"
+      ]
+    },
+    "tabs": {
+      "type": "tabs",
+      "blocks": {
+        "tab_1": {
+          "type": "tab",
+          "settings": {
+            "title": "Description",
+            "content": "<p>A straight cut, a clean drape and careful finishing. Every piece is made to last, season after season.</p>"
+          }
+        },
+        "tab_2": {
+          "type": "tab",
+          "settings": {
+            "title": "Composition",
+            "content": "<p>70% merino wool, 30% cashmere. Woven in Italy, made up in Portugal by a partner atelier of ten years.</p>"
+          }
+        },
+        "tab_3": {
+          "type": "tab",
+          "settings": {
+            "title": "Care",
+            "content": "<p>Hand wash at 30°C or dry clean. Dry flat, out of direct light. Do not tumble dry.</p>"
+          }
+        },
+        "tab_4": {
+          "type": "tab",
+          "settings": {
+            "title": "Shipping & returns",
+            "content": "<p>Shipped within 48 working hours, free delivery over €120. Free returns for 30 days after receipt.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "tab_1",
+        "tab_2",
+        "tab_3",
+        "tab_4"
+      ]
+    },
+    "size_guide": {
+      "type": "size-guide",
+      "blocks": {
+        "row_1": {
+          "type": "row",
+          "settings": {
+            "label": "t:sections.size_guide.blocks.row.presets.xs",
+            "col_1": "82 - 86",
+            "col_2": "64 - 68",
+            "col_3": "88 - 92",
+            "col_4": "59"
+          }
+        },
+        "row_2": {
+          "type": "row",
+          "settings": {
+            "label": "t:sections.size_guide.blocks.row.presets.s",
+            "col_1": "86 - 90",
+            "col_2": "68 - 72",
+            "col_3": "92 - 96",
+            "col_4": "60"
+          }
+        },
+        "row_3": {
+          "type": "row",
+          "settings": {
+            "label": "t:sections.size_guide.blocks.row.presets.m",
+            "col_1": "90 - 94",
+            "col_2": "72 - 76",
+            "col_3": "96 - 100",
+            "col_4": "61"
+          }
+        },
+        "row_4": {
+          "type": "row",
+          "settings": {
+            "label": "t:sections.size_guide.blocks.row.presets.l",
+            "col_1": "94 - 100",
+            "col_2": "76 - 82",
+            "col_3": "100 - 106",
+            "col_4": "62"
+          }
+        },
+        "row_5": {
+          "type": "row",
+          "settings": {
+            "label": "t:sections.size_guide.blocks.row.presets.xl",
+            "col_1": "100 - 106",
+            "col_2": "82 - 88",
+            "col_3": "106 - 112",
+            "col_4": "63"
+          }
+        }
+      },
+      "block_order": [
+        "row_1",
+        "row_2",
+        "row_3",
+        "row_4",
+        "row_5"
+      ]
+    },
+    "map": {
+      "type": "map"
+    },
+    "divider": {
+      "type": "divider"
+    },
+    "custom_liquid": {
+      "type": "custom-liquid",
+      "settings": {
+        "custom_liquid": "<p>Custom Liquid block: this text comes from the section setting.</p>"
+      }
+    },
+    "apps": {
+      "type": "apps"
+    }
+  },
+  "order": [
+    "rich_text",
+    "image_with_text",
+    "multi_column",
+    "slideshow",
+    "video_banner",
+    "featured_product",
+    "featured_collections",
+    "blog_posts",
+    "gallery",
+    "logo_list",
+    "testimonials",
+    "reviews",
+    "trust_badges",
+    "comparison",
+    "countdown",
+    "faq",
+    "tabs",
+    "size_guide",
+    "map",
+    "divider",
+    "custom_liquid",
+    "apps"
+  ]
+}

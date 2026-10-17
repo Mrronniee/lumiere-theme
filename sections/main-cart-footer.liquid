@@ -105,6 +105,34 @@
     background: var(--color-primary-hover);
   }
 
+  /* Barre « livraison offerte » : meme rendu que dans le tiroir
+     (snippets/cart-free-shipping.liquid). */
+  .cart-footer__free-shipping {
+    padding: var(--spacing-sm);
+    background: #f0f0f0;
+    margin-bottom: var(--spacing-sm);
+    text-align: center;
+  }
+
+  .cart-footer__free-shipping-text {
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+  }
+
+  .cart-footer__free-shipping-bar {
+    width: 100%;
+    height: 4px;
+    background: #ddd;
+    margin-top: 0.5rem;
+    overflow: hidden;
+  }
+
+  .cart-footer__free-shipping-progress {
+    height: 100%;
+    background: var(--color-accent);
+    transition: width 0.5s ease;
+  }
+
   .cart-footer__note-shipping {
     font-family: var(--font-body);
     font-size: 0.8125rem;
@@ -144,6 +172,8 @@
     <div class="cart-footer__summary">
       <h2 class="cart-footer__summary-title">{{ 'cart.general.summary' | t }}</h2>
 
+      {% render 'cart-free-shipping', class: 'cart-footer__free-shipping' %}
+
       <div class="cart-footer__line cart-footer__line--subtotal">
         <span>{{ 'cart.general.subtotal' | t }}</span>
         <span data-cart-subtotal>{{ cart.total_price | money }}</span>
@@ -172,6 +202,26 @@
         {{ 'cart.general.checkout' | t }}
         {% render 'icon', icon: 'arrow-right' %}
       </button>
+
+      {%- comment -%}
+        Boutons de paiement accelere (Shop Pay, PayPal, Apple Pay...). La fiche
+        produit les affichait, la page panier non : le client devait passer par
+        la commande pour y arriver.
+      {%- endcomment -%}
+      {%- if additional_checkout_buttons -%}
+        <div class="cart-footer__accelerated">
+          {{ content_for_additional_checkout_buttons }}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Blocs d'application du panier (financement, assurance...). {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == '@app' -%}
+          <div class="cart-footer__app-block" {{ block.shopify_attributes }}>
+            {% render block %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
     </div>
   </div>
 </div>
@@ -183,6 +233,11 @@
   "name": "t:sections.main_cart_footer.name",
   "tag": "section",
   "class": "section-cart-footer",
-  "settings": []
+  "settings": [],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
 }
 {% endschema %}

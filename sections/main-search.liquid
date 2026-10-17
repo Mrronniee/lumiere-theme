@@ -2,7 +2,7 @@
   Section: Résultats de recherche
 {% endcomment %}
 
-<div class="page-shell page-shell--wide">
+<div class="page-shell page-shell--wide" data-section-type="search" data-section-id="{{ section.id }}">
   <div class="page-shell__header">
     <h1 class="page-shell__title">
       {%- if search.performed -%}
@@ -32,6 +32,38 @@
 
   {%- if search.performed -%}
     {%- if search.results_count > 0 -%}
+      {%- comment -%}
+        Filtres et tri : la page de resultats n'en avait aucun, alors que
+        Shopify expose `search.filters` et `search.sort_options` comme sur une
+        collection. Memes snippets, donc meme comportement et meme CSS.
+        `q` et `type` voyagent en champs caches du formulaire de filtres.
+      {%- endcomment -%}
+      {%- liquid
+        assign search_types = 'product'
+        if settings.search_include_pages
+          assign search_types = 'product,page,article'
+        endif
+      -%}
+      {%- if search.filters.size > 0 or search.sort_options.size > 0 -%}
+        <div class="collection-grid__controls">
+          {%- if search.filters.size > 0 -%}
+            <button type="button" class="collection-grid__filter-toggle" data-filter-toggle aria-expanded="false" aria-controls="CollectionFilters">
+              {{ 'sections.collection.filters' | t }}
+            </button>
+          {%- endif -%}
+          {% render 'facet-sort', filterable: search, section_id: section.id %}
+        </div>
+      {%- endif -%}
+
+      {% render 'facet-filters',
+        filterable: search,
+        reset_url: search.url,
+        section_id: section.id,
+        terms: search.terms,
+        types: search_types,
+        sort_by: search.sort_by
+      %}
+
       {%- paginate search.results by settings.search_results_per_page -%}
         <div class="collection-grid__products search-page__results">
           {%- for item in search.results -%}

@@ -2,36 +2,55 @@
   Champs d'adresse client
   Usage: {% render 'address-fields', form: form, prefix: 'AddressNew' %}
 {% endcomment %}
-{%- if form.errors -%}<div class="form__error">{{ form.errors | default_errors }}</div>{%- endif -%}
+{%- assign errors_id = prefix | append: 'Errors' -%}
+{% render 'form-errors', form: form, id: errors_id %}
 
 <label for="{{ prefix }}FirstName">{{ 'customer.addresses.first_name' | t }}</label>
-<input type="text" id="{{ prefix }}FirstName" name="address[first_name]" value="{{ form.first_name }}" autocomplete="given-name">
+<input type="text" id="{{ prefix }}FirstName" name="address[first_name]" value="{{ form.first_name }}"
+  {%- if form.errors contains 'first_name' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="given-name">
 
 <label for="{{ prefix }}LastName">{{ 'customer.addresses.last_name' | t }}</label>
-<input type="text" id="{{ prefix }}LastName" name="address[last_name]" value="{{ form.last_name }}" autocomplete="family-name">
+<input type="text" id="{{ prefix }}LastName" name="address[last_name]" value="{{ form.last_name }}"
+  {%- if form.errors contains 'last_name' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="family-name">
 
 <label for="{{ prefix }}Company">{{ 'customer.addresses.company' | t }}</label>
-<input type="text" id="{{ prefix }}Company" name="address[company]" value="{{ form.company }}" autocomplete="organization">
+<input type="text" id="{{ prefix }}Company" name="address[company]" value="{{ form.company }}"
+  {%- if form.errors contains 'company' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="organization">
 
 <label for="{{ prefix }}Address1">{{ 'customer.addresses.address1' | t }}</label>
-<input type="text" id="{{ prefix }}Address1" name="address[address1]" value="{{ form.address1 }}" autocomplete="address-line1">
+<input type="text" id="{{ prefix }}Address1" name="address[address1]" value="{{ form.address1 }}"
+  {%- if form.errors contains 'address1' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="address-line1">
 
 <label for="{{ prefix }}Address2">{{ 'customer.addresses.address2' | t }}</label>
-<input type="text" id="{{ prefix }}Address2" name="address[address2]" value="{{ form.address2 }}" autocomplete="address-line2">
+<input type="text" id="{{ prefix }}Address2" name="address[address2]" value="{{ form.address2 }}"
+  {%- if form.errors contains 'address2' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="address-line2">
 
 <label for="{{ prefix }}City">{{ 'customer.addresses.city' | t }}</label>
-<input type="text" id="{{ prefix }}City" name="address[city]" value="{{ form.city }}" autocomplete="address-level2">
+<input type="text" id="{{ prefix }}City" name="address[city]" value="{{ form.city }}"
+  {%- if form.errors contains 'city' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="address-level2">
 
 <label for="{{ prefix }}Country">{{ 'customer.addresses.country' | t }}</label>
-<select id="{{ prefix }}Country" name="address[country]" data-address-country autocomplete="country">
+<select id="{{ prefix }}Country" name="address[country]" data-address-country autocomplete="country"
+  {%- if form.errors contains 'country' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+ >
   {{ all_country_option_tags }}
 </select>
 
 <label for="{{ prefix }}Zip">{{ 'customer.addresses.zip' | t }}</label>
-<input type="text" id="{{ prefix }}Zip" name="address[zip]" value="{{ form.zip }}" autocomplete="postal-code">
+<input type="text" id="{{ prefix }}Zip" name="address[zip]" value="{{ form.zip }}"
+  {%- if form.errors contains 'zip' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="postal-code">
 
 <label for="{{ prefix }}Phone">{{ 'customer.addresses.phone' | t }}</label>
-<input type="tel" id="{{ prefix }}Phone" name="address[phone]" value="{{ form.phone }}" autocomplete="tel">
+<input type="tel" id="{{ prefix }}Phone" name="address[phone]" value="{{ form.phone }}"
+  {%- if form.errors contains 'phone' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+  autocomplete="tel">
 
 <label class="customer__checkbox">
   {{ form.set_as_default_checkbox }}

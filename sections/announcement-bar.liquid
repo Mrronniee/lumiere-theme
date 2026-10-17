@@ -3,7 +3,12 @@
   Affiche un message promotionnel en haut de page
 {% endcomment %}
 
-{%- if section.settings.show_announcement -%}
+{%- comment -%}
+  Texte vide = aucune balise. Avant, la barre se rendait quand meme (le
+  reglage `text` n'a pas de defaut) : un <span> vide annonce par le role
+  region, et 24 px de marge fantome en haut de chaque page.
+{%- endcomment -%}
+{%- if section.settings.show_announcement and section.settings.text != blank -%}
   <div class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
     <div class="announcement-bar__content">
       {%- if section.settings.link != blank -%}

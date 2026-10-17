@@ -17,7 +17,11 @@
                 <img
                   src="{{ collection.image | image_url: width: 720 }}"
                   srcset="{{ collection.image | image_url: width: 360 }} 360w, {{ collection.image | image_url: width: 720 }} 720w"
-                  sizes="(min-width: 990px) 33vw, 100vw"
+                  {%- comment -%}
+                    .collections-list : 3 colonnes, 2 sous 990 px, 1 sous
+                    750 px (assets/theme.css). Palier 750-989 px ajoute.
+                  {%- endcomment -%}
+                  sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, calc(100vw - 3rem)"
                   alt="{{ collection.image.alt | escape }}"
                   loading="lazy"
                   width="{{ collection.image.width }}"

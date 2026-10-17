@@ -190,6 +190,31 @@
     margin-bottom: var(--spacing-xs);
   }
 
+  /* Memes elements que sur /cart : snippets/cart-item-price.liquid. */
+  .mini-cart__item-price__original {
+    color: var(--color-text-light);
+    font-size: 0.8125rem;
+    font-weight: 400;
+  }
+
+  .mini-cart__item-price__sale { color: var(--color-sale); }
+
+  .mini-cart__item-price__unit {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-text-light);
+  }
+
+  .mini-cart__item-price__discounts {
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--color-sale);
+  }
+
   .mini-cart__item-actions {
     display: flex;
     align-items: center;
@@ -399,6 +424,31 @@
     background: var(--color-accent);
     transition: width 0.5s ease;
   }
+
+  .mini-cart__note-field {
+    margin-bottom: var(--spacing-xs);
+    text-align: left;
+  }
+
+  .mini-cart__note-label {
+    display: block;
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+  }
+
+  .mini-cart__note-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: var(--input-border, 1px) solid var(--color-border);
+    border-radius: var(--input-radius, 0);
+    background: var(--input-bg, #fff);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    resize: vertical;
+  }
 {%- endstyle -%}
 
 <div class="mini-cart__overlay" data-mini-cart-overlay></div>
@@ -464,7 +514,7 @@
               {%- if item_properties != blank -%}
                 <ul class="mini-cart__item-properties">{{ item_properties }}</ul>
               {%- endif -%}
-              <span class="mini-cart__item-price">{{ item.final_line_price | money }}</span>
+              {% render 'cart-item-price', item: item, scope: 'line', class: 'mini-cart__item-price' %}
               <div class="mini-cart__item-actions">
                 <div class="mini-cart__item-qty">
                   <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--minus" data-qty-change="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
@@ -541,27 +591,7 @@
 
   {%- if cart.item_count > 0 -%}
     <div class="mini-cart__footer">
-      {%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
-        {%- liquid
-          assign threshold = settings.cart_free_shipping_threshold
-          assign progress = cart.total_price | times: 100 | divided_by: threshold
-          assign progress = progress | at_most: 100
-          assign remaining = threshold | minus: cart.total_price
-          assign remaining_money = remaining | money
-        -%}
-        <div class="mini-cart__free-shipping">
-          {%- if cart.total_price >= threshold -%}
-            <p class="mini-cart__free-shipping-text">{{ 'cart.general.free_shipping_success' | t }}</p>
-          {%- else -%}
-            <p class="mini-cart__free-shipping-text">
-              {{- 'cart.general.free_shipping_progress_html' | t: amount: remaining_money -}}
-            </p>
-          {%- endif -%}
-          <div class="mini-cart__free-shipping-bar">
-            <div class="mini-cart__free-shipping-progress" style="width: {{ progress }}%"></div>
-          </div>
-        </div>
-      {%- endif -%}
+      {% render 'cart-free-shipping', class: 'mini-cart__free-shipping' %}
 
       <div class="mini-cart__subtotal">
         <span class="mini-cart__subtotal-label">{{ 'cart.general.subtotal' | t }}</span>
@@ -575,6 +605,23 @@
         dépendre du formulaire de la page panier.
       {%- endcomment -%}
       <form action="{{ routes.cart_url }}" method="post" novalidate>
+        {%- comment -%}
+          Champ de note : /cart l'avait, le tiroir non. Le client qui commande
+          depuis le tiroir doit pouvoir laisser la meme consigne.
+        {%- endcomment -%}
+        {%- if settings.cart_show_note -%}
+          <div class="mini-cart__note-field">
+            <label for="MiniCartNote" class="mini-cart__note-label">{{ 'cart.general.note' | t }}</label>
+            <textarea
+              name="note"
+              id="MiniCartNote"
+              class="mini-cart__note-input"
+              rows="2"
+              placeholder="{{ 'cart.general.note_placeholder' | t }}"
+            >{{ cart.note }}</textarea>
+          </div>
+        {%- endif -%}
+
         <button type="submit" name="checkout" class="mini-cart__checkout">
           {{ 'cart.general.checkout' | t }}
           {% render 'icon', icon: 'arrow-right' %}

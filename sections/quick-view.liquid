@@ -37,6 +37,8 @@
     width: 100%;
     max-width: var(--modal-width, 1000px);
     max-height: 90vh;
+    /* dvh : sur mobile la barre d adresse mangeait le bas du panneau. */
+    max-height: 90dvh;
     overflow-y: auto;
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -249,6 +251,7 @@
     .quick-view__content {
       grid-template-columns: 1fr;
       max-height: 85vh;
+      max-height: 85dvh;
     }
     .quick-view__gallery {
       aspect-ratio: 1;

@@ -25,7 +25,8 @@
       "collections": "Collections",
       "pages": "Pages",
       "articles": "Articles",
-      "view_all": "Voir tous les résultats pour « {{ terms }} »"
+      "view_all": "Voir tous les résultats pour « {{ terms }} »",
+      "error": "La recherche est indisponible pour l’instant. Veuillez réessayer."
     },
     "404": {
       "title": "Page non trouvée",
@@ -39,10 +40,15 @@
       "page": "Page {{ number }}"
     },
     "meta": {
-      "tags": "Étiqueté « {{ tags }} »"
+      "tags": "Étiqueté « {{ tags }} »"
     },
     "footer": {
-      "rights_reserved": "Tous droits réservés."
+      "rights_reserved": "Tous droits réservés.",
+      "quick_links": "Liens utiles"
+    },
+    "forms": {
+      "error_heading": "Veuillez corriger ce qui suit :",
+      "required_note": "Champ obligatoire."
     }
   },
   "accessibility": {
@@ -100,7 +106,8 @@
       "default_link_label": "Découvrir"
     },
     "rich_text": {
-      "no_blocks": "Ajoutez un pré-titre, un titre, du texte ou un bouton pour composer cette section."
+      "no_blocks": "Ajoutez un pré-titre, un titre, du texte ou un bouton pour composer cette section.",
+      "button_needs_link": "Ce bouton n’a pas encore de lien. Choisissez une destination pour qu’il s’affiche."
     },
     "testimonials": {
       "rating": "Note : {{ rating }} sur 5",
@@ -219,6 +226,16 @@
     },
     "related_products": {
       "default_title": "Vous aimerez aussi"
+    },
+    "apps": {
+      "no_blocks": "Ajoutez un bloc d’application à cette section."
+    },
+    "featured_product": {
+      "no_product": "Choisissez le produit à mettre en avant dans cette section."
+    },
+    "footer": {
+      "column_needs_menu": "Choisissez un menu pour que cette colonne s’affiche.",
+      "brand_needs_description": "Ajoutez une courte description de votre boutique."
     }
   },
   "cart": {
@@ -282,7 +299,8 @@
         "unit_price": "Prix à l’unité",
         "regular_price": "Prix régulier",
         "sale_price": "Prix soldé"
-      }
+      },
+      "variant_label": "Variante"
     }
   },
   "wishlist": {
@@ -311,6 +329,21 @@
     },
     "general": {
       "empty": "Aucun article pour le moment."
+    },
+    "comments": {
+      "title": {
+        "one": "{{ count }} commentaire",
+        "other": "{{ count }} commentaires"
+      },
+      "empty": "Aucun commentaire pour l'instant. Soyez la première personne à en écrire un.",
+      "form_title": "Laisser un commentaire",
+      "author": "Nom",
+      "email": "E-mail",
+      "message": "Commentaire",
+      "submit": "Publier le commentaire",
+      "success": "Votre commentaire a été publié. Merci.",
+      "success_moderated": "Votre commentaire a été reçu et s'affichera dès qu'il sera approuvé.",
+      "moderated_note": "Les commentaires sont relus avant d'être publiés."
     }
   },
   "collections": {
@@ -423,7 +456,17 @@
       "expires_on": "Expire le {{ expiry }}",
       "redeem": "Utilisez ce code à la caisse pour utiliser votre carte-cadeau",
       "shop_link": "Commencer mes achats",
-      "print": "Imprimer"
+      "print": "Imprimer",
+      "add_to_wallet": "Ajouter à Apple Wallet"
+    },
+    "recipient": {
+      "legend": "Envoi de la carte cadeau",
+      "send_as_gift": "Envoyer cette carte cadeau à quelqu’un d’autre",
+      "email": "E-mail du destinataire",
+      "name": "Nom du destinataire",
+      "message": "Message (facultatif)",
+      "send_on": "Envoyer le (facultatif)",
+      "send_on_note": "Laissez vide pour l’envoyer dès que la commande est payée."
     }
   },
   "password_page": {

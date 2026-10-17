@@ -571,6 +571,28 @@
           this.addItem(form);
         }
       });
+
+      /**
+       * Carte cadeau : les champs du destinataire ne s'affichent que si
+       * l'acheteur coche « envoyer a quelqu'un d'autre ». La case porte le nom
+       * exact attendu par Shopify, donc on ne la retire jamais du formulaire.
+       */
+      document.addEventListener('change', (e) => {
+        const toggle = e.target.closest('[data-gift-card-toggle]');
+        if (!toggle) return;
+        const fields = toggle.closest('fieldset')?.querySelector('[data-gift-card-fields]');
+        if (fields) fields.hidden = !toggle.checked;
+      });
+
+      /**
+       * Retour arriere du navigateur : la page revient du cache (bfcache) telle
+       * qu'elle etait AVANT l'ajout au panier, et le compteur de l'en-tete
+       * affiche l'ancien nombre. On relit /cart.js et on re-rend le tiroir.
+       */
+      window.addEventListener('pageshow', (e) => {
+        if (!e.persisted) return;
+        this.refresh();
+      });
     },
 
     /**
@@ -1125,7 +1147,19 @@
       }
     },
 
+    /**
+     * Ouvre le panneau vide, pour l'editeur de theme uniquement : il n'y a pas
+     * de produit a charger quand le marchand selectionne la section.
+     */
+    openEmpty() {
+      if (!this.modal) this.modal = document.querySelector('[data-quick-view]');
+      if (!this.modal) return;
+      this.modal.classList.add('is-active');
+      this.modal.setAttribute('aria-hidden', 'false');
+    },
+
     close() {
+      if (!this.modal) return;
       this.modal.classList.remove('is-active');
       this.modal.setAttribute('aria-hidden', 'true');
       utils.lockScroll(false);
@@ -1157,6 +1191,9 @@
           if (!isOpen) {
             group.classList.add('is-open');
             toggle.setAttribute('aria-expanded', 'true');
+            // Declencheur memorise : Echap doit rendre le focus ici, sinon le
+            // focus restait dans un panneau devenu invisible.
+            this.lastFocus = toggle;
           }
           return;
         }
@@ -1199,10 +1236,20 @@
     },
 
     closeAll() {
+      // Le focus ne revient au declencheur que s'il etait DANS le panneau qu'on
+      // ferme : sinon un clic ailleurs sur la page volerait le focus.
+      let focusWasInside = false;
       document.querySelectorAll('[data-market-dropdown]').forEach((group) => {
+        if (group.classList.contains('is-open') && group.contains(document.activeElement)) {
+          focusWasInside = true;
+        }
         group.classList.remove('is-open');
         group.querySelector('.markets-selectors__toggle')?.setAttribute('aria-expanded', 'false');
       });
+      if (focusWasInside) {
+        utils.focusBack(this.lastFocus, '.markets-selectors__toggle');
+      }
+      this.lastFocus = null;
     },
 
     submit(field, value) {
@@ -1510,7 +1557,11 @@
   // ============================================
   const CollectionFilters = {
     init(scope) {
-      const section = (scope || document).querySelector('[data-section-type="collection"]');
+      // La page de resultats de recherche a les memes filtres et le meme tri
+      // que la collection : le module sert aux deux.
+      const section = (scope || document).querySelector(
+        '[data-section-type="collection"], [data-section-type="search"]'
+      );
       if (!section || section.dataset.filtersBound === 'true') return;
       section.dataset.filtersBound = 'true';
       this.section = section;
@@ -1714,9 +1765,29 @@
         this.render(terms, html);
       } catch (error) {
         if (error.name === 'AbortError') return;
-        this.clear();
+        // Avant, l'echec etait muet : la liste se vidait, rien n'etait affiche
+        // ni annonce, et le client croyait qu'il n'y avait aucun resultat.
+        this.showError();
       } finally {
         if (this.controller === controller) this.controller = null;
+      }
+    },
+
+    /** Affiche ET annonce l'echec de la recherche predictive. */
+    showError() {
+      if (!this.list) return;
+      this.list.replaceChildren();
+      this.lastTerms = '';
+      this.setActive(-1);
+      const message = (window.themeStrings && window.themeStrings.searchError) || '';
+      if (this.empty && message) {
+        this.empty.textContent = message;
+        this.empty.hidden = false;
+        if (this.panel) this.panel.hidden = false;
+        this.input.setAttribute('aria-expanded', 'true');
+        this.announce(message);
+      } else {
+        this.close();
       }
     },
 
@@ -1866,10 +1937,37 @@
       this.menuOverlay = document.querySelector('[data-menu-overlay]');
       this.search = document.querySelector('[data-search-overlay]');
 
+      this.publishHeight();
+
       if (!this.bound) {
         this.bindEvents();
         this.bindScroll();
         this.bound = true;
+      }
+    },
+
+    /**
+     * Publie la hauteur REELLE du header en variable CSS : sur l'accueil, le
+     * premier bloc remonte de cette hauteur pour passer sous le header
+     * transparent. Elle depend de la taille du logo reglee par le marchand,
+     * donc elle se mesure au lieu de se deviner (le defaut CSS, 71 px, ne sert
+     * qu'avant le premier calcul et sans JavaScript).
+     */
+    publishHeight() {
+      const header = this.el;
+      if (!header) return;
+
+      const set = () => {
+        document.documentElement.style.setProperty('--header-height', `${header.offsetHeight}px`);
+      };
+      set();
+
+      if (this.heightWatched) return;
+      this.heightWatched = true;
+      if ('ResizeObserver' in window) {
+        new ResizeObserver(set).observe(header);
+      } else {
+        window.addEventListener('resize', set, { passive: true });
       }
     },
 
@@ -2050,15 +2148,30 @@
       const container = (scope || document).querySelector('[data-recommendations]');
       if (!container || container.dataset.loaded === 'true') return;
       container.dataset.loaded = 'true';
+
+      // La section ne se replie que si la reponse ne ramene aucun produit :
+      // tant qu'on ne sait pas, les cartes d'attente gardent la place.
+      const collapse = () => {
+        const section = container.closest('[data-section-id]');
+        if (section) section.hidden = true;
+      };
+
       try {
         const res = await fetch(container.dataset.url);
-        if (!res.ok) return;
+        if (!res.ok) {
+          collapse();
+          return;
+        }
         const html = await res.text();
         const fresh = new DOMParser().parseFromString(html, 'text/html').querySelector('[data-recommendations]');
-        if (fresh) container.innerHTML = fresh.innerHTML;
+        if (!fresh || !fresh.querySelector('.product-card')) {
+          collapse();
+          return;
+        }
+        container.innerHTML = fresh.innerHTML;
         Wishlist.updateUI();
       } catch (e) {
-        /* pas de recommandations : la section reste vide */
+        collapse();
       }
     }
   };
@@ -2095,5 +2208,20 @@
 
   document.addEventListener('shopify:section:unload', (e) => {
     if (e.target.querySelector('[data-mini-cart]')) Cart.drawer = null;
+  });
+
+  /**
+   * Editeur de theme : choisir dans la liste une section qui n'est visible
+   * qu'ouverte (tiroir panier, apercu rapide) doit l'ouvrir. Sinon le marchand
+   * la selectionne, ne voit rien bouger, et ne peut pas juger ses reglages.
+   */
+  document.addEventListener('shopify:section:select', (e) => {
+    if (e.target.querySelector('[data-mini-cart]')) Cart.open();
+    if (e.target.querySelector('[data-quick-view]')) QuickView.openEmpty();
+  });
+
+  document.addEventListener('shopify:section:deselect', (e) => {
+    if (e.target.querySelector('[data-mini-cart]')) Cart.close();
+    if (e.target.querySelector('[data-quick-view]')) QuickView.close();
   });
 })();

@@ -1,0 +1,243 @@
+{% comment %}
+  Section: Produit mis en avant
+  Affiche UN produit choisi par le marchand, avec son image, son prix et son
+  bouton d'ajout au panier, dans n'importe quel gabarit. Section standard
+  exigee par le Theme Store.
+
+  Le choix de variante passe par un <select name="id"> qui liste les variantes :
+  il fonctionne sans JavaScript et n'a pas besoin du selecteur de la fiche
+  produit, qui depend du gabarit produit.
+{% endcomment %}
+
+{%- liquid
+  assign featured = section.settings.product
+  assign chosen_variant = featured.selected_or_first_available_variant
+-%}
+
+{%- style -%}
+  #shopify-section-{{ section.id }} .featured-product {
+    padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
+    background-color: {{ section.settings.background_color }};
+    color: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__inner {
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    align-items: center;
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__media {
+    aspect-ratio: var(--card-ratio, 3 / 4);
+    overflow: hidden;
+    background: #f5f5f5;
+    border-radius: var(--radius, 0);
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__media img,
+  #shopify-section-{{ section.id }} .featured-product__media svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.5rem, 2.5vw, 2.25rem);
+    font-weight: 400;
+    margin-bottom: var(--spacing-xs);
+    color: {{ section.settings.text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__price {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__description {
+    margin-bottom: var(--spacing-sm);
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__variant {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  #shopify-section-{{ section.id }} .featured-product__link {
+    display: inline-block;
+    margin-top: var(--spacing-xs);
+    font-size: 0.875rem;
+  }
+
+  @media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .featured-product__inner {
+      grid-template-columns: 1fr;
+    }
+  }
+{%- endstyle -%}
+
+<div class="featured-product" data-section-id="{{ section.id }}">
+  <div class="featured-product__inner">
+    {%- if featured != blank -%}
+      <div class="featured-product__media">
+        {%- if featured.featured_media -%}
+          <img
+            srcset="{%- if featured.featured_media.width >= 360 -%}{{ featured.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+              {%- if featured.featured_media.width >= 720 -%}{{ featured.featured_media | image_url: width: 720 }} 720w,{%- endif -%}
+              {%- if featured.featured_media.width >= 1100 -%}{{ featured.featured_media | image_url: width: 1100 }} 1100w,{%- endif -%}"
+            src="{{ featured.featured_media | image_url: width: 720 }}"
+            sizes="(min-width: 750px) 50vw, calc(100vw - 3rem)"
+            alt="{{ featured.featured_media.alt | escape }}"
+            loading="lazy"
+            width="{{ featured.featured_media.width }}"
+            height="{{ featured.featured_media.height }}"
+          >
+        {%- else -%}
+          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+      </div>
+
+      <div class="featured-product__info">
+        {%- if section.settings.show_vendor == 'yes' or section.settings.show_vendor == 'inherit' and settings.product_card_show_vendor -%}
+          {%- if featured.vendor != blank -%}
+            <span class="product-card__vendor">{{ featured.vendor }}</span>
+          {%- endif -%}
+        {%- endif -%}
+
+        <h2 class="featured-product__title">{{ featured.title | escape }}</h2>
+
+        <div class="featured-product__price">
+          {% render 'price', product: featured %}
+        </div>
+
+        {%- if section.settings.show_description and featured.description != blank -%}
+          <div class="featured-product__description rte">{{ featured.description | strip_html | truncatewords: 40 }}</div>
+        {%- endif -%}
+
+        {%- form 'product', featured, class: 'product-form', data-type: 'add-to-cart-form' -%}
+          {%- unless featured.has_only_default_variant -%}
+            <label class="featured-product__variant" for="FeaturedVariant-{{ section.id }}">
+              {{ 'products.product.variant_label' | t }}
+              <select
+                class="product-variant__select"
+                id="FeaturedVariant-{{ section.id }}"
+                name="id"
+              >
+                {%- for variant in featured.variants -%}
+                  <option
+                    value="{{ variant.id }}"
+                    {% if variant == chosen_variant %}selected{% endif %}
+                    {% unless variant.available %}disabled{% endunless %}
+                  >
+                    {{ variant.title | escape }}
+                    {%- unless variant.available %} &ndash; {{ 'products.product.sold_out' | t }}{% endunless -%}
+                  </option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- else -%}
+            <input type="hidden" name="id" value="{{ chosen_variant.id }}">
+          {%- endunless -%}
+
+          <button
+            type="submit"
+            name="add"
+            class="btn btn--primary"
+            {% unless featured.available %}disabled{% endunless %}
+          >
+            {%- if featured.available -%}
+              {{ 'products.product.add_to_cart' | t }}
+            {%- else -%}
+              {{ 'products.product.sold_out' | t }}
+            {%- endif -%}
+          </button>
+        {%- endform -%}
+
+        <a href="{{ featured.url }}" class="featured-product__link">
+          {{ 'products.product.view_details' | t }}
+        </a>
+      </div>
+    {%- elsif request.design_mode -%}
+      {%- comment -%}
+        Sans produit choisi, la section ne montre rien en boutique ; ce message
+        n'est la que pour l'editeur, et il nomme la cause.
+      {%- endcomment -%}
+      <p class="featured-product__empty">{{ 'sections.featured_product.no_product' | t }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.featured_product.name",
+  "tag": "section",
+  "class": "section-featured-product",
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:sections.featured_product.settings.product.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_description",
+      "default": true,
+      "label": "t:sections.featured_product.settings.show_description.label"
+    },
+    {
+      "type": "select",
+      "id": "show_vendor",
+      "options": [
+        { "value": "inherit", "label": "t:sections.featured_product.settings.show_vendor.options__inherit" },
+        { "value": "yes", "label": "t:sections.featured_product.settings.show_vendor.options__yes" },
+        { "value": "no", "label": "t:sections.featured_product.settings.show_vendor.options__no" }
+      ],
+      "default": "inherit",
+      "label": "t:sections.featured_product.settings.show_vendor.label",
+      "info": "t:sections.featured_product.settings.show_vendor.info"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "default": "#faf9f7",
+      "label": "t:sections.featured_product.settings.background_color.label"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "default": "#1a1a1a",
+      "label": "t:sections.featured_product.settings.text_color.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "label": "t:sections.featured_product.settings.padding_top.label"
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 64,
+      "label": "t:sections.featured_product.settings.padding_bottom.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured_product.presets.name",
+      "category": "t:categories.product"
+    }
+  ]
+}
+{% endschema %}

@@ -3,6 +3,27 @@
   Footer multi-colonnes avec liens, newsletter, réseaux sociaux
 {% endcomment %}
 
+{%- liquid
+  comment
+    Encre atténuée du pied : les `opacity` (0,7 sur la description et les
+    liens, 0,5 sur le copyright) tombaient sous 4,5:1 des que le marchand
+    choisissait un fond clair. On melange le texte vers le fond jusqu'a
+    atteindre 4,5:1, comme --color-text-light dans css-variables.
+  endcomment
+  assign footer_bg = section.settings.background_color
+  assign footer_text = section.settings.text_color
+  assign muted_weight = 55
+  assign footer_muted = footer_text | color_mix: footer_bg, muted_weight
+  for i in (1..15)
+    assign ratio = footer_muted | color_contrast: footer_bg
+    if ratio >= 4.5
+      break
+    endif
+    assign muted_weight = muted_weight | plus: 3
+    assign footer_muted = footer_text | color_mix: footer_bg, muted_weight
+  endfor
+-%}
+
 {%- style -%}
   .footer {
     background-color: {{ section.settings.background_color }};
@@ -41,7 +62,7 @@
     font-family: var(--font-body);
     font-size: 0.875rem;
     line-height: 1.7;
-    opacity: 0.7;
+    color: {{ footer_muted }};
     margin-bottom: var(--spacing-md);
   }
 
@@ -61,10 +82,12 @@
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
   }
 
+  /* L'encre du survol est derivee de l'accent (--color-on-accent) : du blanc
+     en dur donnait 2,0:1 sur l'accent par defaut #c9a96e. */
   .footer__social-link:hover {
     background-color: var(--color-accent);
     border-color: var(--color-accent);
-    color: #ffffff;
+    color: var(--color-on-accent);
   }
 
   .footer__column-title {
@@ -87,15 +110,14 @@
     display: block;
     font-family: var(--font-body);
     font-size: 0.875rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.7;
+    color: {{ footer_muted }};
     text-decoration: none;
     padding: 0.35rem 0;
-    transition: opacity var(--transition-fast);
+    transition: color var(--transition-fast);
   }
 
   .footer__link:hover {
-    opacity: 1;
+    color: {{ section.settings.text_color }};
   }
 
   .footer__bottom {
@@ -110,7 +132,7 @@
   .footer__copyright {
     font-family: var(--font-body);
     font-size: 0.75rem;
-    opacity: 0.5;
+    color: {{ footer_muted }};
   }
 
   .footer__payments {
@@ -153,6 +175,12 @@
     <div class="footer__top">
       {%- for block in section.blocks -%}
         {%- case block.type -%}
+          {%- comment -%} Bloc d'application depose par le marchand dans le pied. {%- endcomment -%}
+          {%- when '@app' -%}
+            <div class="footer__app-block" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+
           {%- when 'brand' -%}
             <div class="footer__brand" {{ block.shopify_attributes }}>
               {%- if block.settings.logo != blank -%}
@@ -170,6 +198,8 @@
 
               {%- if block.settings.description != blank -%}
                 <p class="footer__description">{{ block.settings.description | escape }}</p>
+              {%- elsif request.design_mode -%}
+                <p class="footer__column-empty">{{ 'sections.footer.brand_needs_description' | t }}</p>
               {%- endif -%}
 
               <div class="footer__socials">
@@ -197,11 +227,21 @@
             </div>
 
           {%- when 'link_list' -%}
-            <div class="footer__column" {{ block.shopify_attributes }}>
-              {%- if block.settings.title != blank -%}
-                <h4 class="footer__column-title">{{ block.settings.title | escape }}</h4>
-              {%- endif -%}
-              {%- if block.settings.menu != blank -%}
+            {%- comment -%}
+              Sans menu choisi, toute la colonne disparait : avant, le titre
+              s'affichait seul, au-dessus du vide. Le repli du titre passe par
+              les locales : le defaut du schema etait de l'anglais en dur, qui
+              s'affichait tel quel sur la version francaise.
+            {%- endcomment -%}
+            {%- if block.settings.menu != blank -%}
+              <div class="footer__column" {{ block.shopify_attributes }}>
+                <h4 class="footer__column-title">
+                  {%- if block.settings.title != blank -%}
+                    {{- block.settings.title | escape -}}
+                  {%- else -%}
+                    {{- 'general.footer.quick_links' | t -}}
+                  {%- endif -%}
+                </h4>
                 <ul class="footer__links">
                   {%- for link in block.settings.menu.links -%}
                     <li>
@@ -209,8 +249,12 @@
                     </li>
                   {%- endfor -%}
                 </ul>
-              {%- endif -%}
-            </div>
+              </div>
+            {%- elsif request.design_mode -%}
+              <div class="footer__column" {{ block.shopify_attributes }}>
+                <p class="footer__column-empty">{{ 'sections.footer.column_needs_menu' | t }}</p>
+              </div>
+            {%- endif -%}
         {%- endcase -%}
       {%- endfor -%}
     </div>
@@ -269,6 +313,9 @@
   ],
   "blocks": [
     {
+      "type": "@app"
+    },
+    {
       "type": "brand",
       "name": "t:sections.footer.blocks.brand.name",
       "limit": 1,
@@ -292,7 +339,7 @@
           "type": "textarea",
           "id": "description",
           "label": "t:sections.footer.blocks.brand.settings.description.label",
-          "default": "A French fashion house built on craft and permanence. Every piece tells a story."
+          "info": "t:sections.footer.blocks.brand.settings.description.info"
         }
       ]
     },
@@ -304,7 +351,7 @@
           "type": "text",
           "id": "title",
           "label": "t:sections.footer.blocks.link_list.settings.title.label",
-          "default": "Quick links"
+          "info": "t:sections.footer.blocks.link_list.settings.title.info"
         },
         {
           "type": "link_list",

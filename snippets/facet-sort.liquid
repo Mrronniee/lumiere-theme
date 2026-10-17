@@ -1,0 +1,19 @@
+{%- comment -%}
+  Liste de tri, lue dans les options que Shopify expose (`sort_options`) plutot
+  qu'ecrite en dur : la page de recherche n'en avait aucune.
+
+  Parametres :
+    filterable (obligatoire) collection ou search
+    section_id (obligatoire)
+{%- endcomment -%}
+{%- if filterable.sort_options.size > 0 -%}
+  {%- assign current_sort = filterable.sort_by | default: filterable.default_sort_by -%}
+  <label class="visually-hidden" for="SortBy-{{ section_id }}">{{ 'sections.collection.sort_by' | t }}</label>
+  <select class="collection-grid__sort" id="SortBy-{{ section_id }}" data-sort-select>
+    {%- for option in filterable.sort_options -%}
+      <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>
+        {{ option.name }}
+      </option>
+    {%- endfor -%}
+  </select>
+{%- endif -%}

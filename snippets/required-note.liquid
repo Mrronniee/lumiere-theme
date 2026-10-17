@@ -1,0 +1,8 @@
+{%- comment -%}
+  Legende de l'asterisque des champs obligatoires. Un asterisque seul n'a pas
+  de sens pour un lecteur d'ecran : il est aria-hidden dans le libelle, et
+  cette legende, rendue une fois par formulaire, en donne la signification.
+{%- endcomment -%}
+<p class="form__required-note">
+  <span aria-hidden="true">*</span> {{ 'general.forms.required_note' | t }}
+</p>

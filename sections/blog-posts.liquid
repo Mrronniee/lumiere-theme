@@ -177,12 +177,27 @@
               tabindex="-1"
               aria-hidden="true"
             >
+              {%- comment -%}
+                Le dernier palier se calcule depuis columns_mobile (range 1 a 4,
+                qui pilote vraiment la grille) : « 100vw » en dur faisait
+                telecharger un candidat deux fois trop large a 2 colonnes.
+              {%- endcomment -%}
+              {%- liquid
+                assign cols_mobile = section.settings.columns_mobile | default: 1
+                if cols_mobile > 1
+                  assign mobile_size = 'calc((100vw - 4rem) / ' | append: cols_mobile | append: ')'
+                else
+                  assign mobile_size = 'calc(100vw - 3rem)'
+                endif
+              -%}
               <img
-                srcset="{%- if article.image.width >= 360 -%}{{ article.image | image_url: width: 360 }} 360w,{%- endif -%}
+                srcset="{%- if article.image.width >= 165 -%}{{ article.image | image_url: width: 165 }} 165w,{%- endif -%}
+                  {%- if article.image.width >= 300 -%}{{ article.image | image_url: width: 300 }} 300w,{%- endif -%}
+                  {%- if article.image.width >= 360 -%}{{ article.image | image_url: width: 360 }} 360w,{%- endif -%}
                   {%- if article.image.width >= 720 -%}{{ article.image | image_url: width: 720 }} 720w,{%- endif -%}
                   {%- if article.image.width >= 1080 -%}{{ article.image | image_url: width: 1080 }} 1080w,{%- endif -%}"
                 src="{{ article.image | image_url: width: 720 }}"
-                sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, 100vw"
+                sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, {{ mobile_size }}"
                 alt="{{ article.image.alt | escape }}"
                 loading="lazy"
                 width="{{ article.image.width }}"

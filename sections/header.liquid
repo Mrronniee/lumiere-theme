@@ -110,6 +110,18 @@
 
       {%- comment -%} Actions {%- endcomment -%}
       <div class="header__actions">
+        {%- comment -%}
+          Blocs d'application de l'en-tete (selecteur de devise d'une app,
+          bouton de fidelite...) : exige par le Theme Store.
+        {%- endcomment -%}
+        {%- for block in section.blocks -%}
+          {%- if block.type == '@app' -%}
+            <div class="header__app-block" {{ block.shopify_attributes }}>
+              {% render block %}
+            </div>
+          {%- endif -%}
+        {%- endfor -%}
+
         {%- if settings.show_search -%}
           <button type="button" class="header__action header__action--search" data-search-toggle aria-label="{{ 'general.search.search' | t }}" aria-expanded="false" aria-controls="SearchOverlay">
             {% render 'icon', icon: 'search' %}
@@ -186,7 +198,37 @@
             </li>
             {%- for childlink in link.links -%}
               <li>
-                <a href="{{ childlink.url }}" class="mobile-menu__sublink">{{ childlink.title }}</a>
+                {%- comment -%}
+                  Troisieme niveau : le menu de bureau en rend trois, le tiroir
+                  mobile s'arretait a deux et le 3e niveau etait perdu sur
+                  telephone. Meme bouton aria-expanded qu'au niveau au-dessus,
+                  pour rester utilisable au clavier.
+                {%- endcomment -%}
+                {%- if childlink.links != blank -%}
+                  {%- assign submenu_id = 'MobileSubmenu-' | append: forloop.parentloop.index | append: '-' | append: forloop.index -%}
+                  <button
+                    type="button"
+                    class="mobile-menu__sublink mobile-menu__sublink--parent"
+                    data-submenu-toggle
+                    aria-expanded="false"
+                    aria-controls="{{ submenu_id }}"
+                  >
+                    {{ childlink.title }}
+                    {% render 'icon', icon: 'chevron-down', class: 'mobile-menu__chevron' %}
+                  </button>
+                  <ul class="mobile-menu__sublist mobile-menu__sublist--nested" id="{{ submenu_id }}" hidden>
+                    <li>
+                      <a href="{{ childlink.url }}" class="mobile-menu__sublink mobile-menu__sublink--all">{{ childlink.title }}</a>
+                    </li>
+                    {%- for grandchildlink in childlink.links -%}
+                      <li>
+                        <a href="{{ grandchildlink.url }}" class="mobile-menu__sublink">{{ grandchildlink.title }}</a>
+                      </li>
+                    {%- endfor -%}
+                  </ul>
+                {%- else -%}
+                  <a href="{{ childlink.url }}" class="mobile-menu__sublink">{{ childlink.title }}</a>
+                {%- endif -%}
               </li>
             {%- endfor -%}
           </ul>
@@ -265,6 +307,11 @@
       "id": "menu",
       "label": "t:sections.header.settings.menu.label",
       "default": "main-menu"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }

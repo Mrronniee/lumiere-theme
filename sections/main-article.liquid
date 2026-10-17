@@ -2,6 +2,11 @@
   Section: Article de blog
 {% endcomment %}
 
+{%- liquid
+  assign comment_errors_id = 'CommentErrors-' | append: section.id
+  assign comments_anchor = 'Comments-' | append: section.id
+-%}
+
 <article class="page-shell page-shell--narrow">
   <div class="page-shell__header">
     <time class="article__date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">
@@ -14,6 +19,10 @@
   </div>
 
   {%- if article.image -%}
+    {%- comment -%}
+      Image de tete : c'est l'element LCP de la page article, donc eager ET
+      fetchpriority="high" (eager seul laisse le navigateur la mettre en file).
+    {%- endcomment -%}
     <img
       class="article__image"
       src="{{ article.image | image_url: width: 1500 }}"
@@ -21,6 +30,7 @@
       sizes="(min-width: 990px) 800px, 100vw"
       alt="{{ article.image.alt | escape }}"
       loading="eager"
+      fetchpriority="high"
       width="{{ article.image.width }}"
       height="{{ article.image.height }}"
     >
@@ -28,10 +38,130 @@
 
   <div class="rte article__content">{{ article.content }}</div>
 
+  {%- comment -%}
+    Blocs d'application : avis, partage, produits lies... deposes par le
+    marchand dans l'editeur.
+  {%- endcomment -%}
+  {%- for block in section.blocks -%}
+    {%- if block.type == '@app' -%}
+      <div class="article__app-block" {{ block.shopify_attributes }}>
+        {% render block %}
+      </div>
+    {%- endif -%}
+  {%- endfor -%}
+
   <a href="{{ blog.url }}" class="article__back">
     {% render 'icon', icon: 'arrow-left' %}
     {{ 'blogs.article.back_to_blog' | t: title: blog.title }}
   </a>
+
+  {%- comment -%}
+    Commentaires. Rendus seulement si le blog les accepte : un blog sans
+    commentaires n'affiche ni liste ni formulaire. Trois etats a traiter, sinon
+    le lecteur ne sait pas ce qui s'est passe : publie, en attente de
+    moderation, et en erreur.
+  {%- endcomment -%}
+  {%- if blog.comments_enabled? -%}
+    <section class="article__comments" id="{{ comments_anchor }}" aria-labelledby="{{ comments_anchor }}-title">
+      <h2 class="article__comments-title" id="{{ comments_anchor }}-title">
+        {{ 'blogs.comments.title' | t: count: article.comments_count }}
+      </h2>
+
+      {%- if article.comments_count > 0 -%}
+        {%- paginate article.comments by 20 -%}
+          <ol class="article__comment-list" role="list">
+            {%- for comment in article.comments -%}
+              <li class="article__comment" id="Comment-{{ comment.id }}">
+                <p class="article__comment-meta">
+                  <span class="article__comment-author">{{ comment.author | escape }}</span>
+                  <time datetime="{{ comment.created_at | date: '%Y-%m-%d' }}">
+                    {{ comment.created_at | date: format: 'date' }}
+                  </time>
+                </p>
+                <div class="article__comment-content rte">{{ comment.content }}</div>
+              </li>
+            {%- endfor -%}
+          </ol>
+
+          {%- if paginate.pages > 1 -%}
+            {% render 'pagination', paginate: paginate %}
+          {%- endif -%}
+        {%- endpaginate -%}
+      {%- else -%}
+        <p class="article__comments-empty">{{ 'blogs.comments.empty' | t }}</p>
+      {%- endif -%}
+
+      {%- form 'new_comment', article, class: 'article__comment-form' -%}
+        {%- if form.posted_successfully? -%}
+          {%- comment -%}
+            Blog modere : le commentaire n'apparait pas tout de suite. Le dire,
+            sinon le visiteur croit que son envoi a echoue et recommence.
+          {%- endcomment -%}
+          <p class="form__success" role="status" tabindex="-1" autofocus>
+            {%- if blog.moderated? -%}
+              {{ 'blogs.comments.success_moderated' | t }}
+            {%- else -%}
+              {{ 'blogs.comments.success' | t }}
+            {%- endif -%}
+          </p>
+        {%- endif -%}
+
+        {% render 'form-errors', form: form, id: comment_errors_id %}
+
+        <h3 class="article__comment-form-title">{{ 'blogs.comments.form_title' | t }}</h3>
+
+        <label for="CommentAuthor-{{ section.id }}">
+          {{ 'blogs.comments.author' | t }}
+          <span class="form__required-mark" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="text"
+          id="CommentAuthor-{{ section.id }}"
+          name="comment[author]"
+          value="{{ form.author }}"
+          autocomplete="name"
+          required
+          {%- if form.errors contains 'author' %} aria-invalid="true" aria-describedby="{{ comment_errors_id }}"{% endif -%}
+        >
+
+        <label for="CommentEmail-{{ section.id }}">
+          {{ 'blogs.comments.email' | t }}
+          <span class="form__required-mark" aria-hidden="true">*</span>
+        </label>
+        <input
+          type="email"
+          id="CommentEmail-{{ section.id }}"
+          name="comment[email]"
+          value="{{ form.email }}"
+          autocomplete="email"
+          autocorrect="off"
+          autocapitalize="off"
+          required
+          {%- if form.errors contains 'email' %} aria-invalid="true" aria-describedby="{{ comment_errors_id }}"{% endif -%}
+        >
+
+        <label for="CommentBody-{{ section.id }}">
+          {{ 'blogs.comments.message' | t }}
+          <span class="form__required-mark" aria-hidden="true">*</span>
+        </label>
+        <textarea
+          id="CommentBody-{{ section.id }}"
+          name="comment[body]"
+          rows="6"
+          required
+          {%- if form.errors contains 'body' %} aria-invalid="true" aria-describedby="{{ comment_errors_id }}"{% endif -%}
+        >{{ form.body }}</textarea>
+
+        {% render 'required-note' %}
+
+        {%- if blog.moderated? -%}
+          <p class="article__comments-moderated">{{ 'blogs.comments.moderated_note' | t }}</p>
+        {%- endif -%}
+
+        <button type="submit" class="btn btn--primary">{{ 'blogs.comments.submit' | t }}</button>
+      {%- endform -%}
+    </section>
+  {%- endif -%}
 </article>
 
 {% schema %}
@@ -39,6 +169,11 @@
   "name": "t:sections.main_article.name",
   "tag": "section",
   "class": "section-main-article",
-  "settings": []
+  "settings": [],
+  "blocks": [
+    {
+      "type": "@app"
+    }
+  ]
 }
 {% endschema %}

@@ -57,25 +57,48 @@
     </h2>
   </div>
 
-  <div class="related-products__grid">
-    {%- if related_collection != blank -%}
+  {%- if related_collection != blank -%}
+    <div class="related-products__grid">
       {%- for product in related_collection.products limit: section.settings.products_to_show -%}
-        {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
+        {% render 'product-card',
+          product: product,
+          show_vendor: section.settings.show_vendor,
+          lazy: forloop.index > 4,
+          priority: forloop.first,
+          columns_mobile: section.settings.columns_mobile
+        %}
       {%- endfor -%}
-    {%- else -%}
-      {%- comment -%} API de recommandations Shopify : reellement lie au produit courant {%- endcomment -%}
-      <div
-        data-recommendations
-        data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent={{ section.settings.intent | default: 'related' }}"
-      >
-        {%- if recommendations.performed and recommendations.products_count > 0 -%}
-          {%- for product in recommendations.products -%}
-            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
-          {%- endfor -%}
-        {%- endif -%}
-      </div>
-    {%- endif -%}
-  </div>
+    </div>
+  {%- else -%}
+    {%- comment -%}
+      API de recommandations Shopify : reellement lie au produit courant.
+      La grille PORTE data-recommendations (avant, le conteneur etait une
+      simple cellule de la grille : les cartes ramenees se rangeaient en une
+      seule colonne), et elle est remplie de cartes d'attente au rendu
+      serveur : la place est reservee, le pied de page ne saute plus.
+    {%- endcomment -%}
+    <div
+      class="related-products__grid"
+      data-recommendations
+      data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent={{ section.settings.intent | default: 'related' }}"
+    >
+      {%- if recommendations.performed and recommendations.products_count > 0 -%}
+        {%- for product in recommendations.products -%}
+          {% render 'product-card',
+            product: product,
+            show_vendor: section.settings.show_vendor,
+            lazy: forloop.index > 4,
+            priority: forloop.first,
+            columns_mobile: section.settings.columns_mobile
+          %}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+          {% render 'product-card-skeleton' %}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  {%- endif -%}
 </div>
 
 {% schema %}
@@ -121,10 +144,16 @@
       "label": "t:sections.related_products.settings.products_to_show.label"
     },
     {
-      "type": "checkbox",
+      "type": "select",
       "id": "show_vendor",
+      "options": [
+        { "value": "inherit", "label": "t:sections.related_products.settings.show_vendor.options__inherit" },
+        { "value": "yes", "label": "t:sections.related_products.settings.show_vendor.options__yes" },
+        { "value": "no", "label": "t:sections.related_products.settings.show_vendor.options__no" }
+      ],
+      "default": "inherit",
       "label": "t:sections.related_products.settings.show_vendor.label",
-      "default": false
+      "info": "t:sections.related_products.settings.show_vendor.info"
     },
     {
       "type": "color",

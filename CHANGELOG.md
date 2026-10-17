@@ -1,5 +1,82 @@
 # Changelog
 
+## 1.5.0 — 2026-10-17
+
+### Added
+- Blog comments: when your blog accepts comments, articles now show the list of
+  published comments and a comment form, with a clear message for each outcome
+  (posted, waiting for approval, or in error).
+- Search results: filters and sorting, the same ones as on a collection page.
+  Your search term is kept when you filter.
+- Gift cards: the product page now has the recipient fields Shopify expects
+  (email, name, message, send-on date), so a gift card can be sent to someone
+  else. The gift card page offers an Apple Wallet pass.
+- Two standard sections: **Apps**, which hosts the block of any app in any
+  template, and **Featured product**, which shows one product with its price
+  and add-to-cart button.
+- App blocks are now accepted in the product page, header, footer, cart
+  summary, article and newsletter.
+- Cart page: express payment buttons (Shop Pay, PayPal, Apple Pay) and the
+  free-shipping progress bar, which only the cart drawer had.
+- Cart drawer: the order note field, which only the cart page had.
+- Phone menu: a third level of menu links, which only the desktop menu showed.
+
+### Fixed
+- Home page with a transparent header: the logo and menu were invisible
+  (contrast 1.04:1). The header now sits over the first block when that block
+  is a full-width image, video or slideshow, with a readability veil that keeps
+  the text at 4.7:1 even over a white image. When the first block is not an
+  image, the header keeps its background.
+- "Show vendor" in theme settings now applies everywhere. Each section can
+  inherit it, or force it on or off.
+- Product recommendations no longer make the footer jump: the section reserves
+  the space of the cards it is about to load, and only collapses when the
+  response comes back empty.
+- Account invitation: "Decline" worked only after filling in the password
+  fields. It now works straight away.
+- Forms (contact, account, address, comment, newsletter, password): the error
+  block is announced to screen readers and takes the focus, every field in
+  error points to its message, and required fields carry a visible mark.
+- Announcement bar: with no text, it no longer renders an empty bar.
+- Rich text: the editor hint ("add a heading, text or a button") no longer
+  shows to customers, and a button with no destination is no longer rendered
+  as a dead link.
+- Footer: the social icon hover turned white text on the gold accent (2.0:1);
+  it now picks the ink that reads. The muted text no longer relies on opacity.
+  A link column with no menu no longer shows its title above nothing.
+- Footer defaults no longer ship English text that showed on the French
+  storefront.
+- Cart: pressing Enter in a quantity field now updates the cart instead of
+  going to checkout.
+- Cart and cart drawer now show the same thing per line: the sale price is
+  named next to the old one, the old price is struck through in the markup,
+  the unit price (€/kg) appears, and line discounts are listed.
+- Cart count in the header no longer goes stale after a browser Back.
+- Predictive search now shows and announces a message when the request fails,
+  instead of looking like "no results".
+- Price filter now has its own removal chip, like every other active filter.
+- Theme editor: selecting an FAQ question opens it; selecting the cart drawer
+  or quick view opens it.
+- Quick view and the product zoom no longer have their bottom cut off by the
+  phone address bar.
+- Long words, URLs and wide tables or embedded videos in rich text no longer
+  push the page sideways.
+- Collection and search card images: the first row loads immediately, the
+  first one with priority, instead of all being lazy.
+- Collection banner and article images now carry fetchpriority.
+- Image sizes on the journal and collection list grids no longer ask for an
+  image twice as wide as the one displayed.
+- Favicon is no longer declared as PNG whatever the file you choose.
+- Password page now uses its own layout and no longer waits for JavaScript.
+- Addresses: "Delete" is a button, not a link to nowhere.
+- Free-shipping bar is off by default: switching it on is a promise to your
+  customers, so it is your choice to make.
+- Removed a real-looking default phone number from the Map section and a fixed
+  date from the Reviews section.
+- Editor labels are in US spelling (color, gray) and spell out "and".
+- French typography: non-breaking spaces before high punctuation and inside
+  quotation marks.
+
 ## 1.4.5 — 2026-10-13
 
 ### Fixed

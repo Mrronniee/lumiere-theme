@@ -165,7 +165,12 @@
   }
 {%- endstyle -%}
 
-<div class="hero" data-section-id="{{ section.id }}">
+{%- comment -%}
+  data-header-overlay : ce bloc rend toujours un media plein cadre et son calque
+  de lisibilite, donc l'en-tete transparent peut se superposer a lui. Sans ce
+  marqueur l'en-tete garde son fond (voir assets/theme.css, HEADER TRANSPARENT).
+{%- endcomment -%}
+<div class="hero" data-section-id="{{ section.id }}" data-header-overlay>
   <div class="hero__media">
     {%- if section.settings.video != blank -%}
       <video

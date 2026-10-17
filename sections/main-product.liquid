@@ -342,7 +342,7 @@
     visibility: visible;
     transition: opacity var(--transition-base), visibility 0s;
   }
-  .product-zoom__image { max-width: 90vw; max-height: 90vh; object-fit: contain; }
+  .product-zoom__image { max-width: 90vw; max-height: 90vh; max-height: 90dvh; object-fit: contain; }
   .product-zoom__close { position: absolute; top: 2rem; right: 2rem; color: #fff; padding: 1rem; }
 
   @media screen and (max-width: 989px) {
@@ -625,6 +625,64 @@
             </span>
           </button>
         </div>
+        {%- comment -%}
+          Produit de type carte cadeau : Shopify attend quatre proprietes de
+          ligne nommees exactement ainsi, plus la case
+          __shopify_send_gift_card_to_recipient, pour envoyer la carte au
+          destinataire. Sans elles, l'acheteur ne pouvait pas offrir la carte :
+          elle lui etait envoyee a lui.
+        {%- endcomment -%}
+        {%- if product.gift_card? -%}
+          <fieldset class="gift-card-recipient">
+            <legend class="gift-card-recipient__legend">{{ 'gift_cards.recipient.legend' | t }}</legend>
+
+            <label class="gift-card-recipient__checkbox" for="GiftCardSend-{{ section.id }}">
+              <input
+                type="checkbox"
+                id="GiftCardSend-{{ section.id }}"
+                name="properties[__shopify_send_gift_card_to_recipient]"
+                value="if_present"
+                data-gift-card-toggle
+              >
+              <span>{{ 'gift_cards.recipient.send_as_gift' | t }}</span>
+            </label>
+
+            <div class="gift-card-recipient__fields" data-gift-card-fields hidden>
+              <label for="GiftCardEmail-{{ section.id }}">{{ 'gift_cards.recipient.email' | t }}</label>
+              <input
+                type="email"
+                id="GiftCardEmail-{{ section.id }}"
+                name="properties[Recipient email]"
+                autocomplete="off"
+              >
+
+              <label for="GiftCardName-{{ section.id }}">{{ 'gift_cards.recipient.name' | t }}</label>
+              <input
+                type="text"
+                id="GiftCardName-{{ section.id }}"
+                name="properties[Recipient name]"
+                autocomplete="off"
+              >
+
+              <label for="GiftCardMessage-{{ section.id }}">{{ 'gift_cards.recipient.message' | t }}</label>
+              <textarea
+                id="GiftCardMessage-{{ section.id }}"
+                name="properties[Message]"
+                rows="3"
+                maxlength="200"
+              ></textarea>
+
+              <label for="GiftCardSendOn-{{ section.id }}">{{ 'gift_cards.recipient.send_on' | t }}</label>
+              <input
+                type="date"
+                id="GiftCardSendOn-{{ section.id }}"
+                name="properties[Send on]"
+              >
+              <p class="gift-card-recipient__note">{{ 'gift_cards.recipient.send_on_note' | t }}</p>
+            </div>
+          </fieldset>
+        {%- endif -%}
+
         {%- if section.settings.show_payment_button -%}
           {% comment %}
             Paiement express : Apple Pay, Google Pay, Shop Pay. Le client
@@ -663,6 +721,19 @@
           {%- endif -%}
         {%- endfor -%}
       </div>
+
+      {%- comment -%}
+        Blocs d'application : le marchand ajoute dans l'editeur le bloc d'une
+        app (avis, abonnements, tableau des tailles...) a l'endroit qu'il veut
+        dans la fiche. Exige par le Theme Store.
+      {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == '@app' -%}
+          <div class="product-app-block" {{ block.shopify_attributes }}>
+            {% render block %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
 
       {%- comment -%} META {%- endcomment -%}
       <div class="product-meta">
@@ -770,6 +841,9 @@
     }
   ],
   "blocks": [
+    {
+      "type": "@app"
+    },
     {
       "type": "collapsible_tab",
       "name": "t:sections.main_product.blocks.collapsible_tab.name",

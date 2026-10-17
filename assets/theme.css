@@ -24,7 +24,19 @@ body {
   color: var(--color-text);
   background-color: var(--color-background);
   overflow-x: hidden;
+  /* Un mot, une URL ou un e-mail tres long debordait des titres, des tableaux
+     et des avantages : aucune regle de coupure n'existait. */
+  overflow-wrap: anywhere;
 }
+
+/* Un enfant de grille ou de flex a min-width: auto par defaut : son contenu
+   long elargit la colonne et fait defiler la page de cote. */
+.rte,
+.product-card__info,
+.cart-items__product,
+.mini-cart__item-info,
+.footer__column,
+.contact__field { min-width: 0; }
 
 img {
   max-width: 100%;
@@ -642,6 +654,36 @@ ul, ol {
   font-size: 0.875rem;
 }
 
+/* Carte d'attente des recommandations : meme encombrement qu'une vraie carte
+   (voir snippets/product-card-skeleton.liquid). Les barres portent un &nbsp;
+   pour prendre exactement la hauteur de ligne du titre et du prix. */
+.product-card--skeleton .product-card__media {
+  background: #ececec;
+}
+
+.product-card__skeleton-bar {
+  display: block;
+  width: 72%;
+  background: #ececec;
+  border-radius: 2px;
+}
+
+.product-card__skeleton-bar--short {
+  width: 38%;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .product-card--skeleton .product-card__media,
+  .product-card__skeleton-bar {
+    animation: skeletonPulse 1.4s ease-in-out infinite;
+  }
+}
+
+@keyframes skeletonPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
 /* Price Component */
 .price {
   display: flex;
@@ -858,20 +900,59 @@ ul, ol {
 /* ============================================
    HEADER TRANSPARENT (accueil)
    ============================================ */
+/* En 1.4.5 le header transparent restait dans le flux : le heros commencait
+   SOUS lui, donc le texte blanc tombait sur le fond de page (contraste
+   1,04:1, logo et menu invisibles). Il ne devient transparent que si le
+   premier bloc de la page est un media plein cadre, qui le declare avec
+   [data-header-overlay] (hero, slideshow, video-banner) ; ce bloc remonte
+   alors de la hauteur du header pour passer dessous. La polarite du :has()
+   est le repli : un navigateur qui l ignore garde le header opaque, lisible. */
 .header--transparent {
-  background: transparent;
-  border-bottom-color: transparent;
+  background-color: var(--color-background);
+  border-bottom-color: var(--color-border);
 }
 
-.header--transparent .header__logo-text,
-.header--transparent .header__nav-link,
-.header--transparent .header__action {
+body:has(> main > .shopify-section:first-child [data-header-overlay]) > main > .shopify-section:first-child {
+  margin-top: calc(-1 * var(--header-height, 71px));
+}
+
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent {
+  background: transparent;
+  border-bottom-color: transparent;
+  backdrop-filter: none;
+}
+
+/* Voile de lisibilite. Il tient toute la hauteur du header puis s estompe
+   SOUS lui (height 200%), sinon le degrade est deja presque transparent a
+   l endroit du logo : mesure 1,01:1 sur une image blanche sans calque
+   (slideshow et video-banner, contrairement au heros, n ont pas de plancher). */
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 200%;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.74) 0%,
+    rgba(0, 0, 0, 0.64) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+  z-index: -1;
+}
+
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__logo-text,
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__nav-link,
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action {
   color: #fff;
 }
 
-.header--transparent .header__nav-link:hover,
-.header--transparent .header__action:hover {
-  color: var(--color-accent);
+/* Au survol on souligne au lieu de passer a l accent : l accent est une
+   couleur reglee par le marchand, qui tombait a 2,1:1 sur le voile. */
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__nav-link:hover,
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent .header__action:hover {
+  color: #fff;
+  text-decoration: underline;
 }
 
 /* ============================================
@@ -939,7 +1020,9 @@ ul, ol {
   box-shadow: 0 0 0 2px #fff;
 }
 
-.header--transparent :where(a, button):focus-visible {
+/* Anneau inverse seulement quand le header est reellement sur un media sombre :
+   sur un header reste opaque, l anneau blanc disparaissait sur le fond clair. */
+body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent :where(a, button):focus-visible {
   outline-color: #fff;
   box-shadow: 0 0 0 2px var(--color-primary);
 }
@@ -1263,6 +1346,23 @@ ul, ol {
 .mobile-menu__sublink:hover { color: var(--color-primary); }
 .mobile-menu__sublink--all { font-weight: 500; color: var(--color-primary); }
 
+/* Troisieme niveau du menu mobile */
+.mobile-menu__sublist--nested { padding-left: var(--spacing-sm); }
+
+.mobile-menu__sublink--parent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.mobile-menu__sublink--parent[aria-expanded='true'] .mobile-menu__chevron { transform: rotate(180deg); }
+
 .mobile-menu__footer {
   padding: var(--spacing-md);
   border-top: 1px solid var(--color-border);
@@ -1349,7 +1449,22 @@ ul, ol {
 .page-shell__subtitle { color: var(--color-text-light); font-size: 0.9375rem; }
 .page-shell__empty { text-align: center; padding: var(--spacing-lg) 0; color: var(--color-text-light); }
 
-.rte { line-height: 1.8; }
+.rte { line-height: 1.8; overflow-wrap: anywhere; }
+
+/* Contenu depose par le marchand dans un texte riche (page, article,
+   description) : une video integree, une image ou un tableau large creait un
+   defilement horizontal. */
+.rte :is(img, video, iframe, svg, table) { max-width: 100%; }
+.rte iframe,
+.rte video { height: auto; }
+
+/* Un tableau large defile DANS son cadre au lieu d'elargir la page. */
+.rte table {
+  display: block;
+  width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
 .rte h2, .rte h3 { font-family: var(--font-heading); font-weight: 400; margin: var(--spacing-md) 0 var(--spacing-xs); }
 .rte p { margin-bottom: var(--spacing-sm); }
 .rte ul, .rte ol { margin-bottom: var(--spacing-sm); padding-left: 1.5rem; }
@@ -1454,6 +1569,19 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 .form__error { color: var(--color-sale); font-size: 0.875rem; margin: 0.5rem 0; }
 .form__success { color: #1e7a45; font-size: 0.875rem; margin: 0.5rem 0; }
 
+/* Bloc d'erreurs rendu par snippets/form-errors.liquid : il recoit le focus
+   apres l'envoi (tabindex=-1 + autofocus) et chaque champ en faute pointe
+   dessus avec aria-describedby. */
+.form__error-heading { font-weight: 500; margin: 0 0 0.25rem; }
+.form__error-list { margin: 0; padding-left: 1.25rem; }
+.form__error-list li { margin-bottom: 0.125rem; }
+
+/* Marque des champs obligatoires. L'asterisque est aria-hidden dans le
+   libelle (il n'a pas de sens lu seul) ; snippets/required-note.liquid en
+   donne la signification une fois par formulaire. */
+.form__required-mark { color: var(--color-sale); }
+.form__required-note { font-size: 0.8125rem; color: var(--color-text-light); margin: 0.5rem 0 1rem; }
+
 .account__grid { display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg); }
 .account__table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 .account__table th, .account__table td { padding: 0.75rem 0.5rem; text-align: left; border-bottom: 1px solid var(--color-border); }
@@ -1468,7 +1596,7 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 }
 
 /* Page mot de passe */
-.password-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: var(--spacing-md); }
+.password-page { min-height: 100vh; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: var(--spacing-md); }
 .password-page__inner { max-width: 420px; text-align: center; }
 .password-page__logo { margin: 0 auto var(--spacing-md); }
 .password-page__shop, .password-page__title { font-family: var(--font-heading); font-weight: 400; }
@@ -1546,4 +1674,124 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   margin-top: 0.25rem;
   font-size: 0.75rem;
   color: var(--color-text-light);
+}
+
+/* ============================================
+   COMMENTAIRES D'ARTICLE
+   ============================================ */
+.article__comments {
+  margin-top: var(--spacing-lg);
+  padding-top: var(--spacing-md);
+  border-top: var(--border-width, 1px) solid var(--color-border);
+}
+
+.article__comments-title {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 400;
+  margin-bottom: var(--spacing-sm);
+}
+
+.article__comment-list {
+  list-style: none;
+  margin: 0 0 var(--spacing-md);
+  padding: 0;
+}
+
+.article__comment {
+  padding: var(--spacing-sm) 0;
+  border-bottom: var(--border-width, 1px) solid var(--color-border);
+}
+
+.article__comment-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-light);
+  margin-bottom: 0.25rem;
+}
+
+.article__comment-author { font-weight: 500; color: var(--color-text); }
+
+.article__comments-empty,
+.article__comments-moderated {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+}
+
+.article__comment-form-title {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 400;
+  margin: var(--spacing-md) 0 var(--spacing-xs);
+}
+
+.article__comment-form textarea { width: 100%; }
+
+/* Blocs d'application deposes par le marchand */
+.product-app-block,
+.footer__app-block,
+.article__app-block,
+.cart-footer__app-block,
+.header__app-block,
+.newsletter__app-block { margin: var(--spacing-sm) 0; }
+
+/* Boutons de paiement accelere de la page panier */
+.cart-footer__accelerated {
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+/* Consigne d'editeur d'une colonne de pied de page sans menu */
+.footer__column-empty { font-size: 0.8125rem; opacity: 1; }
+
+/* Carte cadeau : laissez-passer Apple Wallet */
+.gift-card__pass { margin: var(--spacing-sm) 0; }
+
+/* Carte cadeau : envoi au destinataire (fiche produit) */
+.gift-card-recipient {
+  border: var(--border-width, 1px) solid var(--color-border);
+  padding: var(--spacing-sm);
+  margin-bottom: var(--spacing-sm);
+}
+
+.gift-card-recipient__legend {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.35rem;
+}
+
+.gift-card-recipient__checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.gift-card-recipient__fields { margin-top: 0.75rem; }
+
+.gift-card-recipient__fields label {
+  display: block;
+  font-size: 0.8125rem;
+  margin-bottom: 0.25rem;
+}
+
+.gift-card-recipient__fields input,
+.gift-card-recipient__fields textarea {
+  width: 100%;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border: var(--input-border, 1px) solid var(--color-border);
+  border-radius: var(--input-radius, 0);
+  background: var(--input-bg, #fff);
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+}
+
+.gift-card-recipient__note {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  margin: -0.5rem 0 0;
 }

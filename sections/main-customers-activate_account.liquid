@@ -5,17 +5,45 @@
     <p class="page-shell__subtitle">{{ 'customer.activate_account.subtext' | t }}</p>
   </div>
 
+  {%- assign errors_id = 'ActivateErrors-' | append: section.id -%}
   {%- form 'activate_customer_password', class: 'customer__form' -%}
-    {%- if form.errors -%}<div class="form__error">{{ form.errors | default_errors }}</div>{%- endif -%}
+    {% render 'form-errors', form: form, id: errors_id %}
 
-    <label for="ActivatePassword">{{ 'customer.activate_account.password' | t }}</label>
-    <input type="password" id="ActivatePassword" name="customer[password]" autocomplete="new-password" required>
+    <label for="ActivatePassword">
+      {{ 'customer.activate_account.password' | t }}
+      <span class="form__required-mark" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="password"
+      id="ActivatePassword"
+      name="customer[password]"
+      autocomplete="new-password"
+      required
+      {%- if form.errors contains 'password' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+    >
 
-    <label for="ActivatePasswordConfirm">{{ 'customer.activate_account.password_confirm' | t }}</label>
-    <input type="password" id="ActivatePasswordConfirm" name="customer[password_confirmation]" autocomplete="new-password" required>
+    <label for="ActivatePasswordConfirm">
+      {{ 'customer.activate_account.password_confirm' | t }}
+      <span class="form__required-mark" aria-hidden="true">*</span>
+    </label>
+    <input
+      type="password"
+      id="ActivatePasswordConfirm"
+      name="customer[password_confirmation]"
+      autocomplete="new-password"
+      required
+      {%- if form.errors contains 'password_confirmation' %} aria-invalid="true" aria-describedby="{{ errors_id }}"{% endif -%}
+    >
+
+    {% render 'required-note' %}
 
     <button type="submit" class="btn btn--primary">{{ 'customer.activate_account.submit' | t }}</button>
-    <button type="submit" name="decline" class="btn btn--link">{{ 'customer.activate_account.cancel' | t }}</button>
+    {%- comment -%}
+      formnovalidate : refuser l'invitation ne demande aucun mot de passe. Sans
+      cet attribut, les deux champs `required` bloquaient l'envoi et le bouton
+      « Refuser » ne faisait rien.
+    {%- endcomment -%}
+    <button type="submit" name="decline" class="btn btn--link" formnovalidate>{{ 'customer.activate_account.cancel' | t }}</button>
   {%- endform -%}
 </div>
 

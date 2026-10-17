@@ -30,13 +30,17 @@
             {%- endform -%}
           </details>
 
-          <a
-            href="#"
+          {%- comment -%}
+            Supprimer est une action, pas une destination : un <a href="#">
+            ramenait en haut de page si le JavaScript ne repondait pas.
+          {%- endcomment -%}
+          <button
+            type="button"
             class="btn btn--link"
             data-address-delete
             data-url="{{ address.url }}"
             data-confirm="{{ 'customer.addresses.delete_confirm' | t }}"
-          >{{ 'customer.addresses.delete' | t }}</a>
+          >{{ 'customer.addresses.delete' | t }}</button>
         </li>
       {%- endfor -%}
     </ul>

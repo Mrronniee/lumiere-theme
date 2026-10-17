@@ -106,11 +106,32 @@
     font-size: 0.9375rem;
   }
 
-  .cart-items__price--original {
-    text-decoration: line-through;
+  /* L'ancien prix est un <s> rendu par snippets/cart-item-price.liquid :
+     il reste barre meme sans CSS, et le prix solde est nomme a cote. */
+  .cart-items__price__original,
+  .cart-items__total__original {
     color: var(--color-text-light);
     font-size: 0.8125rem;
     display: block;
+  }
+
+  .cart-items__price__sale,
+  .cart-items__total__sale { color: var(--color-sale); }
+
+  .cart-items__price__unit,
+  .cart-items__total__unit {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-light);
+  }
+
+  .cart-items__price__discounts,
+  .cart-items__total__discounts {
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    font-size: 0.75rem;
+    color: var(--color-sale);
   }
 
   .cart-items__qty {
@@ -227,6 +248,15 @@
 
   {%- if cart.item_count > 0 -%}
     <form action="{{ routes.cart_url }}" method="post" id="CartForm" novalidate>
+      {%- comment -%}
+        Bouton d'envoi par defaut du formulaire, place EN PREMIER : appuyer sur
+        Entree dans un champ de quantite met le panier a jour. Sans lui, le
+        seul bouton d'envoi etait « checkout » (dans main-cart-footer) et
+        Entree envoyait le client vers la commande. Il reste atteignable au
+        clavier (ce n'est pas un `hidden`), juste invisible.
+      {%- endcomment -%}
+      <button type="submit" name="update" class="visually-hidden">{{ 'cart.general.update' | t }}</button>
+
       <div class="cart-items__header">
         <span>{{ 'cart.label.product' | t }}</span>
         <span>{{ 'cart.label.price' | t }}</span>
@@ -280,12 +310,7 @@
             </div>
           </div>
 
-          <div class="cart-items__price">
-            {%- if item.original_price != item.final_price -%}
-              <span class="cart-items__price--original">{{ item.original_price | money }}</span>
-            {%- endif -%}
-            {{ item.final_price | money }}
-          </div>
+          {% render 'cart-item-price', item: item, class: 'cart-items__price' %}
 
           <div class="cart-items__qty">
             <button type="button" class="cart-items__qty-btn cart-items__qty-btn--minus" data-qty-change="-1" aria-label="{{ 'accessibility.decrease_quantity' | t }}">&minus;</button>
@@ -302,7 +327,7 @@
             <button type="button" class="cart-items__qty-btn cart-items__qty-btn--plus" data-qty-change="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
           </div>
 
-          <div class="cart-items__total">{{ item.final_line_price | money }}</div>
+          {% render 'cart-item-price', item: item, scope: 'line', class: 'cart-items__total' %}
 
           <button type="button" class="cart-items__remove-btn" data-remove-item aria-label="{{ 'cart.general.remove' | t }}">
             {% render 'icon', icon: 'close' %}
@@ -310,7 +335,10 @@
         </div>
       {%- endfor -%}
 
-      {%- comment -%} Sans JS, le client doit pouvoir valider ses quantites {%- endcomment -%}
+      {%- comment -%}
+        Sans JavaScript, le client doit VOIR le bouton de mise a jour : celui
+        du haut est masque visuellement.
+      {%- endcomment -%}
       <noscript>
         <button type="submit" name="update" class="btn btn--secondary">{{ 'cart.general.update' | t }}</button>
       </noscript>

@@ -109,6 +109,7 @@
   }
 {%- endstyle -%}
 
+{%- assign newsletter_errors_id = 'NewsletterErrors-' | append: section.id -%}
 <div class="newsletter" data-section-id="{{ section.id }}">
   <div class="newsletter__inner">
     <p class="newsletter__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.newsletter.default_pretitle' | t }}{%- endif -%}</p>
@@ -132,22 +133,38 @@
         autocomplete="email"
         placeholder="{% if section.settings.placeholder != blank %}{{ section.settings.placeholder | escape }}{% else %}{{ 'sections.newsletter.default_placeholder' | t }}{% endif %}"
         required
+        {%- if form.errors %} aria-invalid="true" aria-describedby="{{ newsletter_errors_id }}"{% endif -%}
       >
       <button type="submit" class="newsletter__button" name="commit">
         {%- if section.settings.button_label != blank -%}{{ section.settings.button_label | escape }}{%- else -%}{{ 'sections.newsletter.default_button' | t }}{%- endif -%}
       </button>
 
       {%- if form.posted_successfully? -%}
-        <div class="newsletter__success">
+        <div class="newsletter__success" role="status" tabindex="-1" autofocus>
           {% render 'icon', icon: 'check' %}
           <span>{{ 'newsletter.success' | t }}</span>
         </div>
       {%- elsif form.errors -%}
-        <div class="newsletter__error">
+        <div
+          id="{{ newsletter_errors_id }}"
+          class="newsletter__error"
+          role="alert"
+          tabindex="-1"
+          autofocus
+        >
           {{ form.errors | default_errors }}
         </div>
       {%- endif -%}
     {%- endform -%}
+
+    {%- comment -%} Blocs d'application (formulaire d'une app d'e-mailing...). {%- endcomment -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == '@app' -%}
+        <div class="newsletter__app-block" {{ block.shopify_attributes }}>
+          {% render block %}
+        </div>
+      {%- endif -%}
+    {%- endfor -%}
 
     <p class="newsletter__disclaimer">{%- if section.settings.disclaimer != blank -%}{{ section.settings.disclaimer | escape }}{%- else -%}{{ 'sections.newsletter.default_disclaimer' | t }}{%- endif -%}</p>
   </div>
@@ -238,6 +255,11 @@
     {
       "name": "t:sections.newsletter.presets.name",
       "category": "t:categories.promotional"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ]
 }

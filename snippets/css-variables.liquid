@@ -67,6 +67,19 @@
     endif
   endfor
 
+  comment
+    Encre a poser SUR un aplat d'accent (bouton, pastille, lien social
+    survole). L'accent est regle par le marchand : du blanc en dur tombait a
+    2,0:1 sur l'accent par defaut #c9a96e. On choisit le blanc ou le texte du
+    theme, celui des deux qui contraste le plus avec l'accent.
+  endcomment
+  assign white_on_accent = c_accent | color_contrast: '#ffffff'
+  assign text_on_accent = c_accent | color_contrast: c_text
+  assign c_on_accent = '#ffffff'
+  if text_on_accent > white_on_accent
+    assign c_on_accent = c_text
+  endif
+
   assign light_weight = 55
   assign c_text_light = c_text | color_mix: c_bg, light_weight
   for i in (1..15)
@@ -92,6 +105,7 @@
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: #c0392b;
     --color-on-primary: #ffffff;
+    --color-on-accent: {{ c_on_accent }};
 
     --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
     --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};

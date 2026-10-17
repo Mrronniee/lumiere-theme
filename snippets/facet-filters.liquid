@@ -1,0 +1,153 @@
+{%- comment -%}
+  Panneau de filtres et pastilles de filtres actifs, rendu a l'identique sur
+  une collection ET sur la page de resultats de recherche : celle-ci n'avait ni
+  filtres ni tri, alors que Shopify expose `search.filters` comme
+  `collection.filters`.
+
+  Parametres :
+    filterable (obligatoire) l'objet qui porte `filters` : collection ou search
+    reset_url  (obligatoire) adresse sans aucun filtre
+    section_id (obligatoire) pour fabriquer des id uniques
+    terms      (facultatif)  la requete, a conserver en champ cache (recherche)
+    types      (facultatif)  le parametre `type`, a conserver (recherche)
+    sort_by    (facultatif)  le tri en cours, a conserver en champ cache
+{%- endcomment -%}
+{%- if filterable.filters.size > 0 -%}
+  <div class="collection-filters__overlay" data-filter-overlay></div>
+  {%- comment -%}
+    aria-hidden n'est pose que par theme.js, en mode tiroir (< 990 px) et
+    panneau ferme : sur bureau le panneau est visible en permanence.
+  {%- endcomment -%}
+  <aside
+    class="collection-filters"
+    id="CollectionFilters"
+    data-filters
+    aria-label="{{ 'sections.collection.filters' | t }}"
+  >
+    <button type="button" class="collection-filters__close" data-filter-close aria-label="{{ 'accessibility.close_filters' | t }}">
+      {% render 'icon', icon: 'close' %}
+    </button>
+
+    {%- assign has_active = false -%}
+    {%- for filter in filterable.filters -%}
+      {%- if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value -%}
+        {%- assign has_active = true -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- if has_active -%}
+      <div class="collection-filters__active">
+        {%- for filter in filterable.filters -%}
+          {%- for value in filter.active_values -%}
+            <a href="{{ value.url_to_remove }}" class="collection-filters__active-tag">
+              {{ value.label }}
+              {% render 'icon', icon: 'close' %}
+            </a>
+          {%- endfor -%}
+
+          {%- comment -%}
+            Le filtre de prix compte comme actif (voir has_active ci-dessus)
+            mais n'a pas d'active_values : sa pastille manquait, et on ne
+            pouvait le retirer qu'avec « Tout effacer ».
+          {%- endcomment -%}
+          {%- if filter.type == 'price_range' -%}
+            {%- if filter.min_value.value or filter.max_value.value -%}
+              {%- liquid
+                assign price_from = filter.min_value.value | default: 0 | money
+                assign price_to = filter.max_value.value | default: filter.range_max | money
+              -%}
+              <a href="{{ filter.url_to_remove }}" class="collection-filters__active-tag">
+                {{ filter.label }}: {{ price_from }} &ndash; {{ price_to }}
+                {% render 'icon', icon: 'close' %}
+              </a>
+            {%- endif -%}
+          {%- endif -%}
+        {%- endfor -%}
+
+        <a href="{{ reset_url }}" class="collection-filters__active-clear">
+          {{ 'sections.collection.reset_filters' | t }}
+        </a>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%}
+      Vrai formulaire GET : sans JS les filtres restent utilisables. Sur la
+      recherche, `q` et `type` doivent voyager avec, sinon le filtre renvoie
+      une page de resultats vide.
+    {%- endcomment -%}
+    <form data-filter-form>
+      {%- if terms != blank -%}
+        <input type="hidden" name="q" value="{{ terms | escape }}">
+      {%- endif -%}
+      {%- if types != blank -%}
+        <input type="hidden" name="type" value="{{ types | escape }}">
+      {%- endif -%}
+      {%- if sort_by != blank -%}
+        <input type="hidden" name="sort_by" value="{{ sort_by }}">
+      {%- endif -%}
+
+      {%- for filter in filterable.filters -%}
+        <div class="collection-filters__group">
+          <button type="button" class="collection-filters__title" data-filter-toggle-group aria-expanded="true">
+            {{ filter.label }}
+            {% render 'icon', icon: 'chevron-down' %}
+          </button>
+          <div class="collection-filters__options">
+            {%- case filter.type -%}
+              {%- when 'list' -%}
+                {%- for filter_value in filter.values -%}
+                  {%- assign filter_input_id = 'Filter-' | append: section_id | append: '-' | append: forloop.parentloop.index | append: '-' | append: forloop.index -%}
+                  <label class="collection-filters__option" for="{{ filter_input_id }}">
+                    <input
+                      type="checkbox"
+                      id="{{ filter_input_id }}"
+                      name="{{ filter_value.param_name }}"
+                      value="{{ filter_value.value }}"
+                      {% if filter_value.active %}checked{% endif %}
+                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+                      data-filter-input
+                    >
+                    <span>{{ filter_value.label }}</span>
+                    <span class="collection-filters__option-count">({{ filter_value.count }})</span>
+                  </label>
+                {%- endfor -%}
+
+              {%- when 'price_range' -%}
+                <div class="collection-filters__price-range">
+                  <label class="visually-hidden" for="FilterMin-{{ section_id }}-{{ forloop.index }}">{{ 'sections.collection.price_min' | t }}</label>
+                  <input
+                    type="number"
+                    id="FilterMin-{{ section_id }}-{{ forloop.index }}"
+                    placeholder="{{ 'sections.collection.price_min' | t }}"
+                    class="collection-filters__price-input"
+                    name="{{ filter.min_value.param_name }}"
+                    {% if filter.min_value.value %}value="{{ filter.min_value.value | divided_by: 100.0 }}"{% endif %}
+                    min="0"
+                    max="{{ filter.range_max | divided_by: 100.0 }}"
+                    data-filter-input
+                  >
+                  <span aria-hidden="true">&ndash;</span>
+                  <label class="visually-hidden" for="FilterMax-{{ section_id }}-{{ forloop.index }}">{{ 'sections.collection.price_max' | t }}</label>
+                  <input
+                    type="number"
+                    id="FilterMax-{{ section_id }}-{{ forloop.index }}"
+                    placeholder="{{ 'sections.collection.price_max' | t }}"
+                    class="collection-filters__price-input"
+                    name="{{ filter.max_value.param_name }}"
+                    {% if filter.max_value.value %}value="{{ filter.max_value.value | divided_by: 100.0 }}"{% endif %}
+                    min="0"
+                    max="{{ filter.range_max | divided_by: 100.0 }}"
+                    data-filter-input
+                  >
+                </div>
+            {%- endcase -%}
+          </div>
+        </div>
+      {%- endfor -%}
+
+      <noscript>
+        <button type="submit" class="btn btn--primary">{{ 'sections.collection.filters' | t }}</button>
+      </noscript>
+    </form>
+  </aside>
+{%- endif -%}

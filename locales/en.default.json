@@ -25,7 +25,8 @@
       "collections": "Collections",
       "pages": "Pages",
       "articles": "Articles",
-      "view_all": "View all results for “{{ terms }}”"
+      "view_all": "View all results for “{{ terms }}”",
+      "error": "Search is unavailable right now. Please try again."
     },
     "404": {
       "title": "Page not found",
@@ -42,7 +43,12 @@
       "tags": "Tagged \"{{ tags }}\""
     },
     "footer": {
-      "rights_reserved": "All rights reserved."
+      "rights_reserved": "All rights reserved.",
+      "quick_links": "Quick links"
+    },
+    "forms": {
+      "error_heading": "Please correct the following:",
+      "required_note": "Required field."
     }
   },
   "accessibility": {
@@ -100,7 +106,8 @@
       "default_link_label": "Discover"
     },
     "rich_text": {
-      "no_blocks": "Add an eyebrow, a heading, text or a button to build this section."
+      "no_blocks": "Add an eyebrow, a heading, text or a button to build this section.",
+      "button_needs_link": "This button has no link yet. Choose a destination for it to appear."
     },
     "testimonials": {
       "rating": "Rating: {{ rating }} out of 5",
@@ -219,6 +226,16 @@
     },
     "related_products": {
       "default_title": "You may also like"
+    },
+    "apps": {
+      "no_blocks": "Add an app block to this section."
+    },
+    "featured_product": {
+      "no_product": "Choose a product to feature in this section."
+    },
+    "footer": {
+      "column_needs_menu": "Choose a menu for this column to appear.",
+      "brand_needs_description": "Add a short description of your store."
     }
   },
   "cart": {
@@ -282,7 +299,8 @@
         "unit_price": "Unit price",
         "regular_price": "Regular price",
         "sale_price": "Sale price"
-      }
+      },
+      "variant_label": "Variant"
     }
   },
   "wishlist": {
@@ -311,6 +329,21 @@
     },
     "general": {
       "empty": "No articles yet."
+    },
+    "comments": {
+      "title": {
+        "one": "{{ count }} comment",
+        "other": "{{ count }} comments"
+      },
+      "empty": "No comments yet. Be the first to write one.",
+      "form_title": "Leave a comment",
+      "author": "Name",
+      "email": "Email",
+      "message": "Comment",
+      "submit": "Post comment",
+      "success": "Your comment has been posted. Thank you.",
+      "success_moderated": "Your comment has been received and will appear once it is approved.",
+      "moderated_note": "Comments are reviewed before they appear."
     }
   },
   "collections": {
@@ -423,7 +456,17 @@
       "expires_on": "Expires on {{ expiry }}",
       "redeem": "Use this code at checkout to redeem your gift card",
       "shop_link": "Start shopping",
-      "print": "Print"
+      "print": "Print",
+      "add_to_wallet": "Add to Apple Wallet"
+    },
+    "recipient": {
+      "legend": "Gift card delivery",
+      "send_as_gift": "Send this gift card to someone else",
+      "email": "Recipient email",
+      "name": "Recipient name",
+      "message": "Message (optional)",
+      "send_on": "Send on (optional)",
+      "send_on_note": "Leave empty to send it as soon as the order is paid."
     }
   },
   "password_page": {

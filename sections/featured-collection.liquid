@@ -126,7 +126,19 @@
     <div class="featured-collection__grid">
       {%- for product in collection.products limit: section.settings.products_to_show -%}
         <div class="featured-collection__product" data-animate>
-          {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, columns_mobile: section.settings.columns_mobile %}
+          {%- comment -%}
+            Les premieres cartes sont au-dessus de la ligne de flottaison et
+            l'une d'elles est l'element LCP en mobile : chargement immediat, la
+            premiere en priorite. Sans ces arguments, product-card retombait
+            sur loading="lazy" pour toutes (LCP retarde d'environ 0,8 a 1 s).
+          {%- endcomment -%}
+          {% render 'product-card',
+            product: product,
+            show_vendor: section.settings.show_vendor,
+            lazy: forloop.index > 4,
+            priority: forloop.first,
+            columns_mobile: section.settings.columns_mobile
+          %}
         </div>
       {%- endfor -%}
     </div>
@@ -203,10 +215,16 @@
       "label": "t:sections.featured_collection.settings.products_to_show.label"
     },
     {
-      "type": "checkbox",
+      "type": "select",
       "id": "show_vendor",
+      "options": [
+        { "value": "inherit", "label": "t:sections.featured_collection.settings.show_vendor.options__inherit" },
+        { "value": "yes", "label": "t:sections.featured_collection.settings.show_vendor.options__yes" },
+        { "value": "no", "label": "t:sections.featured_collection.settings.show_vendor.options__no" }
+      ],
+      "default": "inherit",
       "label": "t:sections.featured_collection.settings.show_vendor.label",
-      "default": false
+      "info": "t:sections.featured_collection.settings.show_vendor.info"
     },
     {
       "type": "checkbox",

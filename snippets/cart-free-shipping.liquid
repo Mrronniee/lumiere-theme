@@ -1,0 +1,33 @@
+{%- comment -%}
+  Barre « livraison offerte a partir de X », rendue a l'identique dans le
+  tiroir ET sur /cart. Elle n'existait que dans le tiroir : le client qui
+  passait par la page panier ne voyait pas combien il lui restait a ajouter.
+
+  Parametre : class (facultatif), prefixe de classe.
+{%- endcomment -%}
+{%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+  {%- liquid
+    assign klass = class | default: 'cart-free-shipping'
+    assign threshold = settings.cart_free_shipping_threshold
+    assign progress = cart.total_price | times: 100 | divided_by: threshold
+    assign progress = progress | at_most: 100
+    assign remaining = threshold | minus: cart.total_price
+    assign remaining_money = remaining | money
+  -%}
+  <div class="{{ klass }}">
+    {%- if cart.total_price >= threshold -%}
+      <p class="{{ klass }}-text">{{ 'cart.general.free_shipping_success' | t }}</p>
+    {%- else -%}
+      <p class="{{ klass }}-text">
+        {{- 'cart.general.free_shipping_progress_html' | t: amount: remaining_money -}}
+      </p>
+    {%- endif -%}
+    {%- comment -%}
+      La barre est decorative : le texte au-dessus porte l'information, donc
+      elle est masquee aux lecteurs d'ecran plutot que doublee.
+    {%- endcomment -%}
+    <div class="{{ klass }}-bar" aria-hidden="true">
+      <div class="{{ klass }}-progress" style="width: {{ progress }}%"></div>
+    </div>
+  </div>
+{%- endif -%}

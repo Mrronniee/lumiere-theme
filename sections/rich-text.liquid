@@ -95,7 +95,12 @@
   data-section-id="{{ section.id }}"
 >
   <div class="rich-text__inner">
-    {%- if section.blocks.size == 0 -%}
+    {%- comment -%}
+      Mode d'emploi reserve a l'editeur : sans le test request.design_mode il
+      s'affichait aux clients (« Add an eyebrow, a heading, text or a
+      button... » sur la boutique).
+    {%- endcomment -%}
+    {%- if section.blocks.size == 0 and request.design_mode -%}
       <p class="rich-text__empty">{{ 'sections.rich_text.no_blocks' | t }}</p>
     {%- endif -%}
 
@@ -123,16 +128,24 @@
           {%- endif -%}
 
         {%- when 'button' -%}
-          {%- if block.settings.label != blank -%}
+          {%- comment -%}
+            Sans destination choisie, pas de lien : `| default: '#'` rendait un
+            bouton qui ramene en haut de la page. L'editeur, lui, est prevenu.
+          {%- endcomment -%}
+          {%- if block.settings.label != blank and block.settings.link != blank -%}
             {%- assign button_class = 'btn btn--secondary' -%}
             {%- if block.settings.style == 'primary' -%}
               {%- assign button_class = 'btn btn--primary' -%}
             {%- endif -%}
             <div class="rich-text__block rich-text__buttons" {{ block.shopify_attributes }}>
-              <a href="{{ block.settings.link | default: '#' }}" class="{{ button_class }}">
+              <a href="{{ block.settings.link }}" class="{{ button_class }}">
                 {{ block.settings.label | escape }}
               </a>
             </div>
+          {%- elsif block.settings.label != blank and request.design_mode -%}
+            <p class="rich-text__block rich-text__empty" {{ block.shopify_attributes }}>
+              {{ 'sections.rich_text.button_needs_link' | t }}
+            </p>
           {%- endif -%}
       {%- endcase -%}
     {%- endfor -%}

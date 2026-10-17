@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.4.5",
+    "theme_version": "1.5.0",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -415,8 +415,9 @@
       {
         "type": "checkbox",
         "id": "cart_show_free_shipping",
-        "default": true,
-        "label": "t:settings_schema.panier.settings.cart_show_free_shipping.label"
+        "default": false,
+        "label": "t:settings_schema.panier.settings.cart_show_free_shipping.label",
+        "info": "t:settings_schema.panier.settings.cart_show_free_shipping.info"
       },
       {
         "type": "number",

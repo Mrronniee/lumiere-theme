@@ -373,17 +373,12 @@
         </button>
       {%- endif -%}
 
-      <label class="visually-hidden" for="SortBy-{{ section.id }}">{{ 'sections.collection.sort_by' | t }}</label>
-      <select class="collection-grid__sort" id="SortBy-{{ section.id }}" data-sort-select>
-        {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-        <option value="manual" {% if sort_by == 'manual' %}selected{% endif %}>{{ 'sections.collection.sort.manual' | t }}</option>
-        <option value="best-selling" {% if sort_by == 'best-selling' %}selected{% endif %}>{{ 'sections.collection.sort.best_selling' | t }}</option>
-        <option value="title-ascending" {% if sort_by == 'title-ascending' %}selected{% endif %}>{{ 'sections.collection.sort.title_ascending' | t }}</option>
-        <option value="title-descending" {% if sort_by == 'title-descending' %}selected{% endif %}>{{ 'sections.collection.sort.title_descending' | t }}</option>
-        <option value="price-ascending" {% if sort_by == 'price-ascending' %}selected{% endif %}>{{ 'sections.collection.sort.price_ascending' | t }}</option>
-        <option value="price-descending" {% if sort_by == 'price-descending' %}selected{% endif %}>{{ 'sections.collection.sort.price_descending' | t }}</option>
-        <option value="created-descending" {% if sort_by == 'created-descending' %}selected{% endif %}>{{ 'sections.collection.sort.created_descending' | t }}</option>
-      </select>
+      {%- comment -%}
+        Les options de tri viennent de `collection.sort_options` : la liste
+        ecrite en dur ne suivait pas les tris reellement actifs de la boutique.
+      {%- endcomment -%}
+      {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+      {% render 'facet-sort', filterable: collection, section_id: section.id %}
 
       <div class="collection-grid__layout">
         <button type="button" class="collection-grid__layout-btn is-active" data-layout="grid" aria-pressed="true" aria-label="{{ 'accessibility.grid_view' | t }}">
@@ -397,113 +392,12 @@
   </div>
 
   <div class="collection-grid__body{% if collection.filters.size == 0 %} collection-grid__body--no-filters{% endif %}">
-    {%- if collection.filters.size > 0 -%}
-      <div class="collection-filters__overlay" data-filter-overlay></div>
-      {%- comment -%}
-        aria-hidden n'est pose que par theme.js, en mode tiroir (< 990 px) et
-        panneau ferme : sur bureau le panneau est visible en permanence.
-      {%- endcomment -%}
-      <aside class="collection-filters" id="CollectionFilters" data-filters aria-label="{{ 'sections.collection.filters' | t }}">
-        <button type="button" class="collection-filters__close" data-filter-close aria-label="{{ 'accessibility.close_filters' | t }}">
-          {% render 'icon', icon: 'close' %}
-        </button>
-
-        {%- assign has_active = false -%}
-        {%- for filter in collection.filters -%}
-          {%- if filter.active_values.size > 0 or filter.min_value.value or filter.max_value.value -%}
-            {%- assign has_active = true -%}
-          {%- endif -%}
-        {%- endfor -%}
-
-        {%- if has_active -%}
-          <div class="collection-filters__active">
-            {%- for filter in collection.filters -%}
-              {%- for value in filter.active_values -%}
-                <a href="{{ value.url_to_remove }}" class="collection-filters__active-tag">
-                  {{ value.label }}
-                  {% render 'icon', icon: 'close' %}
-                </a>
-              {%- endfor -%}
-            {%- endfor -%}
-            <a href="{{ collection.url }}" class="collection-filters__active-clear">
-              {{ 'sections.collection.reset_filters' | t }}
-            </a>
-          </div>
-        {%- endif -%}
-
-        {%- comment -%}
-          Vrai formulaire GET : sans JS les filtres restent utilisables.
-        {%- endcomment -%}
-        <form data-filter-form>
-          {%- if sort_by != blank -%}
-            <input type="hidden" name="sort_by" value="{{ sort_by }}">
-          {%- endif -%}
-
-          {%- for filter in collection.filters -%}
-            <div class="collection-filters__group">
-              <button type="button" class="collection-filters__title" data-filter-toggle-group aria-expanded="true">
-                {{ filter.label }}
-                {% render 'icon', icon: 'chevron-down' %}
-              </button>
-              <div class="collection-filters__options">
-                {%- case filter.type -%}
-                  {%- when 'list' -%}
-                    {%- for filter_value in filter.values -%}
-                      {%- assign filter_input_id = 'Filter-' | append: section.id | append: '-' | append: forloop.parentloop.index | append: '-' | append: forloop.index -%}
-                      <label class="collection-filters__option" for="{{ filter_input_id }}">
-                        <input
-                          type="checkbox"
-                          id="{{ filter_input_id }}"
-                          name="{{ filter_value.param_name }}"
-                          value="{{ filter_value.value }}"
-                          {% if filter_value.active %}checked{% endif %}
-                          {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
-                          data-filter-input
-                        >
-                        <span>{{ filter_value.label }}</span>
-                        <span class="collection-filters__option-count">({{ filter_value.count }})</span>
-                      </label>
-                    {%- endfor -%}
-
-                  {%- when 'price_range' -%}
-                    <div class="collection-filters__price-range">
-                      <label class="visually-hidden" for="FilterMin-{{ forloop.index }}">{{ 'sections.collection.price_min' | t }}</label>
-                      <input
-                        type="number"
-                        id="FilterMin-{{ forloop.index }}"
-                        placeholder="{{ 'sections.collection.price_min' | t }}"
-                        class="collection-filters__price-input"
-                        name="{{ filter.min_value.param_name }}"
-                        {% if filter.min_value.value %}value="{{ filter.min_value.value | divided_by: 100.0 }}"{% endif %}
-                        min="0"
-                        max="{{ filter.range_max | divided_by: 100.0 }}"
-                        data-filter-input
-                      >
-                      <span aria-hidden="true">&ndash;</span>
-                      <label class="visually-hidden" for="FilterMax-{{ forloop.index }}">{{ 'sections.collection.price_max' | t }}</label>
-                      <input
-                        type="number"
-                        id="FilterMax-{{ forloop.index }}"
-                        placeholder="{{ 'sections.collection.price_max' | t }}"
-                        class="collection-filters__price-input"
-                        name="{{ filter.max_value.param_name }}"
-                        {% if filter.max_value.value %}value="{{ filter.max_value.value | divided_by: 100.0 }}"{% endif %}
-                        min="0"
-                        max="{{ filter.range_max | divided_by: 100.0 }}"
-                        data-filter-input
-                      >
-                    </div>
-                {%- endcase -%}
-              </div>
-            </div>
-          {%- endfor -%}
-
-          <noscript>
-            <button type="submit" class="btn btn--primary">{{ 'sections.collection.filters' | t }}</button>
-          </noscript>
-        </form>
-      </aside>
-    {%- endif -%}
+    {% render 'facet-filters',
+      filterable: collection,
+      reset_url: collection.url,
+      section_id: section.id,
+      sort_by: sort_by
+    %}
 
     <div class="collection-grid__products-wrapper">
       {%- if collection.products.size > 0 -%}
@@ -554,10 +448,16 @@
       "label": "t:sections.main_collection_product_grid.settings.products_per_page.label"
     },
     {
-      "type": "checkbox",
+      "type": "select",
       "id": "show_vendor",
+      "options": [
+        { "value": "inherit", "label": "t:sections.main_collection_product_grid.settings.show_vendor.options__inherit" },
+        { "value": "yes", "label": "t:sections.main_collection_product_grid.settings.show_vendor.options__yes" },
+        { "value": "no", "label": "t:sections.main_collection_product_grid.settings.show_vendor.options__no" }
+      ],
+      "default": "inherit",
       "label": "t:sections.main_collection_product_grid.settings.show_vendor.label",
-      "default": false
+      "info": "t:sections.main_collection_product_grid.settings.show_vendor.info"
     },
     {
       "type": "header",

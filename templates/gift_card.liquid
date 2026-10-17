@@ -1,6 +1,6 @@
 {% layout none %}
 <!doctype html>
-<html class="no-js" lang="{{ request.locale.iso_code }}">
+<html class="js" lang="{{ request.locale.iso_code }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -21,6 +21,25 @@
     <div class="gift-card">
       <p class="gift-card__value">{{ gift_card.balance | money }}</p>
       <p class="gift-card__code"><code>{{ gift_card.code | format_code }}</code></p>
+
+      {%- comment -%}
+        Carte a emporter : `gift_card.pass_url` est l'adresse documentee du
+        laissez-passer Apple Wallet. Le client ajoute la carte a son telephone
+        et la presente en boutique, sans lire le code a voix haute.
+
+        Le QR code lui-meme n'est PAS rendu ici : `gift_card.qr_identifier` est
+        une simple chaine a encoder, Shopify ne sert aucune image. Il faudrait
+        un encodeur QR en JavaScript dans assets/ (c'est ce que fait Dawn, avec
+        une bibliotheque tierce) : a decider avec Ronnie, pas a improviser dans
+        un theme vendu.
+      {%- endcomment -%}
+      {%- if gift_card.pass_url != blank -%}
+        <p class="gift-card__pass">
+          <a href="{{ gift_card.pass_url }}" class="btn btn--secondary">
+            {{ 'gift_cards.issued.add_to_wallet' | t }}
+          </a>
+        </p>
+      {%- endif -%}
 
       <p class="gift-card__help">{{ 'gift_cards.issued.redeem' | t }}</p>
 

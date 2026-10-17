@@ -1,22 +1,22 @@
 {
   "settings_schema": {
     "couleurs": {
-      "name": "Colours",
+      "name": "Colors",
       "settings": {
         "color_primary": {
-          "label": "Primary colour",
+          "label": "Primary color",
           "info": "Text, buttons, links"
         },
         "color_accent": {
-          "label": "Accent colour",
+          "label": "Accent color",
           "info": "Badges, hover, interactive elements"
         },
         "color_background": {
-          "label": "Background colour",
+          "label": "Background color",
           "info": "Overall site background"
         },
         "color_text": {
-          "label": "Text colour"
+          "label": "Text color"
         }
       }
     },
@@ -34,7 +34,7 @@
       }
     },
     "logo_and_favicon": {
-      "name": "Logo & favicon",
+      "name": "Logo and favicon",
       "settings": {
         "logo": {
           "label": "Logo",
@@ -239,7 +239,8 @@
           "label": "Show order note"
         },
         "cart_show_free_shipping": {
-          "label": "Show free shipping bar"
+          "label": "Show free shipping bar",
+          "info": "Off by default: turning it on promises free shipping to your customers."
         },
         "cart_free_shipping_threshold": {
           "label": "Free shipping threshold (cents)",
@@ -401,13 +402,13 @@
         "price_sale_style": {
           "label": "Sale display",
           "options__1": {
-            "label": "Colour only"
+            "label": "Color only"
           },
           "options__2": {
             "label": "Discount badge only"
           },
           "options__3": {
-            "label": "Colour and badge"
+            "label": "Color and badge"
           }
         }
       }
@@ -431,7 +432,7 @@
       }
     },
     "nuanciers": {
-      "name": "Colour swatches",
+      "name": "Color swatches",
       "settings": {
         "swatch_enable": {
           "label": "Enable swatches"
@@ -449,8 +450,8 @@
           }
         },
         "swatch_map": {
-          "label": "Colour mapping",
-          "info": "One per line, formatted “Name: #hex”. Names not listed fall back to neutral grey."
+          "label": "Color mapping",
+          "info": "One per line, formatted “Name: #hex”. Names not listed fall back to neutral gray."
         }
       }
     },
@@ -508,7 +509,11 @@
           "label": "Number of products to show"
         },
         "show_vendor": {
-          "label": "Show vendor"
+          "label": "Show vendor",
+          "info": "Inherit uses the global setting in Theme settings > Product cards.",
+          "options__inherit": "Inherit from theme settings",
+          "options__yes": "Yes",
+          "options__no": "No"
         },
         "show_view_all": {
           "label": "Show \"View all\" button"
@@ -520,10 +525,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "button_bg": {
           "label": "Button background"
@@ -576,13 +581,13 @@
           "label": "Show payment method logos"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "border_color": {
-          "label": "Border colour"
+          "label": "Border color"
         },
         "copyright_text": {
           "label": "Copyright text"
@@ -599,7 +604,8 @@
               "label": "Logo width"
             },
             "description": {
-              "label": "Description"
+              "label": "Description",
+              "info": "Shown in the footer on every page. Translate it in Settings > Languages."
             }
           }
         },
@@ -607,7 +613,8 @@
           "name": "Link list",
           "settings": {
             "title": {
-              "label": "Column heading"
+              "label": "Column heading",
+              "info": "Leave empty to use the translated default."
             },
             "menu": {
               "label": "Menu"
@@ -680,10 +687,10 @@
           }
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "overlay_color": {
-          "label": "Overlay colour"
+          "label": "Overlay color"
         },
         "overlay_opacity": {
           "label": "Overlay opacity"
@@ -757,10 +764,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "text_alignment": {
           "label": "Text alignment",
@@ -834,7 +841,11 @@
           "label": "Products per page"
         },
         "show_vendor": {
-          "label": "Show vendor"
+          "label": "Show vendor",
+          "info": "Inherit uses the global setting in Theme settings > Product cards.",
+          "options__inherit": "Inherit from theme settings",
+          "options__yes": "Yes",
+          "options__no": "No"
         },
         "header__1": {
           "content": "Grid"
@@ -969,10 +980,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "input_bg": {
           "label": "Email field background"
@@ -1017,13 +1028,17 @@
           "label": "Number of products"
         },
         "show_vendor": {
-          "label": "Show vendor"
+          "label": "Show vendor",
+          "info": "Inherit uses the global setting in Theme settings > Product cards.",
+          "options__inherit": "Inherit from theme settings",
+          "options__yes": "Yes",
+          "options__no": "No"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "columns_desktop": {
           "label": "Columns (desktop)"
@@ -1137,10 +1152,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "header__2": {
           "content": "Layout"
@@ -1401,10 +1416,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "max_width": {
           "label": "Maximum width",
@@ -1502,13 +1517,13 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         },
         "overlay_color": {
-          "label": "Overlay colour"
+          "label": "Overlay color"
         },
         "overlay_opacity": {
           "label": "Overlay opacity",
@@ -1544,8 +1559,8 @@
           "label": "Spacing between logos"
         },
         "grayscale": {
-          "label": "Greyscale logos",
-          "info": "Logos return to full colour on hover."
+          "label": "Grayscale logos",
+          "info": "Logos return to full color on hover."
         },
         "enable_scroll": {
           "label": "Continuous scroll",
@@ -1555,10 +1570,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         }
       },
       "blocks": {
@@ -2700,10 +2715,10 @@
           "content": "Style"
         },
         "background_color": {
-          "label": "Background colour"
+          "label": "Background color"
         },
         "text_color": {
-          "label": "Text colour"
+          "label": "Text color"
         }
       },
       "presets": {
@@ -2712,6 +2727,53 @@
     },
     "predictive_search": {
       "name": "Predictive search"
+    },
+    "apps": {
+      "name": "Apps",
+      "settings": {
+        "padding_top": {
+          "label": "Top padding"
+        },
+        "padding_bottom": {
+          "label": "Bottom padding"
+        }
+      },
+      "presets": {
+        "name": "Apps"
+      }
+    },
+    "featured_product": {
+      "name": "Featured product",
+      "settings": {
+        "product": {
+          "label": "Product"
+        },
+        "show_description": {
+          "label": "Show description"
+        },
+        "show_vendor": {
+          "label": "Show vendor",
+          "info": "Inherit uses the global setting in Theme settings > Product cards.",
+          "options__inherit": "Inherit from theme settings",
+          "options__yes": "Yes",
+          "options__no": "No"
+        },
+        "background_color": {
+          "label": "Background"
+        },
+        "text_color": {
+          "label": "Text"
+        },
+        "padding_top": {
+          "label": "Top padding"
+        },
+        "padding_bottom": {
+          "label": "Bottom padding"
+        }
+      },
+      "presets": {
+        "name": "Featured product"
+      }
     }
   },
   "categories": {

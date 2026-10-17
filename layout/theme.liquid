@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
 
   {%- if settings.favicon != blank -%}
-    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <link rel="icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
   {%- endif -%}
 
   <title>
@@ -87,7 +87,8 @@
       wishlistShareTitle: {{ 'wishlist.share_title' | t | json }},
       wishlistShareText: {{ 'wishlist.share_text' | t: count: '[count]' | json }},
       linkCopied: {{ 'wishlist.link_copied' | t | json }},
-      marketBanner: {{ 'markets.banner_html' | t: country: '[country]' | json }}
+      marketBanner: {{ 'markets.banner_html' | t: country: '[country]' | json }},
+      searchError: {{ 'general.search.error' | t | json }}
     };
   </script>
 </head>

@@ -208,6 +208,48 @@
   </div>
 </div>
 
+{%- comment -%}
+  Editeur de theme : choisir une question dans l'editeur doit l'ouvrir, sinon
+  le marchand clique sur un bloc et rien ne bouge (toutes les questions sont
+  repliees par defaut). Meme principe que sections/tabs.liquid.
+{%- endcomment -%}
+<script>
+  (function () {
+    var root = document.getElementById('shopify-section-{{ section.id }}');
+    if (!root) return;
+
+    function itemOf(target) {
+      if (!target) return null;
+      if (target.closest) {
+        var found = target.closest('.faq__item');
+        if (found) return found;
+      }
+      return target.querySelector ? target.querySelector('.faq__item') : null;
+    }
+
+    root.addEventListener('shopify:block:select', function (event) {
+      var item = itemOf(event.target);
+      if (!item) return;
+      // Marque avant d'ouvrir : a la deselection on ne referme QUE ce que
+      // l'editeur a ouvert (la premiere question peut l'etre par open_first).
+      if (!item.open) item.dataset.openedByEditor = 'true';
+      item.open = true;
+      if (typeof item.scrollIntoView === 'function') {
+        item.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    });
+
+    root.addEventListener('shopify:block:deselect', function (event) {
+      var item = itemOf(event.target);
+      if (!item) return;
+      if (item.dataset.openedByEditor === 'true') {
+        item.open = false;
+        delete item.dataset.openedByEditor;
+      }
+    });
+  })();
+</script>
+
 {%- if faq_count > 0 -%}
   <script type="application/ld+json">
     {

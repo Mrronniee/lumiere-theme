@@ -390,6 +390,8 @@
     data-autoplay="{{ autoplay_value }}"
     data-interval="{{ section.settings.autoplay_interval }}"
     data-transition="{{ section.settings.transition }}"
+    {%- comment -%} Media plein cadre : l'en-tete transparent peut se superposer. {%- endcomment -%}
+    data-header-overlay
     role="group"
     aria-roledescription="carousel"
     aria-label="{{ carousel_label }}"
