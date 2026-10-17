@@ -471,9 +471,17 @@
                   alt="{{ slide_image.alt | escape }}"
                   width="{{ slide_image.width }}"
                   height="{{ slide_image.height }}"
-                  {% if is_first %}
+                  {%- comment -%}
+                    La priorite haute ne vaut que si le diaporama OUVRE la
+                    page : posee sur une section placee plus bas, elle est
+                    depensee pour une image hors ecran (mesure : 4e section de
+                    la page de demo).
+                  {%- endcomment -%}
+                  {% if is_first and section.index == 1 %}
                     loading="eager"
                     fetchpriority="high"
+                  {% elsif is_first %}
+                    loading="lazy"
                   {% else %}
                     loading="lazy"
                     fetchpriority="low"

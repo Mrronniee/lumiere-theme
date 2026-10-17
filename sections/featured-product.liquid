@@ -81,6 +81,13 @@
   }
 {%- endstyle -%}
 
+{%- comment -%}
+  Sans produit choisi, la section ne rend RIEN en boutique : son conteneur
+  vide laissait un blanc de la hauteur de ses marges (mesure : 1 961 octets,
+  0 caractere visible). Dans l'editeur, elle rend son message pour que le
+  marchand voie ce qu'il doit regler.
+{%- endcomment -%}
+{%- if featured != blank or request.design_mode -%}
 <div class="featured-product" data-section-id="{{ section.id }}">
   <div class="featured-product__inner">
     {%- if featured != blank -%}
@@ -181,8 +188,23 @@
       {%- endcomment -%}
       <p class="featured-product__empty">{{ 'sections.featured_product.no_product' | t }}</p>
     {%- endif -%}
+
+    {%- comment -%}
+      Blocs d'app : une app de notation, de stock ou de paiement fractionne
+      peut poser son bloc ici. La section n'en acceptait aucun.
+    {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="featured-product__blocks">
+        {%- for block in section.blocks -%}
+          <div class="featured-product__block" {{ block.shopify_attributes }}>
+            {%- render block -%}
+          </div>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
   </div>
 </div>
+{%- endif -%}
 
 {% schema %}
 {
@@ -205,9 +227,18 @@
       "type": "select",
       "id": "show_vendor",
       "options": [
-        { "value": "inherit", "label": "t:sections.featured_product.settings.show_vendor.options__inherit" },
-        { "value": "yes", "label": "t:sections.featured_product.settings.show_vendor.options__yes" },
-        { "value": "no", "label": "t:sections.featured_product.settings.show_vendor.options__no" }
+        {
+          "value": "inherit",
+          "label": "t:sections.featured_product.settings.show_vendor.options__inherit"
+        },
+        {
+          "value": "yes",
+          "label": "t:sections.featured_product.settings.show_vendor.options__yes"
+        },
+        {
+          "value": "no",
+          "label": "t:sections.featured_product.settings.show_vendor.options__no"
+        }
       ],
       "default": "inherit",
       "label": "t:sections.featured_product.settings.show_vendor.label",
@@ -244,6 +275,11 @@
       "unit": "px",
       "default": 64,
       "label": "t:sections.featured_product.settings.padding_bottom.label"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@app"
     }
   ],
   "presets": [

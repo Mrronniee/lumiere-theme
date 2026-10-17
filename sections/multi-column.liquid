@@ -10,9 +10,28 @@
   assign col_t = section.settings.columns_tablet
   assign col_m = section.settings.columns_mobile
 
-  assign vw_d = 100 | divided_by: col_d
-  assign vw_t = 100 | divided_by: col_t
-  assign vw_m = 100 | divided_by: col_m
+  comment
+    Largeur REELLEMENT peinte, pas une fraction de la fenetre : la grille
+    retire les marges du conteneur (2 x 1,5rem en mobile, 2 x 2rem au-dessus)
+    et les espaces entre colonnes. Avec « 100vw » en mobile, le navigateur
+    prenait la variante 900w pour une image de 247 px CSS : 184 Kio
+    d'images inutiles sur la page de demo (69,9 % de gaspillage sur un
+    fichier), mesure Lighthouse.
+  endcomment
+  assign gap_total_d = section.settings.spacing | times: col_d | minus: section.settings.spacing
+  assign gap_total_t = section.settings.spacing | times: col_t | minus: section.settings.spacing
+  assign gap_mobile_px = section.settings.spacing | times: 0.75 | round
+  assign gap_total_m = gap_mobile_px | times: col_m | minus: gap_mobile_px
+
+  capture size_d
+    echo 'calc((100vw - 4rem - ' | append: gap_total_d | append: 'px) / ' | append: col_d | append: ')'
+  endcapture
+  capture size_t
+    echo 'calc((100vw - 4rem - ' | append: gap_total_t | append: 'px) / ' | append: col_t | append: ')'
+  endcapture
+  capture size_m
+    echo 'calc((100vw - 3rem - ' | append: gap_total_m | append: 'px) / ' | append: col_m | append: ')'
+  endcapture
 
   assign gap = section.settings.spacing
   assign gap_mobile = gap | times: 0.75 | round
@@ -299,7 +318,7 @@
                       {%- if img.width >= 900 -%}{{ img | image_url: width: 900 }} 900w,{%- endif -%}
                       {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200 }} 1200w,{%- endif -%}"
                     src="{{ img | image_url: width: 900 }}"
-                    sizes="(min-width: 990px) {{ vw_d }}vw, (min-width: 750px) {{ vw_t }}vw, {{ vw_m }}vw"
+                    sizes="(min-width: 990px) {{ size_d | strip }}, (min-width: 750px) {{ size_t | strip }}, {{ size_m | strip }}"
                     alt="{{ img.alt | escape }}"
                     class="multi-column__image"
                     loading="lazy"

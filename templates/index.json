@@ -33,7 +33,7 @@
         "description": "",
         "collection": "frontpage",
         "products_to_show": 4,
-        "show_vendor": false,
+        "show_vendor": "inherit",
         "show_view_all": true,
         "view_all_label": "",
         "background_color": "#faf9f7",

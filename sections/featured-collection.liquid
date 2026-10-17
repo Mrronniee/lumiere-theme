@@ -59,12 +59,16 @@
     transition: opacity 0.6s ease, transform 0.6s ease;
   }
 
-  .js .featured-collection__product {
+  /* La garde .animations-on manquait : les cartes restaient a opacite 0 meme
+     quand le marchand a coupe les animations ou quand le visiteur demande
+     moins de mouvement, et un element a opacite 0 n'est jamais candidat LCP —
+     la priorite haute posee sur la premiere carte etait donc perdue. */
+  .js.animations-on .featured-collection__product {
     opacity: 0;
     transform: translateY(30px);
   }
 
-  .js .featured-collection__product.is-visible {
+  .js.animations-on .featured-collection__product.is-visible {
     opacity: 1;
     transform: translateY(0);
   }

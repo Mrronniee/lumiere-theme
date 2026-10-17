@@ -4,12 +4,24 @@
   .product-card__title et .product-card__price, donc la hauteur reservee est
   exactement celle de la carte qui la remplacera. Sert a reserver la place des
   recommandations injectees par fetch : sans elle le pied de page sautait a
-  leur arrivee (CLS 0,622 mesure en mobile).
+  leur arrivee (CLS 0,622 mesure en mobile). Elle reserve aussi la ligne
+  « marque » quand le reglage est actif, et deux lignes de titre : un titre
+  long passe sur deux lignes dans la vraie carte (362,8 px au lieu de
+  341,8 px).
 {%- endcomment -%}
 <div class="product-card product-card--skeleton" aria-hidden="true">
   <div class="product-card__media"></div>
 
   <div class="product-card__info">
+    {%- comment -%}
+      La ligne « marque » est rendue par la vraie carte des que le reglage est
+      actif : sans elle, la carte d'attente mesurait 320,2 px contre 341,8 px
+      (mesure sur la demo, 412 px de large), soit 21,6 px manquants par carte
+      et 64,2 px sur la grille.
+    {%- endcomment -%}
+    {%- if settings.product_card_show_vendor -%}
+      <span class="product-card__vendor product-card__skeleton-bar product-card__skeleton-bar--short">&nbsp;</span>
+    {%- endif -%}
     {%- comment -%}
       La barre du titre porte AUSSI .product-card__link : ce lien est en
       display: block avec 2,4 px de marge interne haute et basse (cible

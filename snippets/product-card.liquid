@@ -19,7 +19,14 @@
   if show_vendor == 'yes' or show_vendor == true
     assign card_show_vendor = true
   endif
-  if show_vendor == 'no'
+  comment
+    « false » : valeur ecrite par les gabarits d'avant la 1.5.0, que le
+    marchand garde dans son settings_data tant qu'il ne retouche pas la
+    section. Sans ce test, une section reglee sur « ne pas afficher » montrait
+    quand meme la marque (mesure sur la demo : templates/index.json garde
+    show_vendor: false).
+  endcomment
+  if show_vendor == 'no' or show_vendor == false
     assign card_show_vendor = false
   endif
   assign card_heading = heading | default: 'h3'
@@ -62,17 +69,25 @@
           >
 
           {%- if product.media[1] != nil and settings.product_card_hover_image -%}
+            {%- comment -%}
+              Le deuxieme media n'est pas toujours une image : pour une video
+              ou un modele 3D, media.width et media.height sont vides et la
+              balise sortait avec srcset, width et height vides (mesure sur la
+              demo : la carte de canvas-market-bag). On prend donc l'image
+              d'apercu du media, qui existe pour tous les types.
+            {%- endcomment -%}
+            {%- assign hover_image = product.media[1].preview_image -%}
             <img
-              srcset="{%- if product.media[1].width >= 165 -%}{{ product.media[1] | image_url: width: 165 }} 165w,{%- endif -%}
-                {%- if product.media[1].width >= 360 -%}{{ product.media[1] | image_url: width: 360 }} 360w,{%- endif -%}
-                {%- if product.media[1].width >= 533 -%}{{ product.media[1] | image_url: width: 533 }} 533w,{%- endif -%}"
-              src="{{ product.media[1] | image_url: width: 533 }}"
+              srcset="{%- if hover_image.width >= 165 -%}{{ hover_image | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if hover_image.width >= 360 -%}{{ hover_image | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if hover_image.width >= 533 -%}{{ hover_image | image_url: width: 533 }} 533w,{%- endif -%}"
+              src="{{ hover_image | image_url: width: 533 }}"
               sizes="{{ card_sizes }}"
               alt=""
               class="product-card__image product-card__image--hover"
               loading="lazy"
-              width="{{ product.media[1].width }}"
-              height="{{ product.media[1].height }}"
+              width="{{ hover_image.width }}"
+              height="{{ hover_image.height }}"
             >
           {%- endif -%}
         </div>

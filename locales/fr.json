@@ -15,7 +15,7 @@
       },
       "submit": "Lancer la recherche",
       "suggestions_label": "Suggestions de recherche",
-      "suggestions_hint": "Des suggestions s'affichent pendant la saisie. Utilisez les flèches haut et bas pour les parcourir et Entrée pour en ouvrir une.",
+      "suggestions_hint": "Des suggestions s’affichent pendant la saisie. Utilisez les flèches haut et bas pour les parcourir et Entrée pour en ouvrir une.",
       "suggestions_count": {
         "one": "{{ count }} suggestion pour « {{ terms }} »",
         "other": "{{ count }} suggestions pour « {{ terms }} »"
@@ -30,8 +30,8 @@
     },
     "404": {
       "title": "Page non trouvée",
-      "subtext": "La page que vous recherchez n'existe pas.",
-      "link": "Retour à l'accueil"
+      "subtext": "La page que vous recherchez n’existe pas.",
+      "link": "Retour à l’accueil"
     },
     "pagination": {
       "label": "Pagination",
@@ -60,7 +60,7 @@
     "refresh_page": "Choix sélectionné, actualiser la page",
     "previous_image": "Image précédente",
     "next_image": "Image suivante",
-    "zoom_image": "Agrandir l'image",
+    "zoom_image": "Agrandir l’image",
     "decrease_quantity": "Diminuer la quantité",
     "increase_quantity": "Augmenter la quantité",
     "quantity": "Quantité",
@@ -116,7 +116,7 @@
       "aria_label": "Logos de nos partenaires"
     },
     "gallery": {
-      "aria_label": "Galerie d'images"
+      "aria_label": "Galerie d’images"
     },
     "featured_collections": {
       "aria_label": "Collections en vedette"
@@ -193,11 +193,11 @@
       "actions": "Choisir une offre"
     },
     "custom_liquid": {
-      "empty": "Ajoutez votre code Liquid ou HTML dans les réglages de cette section. Ce message n'est visible que dans l'éditeur de thème."
+      "empty": "Ajoutez votre code Liquid ou HTML dans les réglages de cette section. Ce message n’est visible que dans l’éditeur de thème."
     },
     "hero": {
       "default_pretitle": "Nouvelle collection 2026",
-      "default_title": "L'élégance, redéfinie",
+      "default_title": "L’élégance, redéfinie",
       "default_description": "Découvrez notre nouvelle collection de pièces intemporelles, coupées pour sublimer et faites pour durer.",
       "default_button": "Découvrir la collection",
       "default_button_2": "Notre histoire"
@@ -212,7 +212,7 @@
       "default_title": "Rejoignez notre univers",
       "default_description": "Inscrivez-vous pour accéder en avant-première aux nouveautés, aux offres exclusives et à nos conseils de style.",
       "default_placeholder": "Votre adresse e-mail",
-      "default_button": "S'inscrire",
+      "default_button": "S’inscrire",
       "default_disclaimer": "En vous inscrivant, vous acceptez notre politique de confidentialité."
     },
     "related_products": {
@@ -265,7 +265,7 @@
     },
     "notification": {
       "added": "Ajouté au panier !",
-      "error": "Impossible d'ajouter au panier"
+      "error": "Impossible d’ajouter au panier"
     }
   },
   "products": {
@@ -303,7 +303,7 @@
     },
     "share": "Partager",
     "share_title": "Mes favoris",
-    "share_text": "J'ai {{ count }} articles dans mes favoris !",
+    "share_text": "J’ai {{ count }} articles dans mes favoris !",
     "clear": "Vider les favoris",
     "clear_confirm": "Vider vos favoris ?",
     "empty_title": "Votre liste de favoris est vide",
@@ -327,15 +327,15 @@
         "one": "{{ count }} commentaire",
         "other": "{{ count }} commentaires"
       },
-      "empty": "Aucun commentaire pour l'instant. Soyez la première personne à en écrire un.",
+      "empty": "Aucun commentaire pour l’instant. Soyez la première personne à en écrire un.",
       "form_title": "Laisser un commentaire",
       "author": "Nom",
       "email": "E-mail",
       "message": "Commentaire",
       "submit": "Publier le commentaire",
       "success": "Votre commentaire a été publié. Merci.",
-      "success_moderated": "Votre commentaire a été reçu et s'affichera dès qu'il sera approuvé.",
-      "moderated_note": "Les commentaires sont relus avant d'être publiés."
+      "success_moderated": "Votre commentaire a été reçu et s’affichera dès qu’il sera approuvé.",
+      "moderated_note": "Les commentaires sont relus avant d’être publiés."
     }
   },
   "collections": {
@@ -359,7 +359,7 @@
       "payment_status": "Statut du paiement",
       "fulfillment_status": "Statut de traitement",
       "total": "Total",
-      "none": "Vous n'avez pas encore passé de commande."
+      "none": "Vous n’avez pas encore passé de commande."
     },
     "order": {
       "title": "Commande {{ name }}",
@@ -389,14 +389,14 @@
       "last_name": "Nom",
       "company": "Société",
       "address1": "Adresse",
-      "address2": "Complément d'adresse",
+      "address2": "Complément d’adresse",
       "city": "Ville",
       "country": "Pays",
       "zip": "Code postal",
       "phone": "Téléphone",
-      "add": "Ajouter l'adresse",
-      "update": "Mettre à jour l'adresse",
-      "none": "Vous n'avez aucune adresse enregistrée."
+      "add": "Ajouter l’adresse",
+      "update": "Mettre à jour l’adresse",
+      "none": "Vous n’avez aucune adresse enregistrée."
     },
     "login": {
       "title": "Connexion",
@@ -405,7 +405,7 @@
       "forgot_password": "Mot de passe oublié ?",
       "sign_in": "Se connecter",
       "create_account": "Créer un compte",
-      "guest_title": "Continuer en tant qu'invité",
+      "guest_title": "Continuer en tant qu’invité",
       "guest_continue": "Continuer"
     },
     "recover_password": {
@@ -430,7 +430,7 @@
       "password": "Mot de passe",
       "password_confirm": "Confirmer le mot de passe",
       "submit": "Activer le compte",
-      "cancel": "Refuser l'invitation"
+      "cancel": "Refuser l’invitation"
     },
     "reset_password": {
       "title": "Réinitialiser le mot de passe",
@@ -474,7 +474,7 @@
     "email_label": "Adresse e-mail"
   },
   "markets": {
-    "banner_html": "Vous semblez être en {{ country }}. Changer de marché ?",
+    "banner_html": "Pays détecté : {{ country }}. Changer de marché ?",
     "switch": "Changer",
     "country": "Pays",
     "language": "Langue",

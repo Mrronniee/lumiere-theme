@@ -942,6 +942,15 @@
               "info": "Fill in with your own terms."
             }
           }
+        },
+        "custom_liquid": {
+          "name": "Custom Liquid",
+          "settings": {
+            "custom_liquid": {
+              "label": "Liquid code",
+              "info": "Add an app snippet, a payment badge or a legal notice."
+            }
+          }
         }
       }
     },

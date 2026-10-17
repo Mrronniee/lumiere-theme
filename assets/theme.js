@@ -2280,9 +2280,32 @@
     initAll();
   }
 
+  /**
+   * Rejoue les <script> en ligne d'une section rechargee.
+   *
+   * L'editeur remplace le balisage d'une section par innerHTML : un <script>
+   * insere ainsi n'est JAMAIS execute par le navigateur. Les sections dont le
+   * comportement vit dans un script en ligne (onglets, FAQ, compte a rebours,
+   * diaporama, bandeau video) restaient donc inertes apres un rechargement —
+   * mesure dans l'editeur : les quatre panneaux d'onglets s'empilaient et le
+   * clic ne faisait plus rien.
+   *
+   * Chaque script est recree a l'identique, donc execute. Tous portent une
+   * garde d'idempotence (data-*-init) : un double passage ne fait rien.
+   */
+  function rejoueScripts(scope) {
+    if (!scope || !scope.querySelectorAll) return;
+    scope.querySelectorAll('script:not([src]):not([type])').forEach((vieux) => {
+      const neuf = document.createElement('script');
+      neuf.textContent = vieux.textContent;
+      vieux.parentNode.replaceChild(neuf, vieux);
+    });
+  }
+
   // Editeur de theme : e.target est le conteneur #shopify-section-*,
   // l'attribut data-section-type est sur un element interne.
   document.addEventListener('shopify:section:load', (e) => {
+    rejoueScripts(e.target);
     initAll(e.target);
     Wishlist.updateUI();
   });

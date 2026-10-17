@@ -8,23 +8,46 @@
   « CATALO/G »). Mesuré sur la démo 1.5.1 à 1440, en EN et en FR.
 
   Usage : {% render 'market-banner' %} — dans la section de l'en-tête, avant
-  <header>, jamais dans .header__inner.
+  <header>, jamais dans .header__inner. Il est affiché hors du flux (en bas de
+  la fenêtre) : révélé après une requête, dans le flux il décalait toute la
+  page de 77 px (CLS 0,1203 à 360 px).
 {% endcomment %}
 {%- if settings.show_market_banner -%}
   {%- if settings.show_language_selector or settings.show_currency_selector or settings.show_country_selector -%}
     {%- style -%}
+      /* Le bandeau est revele APRES une requete
+         (/browsing_context_suggestions.json) : dans le flux, il poussait tout
+         le document de ses 77 px et donnait a lui seul un CLS de 0,1203 a
+         360 px de large (seuil 0,1), soit 95 % du CLS de toutes les pages.
+         Il est donc pose HORS DU FLUX, en bas de la fenetre : son apparition
+         ne deplace plus rien. */
       .market-banner {
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: var(--z-header);
         background: var(--color-primary);
         color: var(--color-on-primary);
         padding: 0.75rem var(--container-padding);
         text-align: center;
         font-family: var(--font-body);
         font-size: 0.875rem;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
         display: none;
       }
 
       .market-banner.is-visible {
         display: block;
+      }
+
+      /* Sur un petit ecran le texte, le bouton et la fermeture tiennent sur
+         plusieurs lignes sans se chevaucher. */
+      @media screen and (max-width: 749px) {
+        .market-banner {
+          font-size: 0.8125rem;
+          padding: 0.75rem 1rem;
+        }
       }
 
       .market-banner__link {

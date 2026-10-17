@@ -155,7 +155,19 @@
           sizes="(min-width: 750px) 50vw, 100vw"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"
-          loading="lazy"
+          {%- comment -%}
+            Quand la section ouvre la page, son image est le LCP : en
+            loading="lazy" elle attendait 4 025 ms et le LCP montait a
+            5 791 ms (audit lcp-lazy-loaded a 0). Au-dela de la deuxieme
+            section, l'image est sous la ligne de flottaison et reste
+            differee.
+          {%- endcomment -%}
+          {%- if section.index == 1 -%}
+            loading="eager"
+            fetchpriority="high"
+          {%- else -%}
+            loading="lazy"
+          {%- endif -%}
           width="{{ section.settings.image.width }}"
           height="{{ section.settings.image.height }}"
         >

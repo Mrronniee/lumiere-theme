@@ -742,6 +742,19 @@
         {%- endif -%}
       {%- endfor -%}
 
+      {%- comment -%}
+        Liquid personnalise : la ou le marchand (ou son developpeur) pose un
+        extrait a lui — badge de paiement, mention legale, appel a une app sans
+        bloc. La fiche n'offrait que l'onglet depliant comme bloc reel.
+      {%- endcomment -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'custom_liquid' and block.settings.custom_liquid != blank -%}
+          <div class="product-custom-liquid" {{ block.shopify_attributes }}>
+            {{ block.settings.custom_liquid }}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+
       {%- comment -%} META {%- endcomment -%}
       <div class="product-meta">
         {%- if section.settings.show_sku -%}
@@ -805,8 +818,17 @@
   "tag": "section",
   "class": "section-main-product",
   "settings": [
-    { "type": "header", "content": "t:sections.main_product.settings.header__payment.content" },
-    { "type": "checkbox", "id": "show_payment_button", "label": "t:sections.main_product.settings.show_payment_button.label", "info": "t:sections.main_product.settings.show_payment_button.info", "default": true },
+    {
+      "type": "header",
+      "content": "t:sections.main_product.settings.header__payment.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_payment_button",
+      "label": "t:sections.main_product.settings.show_payment_button.label",
+      "info": "t:sections.main_product.settings.show_payment_button.info",
+      "default": true
+    },
     {
       "type": "checkbox",
       "id": "show_vendor",
@@ -866,6 +888,19 @@
           "id": "content",
           "label": "t:sections.main_product.blocks.collapsible_tab.settings.content.label",
           "info": "t:sections.main_product.blocks.collapsible_tab.settings.content.info"
+        }
+      ]
+    },
+    {
+      "type": "custom_liquid",
+      "name": "t:sections.main_product.blocks.custom_liquid.name",
+      "limit": 2,
+      "settings": [
+        {
+          "type": "liquid",
+          "id": "custom_liquid",
+          "label": "t:sections.main_product.blocks.custom_liquid.settings.custom_liquid.label",
+          "info": "t:sections.main_product.blocks.custom_liquid.settings.custom_liquid.info"
         }
       ]
     }

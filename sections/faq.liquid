@@ -215,6 +215,12 @@
     var root = document.getElementById('shopify-section-{{ section.id }}');
     if (!root) return;
 
+    /* Idempotence : ce script est reexecute apres un rechargement de section
+       dans l'editeur (assets/theme.js, rejoueScripts). Si le conteneur de
+       section a survecu, ses ecouteurs aussi : on sort. */
+    if (root.dataset.faqInit === 'true') return;
+    root.dataset.faqInit = 'true';
+
     function itemOf(target) {
       if (!target) return null;
       if (target.closest) {
