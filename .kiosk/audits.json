@@ -175,11 +175,183 @@
     }
   },
   "theme-parcours-tester": {
-    "version": "1.4.4",
-    "date": "2026-10-09",
-    "verdict": "passé",
-    "resume": "Variante, ajout, tiroir (+1, -1, saisie, suppression), page panier, ajout rapide et cœur favoris en EN 1440, EN 390 et FR 390 : 0 BLOQUANT, 0 ALERTE du thème, 0 erreur JS du thème, aucun débordement horizontal.",
-    "commit": "4573d69"
+    "version": "1.5.2",
+    "date": "2026-10-17",
+    "verdict": "échoué",
+    "resume": "12/12 points mesurés, 30/30 cas traités (22 mesurés, 8 sans objet avec leur cause), 0 non mesuré, 0 HTTP 429 ; 70 navigations, 25 pages, EN et FR, 1440/390/360/320, Shopify.theme.id relu sur chaque page. ÉCHOUÉ : 4 échecs et 3 alertes. D1 l'ajout rapide d'une carte n'ouvre pas le tiroir (POST /cart/add 200, compteur et annonce OK, mais [data-mini-cart] reste hors écran ; assets/theme.js:871-892 addByVariantId() n'appelle pas open(), contrairement à add() l.855-862), reproduit à 1440, 390 et en FR. D2 la note du tiroir n'est jamais enregistrée (aucun /cart/update.js, /cart.js note vide, #CartNote vide ensuite : l'écouteur theme.js:541-551 ne vise que [data-cart-section] textarea[name=note] et sections/mini-cart.liquid:162-172 place le champ hors de cette portée). D3 avec le code ESSAI10, /cart affiche « Subtotal €391,50 — Discounts −€43,50 — Total €391,50 » : le sous-total est déjà remisé (sections/main-cart-footer.liquid:179 et sections/mini-cart.liquid:147 utilisent cart.total_price), identique en FR. D4 une quantité au-delà du stock donne un 422, un message générique et laisse 9 affiché pour 3 réels (theme.js:904-915 : return avant refresh()). Alertes : A1 aucune remise affichée dans le tiroir ; A2 focus resté sur BODY après chaque erreur de formulaire (autofocus posé sur un div non focusable) ; A3 aucune disponibilité de retrait en magasin (0 occurrence « pickup » dans sections/ et snippets/). Sain : 0 erreur JS du thème sur 70 navigations, compteur toujours égal à /cart.js (13 relevés), Entrée dans un champ quantité de /cart met à jour (bouton « update » placé en premier en 1.5.0), barre de livraison offerte rendue dans le tiroir ET sur /cart (24 % → 100 %), code devise EUR sur tous les prix y compris ceux redessinés par le JS, 16 squelettes de recommandations au rendu serveur remplacés par 4 cartes réelles, quatre properties de carte cadeau relues dans /cart.js, compte à rebours à date fixe, aucune fausse urgence, aucun défilement horizontal réel de 1440 à 320. 33 des 45 éléments d'inventaire vus ; les 12 autres (gabarits customers/*, password, gift_card, page par défaut) non servis par la démo, chacun avec sa cause.",
+    "commit": "7bd2320",
+    "couverture": {
+      "produit-panier": {
+        "etat": "mesuré",
+        "mesure": "EN 1440 : field-jacket, variante Ecru/S/Cotton → Navy/M/Linen (prix 145,00 → 165,00 EUR, SKU ESSAI-JKT-ECR-S-COT → ESSAI-JKT-NAV-M-LIN, id 57599164481862 → 57599164809542, URL ?variant=), qty 2 → tiroir « mini-cart is-open », ligne « Field Jacket / Navy / M / Linen / Regular price €330,00 EUR », sous-total €330,00 EUR, compteur (2) = /cart.js 2, focus sur .mini-cart__close. EN 390 : Ecru/M/Cotton, tiroir x=0 w=390 (win 390), compteur (1)=1, notification « Added to cart! ». FR 1440 et 390/360/320 : « Ajouté au panier ! », ligne « Prix régulier €145,00 EUR », « Supprimer », sous-total, compteur (1)=1. 0 erreur JS du thème sur ces étapes."
+      },
+      "ajout-rapide": {
+        "etat": "mesuré",
+        "mesure": "ÉCHEC D1 : 12 boutons .product-card__quick-add sur 16 cartes ; clic souris réel → POST /en/cart/add 200, /cart.js 0→1, compteur (1), aria-live « Added to cart! » / FR « Ajouté au panier ! », mais [data-mini-cart] reste « mini-cart » (jamais is-open), rect x=1440 hors écran, à 1440 ET à 390. Aperçu rapide (même carte) : ouvre bien le tiroir (mini-cart is-open, 2 lignes, €269,00 EUR). Géométrie : bouton 44×44 px à (541,850), titre à y=938, prix à y=972, aucun recouvrement (overTitle=false, overPrice=false)."
+      },
+      "tiroir": {
+        "etat": "mesuré",
+        "mesure": "+1 : 2→3 (€495,00 EUR, compteur 3=3) ; −1 : 3→2 (€330,00) ; saisie directe 5 (€825,00, compteur 5=5) ; suppression → état vide EN « Your cart is empty / Discover our collections… / Continue shopping », FR « Votre panier est vide… » ; sous-total et barre livraison offerte recalculés (24 % → 100 %) ; Échap ferme et rend le focus au bouton d'ajout. ÉCHEC D2 : note du tiroir jamais enregistrée (2 mesures, /cart.js note reste \"\", aucune requête /cart/update.js, closest('[data-cart-section]') = null). ALERTE A1 : aucune remise affichée dans le tiroir avec ESSAI10."
+      },
+      "page-panier": {
+        "etat": "mesuré",
+        "mesure": "Entrée dans un champ quantité = mise à jour (URL reste /en/cart et /cart, qty 2→3 EN et FR) ; +1/−1 (3→4→3, sous-total €442,00 → €404,00) ; note enregistrée (cart.js « Note commande KIOSK », FR « Note FR ») ; retrait d'une ligne puis de la dernière → état vide traduit EN/FR ; panier à 10 lignes : 10 rangées, compteur (10)=10, sous-total €7.095,00 EUR, hScroll 0 à 1440 et 390 ; commander → shop.app (Shop Pay). ÉCHEC D3 (sous-total déjà remisé : 391,50 − 43,50 = 391,50 au lieu de 435,00 − 43,50) et ÉCHEC D4 (422 → message générique + quantité 9 affichée alors que le panier est à 3)."
+      },
+      "recherche": {
+        "etat": "mesuré",
+        "mesure": "Mot présent EN « serum » : titre « 7 results », 6 cartes produit + 1 article rendu et visible → compte cohérent ; FR « serum » : 8 résultats, 7 cartes + 1 article. Mot absent « zzzqqqkiosk » : 0 résultat, EN « No results found for “zzzqqqkiosk” / Continue shopping », FR « Aucun résultat trouvé pour “zzzqqqkiosk” / CONTINUER LES ACHATS ». Prédictive : GET /search/suggest 200 (resources[type]=product,collection,page,article), 6 éléments rendus, statut aria-live « 5 suggestions for “ser” » ; accents « crème » → 200, « 4 suggestions », et /search?q=crème → 9 résultats. Échap ferme la fenêtre de recherche et rend le focus au bouton loupe."
+      },
+      "collection": {
+        "etat": "mesuré",
+        "mesure": "Filtre « Out of stock » par l'interface : 74 → 1 produit (Ribbed Beanie), étiquette active « Out of stock », lien « Clear filters » ; filtres combinés (In stock + prix 20–40) : 28 produits, 2 étiquettes ; retrait d'une étiquette → 74 ; tout effacer → 74 ; tri price-descending par le select : 1res cartes « Lumière Ring / Ombre Necklace / Aurore Necklace » à €12.800 / €9.200 / €6.450 (avant : A-Z) ; pagination 5 pages, page 2 = 16 autres produits, aria-current=\"page\" sur 2 ; collection vide /coming-soon : 0 produit ; filtre sans résultat : 0 produit + « No results / Try adjusting your filters or your search / CLEAR FILTERS ». Facettes aussi sur la recherche (6 résultats avec filter.v.availability=1)."
+      },
+      "formulaires": {
+        "etat": "mesuré",
+        "mesure": "Contact (/en/pages/lumiere-contact) : envoi à vide bloqué côté navigateur (contact[email] et contact[body] :invalid, focus sur contact[email], aucune navigation) ; e-mail invalide → « Please correct the following: Email is invalid » en role=alert dans form.contact__form ; envoi valide (données factices test@example.com) → « Thanks, your message has been sent. We will get back to you shortly. ». Newsletter (section de l'accueil, form 'customer') : à vide bloqué (focus sur contact[email]), invalide → « Email is invalid. » dans newsletter__form seul, valide → « Thanks for subscribing! » dans newsletter__form seul, les 3 autres formulaires de la page sans message. Commentaire d'article : à vide (3 champs :invalid), invalide → « Email must be formatted as an email », valide → « Your comment has been received and will appear once it is approved. ». ALERTE A2 : focus sur BODY après chaque erreur serveur."
+      },
+      "pages": {
+        "etat": "mesuré",
+        "mesure": "404 : HTTP 404 sur /en/pages/kiosk-nexiste-pas-404, body.template-404, h1 « Page not found », lien « BACK TO HOME » (pas de champ de recherche). FAQ : 4 <details> sur /en/pages/lumiere-all-sections, premier ouvert → fermé → rouvert par clic sur summary. Onglets : 4 boutons, aria-selected passe du 1er au 2e, 13 panneaux. Page de démo « toutes sections » : 22 sections rendues (rich_text → apps). Favoris : page vide (« Your wishlist is empty ») puis 1 produit après ajout par le cœur d'une carte. /en/collections : 26 liens de collections. Blog journal : 3 articles, extrait + date, pas de pagination (3 < taille de page) ; article : date 2026-09-02 (<time datetime>), modération annoncée, formulaire de commentaire ; blog news : « No articles yet. ». Aucun quiz ni constructeur dans ce thème."
+      },
+      "entete": {
+        "etat": "mesuré",
+        "mesure": "Menu mobile (390) : [data-menu-toggle] 40×40 px, clic → nav.mobile-menu is-open (x=0, 380×844), focus déplacé sur .mobile-menu__close, 5 liens, aria-expanded true, Échap ferme (0 élément .is-open, aria-expanded false). Sous-menus : le menu de la démo (lumiere-main) est plat — 3 entrées Home/Catalog/Contact, 0 [data-submenu-toggle] rendu → non provocable sans toucher au menu de la boutique. Sélecteurs : pays FR → BE (input country_code passe à BE, sélecteur « BE Belgique » actif, retour FR vérifié), langue English ↔ Français (/en/collections/all ↔ /collections/all, Shopify.locale en ↔ fr), devise € EUR (marché BE aussi en EUR). Compteur panier et <shopify-account> visibles à 1440 (display block) et 390 (44×44 px)."
+      },
+      "console": {
+        "etat": "mesuré",
+        "mesure": "0 erreur JS du thème sur 70 navigations / 25 pages / 2 langues (aucun message « Could not add/update », « Ajout upsell impossible », « Liquid error », « Uncaught », « is not a function », aucune trace theme.js). 1 728 messages console au total, tous rattachés aux scripts Shopify coupés par le proxy du cloud : ERR_TUNNEL_CONNECTION_FAILED, privacy_banner_initialized/1.2, bugsnag, « Suppressed error while exporting metrics », api/collect, login_with_shop. Requêtes en échec hors Shopify/proxy : 3, toutes attendues (le 404 provoqué, le 422 du dépassement de stock, une vidéo interrompue par la navigation)."
+      },
+      "compteur-panier": {
+        "etat": "mesuré",
+        "mesure": "Comparé à /cart.js à chaque étape : ajout fiche produit (2|2), +1 (3|3), −1 (2|2), saisie 5 (5|5), suppression (0|0) ; ajout rapide (1|1) ; aperçu rapide (2|2) ; page panier après Entrée (5|5 puis 3|3), panier à 10 lignes (10|10) ; FR : (1|1), (2|2), (1|1), (0|0). Aucun écart constaté."
+      },
+      "cas-possibles": {
+        "etat": "mesuré",
+        "mesure": "30 cas de la demande (lignes 47 à 76), tous traités : 22 mesurés, 8 sans objet avec leur cause.",
+        "cas": {
+          "boutique-un-ou-plusieurs-pays": {
+            "etat": "mesuré",
+            "mesure": "Boutique à 2 marchés : sélecteur pays FR/BE rendu dans l'en-tête ; clic « BE Belgique » → rechargement, input country_code=BE, sélecteur actif sur BE ; retour à France vérifié (country_code=FR). Bandeau de marché « You seem to be in United States. Change market? » rendu par le thème (snippets/market-banner.liquid), refermable."
+          },
+          "boutique-devises": {
+            "etat": "mesuré",
+            "mesure": "Format relevé avec price_show_currency_code actif : « €24,00 EUR », « From €245,00 EUR », « €6.450,00 EUR », « €7.095,00 EUR », panier « €391,50 EUR », prix redessinés par le JS après +1 « €495,00 EUR » — le code devise atteint cartes, fiche, panier, tiroir, étiquettes de filtres. Une seule devise disponible : les deux marchés (FR et BE) sont en EUR (Shopify.currency = {active EUR, rate 1.0}), aucune autre devise à provoquer sur la boutique de dev."
+          },
+          "produit-cas": {
+            "etat": "mesuré",
+            "mesure": "Solde : Barrier Balm « Sale price €38,00 EUR / Regular price €46,00 EUR » + badge « On sale ». Épuisé : /products/ribbed-beanie, bouton « Sold out » disabled. Sans image : /products/linen-napkin-set, 1 SVG de remplacement, aucune image produit. Une seule variante : ribbed-beanie et linen-napkin-set (0 sélecteur). Beaucoup de variantes : field-jacket, 3 options (Color/Size/Fabric), 12 variantes, 7 valeurs rendues en radios, 2 pastilles couleur. Titre long : « Contrada Rampante Rosso — Etna, Sicily » (38 caractères) rendu sans débordement en grille. Prix unitaire : aucun produit à unit_price_measurement sur la boutique de dev — l'élément [data-unit-price] est bien masqué (hidden + display:none) sur les 6 fiches. Carte cadeau : /products/carte-cadeau-kiosk, 4 montants (10/25/50/100 €)."
+          },
+          "collection-cas": {
+            "etat": "mesuré",
+            "mesure": "Collection vide /coming-soon : 0 produit, « New pieces arrive here soon. », grille vide propre. Plus d'une page : 74 produits, 16 par page, 5 pages, page 2 chargée (16 autres titres, aria-current=page). Filtres sans résultat : prix 20 000–21 000 → 0 produit + « No results / Try adjusting your filters or your search ». Tri : price-descending change réellement l'ordre (12 800 / 9 200 / 6 450)."
+          },
+          "panier-cas": {
+            "etat": "mesuré",
+            "mesure": "Vide : tiroir et /cart affichent l'état vide traduit (EN/FR). Plein : 10 lignes ajoutées → 10 rangées sur /cart, 10 lignes dans le tiroir, compteur (10)=10, sous-total €7.095,00 EUR, hScroll 0 à 1440 et 390. Au-delà du stock : ÉCHEC D4 (422, message générique, quantité 9 affichée pour 3 réels). Suppression de la dernière ligne → état vide. Note de commande : OK sur /cart (EN et FR), ÉCHEC D2 dans le tiroir. Réduction : ESSAI10 appliquée (voir « remises »)."
+          },
+          "recherche-cas": {
+            "etat": "mesuré",
+            "mesure": "Mot présent (7 résultats EN / 8 FR), mot absent (0 + état vide traduit), prédictive (200 sur /search/suggest, 6 éléments, statut aria-live), accents (« crème » : 9 résultats, 4 suggestions ; URL encodée cr%C3%A8me) ; caractères spéciaux « zzzqqqkiosk » sans résultat."
+          },
+          "compte-client": {
+            "etat": "sans objet",
+            "mesure": "Nouveaux comptes clients de Shopify : /en/account et /en/account/login redirigent vers https://shopify.com/101883216198/account?… (mesuré : titre d'onglet shopify.com), hôte refusé par le proxy du cloud (ERR_TUNNEL_CONNECTION_FAILED). Aucune URL ne sert les gabarits customers/* du thème — cause donnée ligne 84 de la demande."
+          },
+          "pages-systeme": {
+            "etat": "mesuré",
+            "mesure": "404 : HTTP 404, template-404, h1 « Page not found », lien retour accueil. Blog sans article : /en/blogs/news « No articles yet. ». Article avec commentaires : formulaire + note de modération + succès modéré. Mot de passe de la boutique : sans objet, la boutique de dev n'est pas protégée (/en/password redirige 200 vers /en). Carte cadeau (page) : sans objet, adresse publique non obtenable (ligne 84)."
+          },
+          "formulaires-cas": {
+            "etat": "mesuré",
+            "mesure": "Contact : vide / erreur / valide mesurés. Newsletter (form 'customer') : vide / erreur / valide mesurés. Commentaire : vide / erreur / valide mesurés. Compte et adresse : sans objet (nouveaux comptes clients Shopify hors du thème, hôte bloqué)."
+          },
+          "options-activees": {
+            "etat": "mesuré",
+            "mesure": "6 options du registre : header_transparent_home (data-transparent-home présent sur l'accueil, en-tête lisible), product_card_show_vendor (16 vendeurs sur 16 cartes), cart_show_free_shipping (barre 24 % → 100 % dans le tiroir ET sur /cart, textes EN/FR), price_show_currency_code (EUR sur cartes, fiche, panier, tiroir, filtres et prix redessinés par le JS), search_include_pages (input type=product,page,article dans l'en-tête ; « contact » → 4 résultats dont la page Contact), variant_hide_unavailable : non provocable — aucun des 16 produits lus (/products/<handle>.js) n'a de variante indisponible parmi plusieurs valeurs d'option (seul ribbed-beanie est épuisé, sans option). En plus : liste d'envies utilisée de bout en bout (cœur d'une carte → compteur 1, aria-pressed=true, « Ajouté aux favoris ! », localStorage lumiere_wishlist, page favoris qui affiche le produit)."
+          },
+          "petits-ecrans": {
+            "etat": "mesuré",
+            "mesure": "1440 / 390 / 360 / 320 : accueil (hScroll 0 aux trois largeurs), fiche produit (0), page panier (0 ; ligne right 296 ≤ 320, bouton commander 208 px), collection (0 à 390 et 360 ; à 320 scrollWidth 328 > clientWidth 320 mais body overflow-x:hidden et scrollX reste 0 après scrollTo(200,0) → aucun défilement horizontal réel), tiroir panier (x=0, largeur = largeur de fenêtre à 390/360/320), panneau de filtres mobile (x=0, 320 px dans 390, bouton de fermeture), menu mobile (380 px dans 390). Aucun panneau hors de l'écran."
+          },
+          "remises": {
+            "etat": "mesuré",
+            "mesure": "Code ESSAI10 appliqué par /discount/ESSAI10 : /cart.js cart_level_discount_applications [ESSAI10 : 4350], items_subtotal_price 43500, total_price 39150. Page panier : ligne « Discounts − €43,50 EUR » présente mais sous-total faux (ÉCHEC D3) ; tiroir : aucune remise affichée (ALERTE A1). Allocations par ligne : non provocables — ESSAI10 est une remise de commande (aucune allocation line_level sur les lignes, d:[] dans /cart.js) et la boutique de dev n'a ni remise automatique ni remise de ligne (donnée de test unique : ESSAI10)."
+          },
+          "paiement-accelere": {
+            "etat": "sans objet",
+            "mesure": "Aucun moyen de paiement activé sur la boutique de dev (enabled_payment_types vide, donnée de test ligne 84, Bogus Gateway non activé) : la fiche produit rend le conteneur .shopify-payment-button avec le seul « More payment options » (2 351 caractères), et sur /cart le bloc .cart-footer__accelerated n'est pas rendu (additional_checkout_buttons faux). Les vrais boutons et leurs couleurs de marque ne sont donc pas mesurables."
+          },
+          "filtres-facettes": {
+            "etat": "mesuré",
+            "mesure": "Sur la collection ET la recherche : disponibilité (In stock 73 / Out of stock 1) et prix (min/max) — les deux seuls groupes configurés dans Search & Discovery sur la boutique de dev ; combinés (In stock + 20–40 € → 28 produits, 2 étiquettes), retirés un par un (url_to_remove → 74), « Clear filters » (→ 74), filtre sur la recherche (serum + In stock → 6 résultats). Filtres type, marque et options de variante : absents de la boutique de dev, donc non provocables."
+          },
+          "retrait-magasin": {
+            "etat": "mesuré",
+            "mesure": "ALERTE A3 : aucune disponibilité de retrait rendue sur les 6 fiches produit lues (0 pickup-availability, 0 [class*=pickup] dans le DOM) ; aucune occurrence « pickup » dans sections/ ni snippets/ du thème. Aucun ajout au panier n'a été fait pour ce cas."
+          },
+          "recommandations": {
+            "etat": "mesuré",
+            "mesure": "Fiche produit : une section [data-recommendations] (intent=related, limit=4). HTML du serveur relu par fetch : 16 occurrences « skeleton », 0 carte réelle → cartes d'attente rendues côté serveur ; après la réponse : 4 cartes réelles (Overnight Lip Mask, Gentle Milk Cleanser, Vitamin C 15 %, Caffeine Eye Serum), 0 squelette, section visible. Repli quand la réponse est vide : non provocable (les 6 produits lus ont tous des recommandations). Produits complémentaires (intent=complementary) : aucune seconde section dans le thème."
+          },
+          "medias-riches": {
+            "etat": "mesuré",
+            "mesure": "Vidéo hébergée Shopify : /products/canvas-market-bag, élément <video> (controls=true, autoplay=false, loop=true) + vignette qui annonce le type (« Canvas market bag — video » à côté de « Canvas market bag — front view »). Zoom : 4 éléments [data-zoom]/[class*=zoom] sur la fiche. Modèle 3D, YouTube et Vimeo : aucun produit de la boutique de dev n'en porte (media_type lu dans data-product-json : image seulement) → non provocables. Changement d'image à la sélection d'une variante : aucune variante de field-jacket ne porte de featured_image (null dans data-product-json) → rien à changer, non provocable. Aperçu rapide : pas de média vidéo (image + variantes seulement)."
+          },
+          "abonnements": {
+            "etat": "sans objet",
+            "mesure": "Aucun produit à plan d'achat sur la boutique de dev : aucun sélecteur de plan sur les 6 fiches lues, aucun selling_plan dans les lignes de /cart.js, et les données de test (ligne 84) n'en listent pas."
+          },
+          "shop-pay-installments": {
+            "etat": "sans objet",
+            "mesure": "Aucun <shopify-payment-terms> sur les 6 fiches produit : aucun moyen de paiement n'est activé sur la boutique de dev (enabled_payment_types vide, ligne 84), donc la bannière Shop Pay Installments ne peut pas apparaître."
+          },
+          "prix-unitaire-taxes": {
+            "etat": "mesuré",
+            "mesure": "« Taxes incluses » : fiche produit « Tax included. » / FR « Taxes incluses. », panier et tiroir « Tax included. Shipping calculated at checkout. » / « Taxes incluses. Frais de livraison calculés à la caisse. » (cart.taxes_included). Fourchette : carte « From €245,00 EUR » quand les variantes diffèrent. Prix barré et badge : carte « Sale price €38,00 EUR / Regular price €46,00 EUR » + badge « On sale ». Prix unitaire : l'élément existe sur la fiche mais est masqué (hidden, display:none) — aucun produit de la boutique n'a de unit_price_measurement, donc la valeur elle-même n'est pas mesurable. Code devise EUR sur tous les prix, y compris ceux redessinés par le JavaScript (tiroir après +1 : « €495,00 EUR », sous-total « €825,00 EUR ») et les étiquettes de filtres (« Price: €20,00 EUR – €40,00 EUR »)."
+          },
+          "variantes-cas": {
+            "etat": "mesuré",
+            "mesure": "Première variante disponible chargée (Ecru/S/Cotton, id 57599164481862, bouton actif) ; changement d'option → prix 145,00 → 165,00 EUR, SKU et id de variante suivis, URL ?variant= mise à jour ; bouton désactivé et texte « Sold out » sur le produit épuisé ; 2 pastilles couleur (product-variant__swatch) + valeurs texte pour Size et Fabric, options séparées en radiogroup ; quantité (champ + boutons − / +) prise en compte à l'ajout (qty 2 → ligne « €330,00 EUR »). Message pour une combinaison indisponible : non provocable (aucune valeur indisponible parmi les 16 produits lus)."
+          },
+          "carte-cadeau-destinataire": {
+            "etat": "mesuré",
+            "mesure": "Fiche /products/carte-cadeau-kiosk : 4 montants (€10/25/50/100) en radios + les quatre champs destinataire properties[Recipient email] (email), properties[Recipient name] (text), properties[Message] (textarea), properties[Send on] (date) et la case __shopify_send_gift_card_to_recipient ; remplis puis ajout → tiroir ouvert avec la ligne « Carte cadeau KIOSK / €10.00 / Regular price €10,00 EUR » et les 4 propriétés listées sous la ligne, /cart.js properties {__shopify_send_gift_card_to_recipient: if_present, Recipient email, Recipient name, Message, Send on}. PAGE de la carte cadeau (code, QR, Apple Wallet, logo) : sans objet — l'adresse publique /gift_cards/<boutique>/<jeton> n'est pas obtenable (décision du 16/10/2026, ligne 84) ; relevé tel quel sans le mesurer : le thème met un lien Apple Wallet (gift_card.pass_url) à la place du QR."
+          },
+          "blog-article": {
+            "etat": "mesuré",
+            "mesure": "Blog journal : 3 articles, chaque carte affiche la date (« September 2, 2026 ») et un extrait suivi de « Read more » (pas le contenu entier) ; aucune <img> dans les cartes — les articles de la boutique de dev n'ont pas d'image à la une ; pas de pagination (3 articles < taille de page). Article : <time datetime=\"2026-09-02\"> « Posted on September 2, 2026 », auteur, formulaire de commentaire (author/email/body requis), note « Comments are reviewed before they appear. » ; trois états mesurés : vide (validation navigateur sur 3 champs), erreur (« Email must be formatted as an email » en role=alert), succès modéré (« Your comment has been received and will appear once it is approved. », URL ?comment=140877070662). Blog sans modération : le blog news (commentaires publiés d'office) n'a aucun article → non provocable. Blog sans article : « No articles yet. »"
+          },
+          "recherche-par-type": {
+            "etat": "mesuré",
+            "mesure": "type=product → « 6 results », 6 cartes ; sans type → « 7 results » = 6 produits + 1 article rendu et visible ; type=product,page,article → « 7 results » (idem) ; « contact » avec pages → 4 résultats dont la page Contact rendue avec son extrait. État vide traduit EN/FR. Prédictive mesurée (voir recherche-cas). Pagination de la recherche : aucun jeu de résultats ne dépasse une page (max 9) → non provocable."
+          },
+          "page-404-mot-de-passe": {
+            "etat": "mesuré",
+            "mesure": "404 : HTTP 404, h1 « Page not found », texte explicatif et lien « BACK TO HOME » (aucun champ de recherche dans le gabarit). Page mot de passe : sans objet — la boutique de dev n'est pas protégée par mot de passe (/en/password répond 200 sur /en, le gabarit password n'est servi par aucune URL)."
+          },
+          "compte-shopify": {
+            "etat": "mesuré",
+            "mesure": "<shopify-account menu=\"customer-account-main-menu\"> présent une fois dans l'en-tête, customElements.get('shopify-account') défini (Shopify injecte son script), visible à 1440 (display block, largeur > 0) ET à 390 (44×44 px dans la barre d'en-tête, pas seulement dans le tiroir) — conforme aux points 1 à 3 de docs/shopify-account.md (origin/main). Bouton « Follow on Shop » (login_button) : non rendu sur les pages lues ; les requêtes /services/login_with_shop/authorize sont bloquées par le proxy du cloud, donc son absence n'est pas imputable au thème ici."
+          },
+          "navigateurs-webviews": {
+            "etat": "sans objet",
+            "mesure": "Chromium réel (canal « chromium » de Playwright 1.63, /opt/pw-browsers) utilisé pour tout l'audit : navigation et ajout au panier fonctionnent. WebKit (Safari iOS/macOS) et Firefox absents du conteneur cloud (/opt/pw-browsers ne contient que chromium, chromium-1194/1243, chromium_headless_shell, ffmpeg) ; Edge, Samsung Internet et les webviews Instagram/Facebook/Pinterest ne sont pas installables ici."
+          },
+          "fausse-urgence": {
+            "etat": "mesuré",
+            "mesure": "Compte à rebours de la section countdown : data-target=1798153140 (2026-12-24T22:59Z), data-hide-expired=false ; deux visites séparées sur /en/pages/lumiere-all-sections : « 68 Days 03 Hours 39 Min » puis « 68 Days 03 Hours 27 Min » → date fixe, aucun redémarrage par visite. Aucun popup de sortie ni fenêtre de promotion (0 dialog/popup/modal dans le DOM des pages lues), aucun « only N left » ni faux compteur (0 occurrence), localStorage limité à signInWithShop, shopify:webmcp_adapter_loaded et lumiere_wishlist."
+          },
+          "pages-propres-demo": {
+            "etat": "mesuré",
+            "mesure": "Tous les liens de pages de contenu de la démo pointent vers des pages propres au thème : /en/pages/lumiere-contact, /en/pages/lumiere-wishlist (en-tête et menu mobile), /en/pages/lumiere-all-sections (gabarit de démo). Pied de page : 1 seul lien, /en/search. Aucun lien vers une page partagée de la boutique (aucun /pages/about ni équivalent)."
+          },
+          "erreurs-croisees-formulaires": {
+            "etat": "mesuré",
+            "mesure": "Formulaires relevés page par page : page contact = localization + recherche + contact + formulaire du tiroir (note/checkout) ; accueil = localization + recherche + newsletter (form 'customer') + tiroir ; article = localization + recherche + commentaire + tiroir. Aucune page de la démo ne porte deux {% form %} rendant erreurs ou succès (la newsletter est une section de l'accueil, pas du pied) : l'interférence n'est donc pas provocable telle quelle. Mesuré à la place : après l'erreur du contact, seul form.contact__form porte le role=alert (les 3 autres formulaires sont intacts, 1 seul [autofocus] sur la page) ; après le succès newsletter (?customer_posted=true), seul newsletter__form affiche « Thanks for subscribing! », les 3 autres formulaires n'affichent rien ; après l'erreur newsletter, seul newsletter__form affiche « Email is invalid. ». ALERTE A2 : dans les trois cas le focus reste sur BODY."
+          }
+        }
+      }
+    }
   },
   "theme-a11y-auditor": {
     "version": "1.5.2",
