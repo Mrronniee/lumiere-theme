@@ -76,11 +76,103 @@
     }
   },
   "theme-editeur-checker": {
-    "version": "1.4.4",
-    "date": "2026-10-09",
+    "version": "1.5.2",
+    "date": "2026-10-17",
     "verdict": "passé",
-    "resume": "52 sections, 28 presets, 477 réglages de section et 75 réglages globaux contrôlés, 20 gabarits JSON cohérents, 918 clés t: traduites, 0 BLOQUANT, 0 ALERTE.",
-    "commit": "4573d69"
+    "resume": "54 sections, 54 schémas JSON valides, 29 à preset, 21 gabarits, 76 réglages globaux, 411 réglages de section, 952 clés d'éditeur en EN et FR, 15 rendus réels sur la démo et 68 sections rechargées à la façon de l'éditeur sur 7 pages : 0 BLOQUANT, 0 Liquid error, 0 Translation missing, 0 erreur JS du thème. 6/6 points, 16 cas (13 mesurés, 3 sans objet). 8 ALERTE à corriger : A1 templates/index.json:36 show_vendor=false hors des options et product-card.liquid:22 sans repli or == false (le vendeur réapparaît malgré le réglage, mesuré en direct) ; A2 le JS de section meurt après un rechargement d'éditeur (tabs et faq mesurés, 9 sections à <script> inline exposées) ; A3 preset featured-product = coque vide (0 texte, 0 média) ; A4 logo portrait qui dépasse l'en-tête de 144 px et recouvre le contenu ; A5 points de focus ignorés (1 image_tag contre 33 <img> bruts) ; A6 aucun groupe de sections ; A7 featured-product n'accepte aucun bloc @app ; A8 aucun bloc Custom Liquid.",
+    "commit": "7bd2320",
+    "couverture": {
+      "schemas": {
+        "etat": "mesuré",
+        "mesure": "54 sections/*.liquid, 54 schémas JSON valides (0 invalide) ; 29 à preset, 25 sans preset toutes techniques (header, footer, announcement-bar, mini-cart, predictive-search, quick-view, 19 main-*) ; 0 enabled_on/disabled_on déclaré, croisement 21 gabarits x leurs sections = 0 écart ; 16 sections à max_blocks/limit, 0 dépassement, tous les types de blocs des gabarits existent"
+      },
+      "gabarits": {
+        "etat": "mesuré",
+        "mesure": "21 JSON (14 templates + 7 customers) : 0 invalide, 0 section inexistante, 0 réglage inconnu, 0 bloc inconnu, 0 écart order/sections ; 19/19 gabarits obligatoires ; 15 rendus réels sur la démo 195172106566 avec 0 Liquid error et 0 Translation missing ; 2 ALERTE : templates/index.json:36 show_vendor=false hors des options inherit/yes/no, et 0 groupe de sections (en-tête et pied en dur, layout/theme.liquid:105-118)"
+      },
+      "reglages-globaux": {
+        "etat": "mesuré",
+        "mesure": "settings_schema.json valide, 25 groupes, theme_info en premier (LUMIERE 1.5.2 KIOSK), 76 ids, 0 doublon ; settings_data.json valide, current='Default', presets.Default = 0 clé donc 0 valeur hors bornes ou hors options ; 0 réglage mort (76/76 lus par settings.<id>), 0 réglage lu non déclaré ; 14 clés construites, toutes section/block.settings (comparison.liquid:354-368, size-guide.liquid:156-241), 0 clé globale construite, 0 alias ; 411 réglages de section/bloc, 0 non référencé"
+      },
+      "libelles": {
+        "etat": "mesuré",
+        "mesure": "0 clé t: absente de en.default.schema.json, 0 absente de fr.schema.json, parité 952 = 952 (0 EN seul, 0 FR seul) ; 4 chaînes non-t: = les content du preset de sections/tabs.liquid:567+, exemptes ; 741 label/name dont 5 en Title Case, tous noms propres ou marques"
+      },
+      "valeurs-defaut": {
+        "etat": "mesuré",
+        "mesure": "0 default vide, 0 default incompatible avec son type, 0 couleur non hex, 0 url douteuse, 0 richtext sans balise de bloc, 0 Lorem Ipsum, 0 default sur sélecteur de ressource, 4 réseaux sociaux sans clé default, theme_info présent ; 34 selects / 102 options toutes traitées dans le code ; 0 range incohérent ; 5 couleurs globales + 76 de section, chaque fond apparié à son encre ; 2 ALERTE : preset featured-product = coque vide (1961 octets, 0 texte, 0 média, sections/featured-product.liquid:85 sans else) et aucun bloc Custom Liquid"
+      },
+      "cas-possibles": {
+        "etat": "mesuré",
+        "mesure": "16 cas sur 16 traités : 13 mesurés, 3 sans objet avec leur cause",
+        "cas": {
+          "editeur-ajout-retrait": {
+            "etat": "mesuré",
+            "mesure": "29 sections ajoutables, toutes placées dans un gabarit (22 dans templates/page.toutes-sections.json vues en instance sur /en/pages/lumiere-all-sections : rich_text, image_with_text, multi_column, slideshow, video_banner, featured_product, featured_collections, blog_posts, gallery, logo_list, testimonials, reviews, trust_badges, comparison, countdown, faq, tabs, size_guide, map, divider, custom_liquid, apps ; + hero, featured_collection, lookbook, newsletter sur /en, main-contact sur /en/pages/contact, wishlist sur /en/pages/lumiere-wishlist, related-products sur /en/products/field-jacket). Les 29 rendues aussi SANS bloc ni réglage (?section_id=<fichier>) = état « tous les blocs supprimés » : 0 Liquid error. Réordonnancement et retrait mesurés par 68 remplacements outerHTML sur 7 pages, 0 remplacement raté. DÉFAUT : featured-product sans produit = 0 texte visible, 0 média (apps, custom-liquid et divider vides par nature)"
+          },
+          "editeur-reglages-vides": {
+            "etat": "mesuré",
+            "mesure": "29 sections rendues avec TOUS les réglages de ressource vides (image, produit, collection, blog, vidéo laissés vides par le gabarit de démo) : 0 lien mort (href vide ou #), 0 bouton ou lien sans nom accessible, 0 titre vide, 0 Translation missing, 0 img sans alt ; 0 anomalie sur 29"
+          },
+          "editeur-valeurs-extremes": {
+            "etat": "mesuré",
+            "mesure": "titre de 100 caractères + paragraphe de 1000 injectés dans les 22 sections du gabarit de démo à 1440 et 390 px : body.scrollWidth = clientWidth dans les 2 cas, 0 débordement de page, 0 texte coupé (le seul relevé était un span .visually-hidden). Bornes de tous les ranges vérifiées en statique : 0 incohérent, aucun > 101 pas, tous les defaults dans [min,max] et sur le pas ; logo_width éprouvé à son défaut (120) et à son maximum (250) dans le navigateur. 34 selects / 102 options : chaque valeur d'option est traitée dans le code, 0 option morte"
+          },
+          "editeur-blocs-apps": {
+            "etat": "mesuré",
+            "mesure": "méthode imposée (ligne 18) : blocks des 54 schémas relus, 7 sections et 7 seulement acceptent @app (apps, footer, header, main-article, main-cart-footer, main-product, newsletter) ; chacune rendue sans bloc d'application sur la démo (?section_id=) : 7/7 http 200, 0 Liquid error, 0 .shopify-app-block. Rendu d'un vrai bloc d'application : SANS OBJET, aucune app installée sur la boutique de dev. DÉFAUT : featured-product n'accepte aucun bloc"
+          },
+          "editeur-mise-a-jour": {
+            "etat": "mesuré",
+            "mesure": "diff 1.4.4 (4573d69) -> 1.5.2 (HEAD) : réglages globaux 75 -> 76, 0 supprimé, 1 ajouté (wishlist_page), 0 type changé ; sections 52 -> 54, 0 supprimée, 2 ajoutées (apps, featured-product) ; réglages de section/bloc 402 -> 411, 0 disparu dans une section survivante ; 3 types changés checkbox -> select (featured-collection, main-collection-product-grid, related-products / show_vendor). DÉFAUT : repli incomplet — product-card.liquid:19 rattrape l'ancien true, product-card.liquid:22 ne rattrape pas l'ancien false, donc un marchand qui avait décoché « afficher le vendeur » le voit réapparaître (mesuré en direct sur la démo)"
+          },
+          "editeur-schemas-couleurs": {
+            "etat": "sans objet",
+            "mesure": "le thème n'a pas de schémas de couleurs : 0 réglage de type color_scheme ou color_scheme_group dans config/settings_schema.json et dans les 54 sections ; les couleurs sont 5 réglages color à plat (color_primary, color_accent, color_background, color_text, input_background) + 76 réglages color de section. Il n'y a donc pas de schéma à ajouter, modifier, supprimer ni à placer en premier. Les variantes sombres existent en défaut de section (slideshow, countdown, lookbook à #1a1a1a), chacune appariée à sa couleur d'encre"
+          },
+          "editeur-polices": {
+            "etat": "mesuré",
+            "mesure": "2 font_picker (font_heading défaut playfair_display_n4, font_body défaut inter_n4) ; changement de police simulé dans Chromium en remplaçant --font-heading et --font-body par 3 familles très différentes (système -apple-system, Georgia serif, Courier New monospace, dont une police système) x 1440 et 390 px, soit 6 mesures sur le gabarit des 22 sections : 0 débordement de page (body.scrollWidth = clientWidth partout), 0 texte coupé imputable à la police — les 2 seuls éléments coupés sont des boîtes d'icône de l'en-tête (header__action 32>24, search-overlay__submit 40>32), identiques dans les 3 polices. 0 font-family en dur hors var(--font-*) (seul inherit, theme.css:56), font_modify weight/style à layout/theme.liquid:34-36 et password.liquid:11-12, 10 font_face"
+          },
+          "custom-liquid": {
+            "etat": "mesuré",
+            "mesure": "1 réglage de type liquid : sections/custom-liquid.liquid (id custom_liquid) ; la section a un preset et aucun enabled_on/disabled_on, donc elle est proposée sur tous les gabarits compatibles — vérifiée en place sur templates/page.toutes-sections.json et rendue sur la démo (?section_id=template--29526723592518__custom_liquid → 200, 62 caractères du réglage ; vide → 200, 0 texte, 0 Liquid error). DÉFAUT : aucun BLOC Custom Liquid dans le thème, là où une app pourrait aller (les 7 sections @app en tiennent lieu en partie)"
+          },
+          "blocs-app-produit": {
+            "etat": "mesuré",
+            "mesure": "sections/main-product.liquid accepte @app (blocks: @app, collapsible_tab) et se rend sans bloc d'application sur /en/products/field-jacket (200, 42810 octets, 0 Liquid error). DÉFAUT : sections/featured-product.liquid n'accepte AUCUN bloc, donc pas @app ; et main-product n'a qu'un seul type de bloc réel (collapsible_tab) — titre, prix, sélecteur de variante et boutons d'achat sont en dur, contrairement à « la plupart des éléments de la fiche sont des blocs »"
+          },
+          "groupes-et-menus": {
+            "etat": "mesuré",
+            "mesure": "DÉFAUT : 0 groupe de sections (aucun sections/*.json) ; en-tête, pied, bandeau, mini-cart et quick-view posés en dur par {% section %} dans layout/theme.liquid:105-118. link_list par défaut conformes : header.liquid menu = 'main-menu', footer.liquid bloc link_list menu = 'footer'. Menus à plusieurs niveaux : le code les rend sur 3 niveaux (header.liquid:81-108, link.links / childlink.links / grandchildlink) mais le menu servi par la démo n'en a pas — mesuré sur /en : 3 items de premier niveau (Home, Catalog, Contact), 0 sous-menu, 0 details ; cette partie reste donc non éprouvée en rendu, signalée à la session des outils (le registre annonce demo.menu = lumiere-main)"
+          },
+          "logo-favicon-focal": {
+            "etat": "mesuré",
+            "mesure": "DÉFAUT logo portrait : markup exact de sections/header.liquid:63-70 injecté sur /en, .header à height 71px / overflow visible — paysage 600x200 à logo_width 120 → 120x40, contenu (-16 px) ; portrait 400x1200 à la largeur par DÉFAUT 120 → 120x360, dépasse l'en-tête de 144 px et elementFromPoint sous l'en-tête renvoie header__logo-image (le logo recouvre le contenu) ; au maximum du range (250) → 250x750, dépassement de 339 px ; cause : assets/theme.css:169-172 .header__logo-image sans max-height et header.liquid:61 qui calcule la hauteur sans plafond. Favicon : réglage présent (image_picker, sans default) et servi par layout/theme.liquid:11-12. DÉFAUT points de focus : 1 seul image_tag dans tout le thème (sections/predictive-search.liquid:59) contre 33 <img> bruts, 0 object-position, 0 focal_point — aucun point de focus ne peut être posé, donc rien à relire dans le HTML de la démo"
+          },
+          "polices-couleurs": {
+            "etat": "mesuré",
+            "mesure": "font_picker : 2 (font_heading, font_body), defaults chargés par 10 font_face dans layout/theme.liquid et layout/password.liquid ; gras et italique par font_modify ('weight','bold' et 'style','italic', theme.liquid:34-36) ; couleurs : 5 globales (≥ 4) + 76 réglages color de section ; chaque fond a sa couleur de texte — seules exceptions légitimes : divider (background_color #00000000 transparent, sans texte) et slideshow (fond de section #1a1a1a, text_color #ffffff par bloc slide)"
+          },
+          "valeurs-par-defaut": {
+            "etat": "mesuré",
+            "mesure": "741 label/name dans en.default.schema.json : 5 hors casse de phrase, tous noms propres ou marques (TikTok, Shopify Markets, Name (Euro), Custom Liquid x2) ; 0 Lorem Ipsum dans les defaults et les presets ; 0 default posé sur un sélecteur de ressource (image, produit, collection) donc aucune ressource absente d'une boutique neuve ; 4 placeholders de réseaux sociaux sans clé default (vides) ; theme_info en premier élément avec name/version/author ; 0 default vide"
+          },
+          "apercu-editeur": {
+            "etat": "mesuré",
+            "mesure": "méthode imposée (ligne 28) appliquée sur la démo par cookie, Shopify.designMode undefined : 68 sections rechargées sur 7 pages (toutes-sections, accueil, contact, wishlist, produit, collection, panier) — fetch ?section_id=<id complet template--N__cle>, shopify:section:unload, outerHTML remplacé, shopify:section:load, puis shopify:block:select et :deselect. Résultat global : 0 erreur JS du thème (bruit du proxy filtré), 0 Liquid error, 0 remplacement raté, 0 élément personnalisé non réupgradé (le thème ne définit aucun customElements.define, donc aucun connectedCallback/disconnectedCallback propre). DÉFAUT trouvé par cette simulation : sections/tabs.liquid:355 — 4 onglets/4 panneaux, clic sur l'onglet 2 avant rechargement → actif 0→1 ; après rechargement → actif revenu à 0, 4 panneaux visibles sur 4, clic inerte (reste 0) ; sections/faq.liquid:217-247 — block:select ouvre une question fermée avant (true), plus après (false). Cause : le JS de ces sections vit dans un <script> inline jamais réexécuté par outerHTML, et assets/theme.js:2182-2194 initAll() ne couvre ni tabs ni faq ; 9 sections portent un <script> inline (countdown, faq, main-customers-addresses, main-customers-login, main-product, reviews, slideshow, tabs, video-banner)"
+          },
+          "reglage-global-ecrase": {
+            "etat": "mesuré",
+            "mesure": "correction 1.5.0 vérifiée et VRAIE sur sa partie schéma : show_vendor est bien un select inherit/yes/no de défaut 'inherit' dans les 4 sections annoncées (featured-collection:231, main-collection-product-grid:452, related-products:167, featured-product:205), résolu dans snippets/product-card.liquid:18-24 contre settings.product_card_show_vendor. Balayage des 76 globaux x 411 réglages de section pour toute autre collision : seul text_alignment, de portée différente (product_card_text_alignment ne régit que les cartes, lu à snippets/css-variables.liquid:158 ; les text_alignment de section régissent leur propre texte) ; main-product.liquid:805 show_vendor reste une case à cocher mais porte le vendeur de la FICHE (main-product.liquid:451), pas celui de la carte, donc n'écrase pas le global. DÉFAUT RÉSIDUEL mesuré en direct : templates/index.json:36 garde la valeur 1.4.4 'false' et product-card.liquid:22 ne teste que == 'no' sans or == false, donc ce false est ignoré et retombe sur le global activé — /en?section_id=template--29089476378950__featured_collection rend <span class=\"product-card__vendor\">Single lot</span> alors que le gabarit dit de ne pas l'afficher (global confirmé actif par /en/search?q=jacket : 2 cartes, 2 vendeurs)"
+          },
+          "metachamp-acces-public": {
+            "etat": "sans objet",
+            "mesure": "le thème ne lit aucun métachamp ni métaobjet : grep de metafield, metafields et metaobject sur les 54 sections, les snippets, les layouts, les assets et les gabarits = 0 occurrence. Aucune définition à vérifier en access.storefront PUBLIC_READ, aucune section à éprouver métachamp vide"
+          }
+        }
+      }
+    }
   },
   "theme-parcours-tester": {
     "version": "1.4.4",
