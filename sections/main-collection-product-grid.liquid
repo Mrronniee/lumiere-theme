@@ -47,15 +47,15 @@
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    background: #fff;
+    background: var(--color-background);
   }
 
   .collection-grid__sort {
     padding: 0.75rem 2rem 0.75rem 1rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-strong, var(--color-border));
     font-family: var(--font-body);
-    font-size: 0.8125rem;
-    background: #fff;
+    font-size: 1rem;
+    background: var(--color-background);
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -76,13 +76,13 @@
     align-items: center;
     justify-content: center;
     border: 1px solid var(--color-border);
-    background: #fff;
+    background: var(--color-background);
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
   }
 
   .collection-grid__layout-btn.is-active {
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     border-color: var(--color-primary);
   }
 
@@ -169,9 +169,10 @@
     color: var(--color-primary);
   }
 
+  /* 24 x 24 px : cible tactile minimale (WCAG 2.5.8, Theme Store). */
   .collection-filters__option input {
-    width: 18px;
-    height: 18px;
+    width: 24px;
+    height: 24px;
     accent-color: var(--color-primary);
     cursor: pointer;
   }
@@ -202,9 +203,9 @@
   .collection-filters__price-input {
     width: 100%;
     padding: 0.5rem;
-    border: 1px solid var(--color-border);
+    border: 1px solid var(--color-border-strong, var(--color-border));
     font-family: var(--font-body);
-    font-size: 0.875rem;
+    font-size: 1rem;
   }
 
   .collection-filters__active {
@@ -278,12 +279,12 @@
   .collection-grid__pagination a:hover {
     border-color: var(--color-primary);
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
   }
 
   .collection-grid__pagination .current {
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     border-color: var(--color-primary);
   }
 
@@ -315,7 +316,7 @@
       height: 100vh;
       height: 100dvh;
       visibility: hidden;
-      background: #fff;
+      background: var(--color-background);
       z-index: var(--z-drawer);
       padding: var(--spacing-lg) var(--spacing-md);
       overflow-y: auto;

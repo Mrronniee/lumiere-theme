@@ -31,6 +31,7 @@
   .image-with-text {
     padding: var(--spacing-xl) var(--container-padding);
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .image-with-text__inner {
@@ -159,7 +160,7 @@
           height="{{ section.settings.image.height }}"
         >
       {%- else -%}
-        {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+        <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</span>
       {%- endif -%}
     </div>
 

@@ -1201,6 +1201,19 @@
           "settings": {
             "text": {
               "label": "Text"
+            },
+            "heading_tag": {
+              "label": "Heading level",
+              "info": "Use H1 once per page, on the main heading.",
+              "options__1": {
+                "label": "H1 (main heading)"
+              },
+              "options__2": {
+                "label": "H2 (section)"
+              },
+              "options__3": {
+                "label": "H3 (sub-section)"
+              }
             }
           }
         },

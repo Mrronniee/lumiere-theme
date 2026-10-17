@@ -1201,6 +1201,19 @@
           "settings": {
             "text": {
               "label": "Texte"
+            },
+            "heading_tag": {
+              "label": "Niveau de titre",
+              "info": "Utilisez H1 une seule fois par page, sur le titre principal.",
+              "options__1": {
+                "label": "H1 (titre principal)"
+              },
+              "options__2": {
+                "label": "H2 (section)"
+              },
+              "options__3": {
+                "label": "H3 (sous-section)"
+              }
             }
           }
         },

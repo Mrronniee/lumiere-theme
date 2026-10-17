@@ -11,6 +11,7 @@
   .slideshow {
     position: relative;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .slideshow__viewport {
@@ -167,9 +168,11 @@
       assign slide_lightness = block.settings.text_color | color_extract: 'lightness'
       if slide_lightness > 50
         assign overlay_rgb = '0, 0, 0'
+        assign floor_rgb = '26, 22, 18'
         assign button_text_color = '#1a1a1a'
       else
         assign overlay_rgb = '255, 255, 255'
+        assign floor_rgb = '250, 249, 247'
         assign button_text_color = '#ffffff'
       endif
       assign slide_overlay_alpha = block.settings.overlay_opacity | divided_by: 100.0
@@ -177,6 +180,20 @@
     -%}
     {{ slide_selector }} .slideshow__overlay {
       background-color: rgba({{ overlay_rgb }}, {{ slide_overlay_alpha }});
+    }
+
+    {%- comment -%}
+      Plancher de lisibilite, comme le heros (sections/hero.liquid:42-47) : le
+      voile reglable seul laissait le texte des diapositives a 2,89-2,97:1 sur
+      l'image de la demo, pour un seuil de 3:1. Le plancher suit la polarite du
+      texte de la diapositive — sombre sous un texte clair, clair sous un texte
+      sombre.
+    {%- endcomment -%}
+    {{ slide_selector }} .slideshow__overlay::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgba({{ floor_rgb }}, 0.45);
     }
 
     {{ slide_selector }} .slideshow__inner {
@@ -465,7 +482,7 @@
               </picture>
             {%- else -%}
               <div class="slideshow__media">
-                {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                <span class="placeholder-wrap" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
               </div>
             {%- endif -%}
 

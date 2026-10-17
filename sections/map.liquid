@@ -10,6 +10,7 @@
   .map {
     padding: var(--spacing-xl) var(--container-padding);
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .map__inner {
@@ -47,10 +48,6 @@
     text-decoration: none;
   }
 
-  .map__media-link:focus-visible {
-    outline: 2px solid var(--color-accent-dark);
-    outline-offset: 3px;
-  }
 
   .map__image,
   .map__media .placeholder-svg {
@@ -248,7 +245,7 @@
               height="{{ section.settings.image.height }}"
             >
           {%- else -%}
-            {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+            <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</span>
             <span class="visually-hidden">{{ view_map_label }}</span>
           {%- endif -%}
 
@@ -274,7 +271,7 @@
             height="{{ section.settings.image.height }}"
           >
         {%- else -%}
-          {{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}
+          <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</span>
         {%- endif -%}
       {%- endif -%}
     </div>

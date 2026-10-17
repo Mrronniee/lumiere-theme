@@ -274,7 +274,7 @@
   sections/predictive-search.liquid.
 {%- endcomment -%}
 {%- if settings.show_search -%}
-  <div class="search-overlay" id="SearchOverlay" data-search-overlay aria-hidden="true">
+  <div class="search-overlay" id="SearchOverlay" data-search-overlay aria-hidden="true" aria-label="{{ 'general.search.title' | t }}">
     <div class="search-overlay__content">
       <button type="button" class="search-overlay__close" data-search-close aria-label="{{ 'accessibility.close' | t }}">
         {% render 'icon', icon: 'close' %}

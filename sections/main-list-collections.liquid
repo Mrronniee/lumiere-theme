@@ -28,7 +28,7 @@
                   height="{{ collection.image.height }}"
                 >
               {%- else -%}
-                {{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}
+                <span class="placeholder-wrap" aria-hidden="true">{{ 'collection-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
               {%- endif -%}
             </div>
             <h2 class="collections-list__title">{{ collection.title | escape }}</h2>

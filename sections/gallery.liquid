@@ -25,6 +25,7 @@
   .gallery {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .gallery__inner {
@@ -69,10 +70,6 @@
     color: inherit;
   }
 
-  .gallery__link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-  }
 
   .gallery__media {
     position: relative;
@@ -200,7 +197,7 @@
                   {%- if forloop.index > 2 -%}
                     {%- assign placeholder_name = 'lifestyle-1' -%}
                   {%- endif -%}
-                  {{ placeholder_name | placeholder_svg_tag: 'gallery__placeholder' }}
+                  <span class="placeholder-wrap" aria-hidden="true">{{ placeholder_name | placeholder_svg_tag: 'gallery__placeholder' }}</span>
                 {%- endif -%}
               </span>
 

@@ -94,7 +94,7 @@
   .product-gallery__zoom {
     width: 40px;
     height: 40px;
-    background: #fff;
+    background: var(--color-background);
     color: var(--color-primary);
     display: flex;
     align-items: center;
@@ -225,7 +225,7 @@
     text-align: center;
     border: none;
     font-family: var(--font-body);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     -moz-appearance: textfield;
     appearance: textfield;
   }
@@ -261,7 +261,14 @@
     box-shadow: var(--shadow-md);
   }
 
-  .product-add-to-cart:disabled { opacity: 0.5; cursor: not-allowed; }
+  /* « Epuise » porte une information utile : au lieu d'une opacite de 0,5
+     (texte mesure a 2:1), le bouton inactif prend une surface sourde et son
+     encre derivee, soit le meme 4,6:1 que le texte secondaire. */
+  .product-add-to-cart:disabled {
+    background: var(--color-text-light);
+    color: var(--color-background);
+    cursor: not-allowed;
+  }
 
   .product-add-to-cart__spinner {
     display: none;
@@ -423,7 +430,7 @@
           </div>
         {%- else -%}
           <div class="product-gallery__slide is-active">
-            {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+            <span class="placeholder-wrap" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
           </div>
         {%- endfor -%}
 

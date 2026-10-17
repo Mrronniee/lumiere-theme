@@ -250,6 +250,7 @@
       "view_cart": "Voir le panier",
       "checkout": "Passer la commande",
       "remove": "Supprimer",
+      "remove_title": "Supprimer {{ title }}",
       "update": "Mettre à jour",
       "upsell_title": "Complétez votre look",
       "free_shipping_progress_html": "Plus que <strong>{{ amount }}</strong> pour la livraison gratuite",

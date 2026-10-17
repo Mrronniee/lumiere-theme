@@ -8,6 +8,7 @@
   .blog-posts {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .blog-posts__header {
@@ -257,7 +258,7 @@
         <article class="blog-card blog-posts__card">
           {%- if section.settings.show_image -%}
             <div class="blog-card__media">
-              {{ 'blog-apparel-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+              <span class="placeholder-wrap" aria-hidden="true">{{ 'blog-apparel-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}</span>
             </div>
           {%- endif -%}
 

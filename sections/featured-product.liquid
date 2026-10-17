@@ -18,6 +18,7 @@
   #shopify-section-{{ section.id }} .featured-product {
     padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     color: {{ section.settings.text_color }};
   }
 
@@ -97,7 +98,7 @@
             height="{{ featured.featured_media.height }}"
           >
         {%- else -%}
-          {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+          <span class="placeholder-wrap" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
         {%- endif -%}
       </div>
 

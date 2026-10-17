@@ -24,6 +24,7 @@
   .tabs {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
+    {% render 'section-tokens', bg: bg_color, text: text_color %}
   }
 
   .tabs__inner {
@@ -84,8 +85,9 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     white-space: nowrap;
-    color: {{ text_color }};
-    opacity: 0.6;
+    /* Onglet inactif : couleur derivee a 4,6:1 au lieu d'une opacite de 0,6,
+       qui le laissait a 4,48:1 (seuil 4,5). */
+    color: var(--color-text-light);
     background: none;
     border: none;
     transition: opacity var(--transition-fast), color var(--transition-fast);
@@ -107,7 +109,6 @@
   .tabs__tab[aria-selected='true'] {
     color: {{ active_color }};
     font-weight: 500;
-    opacity: 1;
   }
 
   .tabs__tab[aria-selected='true']::after {
@@ -121,7 +122,7 @@
 
   @media (hover: hover) and (pointer: fine) {
     .tabs__tab:hover {
-      opacity: 1;
+      color: {{ active_color }};
     }
   }
 

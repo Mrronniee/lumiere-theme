@@ -1,0 +1,57 @@
+{% comment %}
+  Jetons de couleur recalcules POUR UNE SECTION qui porte son propre fond.
+
+  A placer dans la regle racine de la section (son {%- style -%}), pour que
+  tout ce qu'elle contient herite de jetons justes : sans cela
+  --color-accent-text, --color-text-light et les bordures gardent la valeur
+  derivee du fond du THEME et tombent a 1,0-3,7:1 sur un fond sombre, inverse
+  ou d'accent (mesure : 70 des 120 combinaisons de LUMIERE 1.5.2).
+
+  Usage :
+    .ma-section {
+      background-color: {{ bg }};
+      {% render 'section-tokens', bg: bg, text: txt %}
+    }
+{% endcomment %}
+{%- liquid
+  assign bg = bg | default: settings.color_background
+  assign text = text | default: settings.color_text
+  assign c_accent = settings.color_accent | default: '#c9a96e'
+  assign c_primary = settings.color_primary | default: '#1a1a1a'
+
+  capture accent_text
+    render 'contrast-color', base: c_accent, bg: bg
+  endcapture
+  capture text_light
+    render 'contrast-color', base: text, bg: bg, target: 4.6
+  endcapture
+  capture border_strong
+    render 'contrast-color', base: text, bg: bg, target: 3
+  endcapture
+  assign border_soft = text | color_mix: bg, 12
+
+  assign white_on_accent = c_accent | color_contrast: '#ffffff'
+  assign text_on_accent = c_accent | color_contrast: text
+  assign on_accent = '#ffffff'
+  if text_on_accent > white_on_accent
+    assign on_accent = text
+  endif
+
+  assign white_on_primary = c_primary | color_contrast: '#ffffff'
+  assign text_on_primary = c_primary | color_contrast: text
+  assign on_primary = '#ffffff'
+  if text_on_primary > white_on_primary
+    assign on_primary = text
+  endif
+
+  assign surface = text | color_mix: bg, 4
+-%}
+    --color-background: {{ bg }};
+    --color-text: {{ text }};
+    --color-accent-text: {{ accent_text | strip }};
+    --color-text-light: {{ text_light | strip }};
+    --color-border: {{ border_soft }};
+    --color-border-strong: {{ border_strong | strip }};
+    --color-on-accent: {{ on_accent }};
+    --color-on-primary: {{ on_primary }};
+    --color-surface: {{ surface }};

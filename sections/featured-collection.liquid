@@ -8,6 +8,7 @@
   .featured-collection {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .featured-collection__header {
@@ -174,7 +175,7 @@
         <div class="featured-collection__product" data-animate>
           <div class="product-card product-card--placeholder">
             <div class="product-card__media">
-              {{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}
+              <span class="placeholder-wrap" aria-hidden="true">{{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}</span>
             </div>
             <div class="product-card__info">
               <span class="product-card__placeholder-line"></span>

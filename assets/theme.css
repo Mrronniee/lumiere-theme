@@ -88,7 +88,7 @@ ul, ol {
   z-index: 9999;
   padding: 1rem 2rem;
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .skip-to-content-link:focus {
@@ -107,7 +107,7 @@ ul, ol {
    ============================================ */
 .announcement-bar {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   padding: 0.75rem var(--container-padding);
   text-align: center;
   font-family: var(--font-body);
@@ -230,7 +230,7 @@ ul, ol {
   opacity: 0;
   visibility: hidden;
   transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
-  background: #fff;
+  background: var(--color-background);
   box-shadow: var(--shadow-lg);
   min-width: 220px;
   padding: 1.5rem;
@@ -349,6 +349,10 @@ ul, ol {
   top: -80px;
   right: var(--container-padding);
   padding: 1rem;
+  /* Sans couleur declaree, le bouton gardait le noir « buttontext » du
+     navigateur et tombait a 1,1:1 des que le marchand choisit un fond
+     sombre. */
+  color: var(--color-primary);
 }
 
 .search-overlay__form {
@@ -598,7 +602,7 @@ ul, ol {
 
 .product-card__badge--sold-out {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .product-card__quick-add {
@@ -607,7 +611,7 @@ ul, ol {
   right: 1rem;
   width: 44px;
   height: 44px;
-  background: #fff;
+  background: var(--color-background);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -730,6 +734,21 @@ ul, ol {
   fill: #bbb;
 }
 
+/* placeholder_svg_tag n'accepte aucun attribut : l'illustration de
+   remplacement est donc retiree du nom accessible par son enveloppe, qui
+   prend toute la place du media (24 SVG annonces a tort sur /collections). */
+.placeholder-wrap {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.placeholder-wrap > svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* ============================================
    ANIMATIONS
    ============================================ */
@@ -822,7 +841,7 @@ ul, ol {
   left: 1rem;
   width: 36px;
   height: 36px;
-  background: #fff;
+  background: var(--color-background);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -841,7 +860,7 @@ ul, ol {
 
 .product-card__quick-view-btn:hover {
   background: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 /* ============================================
@@ -1012,6 +1031,28 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   min-height: 24px;
 }
 
+/* Les champs, cases et liens mesures sous 24 px en 1.5.2 : tri d'une
+   collection (124 x 19), cases de filtre (18 x 18 et 13 x 13), bornes de prix
+   (66 x 17), champs du formulaire de commentaire (181 x 19), lien « voir le
+   produit » (104 x 22,4), case d'envoi de la carte cadeau (13 x 13) et bouton
+   d'ouverture des filtres (38,6 x 16). */
+.collection-grid__sort,
+.collection-grid__filter-toggle,
+.collection-filters__price-input,
+.article__comment-form input,
+.article__comment-form textarea,
+.featured-product__link,
+.quantity__input,
+.cart-items__qty-input,
+.mini-cart__item-qty-input {
+  min-height: 24px;
+}
+
+/* Un libelle de filtre reste cliquable sur toute sa hauteur. */
+.collection-filters__option {
+  min-height: 24px;
+}
+
 .announcement-bar__link,
 .market-banner__link {
   padding: 0.25rem 0;
@@ -1024,6 +1065,41 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   outline-offset: 2px;
   border-radius: 2px;
   box-shadow: 0 0 0 2px #fff;
+}
+
+/* Lien dont le contenu est une image : l'anneau exterieur tombe sur le fond de
+   la section, ou se fait rogner, et il ne contrastait plus qu'a 2,1-2,9:1
+   (mesure sur les pixels rendus). On pose en plus, PAR-DESSUS l'image, un
+   anneau en deux tons : quelle que soit la couleur de l'image, l'un des deux
+   tons depasse 4,5:1. */
+:is(
+  .featured-collections__card,
+  .gallery__link,
+  .product-card__media-link,
+  .blog-card__link,
+  .logo-list__link,
+  .map__media-link,
+  .multi-column__media-link,
+  .lookbook__item-link
+):focus-visible {
+  position: relative;
+}
+
+:is(
+  .featured-collections__card,
+  .gallery__link,
+  .product-card__media-link,
+  .blog-card__link,
+  .logo-list__link,
+  .map__media-link,
+  .multi-column__media-link,
+  .lookbook__item-link
+):focus-visible::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px var(--color-primary);
 }
 
 /* Anneau inverse seulement quand le header est reellement sur un media sombre :
@@ -1149,7 +1225,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   font-size: 0.8125rem;
   cursor: pointer;
   transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
-  background: #fff;
+  background: var(--color-background);
 }
 
 .product-variant__option-input:checked + .product-variant__option-label {
@@ -1186,7 +1262,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 
 .product-variant__option-input:checked + .product-variant__option-label--color {
   border-color: var(--color-primary);
-  background: #fff;
+  background: var(--color-background);
 }
 
 .product-variant__swatch {
@@ -1206,7 +1282,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   justify-content: center;
   width: 40px;
   height: 40px;
-  background: #fff;
+  background: var(--color-background);
   border-radius: 50%;
   color: var(--color-primary);
   transition: transform var(--transition-fast), color var(--transition-fast);
@@ -1274,7 +1350,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   max-width: 380px;
   height: 100vh;
   height: 100dvh;
-  background: #fff;
+  background: var(--color-background);
   z-index: var(--z-drawer);
   display: flex;
   flex-direction: column;
@@ -1564,7 +1640,7 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   border: 1px solid var(--color-border);
   font-family: var(--font-body);
   font-size: 0.9375rem;
-  background: #fff;
+  background: var(--input-bg, var(--color-background));
 }
 .customer__form .btn { margin-top: var(--spacing-sm); }
 .customer__subtitle { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 400; margin-bottom: var(--spacing-sm); }
@@ -1657,6 +1733,37 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   border-radius: var(--input-radius, 0);
   border-width: var(--input-border, 1px);
   background-color: var(--input-bg, #fff);
+  /* Le bord d'un champ porte une information : 3:1 exige (WCAG 1.4.11).
+     --color-border, un filet decoratif a 12 %, mesurait 1,28:1. */
+  border-color: var(--color-border-strong, var(--color-border));
+}
+
+/* Memes 3:1 pour les autres controles de saisie : quantites, cases de
+   filtre, champs de la recherche predictive et du formulaire de commentaire,
+   selecteurs de variante. */
+.quantity__input,
+.quantity__button,
+.cart-items__qty-input,
+.mini-cart__qty-input,
+.collection-filters__checkbox,
+.search-overlay__input,
+.article__comment-form input,
+.article__comment-form textarea,
+.product-variant__select,
+.product-variant__option-label,
+.gift-card-recipient__fields input,
+.gift-card-recipient__fields select,
+.gift-card-recipient__fields textarea {
+  border-color: var(--color-border-strong, var(--color-border));
+}
+
+/* Un champ de saisie fait au moins 16 px : en dessous, Safari iOS zoome la
+   page a la mise au focus et le visiteur doit la repincer (mesure : 11
+   champs de 13 a 15 px en 1.5.2). */
+input:not([type='checkbox']):not([type='radio']):not([type='hidden']),
+select,
+textarea {
+  font-size: max(1rem, 16px);
 }
 
 /* Style des filets : « aucun » supprime les separateurs, « marque » les epaissit */
@@ -1774,6 +1881,13 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 24px;
+}
+
+/* La case « envoyer en cadeau » mesurait 13 x 13 px. */
+.gift-card-recipient__checkbox input[type='checkbox'] {
+  width: 24px;
+  height: 24px;
 }
 
 .gift-card-recipient__fields { margin-top: 0.75rem; }

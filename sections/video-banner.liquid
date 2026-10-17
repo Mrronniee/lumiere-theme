@@ -6,10 +6,24 @@
   prefers-reduced-motion, impossible à détecter côté Liquid.
 {% endcomment %}
 
+{%- liquid
+  comment
+    Polarite du plancher de lisibilite : sombre sous un texte clair, clair
+    sous un texte sombre.
+  endcomment
+  assign vb_lightness = section.settings.text_color | color_extract: 'lightness'
+  if vb_lightness > 50
+    assign vb_floor_rgb = '26, 22, 18'
+  else
+    assign vb_floor_rgb = '250, 249, 247'
+  endif
+-%}
+
 {%- style -%}
   .video-banner {
     position: relative;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .video-banner [hidden] {
@@ -68,6 +82,15 @@
     z-index: 1;
     pointer-events: none;
     background-color: rgba({{ section.settings.overlay_color.red }}, {{ section.settings.overlay_color.green }}, {{ section.settings.overlay_color.blue }}, {{ section.settings.overlay_opacity }});
+  }
+
+  /* Plancher de lisibilite, de la polarite du texte : le voile reglable seul
+     laissait le titre a 1,05:1 avec un texte sombre pose dans la page. */
+  .video-banner__overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgba({{ vb_floor_rgb }}, 0.45);
   }
 
   .video-banner__controls {
@@ -279,7 +302,7 @@
           height="{{ section.settings.cover_image.height }}"
         >
       {%- else -%}
-        {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        <span class="placeholder-wrap" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
       {%- endif -%}
     </div>
 

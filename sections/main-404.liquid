@@ -13,13 +13,15 @@
     padding: var(--spacing-xl) var(--container-padding);
   }
 
+  /* Le « 404 » est un decor : il est annonce par le titre et retire du nom
+     accessible (aria-hidden). Son opacite de 0,1 le mettait a 1,22:1 : un
+     decor reste visible, donc il monte au 3:1 du grand texte. */
   .page-404__code {
     font-family: var(--font-heading);
     font-size: clamp(6rem, 15vw, 12rem);
     font-weight: 400;
     line-height: 1;
-    color: var(--color-primary);
-    opacity: 0.1;
+    color: var(--color-text-light);
     margin-bottom: var(--spacing-sm);
   }
 
@@ -44,7 +46,7 @@
     gap: 0.5rem;
     padding: 1rem 2.5rem;
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 500;
@@ -61,7 +63,7 @@
 {%- endstyle -%}
 
 <div class="page-404">
-  <span class="page-404__code">404</span>
+  <span class="page-404__code" aria-hidden="true">404</span>
   <h1 class="page-404__title">{{ 'general.404.title' | t }}</h1>
   <p class="page-404__text">{{ 'general.404.subtext' | t }}</p>
   <a href="{{ routes.root_url }}" class="page-404__link">

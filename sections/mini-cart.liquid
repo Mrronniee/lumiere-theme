@@ -12,7 +12,7 @@
     max-width: var(--drawer-width, 460px);
     height: 100vh;
     height: 100dvh;
-    background: #fff;
+    background: var(--color-background);
     z-index: 1200;
     display: flex;
     flex-direction: column;
@@ -113,7 +113,7 @@
     gap: 0.5rem;
     padding: 1rem 2rem;
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 500;
@@ -244,12 +244,12 @@
   }
 
   .mini-cart__item-qty-input {
-    width: 40px;
+    width: 48px;
     height: 100%;
     text-align: center;
     border: none;
     font-family: var(--font-body);
-    font-size: 0.8125rem;
+    font-size: 1rem;
     -moz-appearance: textfield;
     appearance: textfield;
   }
@@ -316,7 +316,7 @@
   .mini-cart__upsell-add {
     padding: 0.5rem 1rem;
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     font-size: 0.6875rem;
     font-weight: 500;
     text-transform: uppercase;
@@ -341,6 +341,20 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--spacing-sm);
+  }
+
+  .mini-cart__subtotal--discount,
+  .mini-cart__subtotal--total {
+    margin-bottom: 0.35rem;
+  }
+
+  .mini-cart__discount {
+    color: var(--color-sale);
+  }
+
+  .mini-cart__subtotal--total {
+    margin-bottom: var(--spacing-sm);
+    font-weight: 500;
   }
 
   .mini-cart__subtotal-label {
@@ -370,7 +384,7 @@
     width: 100%;
     padding: 1rem;
     background: var(--color-primary);
-    color: #fff;
+    color: var(--color-on-primary);
     font-family: var(--font-body);
     font-size: 0.875rem;
     font-weight: 500;
@@ -442,11 +456,11 @@
   .mini-cart__note-input {
     width: 100%;
     padding: 0.5rem;
-    border: var(--input-border, 1px) solid var(--color-border);
+    border: var(--input-border, 1px) solid var(--color-border-strong, var(--color-border));
     border-radius: var(--input-radius, 0);
     background: var(--input-bg, #fff);
     font-family: var(--font-body);
-    font-size: 0.875rem;
+    font-size: 1rem;
     resize: vertical;
   }
 {%- endstyle -%}
@@ -522,7 +536,12 @@
                   <input type="number" id="MiniCartQty-{{ forloop.index }}" value="{{ item.quantity }}" min="0" class="mini-cart__item-qty-input" data-qty-input>
                   <button type="button" class="mini-cart__item-qty-btn mini-cart__item-qty-btn--plus" data-qty-change="1" aria-label="{{ 'accessibility.increase_quantity' | t }}">+</button>
                 </div>
-                <button type="button" class="mini-cart__item-remove" data-remove-item>{{ 'cart.general.remove' | t }}</button>
+                <button
+                  type="button"
+                  class="mini-cart__item-remove"
+                  data-remove-item
+                  aria-label="{{ 'cart.general.remove_title' | t: title: item.product.title }}"
+                >{{ 'cart.general.remove' | t }}</button>
               </div>
             </div>
           </div>
@@ -593,10 +612,27 @@
     <div class="mini-cart__footer">
       {% render 'cart-free-shipping', class: 'mini-cart__free-shipping' %}
 
+      {%- comment -%}
+        Sous-total AVANT remises, puis la ligne de remises et le total : le
+        tiroir affichait un sous-total deja remise et aucune remise, donc une
+        somme invisible et un total faux a l'oeil.
+      {%- endcomment -%}
       <div class="mini-cart__subtotal">
         <span class="mini-cart__subtotal-label">{{ 'cart.general.subtotal' | t }}</span>
-        <span class="mini-cart__subtotal-value" data-cart-subtotal>{% render 'money', amount: cart.total_price %}</span>
+        <span class="mini-cart__subtotal-value" data-cart-subtotal>{% render 'money', amount: cart.items_subtotal_price %}</span>
       </div>
+
+      {%- if cart.total_discounts > 0 -%}
+        <div class="mini-cart__subtotal mini-cart__subtotal--discount">
+          <span class="mini-cart__subtotal-label">{{ 'cart.general.discounts' | t }}</span>
+          <span class="mini-cart__subtotal-value mini-cart__discount">&minus;{% render 'money', amount: cart.total_discounts %}</span>
+        </div>
+
+        <div class="mini-cart__subtotal mini-cart__subtotal--total">
+          <span class="mini-cart__subtotal-label">{{ 'cart.general.total' | t }}</span>
+          <span class="mini-cart__subtotal-value" data-cart-total>{% render 'money', amount: cart.total_price %}</span>
+        </div>
+      {%- endif -%}
 
       <p class="mini-cart__note">{% render 'cart-taxes-note' %}</p>
 

@@ -19,6 +19,7 @@
   .testimonials {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .testimonials__inner {
@@ -154,10 +155,6 @@
     padding-bottom: var(--spacing-xs);
   }
 
-  .testimonials__list--carousel:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-  }
 
   .testimonials__list--carousel .testimonials__item {
     flex: 0 0 calc((100% - (var(--spacing-md) * {{ carousel_gap_desktop }})) / {{ columns_desktop }});

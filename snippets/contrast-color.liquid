@@ -1,0 +1,30 @@
+{% comment %}
+  Rend une couleur de TEXTE derivee de « base » qui atteigne le rapport
+  « target » (4,6 par defaut, 3 pour un grand texte ou une bordure) sur le
+  fond « bg ». On eclaircit si le fond est sombre, on assombrit sinon, par pas
+  de 3 % — la teinte de la marque est conservee, seule la luminosite bouge.
+
+  Usage (la valeur se recupere par capture) :
+    {%- capture accent_text -%}
+      {%- render 'contrast-color', base: c_accent, bg: bg_color -%}
+    {%- endcapture -%}
+{% endcomment %}
+{%- liquid
+  assign base = base | default: '#1a1a1a'
+  assign bg = bg | default: '#ffffff'
+  assign target = target | default: 4.6
+  assign white_on_bg = bg | color_contrast: '#ffffff'
+  assign out = base
+  for i in (1..34)
+    assign ratio = out | color_contrast: bg
+    if ratio >= target
+      break
+    endif
+    if white_on_bg > 2.5
+      assign out = out | color_lighten: 3
+    else
+      assign out = out | color_darken: 3
+    endif
+  endfor
+  echo out
+-%}

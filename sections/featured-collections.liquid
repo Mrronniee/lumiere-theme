@@ -26,6 +26,7 @@
   .featured-collections {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .featured-collections__inner {
@@ -79,10 +80,6 @@
     color: inherit;
   }
 
-  .featured-collections__card:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-  }
 
   .featured-collections__media {
     position: relative;
@@ -253,7 +250,7 @@
                   {%- if forloop.index > 6 -%}
                     {%- assign placeholder_name = 'collection-1' -%}
                   {%- endif -%}
-                  {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg featured-collections__placeholder' }}
+                  <span class="placeholder-wrap" aria-hidden="true">{{ placeholder_name | placeholder_svg_tag: 'placeholder-svg featured-collections__placeholder' }}</span>
                 {%- endif -%}
               </span>
 

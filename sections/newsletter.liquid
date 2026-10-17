@@ -3,10 +3,23 @@
   Inscription newsletter stylisée avec animation
 {% endcomment %}
 
+{%- liquid
+  comment
+    Le bord du champ porte une information : 3:1 exige (WCAG 1.4.11). La
+    couleur choisie par le marchand est relevee juste ce qu'il faut sur le
+    fond de la section — #e0e0e0 par defaut mesurait 1,21:1.
+  endcomment
+  capture input_border
+    render 'contrast-color', base: section.settings.input_border, bg: section.settings.background_color, target: 3
+  endcapture
+  assign input_border = input_border | strip
+-%}
+
 {%- style -%}
   .newsletter {
     padding: var(--spacing-xl) var(--container-padding);
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     text-align: center;
   }
 
@@ -54,8 +67,8 @@
     flex: 1;
     padding: 1rem 1.5rem;
     font-family: var(--font-body);
-    font-size: 0.875rem;
-    border: 1px solid {{ section.settings.input_border }};
+    font-size: 1rem;
+    border: 1px solid {{ input_border }};
     background-color: {{ section.settings.input_bg }};
     color: {{ section.settings.text_color }};
     transition: border-color var(--transition-fast);

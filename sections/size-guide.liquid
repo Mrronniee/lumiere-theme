@@ -9,6 +9,7 @@
   .size-guide {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     color: {{ section.settings.text_color }};
   }
 
@@ -56,10 +57,6 @@
     max-width: 100%;
   }
 
-  .size-guide__scroll:focus-visible {
-    outline: 2px solid var(--color-accent-dark);
-    outline-offset: 4px;
-  }
 
   .size-guide__table {
     width: 100%;

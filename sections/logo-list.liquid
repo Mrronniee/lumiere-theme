@@ -33,6 +33,7 @@
   .logo-list {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     overflow: hidden;
   }
 
@@ -77,10 +78,6 @@
     color: inherit;
   }
 
-  .logo-list__link:focus-visible {
-    outline: 2px solid var(--color-accent);
-    outline-offset: 4px;
-  }
 
   .logo-list__image,
   .logo-list__placeholder {
@@ -234,7 +231,7 @@
             height="{{ logo_height }}"
           >
         {%- else -%}
-          {{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}
+          <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}</span>
         {%- endif -%}
       {%- if block.settings.link != blank -%}</a>{%- endif -%}
     </li>
@@ -272,7 +269,7 @@
             height="{{ logo_height }}"
           >
         {%- else -%}
-          {{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}
+          <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'logo-list__placeholder' }}</span>
         {%- endif -%}
       </li>
     {%- endfor -%}

@@ -8,6 +8,7 @@
   .faq {
     padding: var(--spacing-xl) var(--container-padding);
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .faq__inner {
@@ -82,10 +83,6 @@
     color: var(--color-accent-dark);
   }
 
-  .faq__question:focus-visible {
-    outline: 2px solid var(--color-accent-dark);
-    outline-offset: 2px;
-  }
 
   .faq__icon {
     flex: 0 0 auto;

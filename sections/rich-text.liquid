@@ -7,6 +7,7 @@
 {%- style -%}
   .rich-text--{{ section.id }} {
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     padding-top: {{ section.settings.padding_top }}px;
     padding-bottom: {{ section.settings.padding_bottom }}px;
     padding-left: var(--container-padding);
@@ -115,9 +116,15 @@
 
         {%- when 'heading' -%}
           {%- if block.settings.text != blank -%}
-            <h2 class="rich-text__block rich-text__heading" {{ block.shopify_attributes }}>
+            {%- liquid
+              assign heading_tag = block.settings.heading_tag | default: 'h2'
+              unless heading_tag == 'h1' or heading_tag == 'h2' or heading_tag == 'h3'
+                assign heading_tag = 'h2'
+              endunless
+            -%}
+            <{{ heading_tag }} class="rich-text__block rich-text__heading" {{ block.shopify_attributes }}>
               {{ block.settings.text | escape }}
-            </h2>
+            </{{ heading_tag }}>
           {%- endif -%}
 
         {%- when 'text' -%}
@@ -254,6 +261,27 @@
           "id": "text",
           "label": "t:sections.rich_text.blocks.heading.settings.text.label",
           "default": "Clothes made to last"
+        },
+        {
+          "type": "select",
+          "id": "heading_tag",
+          "label": "t:sections.rich_text.blocks.heading.settings.heading_tag.label",
+          "info": "t:sections.rich_text.blocks.heading.settings.heading_tag.info",
+          "options": [
+            {
+              "value": "h1",
+              "label": "t:sections.rich_text.blocks.heading.settings.heading_tag.options__1.label"
+            },
+            {
+              "value": "h2",
+              "label": "t:sections.rich_text.blocks.heading.settings.heading_tag.options__2.label"
+            },
+            {
+              "value": "h3",
+              "label": "t:sections.rich_text.blocks.heading.settings.heading_tag.options__3.label"
+            }
+          ],
+          "default": "h2"
         }
       ]
     },

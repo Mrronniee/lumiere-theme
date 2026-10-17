@@ -38,6 +38,7 @@
   .multi-column {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .multi-column__inner {
@@ -210,10 +211,6 @@
 
   .multi-column__link:focus-visible,
   .multi-column__actions .btn:focus-visible,
-  .multi-column__media-link:focus-visible {
-    outline: 2px solid var(--color-accent-dark);
-    outline-offset: 3px;
-  }
 
   @media screen and (max-width: 989px) {
     .multi-column__grid {
@@ -315,7 +312,7 @@
                   {%- if placeholder_parity == 0 -%}
                     {%- assign placeholder_name = 'lifestyle-2' -%}
                   {%- endif -%}
-                  {{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}
+                  <span class="placeholder-wrap" aria-hidden="true">{{ placeholder_name | placeholder_svg_tag: 'placeholder-svg' }}</span>
                 {%- endif -%}
               </span>
 

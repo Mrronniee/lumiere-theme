@@ -145,6 +145,25 @@
      * Un garde `focusin` rattrape en plus tout focus pose hors du dialogue,
      * quelle qu'en soit l'origine (clic, script tiers, autofocus).
      */
+    /**
+     * Pose ou retire la semantique de fenetre modale sur un panneau.
+     *
+     * Elle n'est vraie que pendant l'ouverture : les filtres de collection
+     * sont une colonne ordinaire sur bureau, le menu mobile est un <nav> hors
+     * mobile. Un role="dialog" ecrit en dur dans le balisage mentirait donc la
+     * moitie du temps — il est pose a l'ouverture et retire a la fermeture.
+     */
+    setDialog(container, on) {
+      if (!container) return;
+      if (on) {
+        container.setAttribute('role', 'dialog');
+        container.setAttribute('aria-modal', 'true');
+      } else {
+        container.removeAttribute('role');
+        container.removeAttribute('aria-modal');
+      }
+    },
+
     trapFocus(container, firstFocus) {
       // Une reouverture ne doit pas empiler un second piege sur le premier.
       utils.releaseFocus(container);
@@ -539,7 +558,10 @@
       // Note de commande : enregistree sur le panier des la saisie, pour partir
       // aussi depuis le formulaire du tiroir (qui ne contient pas le champ).
       document.addEventListener('change', (e) => {
-        const note = e.target.closest('[data-cart-section] textarea[name="note"]');
+        // Toute note de commande, d'ou qu'elle vienne : le champ du TIROIR est
+        // hors de [data-cart-section], sa saisie n'etait donc jamais envoyee et
+        // se perdait des qu'on ouvrait /cart.
+        const note = e.target.closest('textarea[name="note"]');
         if (!note) return;
         fetch(routes.cart_update_url || '/cart/update', {
           method: 'POST',
@@ -824,8 +846,17 @@
         el.textContent = `(${cart.item_count})`;
       });
       if (!withTotals) return;
+      // Le sous-total est le total AVANT remises, le total celui APRES : les
+      // ecrire tous les deux avec cart.total_price donnait « Sous-total -
+      // Remises != Total » des qu'un code promo etait applique.
+      const sousTotal = utils.formatMoney(
+        typeof cart.items_subtotal_price === 'number' ? cart.items_subtotal_price : cart.total_price
+      );
       const total = utils.formatMoney(cart.total_price);
-      document.querySelectorAll('[data-cart-subtotal], [data-cart-total]').forEach((el) => {
+      document.querySelectorAll('[data-cart-subtotal]').forEach((el) => {
+        el.textContent = sousTotal;
+      });
+      document.querySelectorAll('[data-cart-total]').forEach((el) => {
         el.textContent = total;
       });
     },
@@ -883,6 +914,10 @@
           return;
         }
         await this.refresh({ sections: data.sections });
+        // Le tiroir s'ouvre comme pour un ajout depuis la fiche produit : sans
+        // cela, l'ajout rapide d'une carte remplissait le panier sans rien
+        // montrer (le tiroir restait hors ecran, le focus sur le bouton).
+        this.open(btn);
         Notify.show(strings.cartAdded);
       } catch (error) {
         console.error('Ajout upsell impossible:', error);
@@ -909,7 +944,13 @@
         const data = await response.json();
 
         if (!response.ok) {
-          Notify.show(data.description || strings.cartError, 'error');
+          // Shopify met le detail dans « description » (« You can only add 3
+          // of this item… ») et un libelle court dans « message » : on prend le
+          // plus precis des deux avant de retomber sur le message du theme.
+          Notify.show(data.description || data.message || strings.cartError, 'error');
+          // La ligne affichait encore la quantite refusee (9 saisi, 3 au
+          // panier) : on re-rend le panier pour revenir a l'etat reel.
+          await this.refresh();
           return;
         }
         await this.refresh({ sections: data.sections, cart: data });
@@ -1633,6 +1674,7 @@
       this.filters?.classList.add('is-open');
       this.filters?.setAttribute('aria-hidden', 'false');
       this.overlay?.classList.add('is-visible');
+      utils.setDialog(this.filters, true);
       utils.lockScroll(true);
       if (this.filters) utils.trapFocus(this.filters, this.filters.querySelector('[data-filter-close]'));
     },
@@ -1648,6 +1690,7 @@
       this.filters?.classList.remove('is-open');
       this.syncFiltersHidden();
       this.overlay?.classList.remove('is-visible');
+      utils.setDialog(this.filters, false);
       utils.lockScroll(false);
       utils.releaseFocus(this.filters);
       utils.focusBack(this.lastFocus, '[data-filter-toggle]');
@@ -2034,6 +2077,12 @@
       });
     },
 
+    /**
+     * Semantique de fenetre modale, posee A L'OUVERTURE seulement : le menu
+     * mobile, la recherche et les filtres sont des panneaux modaux une fois
+     * ouverts, mais les filtres restent une colonne ordinaire sur bureau — un
+     * role="dialog" ecrit en dur dans le balisage y serait faux.
+     */
     openMenu() {
       if (!this.menu) return;
       this.lastFocus = document.activeElement;
@@ -2041,6 +2090,7 @@
       this.menu.setAttribute('aria-hidden', 'false');
       this.menuOverlay?.classList.add('is-visible');
       document.querySelector('[data-menu-toggle]')?.setAttribute('aria-expanded', 'true');
+      utils.setDialog(this.menu, true);
       utils.lockScroll(true);
       utils.trapFocus(this.menu, this.menu.querySelector('[data-menu-close]'));
     },
@@ -2051,6 +2101,7 @@
       this.menu.setAttribute('aria-hidden', 'true');
       this.menuOverlay?.classList.remove('is-visible');
       document.querySelector('[data-menu-toggle]')?.setAttribute('aria-expanded', 'false');
+      utils.setDialog(this.menu, false);
       utils.lockScroll(false);
       utils.releaseFocus(this.menu);
       utils.focusBack(this.lastFocus, '[data-menu-toggle]');
@@ -2062,6 +2113,7 @@
       this.search.classList.add('is-active');
       this.search.setAttribute('aria-hidden', 'false');
       document.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'true');
+      utils.setDialog(this.search, true);
       utils.lockScroll(true);
       utils.trapFocus(this.search, this.search.querySelector('.search-overlay__input'));
     },
@@ -2073,6 +2125,7 @@
       this.search.classList.remove('is-active');
       this.search.setAttribute('aria-hidden', 'true');
       document.querySelector('[data-search-toggle]')?.setAttribute('aria-expanded', 'false');
+      utils.setDialog(this.search, false);
       utils.lockScroll(false);
       utils.releaseFocus(this.search);
       utils.focusBack(this.searchLastFocus, '[data-search-toggle]');
@@ -2177,6 +2230,33 @@
   };
 
   // ============================================
+  // FOCUS APRES UN ENVOI DE FORMULAIRE
+  // ============================================
+  /**
+   * Apres un envoi, Shopify renvoie la page avec une ancre (#contact_form,
+   * #ContactForm…) ou un parametre (?customer_posted=true). Le navigateur
+   * donne alors le focus a la cible de l'ancre, ce qui ANNULE l'attribut
+   * autofocus du bloc de message : mesure sur la demo, le focus restait sur
+   * <body> apres une erreur de contact, de newsletter et de commentaire.
+   *
+   * On le repose donc en JavaScript, sur le premier message rendu par la page
+   * (erreur d'abord, succes ensuite), sans defiler brutalement.
+   */
+  const FormFeedback = {
+    init() {
+      if (this.done) return;
+      this.done = true;
+      const cible =
+        document.querySelector('[role="alert"][tabindex="-1"]') ||
+        document.querySelector('[role="status"][tabindex="-1"][autofocus]');
+      if (!cible) return;
+      if (document.activeElement && cible.contains(document.activeElement)) return;
+      cible.focus({ preventScroll: true });
+      cible.scrollIntoView({ block: 'center', behavior: 'auto' });
+    },
+  };
+
+  // ============================================
   // INITIALISATION
   // ============================================
   function initAll(scope) {
@@ -2191,6 +2271,7 @@
     CollectionFilters.init(scope);
     Recommendations.init(scope);
     Animations.init();
+    FormFeedback.init();
   }
 
   if (document.readyState === 'loading') {

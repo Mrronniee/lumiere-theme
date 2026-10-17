@@ -35,6 +35,7 @@
   .lookbook {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
   }
 
   .lookbook__header {
@@ -218,7 +219,7 @@
             height="{{ block.settings.image.height }}"
           >
         {%- else -%}
-          {{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}
+          <span class="placeholder-wrap" aria-hidden="true">{{ 'collection-' | append: forloop.index | placeholder_svg_tag: 'placeholder-svg' }}</span>
         {%- endif -%}
 
         <div class="lookbook__item-overlay">

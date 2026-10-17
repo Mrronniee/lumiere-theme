@@ -57,7 +57,7 @@
   assign c_accent_text = c_accent
   for i in (1..24)
     assign ratio = c_accent_text | color_contrast: c_bg
-    if ratio >= 4.5
+    if ratio >= 4.6
       break
     endif
     if bg_is_dark
@@ -84,12 +84,36 @@
   assign c_text_light = c_text | color_mix: c_bg, light_weight
   for i in (1..15)
     assign ratio = c_text_light | color_contrast: c_bg
-    if ratio >= 4.5
+    if ratio >= 4.6
       break
     endif
     assign light_weight = light_weight | plus: 3
     assign c_text_light = c_text | color_mix: c_bg, light_weight
   endfor
+
+  comment
+    Encre a poser SUR un aplat de la couleur primaire (boutons pleins,
+    pastilles). Le blanc en dur tombait a 2,2:1 des que le marchand choisit
+    une primaire claire : on prend, du blanc ou du texte du theme, celui qui
+    contraste le plus avec la primaire, comme pour l'accent.
+  endcomment
+  assign white_on_primary = c_primary | color_contrast: '#ffffff'
+  assign text_on_primary = c_primary | color_contrast: c_text
+  assign c_on_primary = '#ffffff'
+  if text_on_primary > white_on_primary
+    assign c_on_primary = c_text
+  endif
+
+  comment
+    Bordure d'un CHAMP ou d'un controle : elle porte l'information « ici on
+    saisit », donc 3:1 (WCAG 1.4.11). Le melange a 12 % de --color-border,
+    qui convient a un filet decoratif, donnait 1,28:1 sur le fond du theme
+    (1,21:1 sur la newsletter).
+  endcomment
+  capture c_border_strong
+    render 'contrast-color', base: c_text, bg: c_bg, target: 3
+  endcapture
+  assign c_border_strong = c_border_strong | strip
 -%}
 <style>
   :root {
@@ -102,10 +126,12 @@
     --color-text: {{ c_text }};
     --color-text-light: {{ c_text_light }};
     --color-border: {{ c_text | color_mix: c_bg, 12 }};
+    --color-border-strong: {{ c_border_strong }};
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: #c0392b;
-    --color-on-primary: #ffffff;
+    --color-on-primary: {{ c_on_primary }};
     --color-on-accent: {{ c_on_accent }};
+    --color-surface: {{ c_text | color_mix: c_bg, 4 }};
 
     --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};
     --font-body: {{ settings.font_body.family }}, {{ settings.font_body.fallback_families }};

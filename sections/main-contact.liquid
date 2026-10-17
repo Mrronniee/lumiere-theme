@@ -70,11 +70,11 @@
   .contact__textarea {
     width: 100%;
     padding: 0.9rem 1rem;
-    border: 1px solid var(--color-border);
-    background: #fff;
+    border: 1px solid var(--color-border-strong, var(--color-border));
+    background: var(--input-bg, var(--color-background));
     color: var(--color-text);
     font-family: var(--font-body);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     transition: border-color var(--transition-fast);
   }
 
@@ -172,26 +172,38 @@
 
   <div class="contact__grid">
     {%- form 'contact', class: 'contact__form' -%}
+      {%- liquid
+        comment
+          Quel champ est en faute : Shopify rend ses noms dans form.errors
+          (« email », « body », ou « form » pour une erreur generale).
+        endcomment
+        assign error_id = 'ContactErrors-' | append: section.id
+        assign email_in_error = false
+        assign body_in_error = false
+        if form.errors
+          if form.errors contains 'email'
+            assign email_in_error = true
+          endif
+          if form.errors contains 'body'
+            assign body_in_error = true
+          endif
+        endif
+      -%}
+
       {%- if form.posted_successfully? -%}
         <p class="contact__message contact__message--success" role="status" tabindex="-1" autofocus>
           {{ 'contact.form.success' | t }}
         </p>
       {%- elsif form.errors -%}
-        <div class="contact__message contact__message--error" role="alert" tabindex="-1" autofocus>
-          <p>{{ 'contact.form.error_heading' | t }}</p>
-          <ul>
-            {%- for field in form.errors -%}
-              <li>
-                {%- if field == 'form' -%}
-                  {{ form.errors.messages[field] }}
-                {%- else -%}
-                  {{ form.errors.translated_fields[field] | capitalize }} {{ form.errors.messages[field] }}
-                {%- endif -%}
-              </li>
-            {%- endfor -%}
-          </ul>
-        </div>
+        {%- comment -%}
+          Bloc d'erreurs mutualise : meme balisage que les six autres
+          formulaires du theme (role=alert, tabindex=-1, id stable vise par les
+          aria-describedby des champs en faute).
+        {%- endcomment -%}
+        {% render 'form-errors', form: form, id: error_id, class: 'contact__message contact__message--error' %}
       {%- endif -%}
+
+      {% render 'required-note' %}
 
       <div class="contact__row">
         <div class="contact__field">
@@ -224,6 +236,7 @@
             spellcheck="false"
             required
             aria-required="true"
+            {%- if email_in_error %} aria-invalid="true" aria-describedby="{{ error_id }}"{% endif -%}
           >
         </div>
       </div>
@@ -254,6 +267,7 @@
           class="contact__textarea"
           required
           aria-required="true"
+          {%- if body_in_error %} aria-invalid="true" aria-describedby="{{ error_id }}"{% endif -%}
         >{{ form.body }}</textarea>
       </div>
 

@@ -79,7 +79,7 @@
       </a>
     {%- else -%}
       <div class="product-card__placeholder">
-        {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        <span class="placeholder-wrap" aria-hidden="true">{{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
       </div>
     {%- endif -%}
 
@@ -94,21 +94,12 @@
     {%- comment -%}
       Les boutons sont hors du lien produit : imbriquer un <button> dans un <a>
       est invalide et rend le clic ambigu.
-    {%- endcomment -%}
-    {%- if settings.product_card_show_quick_add and product.available -%}
-      {%- if product.variants.size == 1 -%}
-        <button
-          type="button"
-          class="product-card__quick-add"
-          data-upsell-add
-          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
-          aria-label="{{ 'products.product.quick_add' | t }}"
-        >
-          {% render 'icon', icon: 'arrow-right' %}
-        </button>
-      {%- endif -%}
-    {%- endif -%}
 
+      Leur ORDRE suit l'ordre visuel (WCAG 2.4.3) : la loupe et le coeur sont
+      en haut de l'image, l'ajout rapide en bas. L'ajout rapide ecrit en
+      premier donnait une inversion de tabulation par carte, soit 24 sur une
+      grille de collection.
+    {%- endcomment -%}
     {%- if settings.product_enable_quick_view -%}
       <button
         type="button"
@@ -123,6 +114,20 @@
 
     {%- if settings.wishlist_enable and settings.product_card_show_wishlist -%}
       {% render 'wishlist-button', product: product, class: 'wishlist-btn--card' %}
+    {%- endif -%}
+
+    {%- if settings.product_card_show_quick_add and product.available -%}
+      {%- if product.variants.size == 1 -%}
+        <button
+          type="button"
+          class="product-card__quick-add"
+          data-upsell-add
+          data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+          aria-label="{{ 'products.product.quick_add' | t }}"
+        >
+          {% render 'icon', icon: 'arrow-right' %}
+        </button>
+      {%- endif -%}
     {%- endif -%}
   </div>
 

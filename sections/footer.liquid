@@ -27,6 +27,7 @@
 {%- style -%}
   .footer {
     background-color: {{ section.settings.background_color }};
+    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
     color: {{ section.settings.text_color }};
     padding: var(--spacing-xl) 0 var(--spacing-md);
   }
@@ -193,7 +194,12 @@
                   loading="lazy"
                 >
               {%- else -%}
-                <h3 class="footer__logo">{{ shop.name }}</h3>
+                {%- comment -%}
+                  Le nom de la boutique dans le pied n'est pas un titre de
+                  section : en <h3> il creait un saut h1 -> h3 sur toutes les
+                  pages dont le contenu principal n'a pas de h2.
+                {%- endcomment -%}
+                <p class="footer__logo">{{ shop.name }}</p>
               {%- endif -%}
 
               {%- if block.settings.description != blank -%}

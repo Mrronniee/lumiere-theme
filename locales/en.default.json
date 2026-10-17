@@ -250,6 +250,7 @@
       "view_cart": "View cart",
       "checkout": "Checkout",
       "remove": "Remove",
+      "remove_title": "Remove {{ title }}",
       "update": "Update",
       "upsell_title": "Complete your look",
       "free_shipping_progress_html": "Only <strong>{{ amount }}</strong> away from free shipping",

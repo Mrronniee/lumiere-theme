@@ -28,6 +28,7 @@
   .comparison {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
+    {% render 'section-tokens', bg: bg_color, text: txt_color %}
   }
 
   .comparison__inner {
@@ -75,10 +76,6 @@
     -webkit-overflow-scrolling: touch;
   }
 
-  .comparison__scroller:focus-visible {
-    outline: 2px solid var(--color-accent-dark);
-    outline-offset: 4px;
-  }
 
   .comparison__table {
     width: 100%;
@@ -226,8 +223,9 @@
   .comparison__note {
     margin-top: var(--spacing-sm);
     font-size: 0.8125rem;
-    color: {{ txt_color }};
-    opacity: 0.6;
+    /* Couleur derivee a 4,6:1 au lieu d'une opacite de 0,6, qui mettait la
+       note a 4,48:1. */
+    color: var(--color-text-light);
   }
 
   @media (hover: hover) and (pointer: fine) {

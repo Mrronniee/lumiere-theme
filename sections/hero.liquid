@@ -200,7 +200,7 @@
         height="{{ section.settings.image.height }}"
       >
     {%- else -%}
-      {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+      <span class="placeholder-wrap" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
     {%- endif -%}
   </div>
 
