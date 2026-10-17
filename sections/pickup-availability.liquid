@@ -1,0 +1,17 @@
+{%- comment -%}
+  Section appelee par l'API de rendu de section pour rafraichir le retrait en
+  magasin quand le visiteur change de variante :
+  /variants/<id>/?section_id=pickup-availability — Shopify y rend la variante
+  demandee dans product.selected_or_first_available_variant.
+
+  Elle n'a ni preset ni reglage : elle n'est jamais posee dans un gabarit.
+{%- endcomment -%}
+{% render 'pickup-availability', variant: product.selected_or_first_available_variant %}
+
+{% schema %}
+{
+  "name": "Pickup availability",
+  "tag": "div",
+  "class": "pickup-availability-section"
+}
+{% endschema %}

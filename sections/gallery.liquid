@@ -189,6 +189,7 @@
                     alt="{{ img.alt | escape }}"
                     class="gallery__image"
                     loading="lazy"
+                    {% render 'focal', image: img %}
                     width="{{ img.width }}"
                     height="{{ img.height }}"
                   >

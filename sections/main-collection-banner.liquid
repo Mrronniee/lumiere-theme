@@ -80,6 +80,7 @@
           la mettre en file derriere le CSS et les polices.
         {%- endcomment -%}
         fetchpriority="high"
+        {% render 'focal', image: collection.image %}
         width="{{ collection.image.width }}"
         height="{{ collection.image.height }}"
       >

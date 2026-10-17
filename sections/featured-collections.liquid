@@ -242,6 +242,7 @@
                     alt="{{ card_image.alt | escape }}"
                     class="featured-collections__image"
                     loading="lazy"
+                    {% render 'focal', image: card_image %}
                     width="{{ card_image.width }}"
                     height="{{ card_image.height }}"
                   >

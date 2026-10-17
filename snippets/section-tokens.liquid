@@ -44,7 +44,6 @@
     assign on_primary = text
   endif
 
-  assign surface = text | color_mix: bg, 4
 -%}
     --color-background: {{ bg }};
     --color-text: {{ text }};
@@ -54,4 +53,3 @@
     --color-border-strong: {{ border_strong | strip }};
     --color-on-accent: {{ on_accent }};
     --color-on-primary: {{ on_primary }};
-    --color-surface: {{ surface }};

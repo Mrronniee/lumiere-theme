@@ -292,7 +292,15 @@
         "regular_price": "Regular price",
         "sale_price": "Sale price"
       },
-      "variant_label": "Variant"
+      "variant_label": "Variant",
+      "pickup_available_at": "Pickup available at {{ location }}",
+      "pickup_unavailable_at": "Pickup currently unavailable at {{ location }}",
+      "pickup_other_stores": {
+        "one": "Check availability at {{ count }} store",
+        "other": "Check availability at {{ count }} stores"
+      },
+      "pickup_available": "Available",
+      "pickup_unavailable": "Currently unavailable"
     }
   },
   "wishlist": {

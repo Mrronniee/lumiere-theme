@@ -1,0 +1,14 @@
+{%- comment -%}
+  Point de focus d'une image, pose en object-position.
+
+  Le marchand choisit dans l'admin Shopify le point qui doit rester visible
+  quand l'image est recadree (object-fit: cover). Le theme rendait des balises
+  d'image brutes sans object-position : ce choix etait ignore partout, et un
+  visage ou un produit place en haut de l'image se retrouvait coupe.
+
+  Parametre : image (objet image ou media.preview_image).
+  Usage, dans la balise d'image : {% render 'focal', image: section.settings.image %}
+{%- endcomment -%}
+{%- if image.presentation.focal_point != blank -%}
+  style="object-position: {{ image.presentation.focal_point }}"
+{%- endif -%}

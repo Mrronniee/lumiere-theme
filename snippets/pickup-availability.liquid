@@ -1,0 +1,74 @@
+{%- comment -%}
+  Retrait en magasin, pour la variante donnee.
+
+  Shopify expose la disponibilite par point de retrait dans
+  variant.store_availabilities : le theme ne l'affichait pas du tout, alors
+  qu'un marchand qui a active le retrait l'attend sur la fiche produit (0
+  element de retrait mesure sur les six fiches de la demo).
+
+  Rendu cote serveur pour la variante affichee, et re-rendu a chaque
+  changement de variante par l'API de rendu de section
+  (sections/pickup-availability.liquid, appelee par assets/theme.js).
+
+  Parametres :
+    variant (obligatoire) la variante a decrire
+    id      (facultatif)  suffixe des identifiants, pour n'en avoir qu'un par page
+{%- endcomment -%}
+{%- liquid
+  assign availabilities = variant.store_availabilities
+  assign pickup_count = availabilities | size
+  assign list_id = 'PickupStores'
+  if id != blank
+    assign list_id = 'PickupStores-' | append: id
+  endif
+-%}
+{%- if pickup_count > 0 -%}
+  {%- assign first = availabilities.first -%}
+  <div class="pickup-availability__summary">
+    {%- if first.available -%}
+      <span class="pickup-availability__dot pickup-availability__dot--available" aria-hidden="true"></span>
+      <p class="pickup-availability__headline">
+        {{ 'products.product.pickup_available_at' | t: location: first.location.name }}
+      </p>
+      <p class="pickup-availability__time">{{ first.pick_up_time }}</p>
+    {%- else -%}
+      <span class="pickup-availability__dot" aria-hidden="true"></span>
+      <p class="pickup-availability__headline">
+        {{ 'products.product.pickup_unavailable_at' | t: location: first.location.name }}
+      </p>
+    {%- endif -%}
+
+    {%- if pickup_count > 1 -%}
+      <button
+        type="button"
+        class="pickup-availability__more"
+        data-pickup-toggle
+        aria-expanded="false"
+        aria-controls="{{ list_id }}"
+      >
+        {{ 'products.product.pickup_other_stores' | t: count: pickup_count }}
+      </button>
+    {%- endif -%}
+
+    <ul class="pickup-availability__list" id="{{ list_id }}"{% if pickup_count > 1 %} hidden{% endif %}>
+      {%- for availability in availabilities -%}
+        <li class="pickup-availability__store">
+          <p class="pickup-availability__store-name">{{ availability.location.name }}</p>
+          <p class="pickup-availability__store-state">
+            {%- if availability.available -%}
+              {{ 'products.product.pickup_available' | t }} &middot; {{ availability.pick_up_time }}
+            {%- else -%}
+              {{ 'products.product.pickup_unavailable' | t }}
+            {%- endif -%}
+          </p>
+          {%- assign address = availability.location.address -%}
+          {%- if address != blank -%}
+            <p class="pickup-availability__store-address">
+              {{ address.street }}{% if address.city != blank %}, {{ address.city }}{% endif %}{% if address.zip != blank %} {{ address.zip }}{% endif %}
+            </p>
+          {%- endif -%}
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+{%- endif -%}

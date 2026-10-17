@@ -704,6 +704,16 @@
 
       {%- endform -%}
 
+      {%- comment -%}
+        Retrait en magasin : rendu pour la variante affichee, et re-rendu par
+        l'API de rendu de section a chaque changement de variante
+        (assets/theme.js, Pickup). Le conteneur existe toujours, le snippet ne
+        rend rien quand la boutique n'a aucun point de retrait.
+      {%- endcomment -%}
+      <div class="pickup-availability" data-pickup-availability>
+        {% render 'pickup-availability', variant: current_variant, id: section.id %}
+      </div>
+
       {%- comment -%} BLOCS DE CONTENU ÉDITABLES {%- endcomment -%}
       <div class="product-details">
         {%- if product.description != blank -%}

@@ -1549,7 +1549,53 @@
         sku.textContent = variant.sku || '';
         sku.closest('[data-product-sku-wrapper]')?.toggleAttribute('hidden', !variant.sku);
       }
+
+      Pickup.refresh(variant.id);
     }
+  };
+
+  // ============================================
+  // RETRAIT EN MAGASIN
+  // ============================================
+  /**
+   * Rafraichit le bloc de retrait quand la variante change.
+   *
+   * La disponibilite par point de retrait depend de la variante : elle est
+   * rendue cote serveur pour la variante affichee, puis re-rendue par l'API de
+   * rendu de section (/variants/<id>/?section_id=pickup-availability), comme
+   * le fait Shopify. Sans JavaScript, la page affiche la disponibilite de la
+   * variante chargee, ce qui reste juste.
+   */
+  const Pickup = {
+    init() {
+      if (this.bound) return;
+      this.bound = true;
+      document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('[data-pickup-toggle]');
+        if (!toggle) return;
+        const liste = document.getElementById(toggle.getAttribute('aria-controls'));
+        if (!liste) return;
+        const ouvert = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', ouvert ? 'false' : 'true');
+        liste.hidden = ouvert;
+      });
+    },
+
+    async refresh(variantId) {
+      const conteneur = document.querySelector('[data-pickup-availability]');
+      if (!conteneur || !variantId) return;
+      try {
+        const base = routes.root_url && routes.root_url !== '/' ? routes.root_url : '';
+        const reponse = await fetch(`${base}/variants/${variantId}/?section_id=pickup-availability`);
+        if (!reponse.ok) return;
+        const html = await reponse.text();
+        const recu = new DOMParser().parseFromString(html, 'text/html');
+        const neuf = recu.querySelector('.pickup-availability__summary');
+        conteneur.innerHTML = neuf ? neuf.outerHTML : '';
+      } catch (e) {
+        /* la disponibilite rendue au chargement reste affichee */
+      }
+    },
   };
 
   // ============================================
@@ -2270,6 +2316,7 @@
     ProductZoom.init();
     CollectionFilters.init(scope);
     Recommendations.init(scope);
+    Pickup.init();
     Animations.init();
     FormFeedback.init();
   }

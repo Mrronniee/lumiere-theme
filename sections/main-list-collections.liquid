@@ -24,6 +24,7 @@
                   sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, calc(100vw - 3rem)"
                   alt="{{ collection.image.alt | escape }}"
                   {%- if section.index == 1 and forloop.index <= 3 -%}loading="eager"{%- else -%}loading="lazy"{%- endif -%}
+                  {% render 'focal', image: collection.image %}
                   width="{{ collection.image.width }}"
                   height="{{ collection.image.height }}"
                 >

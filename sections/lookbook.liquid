@@ -215,6 +215,7 @@
             alt="{{ block.settings.image.alt | escape }}"
             class="lookbook__item-image"
             loading="lazy"
+            {% render 'focal', image: block.settings.image %}
             width="{{ block.settings.image.width }}"
             height="{{ block.settings.image.height }}"
           >

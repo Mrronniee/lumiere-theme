@@ -469,6 +469,7 @@
                   src="{{ slide_image | image_url: width: 1920 }}"
                   sizes="100vw"
                   alt="{{ slide_image.alt | escape }}"
+                  {% render 'focal', image: slide_image %}
                   width="{{ slide_image.width }}"
                   height="{{ slide_image.height }}"
                   {%- comment -%}

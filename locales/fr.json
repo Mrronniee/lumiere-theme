@@ -292,7 +292,15 @@
         "regular_price": "Prix régulier",
         "sale_price": "Prix soldé"
       },
-      "variant_label": "Variante"
+      "variant_label": "Variante",
+      "pickup_available_at": "Retrait possible à {{ location }}",
+      "pickup_unavailable_at": "Retrait indisponible à {{ location }}",
+      "pickup_other_stores": {
+        "one": "Voir la disponibilité dans {{ count }} magasin",
+        "other": "Voir la disponibilité dans {{ count }} magasins"
+      },
+      "pickup_available": "Disponible",
+      "pickup_unavailable": "Indisponible pour le moment"
     }
   },
   "wishlist": {

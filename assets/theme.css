@@ -1867,6 +1867,77 @@ textarea {
 /* Consigne d'editeur d'une colonne de pied de page sans menu */
 .footer__column-empty { font-size: 0.8125rem; opacity: 1; }
 
+/* Retrait en magasin (fiche produit) */
+.pickup-availability:empty {
+  display: none;
+}
+
+.pickup-availability__summary {
+  margin: var(--spacing-sm) 0;
+  padding: var(--spacing-sm);
+  border: var(--border-width, 1px) solid var(--color-border);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+}
+
+.pickup-availability__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 0.5rem;
+  border-radius: 50%;
+  background: var(--color-text-light);
+}
+
+.pickup-availability__dot--available {
+  background: var(--color-accent-text);
+}
+
+.pickup-availability__headline {
+  display: inline;
+  margin: 0;
+  font-weight: 500;
+}
+
+.pickup-availability__time,
+.pickup-availability__store-state,
+.pickup-availability__store-address {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-light);
+  font-size: 0.8125rem;
+}
+
+.pickup-availability__more {
+  display: inline-block;
+  min-height: 24px;
+  margin-top: 0.5rem;
+  padding: 0;
+  background: none;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  text-decoration: underline;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+
+.pickup-availability__list {
+  margin: var(--spacing-xs) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pickup-availability__store + .pickup-availability__store {
+  margin-top: var(--spacing-xs);
+  padding-top: var(--spacing-xs);
+  border-top: 1px solid var(--color-border);
+}
+
+.pickup-availability__store-name {
+  margin: 0;
+  font-weight: 500;
+}
+
 /* Carte cadeau : laissez-passer Apple Wallet */
 .gift-card__pass { margin: var(--spacing-sm) 0; }
 

@@ -1,5 +1,97 @@
 # Changelog
 
+## 1.6.0 — 2026-10-17
+
+### Added
+- Pickup availability on the product page: when your shop offers local pickup,
+  each product now shows whether it can be picked up, at which store and how
+  soon, with a list of your other stores. It follows the variant the shopper
+  selects.
+- A "Heading level" setting on the rich text heading block (H1, H2 or H3), so a
+  page built from sections can carry its main heading.
+- A "Custom Liquid" block on the product page, for your own snippet — a payment
+  badge, a legal notice, a call to an app that has no block of its own.
+- The featured product section now accepts app blocks.
+- Image focal points set in Shopify admin are now honoured wherever an image is
+  cropped: product cards, hero, slideshow, image with text, collection banner,
+  lookbook, gallery, columns, blog cards and collection lists.
+
+### Fixed
+- Readability of text over images: slideshow captions sat as low as 2.9:1 on a
+  pale photo. Slides and the video banner now keep a readability floor, like
+  the hero, and it flips with the text colour — dark under light text, light
+  under dark text.
+- Colours now follow the section they are in. A section with its own dark,
+  inverted or accent background kept the eyebrow, secondary text, borders and
+  button ink derived from the theme background, which could fall to 1:1 — 70 of
+  120 background combinations failed. Each section with its own background now
+  recomputes them.
+- Panels that were white whatever your palette: mobile menu, header dropdown,
+  cart drawer, quick view, filter panel, sort control, market selectors, and
+  the card buttons. With a dark first palette they turned white-on-white.
+- Button ink on your primary colour is now computed instead of always white: a
+  light primary left "Add to cart" at 2.2:1.
+- Field borders now reach the 3:1 the standard asks (they were at 1.3:1), and
+  every field is at least 16px so Safari on iPhone no longer zooms the page
+  when you tap into one.
+- The 404 page number was at 1.2:1, the inactive tab and the comparison note at
+  4.5:1, the "Sold out" button at 2:1. All raised.
+- Focus ring: ten sections replaced the theme's two-tone ring with a single
+  accent outline, which fell to 2.1:1 on links over an image. The theme ring is
+  back everywhere, and links over an image get a ring drawn on top of the
+  picture.
+- Touch targets under 24px: sort control, filter button, price bounds, comment
+  fields, filter checkboxes and the gift-card checkbox.
+- The mobile menu, search and filter panels now announce themselves as dialogs
+  while they are open, and search has a name.
+- "Remove" buttons in the cart and drawer now say which product they remove.
+- Decorative placeholder illustrations are no longer announced by screen
+  readers (24 of them on a collection page).
+- The shop name in the footer was a level-3 heading, which created a heading
+  gap on five pages.
+- Product card: the magnifier and the heart (top of the image) now come before
+  quick add (bottom) when tabbing, matching what you see.
+- Quick add from a product card filled the cart without opening the drawer.
+- A note typed in the cart drawer was never saved and vanished when you opened
+  the cart page.
+- With a discount code the cart read "Subtotal 391.50 − Discounts 43.50 = Total
+  391.50": the subtotal was already discounted. The drawer now shows the
+  discount and the total too.
+- Asking for more than the stock left the wrong quantity on screen and showed a
+  generic message instead of Shopify's own.
+- After a form error, the focus stayed on the page body instead of moving to
+  the message (contact, newsletter, comments). The contact form also marks the
+  field at fault and explains the required asterisk.
+- Sections whose behaviour lives in an inline script (tabs, FAQ, countdown,
+  slideshow, video banner) stopped working after being reloaded in the theme
+  editor.
+- A section set to hide the vendor showed it anyway if it had been set before
+  1.5.0.
+- The featured product section no longer leaves an empty gap in the shop when
+  no product is chosen.
+- A tall logo overflowed the header by up to 144px and covered the page.
+- French editor labels: 26 English words left untranslated, 39 missing accents,
+  number and thousands spacing, and mixed apostrophes. The market banner no
+  longer says "en États-Unis".
+
+### Performance
+- The market banner is no longer laid out in the flow: revealed after a request,
+  it pushed the whole page down by 77px and was on its own 95% of the layout
+  shift measured on every page (0.125 at 360px wide, for a 0.1 threshold).
+- The image of "image with text" now loads immediately when the section opens
+  the page: deferred, it carried a 5.8s largest-paint. Same for the first row of
+  blog and collection lists.
+- High loading priority is no longer spent on images that cannot be seen: the
+  first slide of a slideshow placed further down the page, and the first
+  product card of a featured collection, which was held at zero opacity even
+  when animations are off.
+- Waiting cards now reserve the vendor line, so the grid no longer grows by
+  64px when recommendations arrive.
+- Column images asked for 900px-wide files for a 247px slot on phones: 184KB of
+  needless image per page.
+- The hover image of a product whose second media is a video had no dimensions
+  and no srcset.
+
 ## 1.5.2 — 2026-10-17
 
 ### Fixed

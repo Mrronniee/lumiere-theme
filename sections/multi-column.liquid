@@ -322,6 +322,7 @@
                     alt="{{ img.alt | escape }}"
                     class="multi-column__image"
                     loading="lazy"
+                    {% render 'focal', image: img %}
                     width="{{ img.width }}"
                     height="{{ img.height }}"
                   >
