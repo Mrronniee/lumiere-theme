@@ -1,4 +1,4 @@
-LUMIERE 1.5.0 - free Shopify theme by KIOSK
+LUMIERE 1.5.1 - free Shopify theme by KIOSK
 https://kioskthemes.com
 
 WHAT'S IN THIS DOWNLOAD
@@ -14,7 +14,9 @@ QUICK START
 
 AFTER INSTALLING
   Create a page with the handle "contact" and assign the page.contact template.
-  Create a page with the handle "wishlist" and assign the page.wishlist template.
+  Create a page for the wishlist and assign the page.wishlist template, then
+  pick it in Theme settings -> Wishlist -> Wishlist page. Any handle works;
+  leave the setting empty only if the handle is "wishlist".
   Both are covered in INSTALLATION.md.
 
 Support: https://kioskthemes.com/support/

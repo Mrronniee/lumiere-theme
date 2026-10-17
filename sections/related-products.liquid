@@ -60,11 +60,23 @@
   {%- if related_collection != blank -%}
     <div class="related-products__grid">
       {%- for product in related_collection.products limit: section.settings.products_to_show -%}
+        {%- liquid
+          comment
+            La valeur se calcule AVANT le render : une comparaison n'est pas une
+            valeur d'argument en Liquid, et Shopify rejette toute la section au
+            push (« Expected end_of_string but found comparison »).
+          endcomment
+          assign card_lazy = true
+          if forloop.index <= 4
+            assign card_lazy = false
+          endif
+          assign card_priority = forloop.first
+        -%}
         {% render 'product-card',
           product: product,
           show_vendor: section.settings.show_vendor,
-          lazy: forloop.index > 4,
-          priority: forloop.first,
+          lazy: card_lazy,
+          priority: card_priority,
           columns_mobile: section.settings.columns_mobile
         %}
       {%- endfor -%}
@@ -84,11 +96,18 @@
     >
       {%- if recommendations.performed and recommendations.products_count > 0 -%}
         {%- for product in recommendations.products -%}
+          {%- liquid
+            assign card_lazy = true
+            if forloop.index <= 4
+              assign card_lazy = false
+            endif
+            assign card_priority = forloop.first
+          -%}
           {% render 'product-card',
             product: product,
             show_vendor: section.settings.show_vendor,
-            lazy: forloop.index > 4,
-            priority: forloop.first,
+            lazy: card_lazy,
+            priority: card_priority,
             columns_mobile: section.settings.columns_mobile
           %}
         {%- endfor -%}

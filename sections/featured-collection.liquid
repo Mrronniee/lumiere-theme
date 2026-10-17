@@ -132,11 +132,23 @@
             premiere en priorite. Sans ces arguments, product-card retombait
             sur loading="lazy" pour toutes (LCP retarde d'environ 0,8 a 1 s).
           {%- endcomment -%}
+          {%- liquid
+            comment
+              La valeur se calcule AVANT le render : une comparaison n'est pas
+              une valeur d'argument en Liquid, et Shopify rejette toute la
+              section au push (« Expected end_of_string but found comparison »).
+            endcomment
+            assign card_lazy = true
+            if forloop.index <= 4
+              assign card_lazy = false
+            endif
+            assign card_priority = forloop.first
+          -%}
           {% render 'product-card',
             product: product,
             show_vendor: section.settings.show_vendor,
-            lazy: forloop.index > 4,
-            priority: forloop.first,
+            lazy: card_lazy,
+            priority: card_priority,
             columns_mobile: section.settings.columns_mobile
           %}
         </div>

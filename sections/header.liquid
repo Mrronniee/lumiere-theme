@@ -5,15 +5,24 @@
 
 {%- liquid
   comment
-    routes.root_url vaut « / » dans la langue principale et « /en » (sans barre
-    finale) dans les autres : une concatenation directe donnait « /enpages/wishlist ».
+    Page des favoris. Le marchand la choisit dans les reglages (wishlist_page) :
+    le handle « wishlist » etait ecrit en dur, donc toute boutique dont la page
+    porte un autre handle avait un lien mort.
+
+    Repli sur /pages/wishlist quand le reglage est vide. routes.root_url vaut
+    « / » dans la langue principale et « /en » (sans barre finale) dans les
+    autres : une concatenation directe donnait « /enpages/wishlist ».
   endcomment
-  assign wishlist_url = routes.root_url
-  assign root_last_char = wishlist_url | slice: -1
-  unless root_last_char == '/'
-    assign wishlist_url = wishlist_url | append: '/'
-  endunless
-  assign wishlist_url = wishlist_url | append: 'pages/wishlist'
+  if settings.wishlist_page != blank
+    assign wishlist_url = settings.wishlist_page.url
+  else
+    assign wishlist_url = routes.root_url
+    assign root_last_char = wishlist_url | slice: -1
+    unless root_last_char == '/'
+      assign wishlist_url = wishlist_url | append: '/'
+    endunless
+    assign wishlist_url = wishlist_url | append: 'pages/wishlist'
+  endif
 -%}
 <header
   class="header{% if settings.header_transparent_home and template.name == 'index' %} header--transparent{% endif %}"

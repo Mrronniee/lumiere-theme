@@ -93,6 +93,10 @@
         },
         "wishlist_show_share": {
           "label": "Bouton partager les favoris"
+        },
+        "wishlist_page": {
+          "label": "Page des favoris",
+          "info": "La page qui utilise le gabarit « page.wishlist ». Laissez vide pour utiliser /pages/wishlist."
         }
       }
     },

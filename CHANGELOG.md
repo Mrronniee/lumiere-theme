@@ -1,5 +1,20 @@
 # Changelog
 
+## 1.5.1 — 2026-10-17
+
+### Fixed
+- Two sections were rejected by Shopify when the theme was pushed, so they
+  never reached the store: "Product recommendations" and "Featured collection".
+  A card setting was written as a comparison inside the section's own template
+  call, which Shopify refuses to parse. The value is now worked out first. If
+  you installed 1.5.0, reinstall 1.5.1: those two sections were missing.
+- The wishlist icon in the header always pointed at /pages/wishlist. If your
+  wishlist page has any other handle, the link went nowhere. You now pick the
+  page in **Theme settings → Wishlist → Wishlist page**; /pages/wishlist is
+  still used when the setting is left empty.
+- Two British spellings in the English text: the wishlist empty-state message
+  and one editor label.
+
 ## 1.5.0 — 2026-10-17
 
 ### Added

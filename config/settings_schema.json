@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.5.0",
+    "theme_version": "1.5.1",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -159,6 +159,12 @@
         "id": "wishlist_show_share",
         "label": "t:settings_schema.wishlist.settings.wishlist_show_share.label",
         "default": true
+      },
+      {
+        "type": "page",
+        "id": "wishlist_page",
+        "label": "t:settings_schema.wishlist.settings.wishlist_page.label",
+        "info": "t:settings_schema.wishlist.settings.wishlist_page.info"
       }
     ]
   },
