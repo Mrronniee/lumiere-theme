@@ -87,15 +87,6 @@
       "product_count": {
         "one": "{{ count }} product",
         "other": "{{ count }} products"
-      },
-      "sort": {
-        "manual": "Featured",
-        "best_selling": "Best selling",
-        "title_ascending": "Name, A-Z",
-        "title_descending": "Name, Z-A",
-        "price_ascending": "Price, low to high",
-        "price_descending": "Price, high to low",
-        "created_descending": "Date, new to old"
       }
     },
     "lookbook": {
