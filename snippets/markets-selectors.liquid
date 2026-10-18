@@ -228,14 +228,22 @@
   </div>
 
   {%- comment -%}
-    Formulaire de localisation. Sans return_to, Shopify redirige vers l'accueil
-    apres un changement de pays / langue / devise.
+    Formulaire de localisation, rendu UNE SEULE FOIS pour la page. Ce snippet est
+    rendu deux fois (rangee de l'en-tete et menu mobile) : le formulaire partait
+    donc en double et #MarketForm etait un id duplique sur les 36 lignes mesurees
+    en 1.6.1. L'en-tete le rend (avec_formulaire), le menu mobile non ; theme.js
+    le retrouve par getElementById, qui n'en veut qu'un.
+
+    Sans return_to, Shopify redirige vers l'accueil apres un changement de pays,
+    de langue ou de devise.
   {%- endcomment -%}
+  {%- if avec_formulaire -%}
   {%- form 'localization', id: 'MarketForm', class: 'visually-hidden' -%}
     <input type="hidden" name="return_to" value="{{ request.path }}">
     <input type="hidden" name="country_code" data-market-country value="{{ localization.country.iso_code }}">
     <input type="hidden" name="language_code" data-market-language value="{{ localization.language.iso_code }}">
   {%- endform -%}
+  {%- endif -%}
 
   {%- comment -%}
     Le bandeau de changement de marche est rendu par snippets/market-banner.liquid,

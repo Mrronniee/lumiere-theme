@@ -136,7 +136,8 @@
   .cart-footer__note-shipping {
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: var(--color-text-light);
+    /* pose sur la surface du recapitulatif, pas sur le fond : 4,37:1 mesure */
+    color: var(--color-text-light-surface, var(--color-text-light));
     text-align: center;
     margin-top: var(--spacing-sm);
   }

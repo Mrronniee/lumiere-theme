@@ -185,7 +185,8 @@
 
       {%- comment -%} Markets selectors {%- endcomment -%}
       <div class="header__markets">
-        {% render 'markets-selectors' %}
+        {% comment %} avec_formulaire : le formulaire de localisation est rendu ici, une seule fois pour la page {% endcomment %}
+        {% render 'markets-selectors', avec_formulaire: true %}
       </div>
     </div>
   </div>

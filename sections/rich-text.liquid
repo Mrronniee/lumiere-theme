@@ -145,7 +145,7 @@
               {%- assign button_class = 'btn btn--primary' -%}
             {%- endif -%}
             <div class="rich-text__block rich-text__buttons" {{ block.shopify_attributes }}>
-              <a href="{{ block.settings.link }}" class="{{ button_class }}">
+              <a href="{% render 'lien-localise', url: block.settings.link %}" class="{{ button_class }}">
                 {{ block.settings.label | escape }}
               </a>
             </div>

@@ -1,5 +1,5 @@
 {% comment %}Section: Adresses client{% endcomment %}
-<div class="page-shell page-shell--narrow">
+<div class="page-shell page-shell--narrow" data-addresses-root>
   <div class="page-shell__header">
     <h1 class="page-shell__title">{{ 'customer.addresses.title' | t }}</h1>
     <a href="{{ routes.account_url }}" class="btn btn--link">{{ 'customer.account.return' | t }}</a>
@@ -50,6 +50,14 @@
 </div>
 
 <script>
+  (function () {
+    /* Idempotence par racine, comme les autres sections a script en ligne : sans
+       garde, un rechargement de section empilait un ecouteur de suppression
+       d'adresse sur document (releve en 1.6.0, non corrige par mon lot de
+       1.6.1, qui n'avait pas touche ce fichier). */
+    var root = document.querySelector('[data-addresses-root]');
+    if (!root || root.dataset.addressesInit === 'true') return;
+    root.dataset.addressesInit = 'true';
   document.addEventListener('click', function (e) {
     var link = e.target.closest('[data-address-delete]');
     if (!link) return;
@@ -57,6 +65,7 @@
     if (!window.confirm(link.dataset.confirm)) return;
     Shopify.postLink(link.dataset.url, { parameters: { _method: 'delete' } });
   });
+  })();
 </script>
 
 {% schema %}

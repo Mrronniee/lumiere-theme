@@ -375,7 +375,9 @@
   .mini-cart__note {
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: var(--color-text-light);
+    /* --color-text-light est derive pour 4,6:1 sur le FOND du theme ; ce texte est
+       pose sur la surface du pied de tiroir (#f3f2f0) ou il tombait a 4,37:1. */
+    color: var(--color-text-light-surface, var(--color-text-light));
     margin-bottom: var(--spacing-sm);
     text-align: center;
   }
@@ -407,7 +409,8 @@
     text-align: center;
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: var(--color-text-light);
+    /* meme surface, meme mesure : 4,37:1 pour un seuil de 4,5 a 13 px */
+    color: var(--color-text-light-surface, var(--color-text-light));
     text-decoration: underline;
     padding: 0.5rem;
     transition: color var(--transition-fast);
@@ -439,7 +442,10 @@
 
   .mini-cart__free-shipping-progress {
     height: 100%;
-    background: var(--color-accent);
+    /* L'accent de marque sur la piste --color-surface-16 donnait 1,53:1 : une
+       progression ne se lit plus. On prend l'encre derivee de la section, qui
+       garde 4,5:1 sur le fond, donc bien plus de 3:1 sur la piste. */
+    background: var(--color-accent-text, var(--color-accent));
     transition: width 0.5s ease;
   }
 
@@ -530,7 +536,7 @@
                 {%- for property in item.properties -%}
                   {%- assign property_first_char = property.first | slice: 0 -%}
                   {%- unless property.last == blank or property_first_char == '_' -%}
-                    <li>{{ property.first }}: {{ property.last }}</li>
+                    <li>{{ property.first }}{{ 'general.punctuation.colon' | t }}{{ property.last }}</li>
                   {%- endunless -%}
                 {%- endfor -%}
               {%- endcapture -%}

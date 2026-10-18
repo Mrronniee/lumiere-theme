@@ -303,7 +303,7 @@
       {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
         <a
           class="btn btn--primary countdown__button"
-          href="{{ section.settings.button_link }}"
+          href="{% render 'lien-localise', url: section.settings.button_link %}"
         >
           {{- section.settings.button_label | escape -}}
         </a>

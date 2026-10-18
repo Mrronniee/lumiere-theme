@@ -1,5 +1,68 @@
 # Changelog
 
+## 1.6.2 — 2026-10-18
+
+### Fixed
+- Brand colours used as ink are no longer printed raw. The header icons, the
+  search field you type into, the wishlist heart and the quick-view and
+  quick-add buttons on product cards took your brand colour, or no colour at
+  all, and measured between 1.06:1 and 1.79:1 under a dark palette — the
+  quick-view and quick-add icons had no `color` declared, so the browser used
+  its own black. They now follow the ink the section computes. The "On sale"
+  badge had white text hard-coded and fell to 2.47:1 once the sale colour is
+  recomputed per section; its ink is now derived from the badge itself.
+- The focus ring is visible again on every control. A component that declares
+  its own `box-shadow` — a button, the wishlist heart, the newsletter button —
+  was erasing the white half of the two-tone ring, and the dark half was your
+  brand colour, which on a dark section measured 1.00:1. The ring is now put
+  back after the component, and it follows the section's ink; over a photo or a
+  video it uses a fixed white-and-dark pair, which no image can swallow.
+- Cart drawer and cart page: the "Tax included", "View cart" and shipping notes
+  measured 4.37:1 because their muted ink was derived against the page
+  background, not against the lighter surface they sit on.
+- The comparison table: "not included" was marked only by an icon at 35%
+  opacity (2.20:1), and two more texts relied on opacity. All three now use a
+  derived colour.
+- The page could be dragged sideways on the sections page: 665 pixels of
+  scrollable width for a 390-pixel screen, and it really scrolled on a narrow
+  desktop window and at 400% zoom. The cause was the comparison table's
+  scrolling box, which was imposing its content's width on the document.
+- The free-shipping progress bar was 1.53:1 against its track, and its text was
+  announced by nothing; it now carries the derived accent ink and `role="status"`.
+- The active tab took the colour you choose without any contrast correction
+  (2.03:1 on an accent background).
+- The localization form was rendered twice, so `MarketForm` was a duplicated id
+  on every page; it is now rendered once. Escape on the market panels of the
+  mobile menu gives the focus back to the button that opened them.
+- After a form error, the focus really lands on the error summary. The retry
+  window added in 1.6.1 was too short — something takes the focus back later —
+  and a hidden error container from another form could be picked instead of the
+  visible one.
+- The video banner's guard against double initialisation was global, so after a
+  section reload its pause button went dead and a second video banner on the
+  same page never started. The login and address sections never received their
+  guard at all.
+- Address fields: eight inputs glued `autocomplete` to the attribute before it.
+- Links written as a plain path in a shipped template sent an English shopper to
+  the French storefront; every link setting is now rendered in the language
+  being served.
+- Three French strings: a pair of apostrophes used as quotation marks, and the
+  last two colons of cart line properties, which needed a non-breaking space.
+- Product gallery images and thumbnails honour the focal point set in Shopify
+  admin, like the rest of the theme.
+
+### Performance
+- The hero video no longer downloads 2,128KB before anyone asks for it. With
+  `preload="metadata"` the browser pulled two HLS variants — 581KB and 1,596KB,
+  half the bytes of the home page — even for visitors who ask for less motion,
+  for whom the video never plays.
+- Loading priority is no longer spent on four cards that start below the fold
+  and at zero opacity.
+- Lookbook and "image with text" describe the width they really paint: a tile
+  was being served 650 pixels for 1,066, and the largest image of the page 750
+  for 1,085. Column images gained two intermediate sizes, so a 364-pixel tile
+  no longer receives a 900-pixel file.
+
 ## 1.6.1 — 2026-10-18
 
 ### Fixed

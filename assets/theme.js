@@ -1315,7 +1315,13 @@
         group.classList.remove('is-open');
         group.querySelector('.markets-selectors__toggle')?.setAttribute('aria-expanded', 'false');
       });
-      if (focusWasInside) {
+      // Le focus revient aussi quand PERSONNE ne le tient (document.activeElement
+      // vaut <body>) : dans le menu mobile, Echap fermait les trois panneaux sans
+      // rendre le focus au declencheur (mesure 1.6.1 a 390, 360 et 320, alors que
+      // les panneaux de l'en-tete le rendaient bien a 1440). On ne le vole jamais
+      // a un vrai element : seul le cas « plus rien de focalise » est ajoute.
+      const personne = document.activeElement === document.body || !document.activeElement;
+      if (focusWasInside || personne) {
         utils.focusBack(this.lastFocus, '.markets-selectors__toggle');
       }
       this.lastFocus = null;
@@ -2423,29 +2429,44 @@
     init() {
       if (this.done) return;
       this.done = true;
+      // La cible doit etre VISIBLE : un conteneur d'erreurs masque (autre
+      // formulaire de la page) etait pris par querySelector, et focus() sur un
+      // element masque ne fait rien, donc le focus restait sur <body>.
+      const visible = (el) => !!(el && (el.offsetParent !== null || el.getClientRects().length));
+      const candidats = Array.from(
+        document.querySelectorAll('[role="alert"][tabindex="-1"], [role="status"][tabindex="-1"]')
+      );
       const cible =
-        document.querySelector('[role="alert"][tabindex="-1"]') ||
-        document.querySelector('[role="status"][tabindex="-1"][autofocus]');
+        candidats.find((el) => el.hasAttribute('autofocus') && visible(el)) || candidats.find(visible);
       if (!cible) return;
 
-      // Le focus est repose PLUSIEURS FOIS, et c'est necessaire : mesure sur
-      // la demo, un seul appel au chargement laissait document.activeElement
-      // sur <body>, parce que le navigateur donne le focus a la cible de
-      // l'ancre que Shopify ajoute (#contact_form) APRES notre appel. On
-      // repasse donc apres la mise en page et apres l'evenement load, et on
-      // s'arrete des que le focus est en place.
+      // Le focus est repose PLUSIEURS FOIS, et la fenetre de 1.6.1 (rAF, load,
+      // puis 120 ms) etait TROP COURTE : deux audits de la 1.6.1 ont mesure
+      // document.activeElement === BODY a +1,2 s ET a +4,2 s sur les quatre
+      // envois, alors qu'un focus() lance a la main prenait. Quelque chose
+      // reprend donc le focus apres 120 ms (ancre #contact_form de Shopify,
+      // montee des composants). On reessaie par pas de 150 ms pendant 2,1 s au
+      // plus, et on S'ARRETE des que le visiteur agit : on ne lui vole jamais
+      // le focus en cours de frappe ou de clic.
+      let restant = 14;
+      let abandon = false;
+      const stopper = () => { abandon = true; };
+      ['pointerdown', 'keydown', 'wheel', 'touchstart'].forEach((nom) => {
+        document.addEventListener(nom, stopper, { once: true, passive: true });
+      });
       const poser = () => {
+        if (abandon) return true;
         if (cible.contains(document.activeElement)) return true;
         cible.focus({ preventScroll: true });
         return cible.contains(document.activeElement);
       };
-      if (!poser()) {
-        requestAnimationFrame(() => {
-          if (poser()) return;
-          window.addEventListener('load', poser, { once: true });
-          setTimeout(poser, 120);
-        });
-      }
+      const essayer = () => {
+        if (poser() || restant <= 0) return;
+        restant -= 1;
+        setTimeout(essayer, 150);
+      };
+      essayer();
+      window.addEventListener('load', essayer, { once: true });
       cible.scrollIntoView({ block: 'center', behavior: 'auto' });
     },
   };

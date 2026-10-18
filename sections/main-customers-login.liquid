@@ -85,6 +85,15 @@
 </div>
 
 <script>
+  (function () {
+    /* Idempotence par racine (meme regle que countdown:323). Sans garde, chaque
+       rechargement de section empilait un ecouteur sur document : a la 2e
+       execution la bascule « mot de passe oublie » ne faisait plus rien
+       (RecoverPassword.hidden true -> true, mesure 1.6.0 ET 1.6.1 : mon lot de
+       1.6.1 n'avait pas touche ce fichier). */
+    var root = document.getElementById('RecoverPassword');
+    if (!root || root.dataset.loginToggleInit === 'true') return;
+    root.dataset.loginToggleInit = 'true';
   document.addEventListener('click', function (e) {
     if (!e.target.closest('[data-toggle-recover]')) return;
     var recover = document.getElementById('RecoverPassword');
@@ -95,6 +104,7 @@
     login.hidden = showRecover;
     (showRecover ? recover : login).querySelector('input')?.focus();
   });
+  })();
 </script>
 
 {% schema %}

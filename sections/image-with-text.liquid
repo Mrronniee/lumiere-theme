@@ -149,9 +149,17 @@
           srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
             {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
             {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
           src="{{ section.settings.image | image_url: width: 1100 }}"
-          sizes="(min-width: 750px) 50vw, 100vw"
+          {% comment -%}
+            Cette image EST le LCP quand la section ouvre la page, et elle est
+            recadree en object-fit: cover sur un cadre au ratio choisi : le
+            navigateur a besoin de plus large que 50vw. Mesure 1.6.1 a 1350 :
+            750 px charges pour 1 085 necessaires (rapport 0,69), donc une image
+            LCP floue. On annonce 60vw au-dela de 750 px et on ajoute 2000w.
+          {%- endcomment -%}
+          sizes="(min-width: 750px) 60vw, 100vw"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"
           {% comment -%}
@@ -197,7 +205,7 @@
 
       {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
         <a
-          href="{{ section.settings.button_link }}"
+          href="{% render 'lien-localise', url: section.settings.button_link %}"
           class="btn btn--{{ section.settings.button_style }} image-with-text__button"
         >
           {{ section.settings.button_label | escape }}

@@ -162,7 +162,7 @@ ul, ol {
   /* Un <button> ne herite PAS de la couleur du texte : sans cette ligne l'UA
      applique « color: buttontext », donc du noir, et l'icone (stroke
      currentColor) restait noire meme sur l'en-tete transparent. */
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .header__logo {
@@ -306,7 +306,7 @@ ul, ol {
   align-items: center;
   justify-content: center;
   position: relative;
-  color: var(--color-primary);
+  color: var(--color-text);
   transition: color var(--transition-fast);
 }
 
@@ -383,7 +383,7 @@ ul, ol {
   border: none;
   background: none;
   padding: 1rem 0;
-  color: var(--color-primary);
+  color: var(--color-text);
 }
 
 .search-overlay__input::placeholder {
@@ -611,7 +611,9 @@ ul, ol {
 
 .product-card__badge--sale {
   background: var(--color-sale);
-  color: #fff;
+  /* #fff en dur tombait a 2,47:1 (fond teinte) et 3,73:1 (fond sombre) depuis que
+     --color-sale est recalcule par section : l'encre se deduit de l'aplat. */
+  color: var(--color-on-sale, #fff);
 }
 
 .product-card__badge--sold-out {
@@ -626,6 +628,8 @@ ul, ol {
   width: 44px;
   height: 44px;
   background: var(--color-background);
+  /* sans color, l'UA applique buttontext (noir) : 1,14:1 sur une section sombre */
+  color: var(--color-text);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -867,6 +871,8 @@ ul, ol {
   width: 36px;
   height: 36px;
   background: var(--color-background);
+  /* idem : 1,14:1 (sombre) et 1,79:1 (teinte sombre) sans couleur declaree */
+  color: var(--color-text);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -1095,11 +1101,38 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   margin: -0.25rem 0;
 }
 
-/* Anneau en deux tons : le blanc intérieur se voit sur fond sombre, le sombre extérieur sur fond clair */
+/* Anneau en deux tons : le blanc intérieur se voit sur fond sombre, le sombre extérieur sur fond clair.
+   Le ton exterieur suit --color-text, recalcule PAR SECTION : en primaire brute il valait
+   #1a1a1a sur le #141414 d'une section sombre, soit 1,06:1 (et 1,00:1 sur le diaporama). */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-text);
   outline-offset: 2px;
   border-radius: 2px;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* UN COMPOSANT QUI PORTE SON OMBRE EFFACE L'ANNEAU. box-shadow ne se cumule pas
+   d'une regle a l'autre : .btn, .wishlist-btn, .newsletter__button, les commandes
+   de carte et le bouton de pause du heros declarent leur propre box-shadow, qui
+   remplacait le « 0 0 0 2px #fff » de la regle ci-dessus (specificite 0 de
+   :where()). Mesure 1.6.1 : 0 pixel conforme sur les 320 requis pour
+   .wishlist-btn--card, et 9 boutons a 1,00-1,06:1 sur une section sombre. On
+   repose l'anneau blanc ici, avec une specificite que le composant ne depasse pas. */
+:is(
+  .btn,
+  .btn--primary,
+  .btn--secondary,
+  .wishlist-btn,
+  .newsletter__button,
+  .product-card__quick-add,
+  .product-card__quick-view-btn,
+  .hero__video-control,
+  .slideshow__button,
+  .slideshow__arrow,
+  .mini-cart__view-cart,
+  .quick-view__close,
+  .search-overlay__submit
+):focus-visible {
   box-shadow: 0 0 0 2px #fff;
 }
 
@@ -1116,7 +1149,10 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .logo-list__link,
   .map__media-link,
   .multi-column__media-link,
-  .lookbook__item-link
+  .lookbook__item-link,
+  .wishlist-btn--card,
+  .hero__video-control,
+  .slideshow__button
 ):focus-visible {
   position: relative;
 }
@@ -1129,13 +1165,21 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .logo-list__link,
   .map__media-link,
   .multi-column__media-link,
-  .lookbook__item-link
+  .lookbook__item-link,
+  .wishlist-btn--card,
+  .hero__video-control,
+  .slideshow__button
 ):focus-visible::after {
   content: '';
+  border-radius: inherit;
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px var(--color-primary);
+  /* Deux tons FIXES : sur une photo ou une image de video, un ton derive du theme
+     peut tomber sur une zone de la meme couleur (mesure 1.6.1 : le bouton de pause
+     du heros a 2,83:1, la liste d'envies sur photo sombre a 1,22:1). Le blanc et
+     le #1a1a1a garantissent qu'un des deux depasse 3:1 sur n'importe quel pixel. */
+  box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #1a1a1a;
 }
 
 /* Anneau inverse seulement quand le header est reellement sur un media sombre :
@@ -1320,7 +1364,8 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   height: 40px;
   background: var(--color-background);
   border-radius: 50%;
-  color: var(--color-primary);
+  /* la primaire brute valait 1,06:1 (sombre) et 1,48:1 (teinte) : jeton recalcule */
+  color: var(--color-primary-text, var(--color-primary));
   transition: transform var(--transition-fast), color var(--transition-fast);
   box-shadow: var(--shadow-sm);
 }
@@ -1969,7 +2014,7 @@ textarea {
   font-family: var(--font-body);
   font-size: 0.8125rem;
   text-decoration: underline;
-  color: var(--color-primary);
+  color: var(--color-text);
   cursor: pointer;
 }
 

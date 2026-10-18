@@ -392,6 +392,7 @@
                 src="{{ media.preview_image | image_url: width: 160 }}"
                 alt=""
                 loading="lazy"
+                {% render 'focal', image: media.preview_image %}
                 width="80"
                 height="100"
               >
@@ -428,6 +429,7 @@
                   {% if forloop.first %}fetchpriority="high"{% endif %}
                   width="{{ media.preview_image.width }}"
                   height="{{ media.preview_image.height }}"
+                  {% render 'focal', image: media.preview_image %}
                   data-zoom-src="{{ media | image_url: width: 2000 }}"
                 >
             {%- endcase -%}

@@ -209,15 +209,21 @@
         sections/video-banner.liquid : prefers-reduced-motion ne se lit pas en
         Liquid, et la vidéo tournait en boucle malgré la préférence (mesuré :
         currentTime 2,6 → 5,1 s). Les dimensions évitent le décalage que
-        Lighthouse nomme « Media element lacking an explicit size », et
-        preload="metadata" évite de tirer 2 135 Kio de HLS avant de savoir si
-        la vidéo doit jouer.
+        Lighthouse nomme « Media element lacking an explicit size ».
+
+        preload="none" et non "metadata" : mesure de la 1.6.1, « metadata » tirait
+        quand meme 2 127,9 Ko de HLS en 5 requetes (581 484 o en SD ET 1 596 308 o
+        en HD, deux variantes au lieu d'une), soit la moitie des 4 294 Ko de
+        l'accueil — y compris sous prefers-reduced-motion, ou la video reste en
+        pause (currentTime 0 apres 6 s) et ou ces octets ne servent a RIEN. Le
+        poster suffit a peindre le premier ecran ; le play() de theme.js
+        (HeroVideo) declenche lui-meme le chargement quand la lecture est permise.
       {%- endcomment -%}
       <video
         loop
         muted
         playsinline
-        preload="metadata"
+        preload="none"
         width="{{ section.settings.video.sources.first.width | default: 1920 }}"
         height="{{ section.settings.video.sources.first.height | default: 1080 }}"
         poster="{{ section.settings.image | image_url: width: 1920 }}"
@@ -319,13 +325,13 @@
     {%- if section.settings.button_link != blank or section.settings.button_link_2 != blank -%}
       <div class="hero__buttons">
         {%- if section.settings.button_link != blank -%}
-          <a href="{{ section.settings.button_link }}" class="hero__button hero__button--primary">
+          <a href="{% render 'lien-localise', url: section.settings.button_link %}" class="hero__button hero__button--primary">
             {{ hero_button_label | escape }}
             {% render 'icon', icon: 'arrow-right' %}
           </a>
         {%- endif -%}
         {%- if section.settings.button_link_2 != blank -%}
-          <a href="{{ section.settings.button_link_2 }}" class="hero__button hero__button--secondary">
+          <a href="{% render 'lien-localise', url: section.settings.button_link_2 %}" class="hero__button hero__button--secondary">
             {{ hero_button_label_2 | escape }}
           </a>
         {%- endif -%}

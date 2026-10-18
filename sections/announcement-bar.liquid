@@ -12,7 +12,7 @@
   <div class="announcement-bar" role="region" aria-label="{{ 'sections.header.announcement' | t }}">
     <div class="announcement-bar__content">
       {%- if section.settings.link != blank -%}
-        <a href="{{ section.settings.link }}" class="announcement-bar__link">
+        <a href="{% render 'lien-localise', url: section.settings.link %}" class="announcement-bar__link">
           <span class="announcement-bar__message">{{ section.settings.text | escape }}</span>
         </a>
       {%- else -%}

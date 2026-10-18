@@ -59,7 +59,7 @@
               {%- capture price_from -%}{% render 'money', amount: from_amount %}{%- endcapture -%}
               {%- capture price_to -%}{% render 'money', amount: to_amount %}{%- endcapture -%}
               <a href="{{ filter.url_to_remove }}" class="collection-filters__active-tag">
-                {{ filter.label }}: {{ price_from }} &ndash; {{ price_to }}
+                {{ filter.label }}{{ 'general.punctuation.colon' | t }}{{ price_from }} &ndash; {{ price_to }}
                 {% render 'icon', icon: 'close' %}
               </a>
             {%- endif -%}

@@ -353,7 +353,7 @@
       {%- endif -%}
 
       {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
-        <a href="{{ section.settings.button_link }}" class="video-banner__button">
+        <a href="{% render 'lien-localise', url: section.settings.button_link %}" class="video-banner__button">
           {{ section.settings.button_label | escape }}
           {% render 'icon', icon: 'arrow-right' %}
         </a>
@@ -364,15 +364,17 @@
 
 <script>
   (function () {
-    /* Idempotence : ce script est reexecute apres un rechargement de section
-       dans l'editeur (assets/theme.js, rejoueScripts). Sans garde, chaque
-       rechargement empilait un ecouteur sur document — mesure : a la 2e
-       execution le panneau ne basculait plus. */
-    if (document.documentElement.dataset.videoBannerInit === 'true') return;
-    document.documentElement.dataset.videoBannerInit = 'true';
-
     var root = document.getElementById('VideoBanner-' + {{ section.id | json }});
     if (!root) return;
+
+    /* Idempotence PAR SECTION, comme countdown:323, faq:219, slideshow:589 et
+       tabs:359. En 1.6.1 le drapeau etait pose sur document.documentElement,
+       donc global : apres un rechargement de section le script sortait tout de
+       suite et le bouton Pause restait inerte (libelle et paused inchanges,
+       mesure 1.6.1), et une 2e section video-banner — le preset n'a pas de
+       limit — ne s'initialisait jamais. Une racine neuve n'a pas le drapeau. */
+    if (root.dataset.videoBannerInit === 'true') return;
+    root.dataset.videoBannerInit = 'true';
 
     var prefersReducedMotion =
       window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;

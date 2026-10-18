@@ -9,6 +9,16 @@
   assign bg_color = section.settings.background_color
   assign text_color = section.settings.text_color
   assign active_color = section.settings.active_color
+  comment
+    L'encre de l'onglet ACTIF est un reglage du marchand : posee telle quelle,
+    elle valait 2,03:1 (fond d'accent) et 2,58:1 (fond sombre teinte) en 1.6.1.
+    On la releve sur le fond de la section comme les autres encres du theme, en
+    gardant sa teinte ; le filet sous l'onglet garde la couleur choisie.
+  endcomment
+  capture active_text
+    render 'contrast-color', base: active_color, bg: bg_color
+  endcapture
+  assign active_text = active_text | strip
   assign border_color = text_color | color_mix: bg_color, 18
   assign media_color = text_color | color_mix: bg_color, 6
 
@@ -107,7 +117,7 @@
   }
 
   .tabs__tab[aria-selected='true'] {
-    color: {{ active_color }};
+    color: {{ active_text }};
     font-weight: 500;
   }
 
@@ -116,7 +126,7 @@
   }
 
   .tabs__tab:focus-visible {
-    outline: 2px solid {{ active_color }};
+    outline: 2px solid {{ active_text }};
     outline-offset: 2px;
   }
 

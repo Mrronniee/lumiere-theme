@@ -1,0 +1,28 @@
+{%- comment -%}
+  Un lien de REGLAGE rendu dans la langue servie.
+
+  Un lien choisi dans l'editeur est rendu localise par Shopify. Un chemin tape a
+  la main ou ecrit dans un gabarit livre (« /collections/all ») ne l'est pas :
+  mesure sur la 1.6.1, sur /en de la demo, 7 appels a l'action de l'accueil et 21
+  de la page des sections renvoyaient l'acheteur anglophone sur la boutique
+  FRANCAISE (clic reel : Shopify.locale « fr », h1 « Produits »). Les deux
+  gabarits en cause partent dans le zip vendu, ce n'est pas qu'un reglage de demo.
+
+  On prefixe donc par routes.root_url tout chemin absolu qui ne le porte pas
+  deja. Les URL completes (https://…), les ancres et les liens mailto/tel sont
+  rendus tels quels.
+
+  Parametre : url (le reglage).
+{%- endcomment -%}
+{%- liquid
+  assign lien = url | default: ''
+  assign racine = routes.root_url
+  assign premier = lien | slice: 0, 1
+  assign taille = racine | size
+  assign tete = lien | slice: 0, taille
+  assign sortie = lien
+  if lien != blank and racine != '/' and premier == '/' and tete != racine
+    assign sortie = racine | append: lien
+  endif
+-%}
+{{- sortie | escape -}}

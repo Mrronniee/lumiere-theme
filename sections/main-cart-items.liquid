@@ -308,7 +308,7 @@
                 {%- for property in item.properties -%}
                   {%- assign property_first_char = property.first | slice: 0 -%}
                   {%- unless property.last == blank or property_first_char == '_' -%}
-                    <li>{{ property.first }}: {{ property.last }}</li>
+                    <li>{{ property.first }}{{ 'general.punctuation.colon' | t }}{{ property.last }}</li>
                   {%- endunless -%}
                 {%- endfor -%}
               {%- endcapture -%}

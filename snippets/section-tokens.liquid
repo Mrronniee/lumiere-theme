@@ -66,6 +66,31 @@
     render 'contrast-color', base: '#c0392b', bg: bg
   endcapture
 
+  comment
+    Encre a poser SUR l'aplat de solde (pastille « On sale »). Le #fff en dur de
+    la pastille tombait a 2,47:1 (fond teinte) et 3,73:1 (fond sombre) des que
+    --color-sale est recalcule sur le fond de la section. On prend, du blanc ou
+    du texte de la section, celui qui contraste le plus avec l'aplat.
+  endcomment
+  assign sale_solid = sale_text | strip
+  assign white_on_sale = sale_solid | color_contrast: '#ffffff'
+  assign text_on_sale = sale_solid | color_contrast: text
+  assign on_sale = '#ffffff'
+  if text_on_sale > white_on_sale
+    assign on_sale = text
+  endif
+
+  comment
+    Encre discrete posee sur une SURFACE INTERNE (pied du tiroir panier,
+    recapitulatif du panier) et non sur le fond de la section :
+    --color-text-light est derive pour 4,6:1 sur le FOND, et tombait a 4,37:1
+    sur la surface #f3f2f0 du pied de tiroir (mesure 1.6.1, 13 px).
+  endcomment
+  assign surface_6 = text | color_mix: bg, 6
+  capture text_light_surface
+    render 'contrast-color', base: text, bg: surface_6, target: 4.6
+  endcapture
+
   assign white_on_accent = c_accent | color_contrast: '#ffffff'
   assign text_on_accent = c_accent | color_contrast: text
   assign on_accent = '#ffffff'
@@ -92,6 +117,8 @@
     --color-primary-text: {{ primary_text | strip }};
     --color-accent-dark: {{ accent_dark_text | strip }};
     --color-sale: {{ sale_text | strip }};
+    --color-on-sale: {{ on_sale }};
+    --color-text-light-surface: {{ text_light_surface | strip }};
     --color-surface-3: {{ text | color_mix: bg, 3 }};
     --color-surface-4: {{ text | color_mix: bg, 4 }};
     --color-surface-6: {{ text | color_mix: bg, 6 }};

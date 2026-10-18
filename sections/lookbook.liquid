@@ -217,9 +217,18 @@
               {%- if block.settings.image.width >= 650 -%}{{ block.settings.image | image_url: width: 650 }} 650w,{%- endif -%}
               {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
               {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-              {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
+              {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+              {%- if block.settings.image.width >= 2000 -%}{{ block.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
             src="{{ block.settings.image | image_url: width: 1100 }}"
-            sizes="(min-width: 1200px) calc(50vw - 3rem), calc(100vw - 3rem)"
+            {% comment -%}
+              La tuile est recadree en object-fit: cover sur un cadre portrait : sa
+              largeur PEINTE n'est pas sa largeur CSS. Mesure 1.6.1 a 1350 :
+              sizes annoncait 627 px pour des tuiles de 418 px (650w servi,
+              206 KiB de trop) et une tuile demandait 1 066 px pour 650 charges
+              (rapport 0,61, image floue). On decrit la tuile et on laisse un
+              palier de 2000w pour les ecrans denses.
+            {%- endcomment -%}
+            sizes="(min-width: 1200px) calc(33vw - 3rem), (min-width: 750px) calc(50vw - 3rem), calc(100vw - 3rem)"
             alt="{{ block.settings.image.alt | escape }}"
             class="lookbook__item-image"
             loading="lazy"
@@ -248,7 +257,7 @@
               <p class="lookbook__item-subtitle">{{ block.settings.subtitle | escape }}</p>
             {%- endif -%}
             {%- if block.settings.link != blank -%}
-              <a href="{{ block.settings.link }}" class="lookbook__item-link">
+              <a href="{% render 'lien-localise', url: block.settings.link %}" class="lookbook__item-link">
                 {%- if block.settings.link_label != blank -%}
                   {{- block.settings.link_label | escape -}}
                 {%- else -%}

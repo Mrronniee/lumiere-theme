@@ -150,8 +150,15 @@
               defilement (opacite 0) — un element a opacite 0 n'est de toute
               facon jamais candidat LCP, la priorite etait perdue.
             endcomment
+            comment
+              1.6.2 : « section.index <= 2 » laissait encore 4 cartes en eager alors que
+              la section est 2e du gabarit d'accueil et commence a y=819 pour une
+              fenetre de 823 (mesure 1.6.1 : 0 image au premier ecran a 1350, 4 eager
+              hors ecran). Seule une section REELLEMENT premiere peut etre peinte
+              dans le premier ecran.
+            endcomment
             assign card_lazy = true
-            if section.index <= 2 and forloop.index <= 4
+            if section.index == 1 and forloop.index <= 4
               assign card_lazy = false
             endif
             assign card_priority = false

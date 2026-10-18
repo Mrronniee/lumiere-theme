@@ -521,7 +521,7 @@
                   <div class="slideshow__actions">
                     <a
                       class="slideshow__button"
-                      href="{% if block.settings.button_link != blank %}{{ block.settings.button_link }}{% else %}#{% endif %}"
+                      href="{% if block.settings.button_link != blank %}{% render 'lien-localise', url: block.settings.button_link %}{% else %}#{% endif %}"
                     >
                       <span>{{ block.settings.button_label | escape }}</span>
                       {% render 'icon', icon: 'arrow-right' %}

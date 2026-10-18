@@ -73,6 +73,17 @@
   .comparison__scroller {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    /* UN CONTENEUR DEFILANT NE DOIT JAMAIS IMPOSER LA LARGEUR DE SON CONTENU.
+       Mesure 1.6.1 sur /pages/lumiere-all-sections : documentElement.scrollWidth
+       665 px pour un ecran de 390, et scrollX 275 apres scrollTo(300,0) a 390,
+       300 a 320 et 300 au zoom 400 % — la page defilait vraiment de cote
+       (WCAG 1.4.10), malgre html { overflow-x: clip }. Cause isolee en masquant
+       les candidats un par un : ce conteneur seul fait retomber scrollWidth a
+       390 et scrollX a 0 ; le tableau qu'il porte est force a min-width: 720px
+       sous 989 px (plus bas). min-width: 0 neutralise le min-width implicite
+       d'un element flex ou grid, max-width: 100% le borne dans tous les cas. */
+    min-width: 0;
+    max-width: 100%;
   }
 
 
@@ -129,7 +140,8 @@
     margin-top: 0.25rem;
     font-size: 0.8125rem;
     line-height: 1.5;
-    opacity: 0.75;
+    /* opacity 0.75 donnait 4,18:1 en variante accent : couleur deduite */
+    color: var(--color-text-light);
   }
 
   .comparison__col-price {
@@ -186,8 +198,10 @@
   }
 
   .comparison__mark--no {
-    color: {{ txt_color }};
-    opacity: 0.35;
+    /* SEUL indicateur visuel de « non inclus » (le texte qui le double est
+       visually-hidden) : a opacity 0.35 l'encre composee valait 2,20:1 pour un
+       seuil de 3:1. On garde la nuance discrete par un jeton derive. */
+    color: var(--color-text-light);
   }
 
   .comparison__detail {
@@ -195,7 +209,8 @@
     margin-top: 0.25rem;
     font-size: 0.8125rem;
     line-height: 1.4;
-    opacity: 0.8;
+    /* opacity 0.8 donnait 4,34:1 en variante accent */
+    color: var(--color-text-light);
   }
 
   .comparison__foot-cell {
@@ -405,7 +420,7 @@
                             assign button_class = 'btn btn--primary comparison__button'
                           endif
                         -%}
-                        <a class="{{ button_class }}" href="{{ block.settings.button_link }}">
+                        <a class="{{ button_class }}" href="{% render 'lien-localise', url: block.settings.button_link %}">
                           {{- block.settings.button_label | escape -}}
                           {%- if block.settings.title != blank -%}
                             <span class="visually-hidden"> {{ block.settings.title | escape }}</span>

@@ -105,6 +105,23 @@
   endif
 
   comment
+    Encre a poser SUR l'aplat de solde, et encre discrete d'une SURFACE interne
+    (pied du tiroir panier) : les memes jetons que section-tokens, pour que
+    :root les porte aussi.
+  endcomment
+  assign white_on_sale = '#c0392b' | color_contrast: '#ffffff'
+  assign text_on_sale = '#c0392b' | color_contrast: c_text
+  assign c_on_sale = '#ffffff'
+  if text_on_sale > white_on_sale
+    assign c_on_sale = c_text
+  endif
+  assign surface_6 = c_text | color_mix: c_bg, 6
+  capture c_text_light_surface
+    render 'contrast-color', base: c_text, bg: surface_6, target: 4.6
+  endcapture
+  assign c_text_light_surface = c_text_light_surface | strip
+
+  comment
     Bordure d'un CHAMP ou d'un controle : elle porte l'information « ici on
     saisit », donc 3:1 (WCAG 1.4.11). Le melange a 12 % de --color-border,
     qui convient a un filet decoratif, donnait 1,28:1 sur le fond du theme
@@ -139,6 +156,8 @@
     --color-border-strong: {{ c_border_strong }};
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: #c0392b;
+    --color-on-sale: {{ c_on_sale }};
+    --color-text-light-surface: {{ c_text_light_surface }};
     --color-on-primary: {{ c_on_primary }};
     --color-primary-text: {{ c_primary_text }};
     /* Surfaces internes (lignes de panier, barres de progression, puces) :
