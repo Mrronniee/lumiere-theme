@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.6.1 — 2026-10-17
+## 1.6.1 — 2026-10-18
 
 ### Fixed
 - Three faults introduced by 1.6.0 are gone. Slideshow arrows and dots had
@@ -56,6 +56,12 @@
   the one-pixel update button is out of the tab order.
 - The page can no longer be dragged sideways on the demo page: the document
   clipped nothing, even though the body did.
+- The slideshow no longer asks for a section setting it does not have. Its
+  text colour is set per slide, so the colour tokens of the section were being
+  computed from `section.settings.text_color`, which is always empty; they are
+  derived from the background instead, which is what the page already showed.
+- Three French editor labels had lost their accent: "panneau latéral",
+  "Tiroir latéral" and "Onglet dépliant".
 
 ### Performance
 - The image of "image with text" loads immediately when its section is first

@@ -231,9 +231,9 @@
       "settings": {
         "cart_type": {
           "label": "Type de panier",
-          "info": "Le tiroir ouvre un panneau lateral sans quitter la page",
+          "info": "Le tiroir ouvre un panneau latéral sans quitter la page",
           "options__1": {
-            "label": "Tiroir lateral"
+            "label": "Tiroir latéral"
           },
           "options__2": {
             "label": "Page dédiée"
@@ -932,7 +932,7 @@
       },
       "blocks": {
         "collapsible_tab": {
-          "name": "Onglet depliant",
+          "name": "Onglet dépliant",
           "settings": {
             "heading": {
               "label": "Titre"

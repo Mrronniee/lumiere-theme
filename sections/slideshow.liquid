@@ -11,7 +11,13 @@
   .slideshow {
     position: relative;
     background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    {%- comment -%}
+      Pas de « text: » ici : le diaporama n'a pas de couleur de texte de SECTION, elle
+      se regle par BLOC (block.settings.text_color). Passer section.settings.text_color
+      ne donnait rien (nil) et faisait croire a un reglage inexistant ; le snippet deduit
+      l'encre du fond, ce qui est deja ce qui se rendait.
+    {%- endcomment -%}
+    {% render 'section-tokens', bg: section.settings.background_color %}
   }
 
   .slideshow__viewport {
