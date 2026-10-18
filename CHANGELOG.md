@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.6.3 — 2026-10-18
+
+### Fixed
+- The focus ring is back on the controls that sit on a photo or a video. In
+  1.6.2 its outer tone followed the ink the section computes, which is white on
+  a section whose text is light — so both tones of the ring were white, and on
+  the lookbook tiles it measured between 1.23:1 and 1.81:1. Over an image no
+  colour derived from your palette can promise anything, so those controls use
+  a fixed dark-and-white pair again; inside a section, where the ring is
+  measured against a known background, it still follows the section's ink.
+- The ring also no longer fades in. `box-shadow` was listed among the
+  transitions of nine components, so the ring took up to 0.3 second to appear —
+  long enough to be missed by someone tabbing quickly, and it measured as absent
+  on the quick-view and quick-add buttons of product cards.
+- The small round controls over a video or a photo — the hero's pause button,
+  the slideshow arrows and dots, the wishlist heart and the card buttons — take
+  an opaque plate when focused, so their icon no longer depends on the frame
+  behind them (the pause button measured 1:1).
+- The highlighted column of the comparison table had invisible text: "Our most
+  popular offer" measured 1:1, dark ink on the dark surface of that column,
+  because 1.6.2 derived the muted ink against the section background instead.
+  Its title, price, subtitle and details are now derived against the column's
+  own surface.
+
 ## 1.6.2 — 2026-10-18
 
 ### Fixed

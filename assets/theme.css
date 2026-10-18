@@ -243,7 +243,7 @@ ul, ol {
   transform: translateX(-50%) translateY(10px);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   background: var(--color-background);
   box-shadow: var(--shadow-lg);
   min-width: 220px;
@@ -636,7 +636,7 @@ ul, ol {
   justify-content: center;
   opacity: 0;
   transform: translateY(10px);
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   z-index: 2;
   box-shadow: var(--shadow-md);
 }
@@ -834,7 +834,7 @@ ul, ol {
   top: 1rem;
   right: 1rem;
   z-index: 3;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 /* Masqué jusqu'au survol seulement avec une souris : voir le bloc (hover: hover) plus bas. */
 
@@ -880,7 +880,7 @@ ul, ol {
   z-index: 3;
   opacity: 0;
   transform: translateY(-10px);
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   box-shadow: var(--shadow-sm);
 }
 
@@ -1136,6 +1136,51 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   box-shadow: 0 0 0 2px #fff;
 }
 
+/* AU-DESSUS D'UN MEDIA, LE TON EXTERIEUR RESTE FIXE ET SOMBRE.
+   --color-text est juste quand l'anneau est mesure contre le FOND de la section (c'est
+   ce qui a corrige les 9 boutons a 1,06:1 en 1.6.2), mais sur une section a texte clair
+   il vaut blanc : avec l'ombre blanche, l'anneau devenait blanc sur blanc et tombait a
+   1,23-1,81:1 sur les photos du lookbook (mesure 1.6.2, accueil 1440 et 390). Sur une
+   image, aucune couleur derivee du theme ne garantit quoi que ce soit : on reprend la
+   paire fixe sombre + blanc, et l'anneau en deux tons pose en ::after (plus bas) fait
+   le reste. */
+:is(
+  .featured-collections__card,
+  .gallery__link,
+  .product-card__media-link,
+  .blog-card__link,
+  .logo-list__link,
+  .map__media-link,
+  .multi-column__media-link,
+  .lookbook__item-link,
+  .wishlist-btn--card,
+  .hero__video-control,
+  .hero__button,
+  .slideshow__button,
+  .slideshow__arrow,
+  .slideshow__dot,
+  .product-card__quick-view-btn,
+  .product-card__quick-add
+):focus-visible {
+  outline-color: #1a1a1a;
+  box-shadow: 0 0 0 2px #fff;
+}
+
+/* Et les petits boutons ronds poses sur un media prennent une PLAQUE OPAQUE au focus :
+   leur fond translucide laissait la video ou la photo decider du contraste de l'icone
+   (bouton de pause du heros mesure a 1,00:1 en 1.6.2). */
+:is(
+  .hero__video-control,
+  .slideshow__arrow,
+  .slideshow__dot,
+  .wishlist-btn--card,
+  .product-card__quick-view-btn,
+  .product-card__quick-add
+):focus-visible {
+  background-color: var(--color-background);
+  color: var(--color-text);
+}
+
 /* Lien dont le contenu est une image : l'anneau exterieur tombe sur le fond de
    la section, ou se fait rogner, et il ne contrastait plus qu'a 2,1-2,9:1
    (mesure sur les pixels rendus). On pose en plus, PAR-DESSUS l'image, un
@@ -1207,7 +1252,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   border: var(--btn-border, 1px) solid transparent;
   border-radius: var(--btn-radius, 0);
   cursor: pointer;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 
 .btn--primary {
@@ -1304,7 +1349,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   font-family: var(--font-body);
   font-size: 0.8125rem;
   cursor: pointer;
-  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   background: var(--color-background);
 }
 
@@ -1388,7 +1433,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .wishlist-btn--card {
     opacity: 0;
     transform: translateY(-10px);
-    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+    transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   }
   .product-card:hover .wishlist-btn--card,
   .product-card:focus-within .wishlist-btn--card {
@@ -1455,7 +1500,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   z-index: calc(var(--z-drawer) - 1);
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base), box-shadow var(--transition-base);
+  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
 }
 
 .mobile-menu__overlay.is-visible { opacity: 1; visibility: visible; }
@@ -1717,7 +1762,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   font-family: var(--font-body);
   font-size: 0.875rem;
   border: 1px solid var(--color-border);
-  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
 .pagination__item--current { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
 .pagination__item--gap { border-color: transparent; }

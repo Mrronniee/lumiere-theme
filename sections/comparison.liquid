@@ -14,6 +14,21 @@
   assign head_surface = txt_color | color_mix: bg_color, 5
   assign row_surface = txt_color | color_mix: bg_color, 3
   assign hl_surface = hl_color | color_mix: bg_color, 10
+  comment
+    La colonne mise en avant a SA surface (hl_surface), qui peut etre bien plus
+    sombre que le fond de la section : --color-text-light, derive sur le fond,
+    y tombait a 1:1 (mesure 1.6.2 sur la demo : « Our most popular offer »
+    #1a1a1a sur #1a1a1a). On derive donc les encres de cette colonne sur sa
+    propre surface, comme le pied du tiroir panier.
+  endcomment
+  capture hl_text
+    render 'contrast-color', base: txt_color, bg: hl_surface
+  endcapture
+  assign hl_text = hl_text | strip
+  capture hl_muted
+    render 'contrast-color', base: txt_color, bg: hl_surface, target: 4.6
+  endcapture
+  assign hl_muted = hl_muted | strip
   assign hl_border = hl_color | color_mix: bg_color, 55
 
   assign contrast_light = hl_color | color_contrast: '#ffffff'
@@ -142,6 +157,17 @@
     line-height: 1.5;
     /* opacity 0.75 donnait 4,18:1 en variante accent : couleur deduite */
     color: var(--color-text-light);
+  }
+
+  .comparison__col--highlight .comparison__col-subtitle,
+  .comparison__col--highlight .comparison__detail,
+  .comparison__cell--highlight .comparison__detail {
+    color: {{ hl_muted }};
+  }
+
+  .comparison__col--highlight .comparison__col-title,
+  .comparison__col--highlight .comparison__col-price {
+    color: {{ hl_text }};
   }
 
   .comparison__col-price {
