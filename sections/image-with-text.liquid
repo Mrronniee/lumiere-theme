@@ -154,7 +154,7 @@
           sizes="(min-width: 750px) 50vw, 100vw"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"
-          {%- comment -%}
+          {% comment -%}
             Quand la section ouvre la page, son image est le LCP : en
             loading="lazy" elle attendait 4 025 ms et le LCP montait a
             5 791 ms (audit lcp-lazy-loaded a 0). Au-dela de la deuxieme
@@ -172,7 +172,7 @@
             {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
           {%- else -%}
             loading="lazy"
-          {%- endif -%}
+          {%- endif %}
           {% render 'focal', image: section.settings.image %}
           width="{{ section.settings.image.width }}"
           height="{{ section.settings.image.height }}"

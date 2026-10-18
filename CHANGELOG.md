@@ -56,6 +56,13 @@
   the one-pixel update button is out of the tab order.
 - The page can no longer be dragged sideways on the demo page: the document
   clipped nothing, even though the body did.
+- The lookbook showed no images at all. A Liquid comment written inside the
+  `<img>` tag trimmed the whitespace on both sides, so the tag was rendered as
+  `<imgsrcset="…"` — an element no browser knows. Nine other places glued one
+  attribute to the next in the same way (blog cards, collection list,
+  collection banner, image with text, slideshow, video banner), and in four of
+  them the focal point landed as `loading="eager"style="object-position:…"`.
+  Comments and conditional attributes now keep the space that separates them.
 - The slideshow no longer asks for a section setting it does not have. Its
   text colour is set per slide, so the colour tokens of the section were being
   computed from `section.settings.text_color`, which is always empty; they are

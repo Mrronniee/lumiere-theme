@@ -205,7 +205,7 @@
       <div class="lookbook__item" {{ block.shopify_attributes }}>
         {%- if block.settings.image != blank -%}
           <img
-            {%- comment -%}
+            {% comment -%}
               Paliers intermédiaires : entre 375 et 750 il n'y avait rien, et
               une tuile de 364 px à densité 1,75 (637 px nécessaires) recevait
               le fichier 750w, soit 28 % de pixels en trop (103 Kio sur
