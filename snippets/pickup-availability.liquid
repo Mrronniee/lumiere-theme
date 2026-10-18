@@ -71,4 +71,11 @@
       {%- endfor -%}
     </ul>
   </div>
+{%- else -%}
+  {%- comment -%}
+    Marqueur de reponse vide : sans lui, le rafraichissement par variante ne
+    pouvait pas distinguer « pas de retrait pour cette variante » d'une requete
+    qui n'a rien rendu, et il effacait le retrait deja affiche.
+  {%- endcomment -%}
+  <span data-pickup-empty hidden></span>
 {%- endif -%}

@@ -131,6 +131,12 @@
     aria-atomic="false"
   ></div>
 
+  {%- comment -%}
+    Bandeau de marché : hors du flux, en bas de la fenêtre, et rendu en fin de
+    document pour que son ordre de tabulation suive son ordre visuel.
+  {%- endcomment -%}
+  {% render 'market-banner' %}
+
   <ul hidden>
     <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
   </ul>

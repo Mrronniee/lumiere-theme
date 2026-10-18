@@ -176,7 +176,21 @@
         {%- for block in section.blocks -%}
           {%- assign img = block.settings.image -%}
           <li class="gallery__item" {{ block.shopify_attributes }}>
-            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="gallery__link">{%- endif -%}
+            {%- comment -%}
+              Le lien doit avoir un nom accessible même quand le bloc n'a ni
+              image (l'illustration de remplacement est aria-hidden) ni
+              légende : sans ce repli, le preset livré rendait 6 liens sans nom.
+            {%- endcomment -%}
+            {%- liquid
+              assign lien_nom = block.settings.caption | escape
+              if lien_nom == blank
+                assign lien_nom = img.alt | escape
+              endif
+              if lien_nom == blank
+                assign lien_nom = 'sections.gallery.item_label' | t: index: forloop.index
+              endif
+            -%}
+            {%- if block.settings.link != blank -%}<a href="{{ block.settings.link }}" class="gallery__link" aria-label="{{ lien_nom }}">{%- endif -%}
               <span class="gallery__media{% if img == blank %} gallery__media--placeholder{% endif %}">
                 {%- if img != blank -%}
                   <img

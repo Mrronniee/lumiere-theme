@@ -153,6 +153,30 @@
      * mobile. Un role="dialog" ecrit en dur dans le balisage mentirait donc la
      * moitie du temps — il est pose a l'ouverture et retire a la fermeture.
      */
+    /**
+     * Le message d'erreur le plus precis que renvoie l'API panier.
+     *
+     * Les points d'entree ne repondent pas de la meme facon : /cart/add.js et
+     * /cart/change.js donnent « message » et « description », alors que
+     * /cart/change (sans .js) ne donne que « errors », chaine ou objet
+     * { champ: [messages] }. Sans lire « errors », le theme affichait son
+     * message generique a la place de celui de Shopify (mesure : depassement
+     * de stock).
+     */
+    messageErreurPanier(data, repli) {
+      const defaut = repli || strings.cartError;
+      if (!data) return defaut;
+      if (typeof data.description === 'string' && data.description) return data.description;
+      if (typeof data.message === 'string' && data.message && data.message !== 'Cart Error') return data.message;
+      const e = data.errors;
+      if (typeof e === 'string' && e) return e;
+      if (e && typeof e === 'object') {
+        const premier = Object.values(e).flat().find((m) => typeof m === 'string' && m);
+        if (premier) return premier;
+      }
+      return defaut;
+    },
+
     setDialog(container, on) {
       if (!container) return;
       if (on) {
@@ -883,7 +907,7 @@
         const data = await response.json();
 
         if (!response.ok) {
-          Notify.show(data.description || strings.cartAddError, 'error');
+          Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
 
@@ -910,7 +934,7 @@
         });
         const data = await response.json();
         if (!response.ok) {
-          Notify.show(data.description || strings.cartAddError, 'error');
+          Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
         await this.refresh({ sections: data.sections });
@@ -944,10 +968,13 @@
         const data = await response.json();
 
         if (!response.ok) {
-          // Shopify met le detail dans « description » (« You can only add 3
-          // of this item… ») et un libelle court dans « message » : on prend le
-          // plus precis des deux avant de retomber sur le message du theme.
-          Notify.show(data.description || data.message || strings.cartError, 'error');
+          // Selon le point d'entree, Shopify met le detail dans
+          // « description », dans « message », ou — pour /cart/change SANS
+          // « .js » — dans « errors », qui peut etre une chaine ou un objet
+          // { champ: [messages] }. Mesure : « Only 3 items were added to your
+          // cart due to availability. » n'arrivait que par « errors », et le
+          // client lisait le message generique du theme.
+          Notify.show(utils.messageErreurPanier(data), 'error');
           // La ligne affichait encore la quantite refusee (9 saisi, 3 au
           // panier) : on re-rend le panier pour revenir a l'etat reel.
           await this.refresh();
@@ -1173,7 +1200,7 @@
         });
         const data = await response.json();
         if (!response.ok) {
-          Notify.show(data.description || strings.cartAddError, 'error');
+          Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
         await Cart.refresh({ sections: data.sections });
@@ -1254,6 +1281,7 @@
 
         if (e.target.closest('[data-market-banner-close]')) {
           document.getElementById('MarketBanner')?.classList.remove('is-visible');
+          this.reserverPlace(null);
           try {
             sessionStorage.setItem('lumiere_market_banner_dismissed', '1');
           } catch (err) {
@@ -1342,6 +1370,39 @@
       return fallback;
     },
 
+    /**
+     * Reserve la place du bandeau de marche.
+     *
+     * Le bandeau est hors du flux (sinon son apparition decalait toute la page
+     * de 77 px : CLS 0,125 a 360 px). Hors du flux, il RECOUVRAIT les 54 a
+     * 75 derniers pixels du document — mesure : la ligne de copyright finissait
+     * 42,6 px sous lui. On rend donc sa hauteur au document par le bas, et on
+     * la retire a la fermeture. Pose APRES la premiere peinture et tout en bas
+     * du document, ce remplissage ne decale rien au-dessus : le CLS reste
+     * inchange.
+     */
+    reserverPlace(banner) {
+      const racine = document.documentElement;
+      if (!banner) {
+        document.body.style.paddingBottom = '';
+        racine.style.scrollPaddingBottom = '';
+        return;
+      }
+      const poser = () => {
+        const h = banner.offsetHeight;
+        if (!h) return;
+        document.body.style.paddingBottom = `${h}px`;
+        racine.style.scrollPaddingBottom = `${h}px`;
+      };
+      poser();
+      if (!this.hauteurSuivie && 'ResizeObserver' in window) {
+        this.hauteurSuivie = true;
+        new ResizeObserver(() => {
+          if (banner.classList.contains('is-visible')) poser();
+        }).observe(banner);
+      }
+    },
+
     async suggestMarket() {
       const banner = document.getElementById('MarketBanner');
       if (!banner) return;
@@ -1379,6 +1440,7 @@
         text.textContent = utils.interpolate(strings.marketBanner, 'country', countryName);
         switchBtn.dataset.detectedCountry = detected;
         banner.classList.add('is-visible');
+        this.reserverPlace(banner);
       } catch (e) {
         /* suggestion indisponible : on n'affiche rien */
       }
@@ -1585,13 +1647,27 @@
       const conteneur = document.querySelector('[data-pickup-availability]');
       if (!conteneur || !variantId) return;
       try {
-        const base = routes.root_url && routes.root_url !== '/' ? routes.root_url : '';
-        const reponse = await fetch(`${base}/variants/${variantId}/?section_id=pickup-availability`);
+        // La section se demande sur l'URL DU PRODUIT avec ?variant= : sur
+        // /variants/<id>/?section_id=pickup-availability, mesure faite,
+        // store_availabilities revient vide (107 octets) alors que la meme
+        // section sur l'URL produit en rend 850 avec le retrait.
+        const url = new URL(window.location.href);
+        url.search = '';
+        url.searchParams.set('variant', variantId);
+        url.searchParams.set('section_id', 'pickup-availability');
+        const reponse = await fetch(url.toString());
         if (!reponse.ok) return;
         const html = await reponse.text();
         const recu = new DOMParser().parseFromString(html, 'text/html');
         const neuf = recu.querySelector('.pickup-availability__summary');
-        conteneur.innerHTML = neuf ? neuf.outerHTML : '';
+        // Une reponse sans retrait ne doit pas EFFACER celui qui est affiche :
+        // ou la variante n'a pas de point de retrait, ou la requete n'a rien
+        // rendu. On ne remplace que ce qu'on a mesure.
+        if (neuf) {
+          conteneur.innerHTML = neuf.outerHTML;
+        } else if (recu.querySelector('[data-pickup-empty]')) {
+          conteneur.innerHTML = '';
+        }
       } catch (e) {
         /* la disponibilite rendue au chargement reste affichee */
       }
@@ -1717,6 +1793,9 @@
 
     openFilters() {
       this.lastFocus = document.activeElement;
+      // L'etat du declencheur suit l'etat du panneau : il restait
+      // aria-expanded="false" panneau ouvert comme ferme.
+      document.querySelector('[data-filter-toggle]')?.setAttribute('aria-expanded', 'true');
       this.filters?.classList.add('is-open');
       this.filters?.setAttribute('aria-hidden', 'false');
       this.overlay?.classList.add('is-visible');
@@ -1733,6 +1812,7 @@
     },
 
     closeFilters() {
+      document.querySelector('[data-filter-toggle]')?.setAttribute('aria-expanded', 'false');
       this.filters?.classList.remove('is-open');
       this.syncFiltersHidden();
       this.overlay?.classList.remove('is-visible');
@@ -2276,6 +2356,57 @@
   };
 
   // ============================================
+  // VIDEO DU HEROS
+  // ============================================
+  /**
+   * Lecture automatique du héros, et bouton pour l'arrêter.
+   *
+   * L'attribut autoplay n'est pas dans le balisage : prefers-reduced-motion ne
+   * se lit pas en Liquid, et la vidéo tournait en boucle malgré la préférence,
+   * sans aucun moyen de l'arrêter (mesuré sur la démo). Même motif que
+   * sections/video-banner.liquid.
+   */
+  const HeroVideo = {
+    init() {
+      const video = document.querySelector('[data-hero-video]');
+      if (!video || video.dataset.heroBound === 'true') return;
+      video.dataset.heroBound = 'true';
+
+      const toggle = document.querySelector('[data-hero-video-toggle]');
+      const iconPlay = toggle?.querySelector('[data-icon-play]');
+      const iconPause = toggle?.querySelector('[data-icon-pause]');
+      const reduit = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const sync = () => {
+        if (!toggle) return;
+        const joue = !video.paused;
+        toggle.setAttribute('aria-label', joue ? toggle.dataset.labelPause : toggle.dataset.labelPlay);
+        iconPause?.toggleAttribute('hidden', !joue);
+        iconPlay?.toggleAttribute('hidden', joue);
+      };
+
+      if (reduit) {
+        video.pause();
+      } else {
+        video.play().catch(() => {
+          /* le navigateur peut refuser la lecture : le poster reste affiche */
+        });
+      }
+      sync();
+
+      video.addEventListener('play', sync);
+      video.addEventListener('pause', sync);
+      toggle?.addEventListener('click', () => {
+        if (video.paused) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      });
+    },
+  };
+
+  // ============================================
   // FOCUS APRES UN ENVOI DE FORMULAIRE
   // ============================================
   /**
@@ -2296,8 +2427,25 @@
         document.querySelector('[role="alert"][tabindex="-1"]') ||
         document.querySelector('[role="status"][tabindex="-1"][autofocus]');
       if (!cible) return;
-      if (document.activeElement && cible.contains(document.activeElement)) return;
-      cible.focus({ preventScroll: true });
+
+      // Le focus est repose PLUSIEURS FOIS, et c'est necessaire : mesure sur
+      // la demo, un seul appel au chargement laissait document.activeElement
+      // sur <body>, parce que le navigateur donne le focus a la cible de
+      // l'ancre que Shopify ajoute (#contact_form) APRES notre appel. On
+      // repasse donc apres la mise en page et apres l'evenement load, et on
+      // s'arrete des que le focus est en place.
+      const poser = () => {
+        if (cible.contains(document.activeElement)) return true;
+        cible.focus({ preventScroll: true });
+        return cible.contains(document.activeElement);
+      };
+      if (!poser()) {
+        requestAnimationFrame(() => {
+          if (poser()) return;
+          window.addEventListener('load', poser, { once: true });
+          setTimeout(poser, 120);
+        });
+      }
       cible.scrollIntoView({ block: 'center', behavior: 'auto' });
     },
   };
@@ -2318,6 +2466,7 @@
     Recommendations.init(scope);
     Pickup.init();
     Animations.init();
+    HeroVideo.init();
     FormFeedback.init();
   }
 

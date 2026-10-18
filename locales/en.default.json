@@ -49,6 +49,9 @@
     "forms": {
       "error_heading": "Please correct the following:",
       "required_note": "Required field."
+    },
+    "punctuation": {
+      "colon": ": "
     }
   },
   "accessibility": {
@@ -116,7 +119,8 @@
       "aria_label": "Our partner logos"
     },
     "gallery": {
-      "aria_label": "Image gallery"
+      "aria_label": "Image gallery",
+      "item_label": "View image {{ index }}"
     },
     "featured_collections": {
       "aria_label": "Featured collections"

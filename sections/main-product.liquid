@@ -264,9 +264,13 @@
   /* « Epuise » porte une information utile : au lieu d'une opacite de 0,5
      (texte mesure a 2:1), le bouton inactif prend une surface sourde et son
      encre derivee, soit le meme 4,6:1 que le texte secondaire. */
+  /* « Epuise » porte une information utile. La surface sourde donnait 4,24:1
+     avec une encre a 0,925 d'opacite (mesure) : l'encre est maintenant pleine
+     et la surface derivee a 4,6:1, donc le texte est au meme rapport. */
   .product-add-to-cart:disabled {
     background: var(--color-text-light);
     color: var(--color-background);
+    opacity: 1;
     cursor: not-allowed;
   }
 
@@ -769,7 +773,7 @@
       <div class="product-meta">
         {%- if section.settings.show_sku -%}
           <span class="product-meta__item" data-product-sku-wrapper{% unless current_variant.sku %} hidden{% endunless %}>
-            <strong>{{ 'products.product.sku' | t }}:</strong>
+            <strong>{{ 'products.product.sku' | t }}{{ 'general.punctuation.colon' | t }}</strong>
             <span data-product-sku>{{ current_variant.sku }}</span>
           </span>
         {%- endif -%}
@@ -810,7 +814,7 @@
 
 {%- comment -%} ZOOM MODAL {%- endcomment -%}
 {%- if section.settings.enable_zoom -%}
-  <div class="product-zoom" id="ProductZoom" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="product-zoom" id="ProductZoom" role="dialog" aria-modal="true" aria-hidden="true" aria-label="{{ 'accessibility.zoom_image' | t }}">
     <button type="button" class="product-zoom__close" aria-label="{{ 'accessibility.close' | t }}">
       {% render 'icon', icon: 'close' %}
     </button>

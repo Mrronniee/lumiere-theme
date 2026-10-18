@@ -114,6 +114,16 @@
     render 'contrast-color', base: c_text, bg: c_bg, target: 3
   endcapture
   assign c_border_strong = c_border_strong | strip
+
+  comment
+    La primaire sert aussi de couleur de TEXTE (titre de carte, prix, bouton
+    secondaire). Sur le fond du theme elle convient, mais le jeton doit exister
+    pour que les sections puissent le recalculer sur LEUR fond.
+  endcomment
+  capture c_primary_text
+    render 'contrast-color', base: c_primary, bg: c_bg
+  endcapture
+  assign c_primary_text = c_primary_text | strip
 -%}
 <style>
   :root {
@@ -130,6 +140,15 @@
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: #c0392b;
     --color-on-primary: {{ c_on_primary }};
+    --color-primary-text: {{ c_primary_text }};
+    /* Surfaces internes (lignes de panier, barres de progression, puces) :
+       un melange du texte et du fond, donc elles suivent le fond choisi.
+       Ecrites en dur (#f5f5f5, #fafafa, #f0f0f0, #ddd) elles restaient
+       claires sous un premier schema sombre : 6 echecs mesures a 1,04-1,11:1. */
+    --color-surface-3: {{ c_text | color_mix: c_bg, 3 }};
+    --color-surface-4: {{ c_text | color_mix: c_bg, 4 }};
+    --color-surface-6: {{ c_text | color_mix: c_bg, 6 }};
+    --color-surface-16: {{ c_text | color_mix: c_bg, 16 }};
     --color-on-accent: {{ c_on_accent }};
 
     --font-heading: {{ settings.font_heading.family }}, {{ settings.font_heading.fallback_families }};

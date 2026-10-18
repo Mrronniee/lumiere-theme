@@ -63,6 +63,14 @@
     margin-bottom: var(--spacing-sm);
   }
 
+  /* 16 px minimum : en dessous, Safari iOS zoome la page a la mise au focus.
+     La regle globale par element est battue par la classe, donc elle se pose
+     ici. */
+  #shopify-section-{{ section.id }} .product-variant__select {
+    font-size: 1rem;
+    min-height: 24px;
+  }
+
   #shopify-section-{{ section.id }} .featured-product__variant {
     display: block;
     margin-bottom: var(--spacing-sm);
@@ -101,6 +109,7 @@
             sizes="(min-width: 750px) 50vw, calc(100vw - 3rem)"
             alt="{{ featured.featured_media.alt | escape }}"
             loading="lazy"
+            {% render 'focal', image: featured.featured_media.preview_image %}
             width="{{ featured.featured_media.width }}"
             height="{{ featured.featured_media.height }}"
           >

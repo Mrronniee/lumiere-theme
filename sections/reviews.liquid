@@ -12,6 +12,22 @@
   assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
   assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
   assign star_empty = section.settings.text_color | color_mix: section.settings.background_color, 22
+
+  comment
+    Les textes des cartes sont poses sur card_surface, PLUS SOMBRE que le fond
+    de la section : une encre derivee sur le fond de section y perd quelques
+    dixiemes. « Verifie » mesurait 4,21:1 et la date 4,45:1 pour un seuil de
+    4,5. Les deux encres sont donc derivees sur la SURFACE DE LA CARTE.
+  endcomment
+  assign accent_dark_base = settings.color_accent | default: '#c9a96e' | color_darken: 22
+  capture card_accent
+    render 'contrast-color', base: accent_dark_base, bg: card_surface
+  endcapture
+  capture card_muted
+    render 'contrast-color', base: section.settings.text_color, bg: card_surface
+  endcapture
+  assign card_accent = card_accent | strip
+  assign card_muted = card_muted | strip
 -%}
 
 {%- style -%}
@@ -69,8 +85,7 @@
   .reviews__average-count {
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.7;
+    color: var(--color-text-light);
   }
 
   .reviews__stars {
@@ -152,8 +167,7 @@
     font-family: var(--font-body);
     font-size: 0.75rem;
     letter-spacing: 0.04em;
-    color: {{ section.settings.text_color }};
-    opacity: 0.6;
+    color: {{ card_muted }};
   }
 
   .reviews__heading {
@@ -169,8 +183,7 @@
     font-family: var(--font-body);
     font-size: 0.9375rem;
     line-height: 1.75;
-    color: {{ section.settings.text_color }};
-    opacity: 0.85;
+    color: {{ card_muted }};
     margin: 0;
   }
 
@@ -197,7 +210,7 @@
     font-family: var(--font-body);
     font-size: 0.75rem;
     letter-spacing: 0.04em;
-    color: var(--color-accent-dark);
+    color: {{ card_accent }};
   }
 
   .reviews__verified svg {
@@ -419,6 +432,7 @@
                         "
                         sizes="40px"
                         alt=""
+                        {% render 'focal', image: block_product.featured_image %}
                         width="{{ block_product.featured_image.width }}"
                         height="{{ block_product.featured_image.height }}"
                         loading="lazy"

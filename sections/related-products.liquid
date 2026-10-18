@@ -67,11 +67,13 @@
             valeur d'argument en Liquid, et Shopify rejette toute la section au
             push (« Expected end_of_string but found comparison »).
           endcomment
+          comment
+            Les recommandations sont mesurees a y=1905, soit 2,3 ecrans sous la
+            ligne de flottaison : ni chargement immediat ni priorite haute, la
+            bande passante doit servir le premier ecran.
+          endcomment
           assign card_lazy = true
-          if forloop.index <= 4
-            assign card_lazy = false
-          endif
-          assign card_priority = forloop.first
+          assign card_priority = false
         -%}
         {% render 'product-card',
           product: product,
@@ -99,10 +101,7 @@
         {%- for product in recommendations.products -%}
           {%- liquid
             assign card_lazy = true
-            if forloop.index <= 4
-              assign card_lazy = false
-            endif
-            assign card_priority = forloop.first
+            assign card_priority = false
           -%}
           {% render 'product-card',
             product: product,

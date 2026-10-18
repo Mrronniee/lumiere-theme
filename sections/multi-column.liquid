@@ -51,6 +51,32 @@
   endcase
 
   assign media_surface = section.settings.text_color | color_mix: section.settings.background_color, 6
+
+  comment
+    Le media est RECADRE par CSS (aspect-ratio + object-fit: cover) : un
+    fichier 900 x 1125 etait peint 364 x 273, soit 70 % des pixels telecharges
+    pour rien (184 Kio sur la page de demo, mesure Lighthouse). On demande donc
+    au CDN une image deja recadree, en passant la hauteur et « crop ».
+  endcomment
+  case ratio
+    when 'portrait'
+      assign crop_ratio = 1.3333
+    when 'landscape'
+      assign crop_ratio = 0.75
+    else
+      assign crop_ratio = 1
+  endcase
+
+  comment
+    Les hauteurs se calculent ICI : une expression (« 300 | times: … ») n'est
+    pas une valeur d'argument de filtre valide, et Shopify rejette alors toute
+    la section au push en repondant « reussi » (piege paye en 1.5.1).
+  endcomment
+  assign h300 = 300 | times: crop_ratio | round
+  assign h450 = 450 | times: crop_ratio | round
+  assign h600 = 600 | times: crop_ratio | round
+  assign h900 = 900 | times: crop_ratio | round
+  assign h1200 = 1200 | times: crop_ratio | round
 -%}
 
 {%- style -%}
@@ -182,8 +208,7 @@
     font-family: var(--font-body);
     font-size: 0.9375rem;
     line-height: 1.7;
-    color: {{ section.settings.text_color }};
-    opacity: 0.75;
+    color: var(--color-text-light);
   }
 
   .multi-column__text > *:last-child {
@@ -313,11 +338,12 @@
               <span class="multi-column__media">
                 {%- if img != blank -%}
                   <img
-                    srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300 }} 300w,{%- endif -%}
-                      {%- if img.width >= 600 -%}{{ img | image_url: width: 600 }} 600w,{%- endif -%}
-                      {%- if img.width >= 900 -%}{{ img | image_url: width: 900 }} 900w,{%- endif -%}
-                      {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200 }} 1200w,{%- endif -%}"
-                    src="{{ img | image_url: width: 900 }}"
+                    srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300, height: h300, crop: 'center' }} 300w,{%- endif -%}
+                      {%- if img.width >= 450 -%}{{ img | image_url: width: 450, height: h450, crop: 'center' }} 450w,{%- endif -%}
+                      {%- if img.width >= 600 -%}{{ img | image_url: width: 600, height: h600, crop: 'center' }} 600w,{%- endif -%}
+                      {%- if img.width >= 900 -%}{{ img | image_url: width: 900, height: h900, crop: 'center' }} 900w,{%- endif -%}
+                      {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200, height: h1200, crop: 'center' }} 1200w,{%- endif -%}"
+                    src="{{ img | image_url: width: 900, height: h900, crop: 'center' }}"
                     sizes="(min-width: 990px) {{ size_d | strip }}, (min-width: 750px) {{ size_t | strip }}, {{ size_m | strip }}"
                     alt="{{ img.alt | escape }}"
                     class="multi-column__image"

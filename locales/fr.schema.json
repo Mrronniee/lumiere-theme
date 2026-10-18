@@ -13,7 +13,7 @@
         },
         "color_background": {
           "label": "Couleur de fond",
-          "info": "Fond general du site"
+          "info": "Fond général du site"
         },
         "color_text": {
           "label": "Couleur du texte"
@@ -45,7 +45,7 @@
         },
         "favicon": {
           "label": "Favicon",
-          "info": "Format .ico ou .png, 32 × 32 px minimum"
+          "info": "Format .ico ou .png, 32 × 32 px minimum"
         }
       }
     },
@@ -236,7 +236,7 @@
             "label": "Tiroir lateral"
           },
           "options__2": {
-            "label": "Page dediee"
+            "label": "Page dédiée"
           }
         },
         "cart_show_note": {
@@ -316,7 +316,7 @@
           "info": "Toujours désactivées pour les visiteurs qui demandent de réduire les animations"
         },
         "animation_style": {
-          "label": "Style d animation",
+          "label": "Style d’animation",
           "options__1": {
             "label": "Fondu"
           },
@@ -328,7 +328,7 @@
           }
         },
         "animation_duration": {
-          "label": "Duree"
+          "label": "Durée"
         }
       }
     },
@@ -431,7 +431,7 @@
         },
         "variant_hide_unavailable": {
           "label": "Masquer les variantes indisponibles",
-          "info": "Sinon elles sont barrees et desactivees"
+          "info": "Sinon elles sont barrées et désactivées"
         }
       }
     },
@@ -887,7 +887,7 @@
       "name": "Commande"
     },
     "main_customers_register": {
-      "name": "Creation de compte"
+      "name": "Création de compte"
     },
     "main_customers_reset_password": {
       "name": "Nouveau mot de passe"
@@ -908,7 +908,7 @@
           "label": "Afficher la marque"
         },
         "show_sku": {
-          "label": "Afficher la reference (SKU)"
+          "label": "Afficher la référence (SKU)"
         },
         "show_stock": {
           "label": "Afficher l’alerte de stock faible"
@@ -1107,7 +1107,7 @@
           "info": "Utilisé seulement si la page n’a pas de titre"
         },
         "intro": {
-          "label": "Texte d introduction"
+          "label": "Texte d’introduction"
         },
         "button_label": {
           "label": "Texte du bouton"
@@ -1116,7 +1116,7 @@
           "label": "Afficher le champ téléphone"
         },
         "show_details": {
-          "label": "Afficher la colonne coordonnees"
+          "label": "Afficher la colonne coordonnées"
         }
       },
       "blocks": {
@@ -2169,7 +2169,7 @@
         },
         "target_time": {
           "label": "Heure de fin",
-          "info": "Format HH:MM sur 24 heures, par exemple 23:59. Laissez vide pour minuit."
+          "info": "Format HH:MM sur 24 heures, par exemple 23:59. Laissez vide pour minuit."
         },
         "header__2": {
           "content": "Contenu"
@@ -2597,7 +2597,7 @@
             },
             "price": {
               "label": "Prix",
-              "info": "Texte libre, par exemple « 29 € » ou « Sur devis »."
+              "info": "Texte libre, par exemple « 29 € » ou « Sur devis »."
             },
             "highlight": {
               "label": "Mettre cette colonne en avant",
@@ -2800,6 +2800,9 @@
       "presets": {
         "name": "Produit mis en avant"
       }
+    },
+    "pickup_availability": {
+      "name": "Retrait en magasin"
     }
   },
   "categories": {

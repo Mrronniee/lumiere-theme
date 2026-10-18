@@ -40,8 +40,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.7;
-    color: {{ section.settings.text_color }};
-    opacity: 0.7;
+    color: var(--color-text-light);
     max-width: 600px;
     margin: 0 auto;
   }
@@ -143,11 +142,22 @@
               une valeur d'argument en Liquid, et Shopify rejette toute la
               section au push (« Expected end_of_string but found comparison »).
             endcomment
+            comment
+              Chargement immediat et priorite haute SEULEMENT si la section peut
+              etre dans le premier ecran : mesure sur la demo, les 4 cartes
+              sortaient en eager (la premiere en fetchpriority=high) alors
+              qu'elles sont a y=819 pour une fenetre de 823 et revelees au
+              defilement (opacite 0) — un element a opacite 0 n'est de toute
+              facon jamais candidat LCP, la priorite etait perdue.
+            endcomment
             assign card_lazy = true
-            if forloop.index <= 4
+            if section.index <= 2 and forloop.index <= 4
               assign card_lazy = false
             endif
-            assign card_priority = forloop.first
+            assign card_priority = false
+            if section.index == 1 and forloop.first
+              assign card_priority = true
+            endif
           -%}
           {% render 'product-card',
             product: product,

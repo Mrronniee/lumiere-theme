@@ -67,8 +67,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.7;
-    color: {{ section.settings.text_color }};
-    opacity: 0.7;
+    color: var(--color-text-light);
     max-width: 600px;
     margin: 0 auto;
   }
@@ -206,12 +205,21 @@
       <div class="lookbook__item" {{ block.shopify_attributes }}>
         {%- if block.settings.image != blank -%}
           <img
+            {%- comment -%}
+              Paliers intermédiaires : entre 375 et 750 il n'y avait rien, et
+              une tuile de 364 px à densité 1,75 (637 px nécessaires) recevait
+              le fichier 750w, soit 28 % de pixels en trop (103 Kio sur
+              l'accueil, mesure Lighthouse). Le « sizes » décrit la tuile et
+              non la fenêtre : la grille retire les marges du conteneur.
+            {%- endcomment -%}
             srcset="{%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+              {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
+              {%- if block.settings.image.width >= 650 -%}{{ block.settings.image | image_url: width: 650 }} 650w,{%- endif -%}
               {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
               {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
               {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
             src="{{ block.settings.image | image_url: width: 1100 }}"
-            sizes="(min-width: 1200px) 50vw, 100vw"
+            sizes="(min-width: 1200px) calc(50vw - 3rem), calc(100vw - 3rem)"
             alt="{{ block.settings.image.alt | escape }}"
             class="lookbook__item-image"
             loading="lazy"

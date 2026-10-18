@@ -107,8 +107,7 @@
   .image-with-text__text {
     font-family: var(--font-body);
     font-size: 1rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.8;
+    color: var(--color-text-light);
   }
 
   .image-with-text__button {
@@ -162,9 +161,15 @@
             section, l'image est sous la ligne de flottaison et reste
             differee.
           {%- endcomment -%}
-          {%- if section.index == 1 -%}
+          {%- comment -%}
+            Les deux PREMIERES sections de la page, pas seulement la première :
+            mesuré sur le gabarit de démo, où un bloc de texte précède cette
+            section et où l'image reste peinte à y = 464, dans le premier
+            écran — elle portait un LCP de 4 317 ms en loading="lazy".
+          {%- endcomment -%}
+          {%- if section.index <= 2 -%}
             loading="eager"
-            fetchpriority="high"
+            {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
           {%- else -%}
             loading="lazy"
           {%- endif -%}

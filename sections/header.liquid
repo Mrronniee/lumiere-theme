@@ -30,7 +30,13 @@
   l'en-tete sticky, il ne compte pas dans --header-height, donc il ne decale
   pas le premier bloc de l'accueil quand le JavaScript l'affiche.
 {%- endcomment -%}
-{% render 'market-banner' %}
+{%- comment -%}
+  Le bandeau de marché n'est plus rendu ici : posé en bas de la fenêtre
+  (position: fixed) pour ne rien décaler, il était pourtant le 2e arrêt de
+  tabulation de chaque page. Il est rendu en fin de document par
+  layout/theme.liquid, donc son bouton de fermeture vient en dernier, là où
+  l'œil le trouve.
+{%- endcomment -%}
 
 <header
   class="header{% if settings.header_transparent_home and template.name == 'index' %} header--transparent{% endif %}"
@@ -173,7 +179,7 @@
           {%- comment -%} Nom accessible = libelle masque + compteur visible (axe : label-content-name-mismatch) {%- endcomment -%}
           <span class="visually-hidden">{{ 'cart.general.title' | t }}</span>
           {% render 'icon', icon: 'cart' %}
-          <span class="header__cart-count" data-cart-count>{{ cart.item_count }}</span>
+          <span class="header__cart-count" data-cart-count role="status" aria-live="polite">{{ cart.item_count }}</span>
         </a>
       </div>
 
@@ -255,6 +261,17 @@
       </li>
     {%- endfor -%}
   </ul>
+
+  {%- comment -%}
+    Pays, langue et devise dans le menu mobile : sous 990 px, .header__markets
+    est masqué (assets/theme.css) et le visiteur n'avait AUCUN moyen de changer
+    de marché — ni ici, ni dans le pied.
+  {%- endcomment -%}
+  {%- if settings.show_country_selector or settings.show_language_selector or settings.show_currency_selector -%}
+    <div class="mobile-menu__markets">
+      {% render 'markets-selectors' %}
+    </div>
+  {%- endif -%}
 
   <div class="mobile-menu__footer">
     {%- if shop.customer_accounts_enabled and settings.show_account -%}

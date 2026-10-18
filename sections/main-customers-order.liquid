@@ -56,12 +56,12 @@
   <div class="account__addresses">
     <div>
       <h2 class="customer__subtitle">{{ 'customer.order.billing_address' | t }}</h2>
-      <p>{{ 'customer.order.payment_status' | t }}: {{ order.financial_status_label }}</p>
+      <p>{{ 'customer.order.payment_status' | t }}{{ 'general.punctuation.colon' | t }}{{ order.financial_status_label }}</p>
       {{ order.billing_address | format_address }}
     </div>
     <div>
       <h2 class="customer__subtitle">{{ 'customer.order.shipping_address' | t }}</h2>
-      <p>{{ 'customer.order.fulfillment_status' | t }}: {{ order.fulfillment_status_label }}</p>
+      <p>{{ 'customer.order.fulfillment_status' | t }}{{ 'general.punctuation.colon' | t }}{{ order.fulfillment_status_label }}</p>
       {{ order.shipping_address | format_address }}
     </div>
   </div>

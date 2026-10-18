@@ -46,6 +46,39 @@
     background: rgba(26, 22, 18, 0.45);
   }
 
+  .hero__video-controls {
+    position: absolute;
+    right: var(--spacing-sm);
+    bottom: var(--spacing-sm);
+    z-index: 4;
+  }
+
+  .hero__video-control {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 3rem;
+    height: 3rem;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.55);
+    color: #ffffff;
+    cursor: pointer;
+  }
+
+  .hero__video-control:hover {
+    border-color: #ffffff;
+  }
+
+  .hero__video-icon {
+    display: inline-flex;
+  }
+
+  .hero__video-icon[hidden] {
+    display: none;
+  }
+
   .hero__content {
     position: relative;
     z-index: 3;
@@ -81,7 +114,6 @@
     font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.6;
     color: {{ section.settings.text_color }};
-    opacity: 0.9;
     margin-bottom: var(--spacing-md);
     max-width: 600px;
   }
@@ -139,7 +171,6 @@
     transform: translateX(-50%);
     z-index: 3;
     color: {{ section.settings.text_color }};
-    opacity: 0.7;
     animation: bounce 2s infinite;
   }
 
@@ -173,17 +204,47 @@
 <div class="hero" data-section-id="{{ section.id }}" data-header-overlay>
   <div class="hero__media">
     {%- if section.settings.video != blank -%}
+      {%- comment -%}
+        La lecture automatique est posée en JavaScript, comme dans
+        sections/video-banner.liquid : prefers-reduced-motion ne se lit pas en
+        Liquid, et la vidéo tournait en boucle malgré la préférence (mesuré :
+        currentTime 2,6 → 5,1 s). Les dimensions évitent le décalage que
+        Lighthouse nomme « Media element lacking an explicit size », et
+        preload="metadata" évite de tirer 2 135 Kio de HLS avant de savoir si
+        la vidéo doit jouer.
+      {%- endcomment -%}
       <video
-        autoplay
         loop
         muted
         playsinline
+        preload="metadata"
+        width="{{ section.settings.video.sources.first.width | default: 1920 }}"
+        height="{{ section.settings.video.sources.first.height | default: 1080 }}"
         poster="{{ section.settings.image | image_url: width: 1920 }}"
+        data-hero-video
       >
         {%- for source in section.settings.video.sources -%}
           <source src="{{ source.url }}" type="{{ source.mime_type }}">
         {%- endfor -%}
       </video>
+
+      <div class="hero__video-controls">
+        <button
+          type="button"
+          class="hero__video-control"
+          data-hero-video-toggle
+          data-label-play="{{ 'sections.video_banner.play' | t }}"
+          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
+          aria-label="{{ 'sections.video_banner.pause' | t }}"
+        >
+          <span class="hero__video-icon" data-icon-pause>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+          </span>
+          <span class="hero__video-icon" data-icon-play hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </button>
+      </div>
     {%- elsif section.settings.image != blank -%}
       <img
         srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}

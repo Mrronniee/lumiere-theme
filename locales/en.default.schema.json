@@ -2800,6 +2800,9 @@
       "presets": {
         "name": "Featured product"
       }
+    },
+    "pickup_availability": {
+      "name": "Pickup availability"
     }
   },
   "categories": {

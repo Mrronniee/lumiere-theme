@@ -1,5 +1,78 @@
 # Changelog
 
+## 1.6.1 — 2026-10-17
+
+### Fixed
+- Three faults introduced by 1.6.0 are gone. Slideshow arrows and dots had
+  turned invisible (dark on dark) because the section recomputes its colours
+  from a text setting it does not have — the ink is now derived from the
+  background whenever a section has no text colour of its own. Gallery links
+  built from the shipped preset had lost their name for screen readers. And
+  the market banner, moved out of the flow to stop it shifting the page, was
+  covering the last 54 to 75 pixels of every page: it now gives that space
+  back and sits last in the tab order, where the eye finds it.
+- Store pickup no longer empties itself when you pick another variant: the
+  theme was asking Shopify for the wrong address, and a reply with no pickup
+  now leaves what is on screen alone.
+- Brand colours used as text (card titles, prices, secondary buttons, eyebrow
+  links, sale prices) are recomputed per section, so a section with its own
+  dark, inverted or accent background no longer prints them at 1:1.
+- Secondary text no longer relies on opacity: 31 rules across 20 sections now
+  use a derived colour, which keeps its contrast on any background. The review
+  date and "Verified" line, measured at 4.45:1 and 4.21:1, are derived against
+  the card they sit on.
+- Cart drawer and cart page under a dark palette: six surfaces that were
+  hard-coded light now follow your background, and the quantity and close
+  buttons, which had no colour at all, no longer inherit the browser's black.
+  The search and menu close buttons use panel ink instead of your brand
+  colour.
+- The video hero now has a pause button and stops for visitors who ask for
+  less motion, like the video banner already did. It also declares its size
+  and no longer pulls two megabytes of video before it knows it should play.
+- The filter button now says whether the panel is open.
+- Over-stock quantities show Shopify's own message ("Only 3 items…") instead
+  of the theme's generic one: one cart endpoint returns it under a key the
+  theme wasn't reading.
+- After a form error the message takes the focus. Shopify's own anchor was
+  stealing it back, so the theme now re-applies it.
+- The footer logo is bounded like the header one: a tall logo made the footer
+  grow from 387 to 1,087 pixels.
+- Footer column titles are no longer headings, which removes the heading gap
+  they created on eight pages out of nine.
+- Editor: three inline scripts stacked one more document listener on every
+  section reload — after two, the "forgot password" link stopped working.
+- Image focal points are honoured in nine more places: product gallery, cart
+  and drawer thumbnails, map, testimonials, reviews, featured product and the
+  video banner cover.
+- French editor labels: ten missing accents or apostrophes, three missing
+  spaces before units, and the colon now takes its French spacing wherever a
+  template writes it.
+- Country, language and currency can be changed on phones: the selectors were
+  simply hidden below 990px, with no replacement.
+- Two fields were still under 16px (the cart note and the featured-product
+  variant picker), so iPhones zoomed in on them; filter checkboxes on the
+  search page were 13 by 13 pixels.
+- The image zoom dialog has a name, the cart counter announces its change, and
+  the one-pixel update button is out of the tab order.
+- The page can no longer be dragged sideways on the demo page: the document
+  clipped nothing, even though the body did.
+
+### Performance
+- The image of "image with text" loads immediately when its section is first
+  or second in the page, not only first: on the demo page a text block comes
+  before it and its image still carried the largest paint, at 4.3 seconds.
+- Loading priority is no longer spent on cards that cannot be seen: the four
+  cards of a featured collection placed further down the page, and the four
+  recommendations on a product page, which sit two and a half screens down.
+- Column images are now cropped by the CDN instead of by the browser: a
+  900-pixel file was being painted 364 pixels wide and 70% of it thrown away
+  (184KB per page). Lookbook images gained two intermediate sizes and a size
+  hint that matches the tile, saving another 103KB.
+- Product card titles reserve two lines in every card, so waiting cards and
+  real cards have exactly the same height and the grid no longer grows by 21
+  pixels when recommendations arrive.
+- Cart thumbnails have a srcset instead of one fixed 200-pixel file.
+
 ## 1.6.0 — 2026-10-17
 
 ### Added

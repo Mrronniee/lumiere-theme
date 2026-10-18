@@ -131,8 +131,7 @@
   .map__hours {
     font-family: var(--font-body);
     font-size: 0.9375rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.8;
+    color: var(--color-text-light);
   }
 
   .map__hours > *:last-child {
@@ -241,6 +240,7 @@
               alt="{{ image_alt }}"
               class="map__image"
               loading="lazy"
+              {% render 'focal', image: section.settings.image %}
               width="{{ section.settings.image.width }}"
               height="{{ section.settings.image.height }}"
             >
@@ -267,6 +267,7 @@
             alt="{{ section.settings.image.alt | escape }}"
             class="map__image"
             loading="lazy"
+            {% render 'focal', image: section.settings.image %}
             width="{{ section.settings.image.width }}"
             height="{{ section.settings.image.height }}"
           >

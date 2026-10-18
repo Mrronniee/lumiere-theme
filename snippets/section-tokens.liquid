@@ -15,7 +15,25 @@
 {% endcomment %}
 {%- liquid
   assign bg = bg | default: settings.color_background
-  assign text = text | default: settings.color_text
+
+  comment
+    L'ENCRE NE SE DEVINE PAS A PARTIR D'UN REGLAGE ABSENT. Une section peut
+    porter un fond sans porter de « text_color » de section — le diaporama
+    regle sa couleur de texte par BLOC. En retombant sur le texte du theme, on
+    posait une encre sombre sur un fond sombre : fleches du diaporama mesurees
+    a 1,00:1 et leur anneau de focus a 2,02:1 en 1.6.0. Quand « text » manque,
+    l'encre se choisit donc d'apres le FOND : du blanc ou du texte du theme,
+    celui des deux qui contraste le plus.
+  endcomment
+  if text == blank
+    assign white_on_bg = bg | color_contrast: '#ffffff'
+    assign theme_text_on_bg = bg | color_contrast: settings.color_text
+    if white_on_bg > theme_text_on_bg
+      assign text = '#ffffff'
+    else
+      assign text = settings.color_text
+    endif
+  endif
   assign c_accent = settings.color_accent | default: '#c9a96e'
   assign c_primary = settings.color_primary | default: '#1a1a1a'
 
@@ -29,6 +47,24 @@
     render 'contrast-color', base: text, bg: bg, target: 3
   endcapture
   assign border_soft = text | color_mix: bg, 12
+
+  comment
+    Encres de MARQUE utilisees comme couleur de texte : la primaire (titres de
+    carte, prix, bouton secondaire), l'accent sombre (sur-titres et liens de 9
+    sections) et le rouge de solde. Definies seulement dans :root, elles
+    tombaient a 1,03-2,16:1 sur une variante sombre ou d'accent. On les releve
+    sur le fond de LA section, en gardant leur teinte.
+  endcomment
+  assign accent_dark = c_accent | color_darken: 22
+  capture primary_text
+    render 'contrast-color', base: c_primary, bg: bg
+  endcapture
+  capture accent_dark_text
+    render 'contrast-color', base: accent_dark, bg: bg
+  endcapture
+  capture sale_text
+    render 'contrast-color', base: '#c0392b', bg: bg
+  endcapture
 
   assign white_on_accent = c_accent | color_contrast: '#ffffff'
   assign text_on_accent = c_accent | color_contrast: text
@@ -53,3 +89,10 @@
     --color-border-strong: {{ border_strong | strip }};
     --color-on-accent: {{ on_accent }};
     --color-on-primary: {{ on_primary }};
+    --color-primary-text: {{ primary_text | strip }};
+    --color-accent-dark: {{ accent_dark_text | strip }};
+    --color-sale: {{ sale_text | strip }};
+    --color-surface-3: {{ text | color_mix: bg, 3 }};
+    --color-surface-4: {{ text | color_mix: bg, 4 }};
+    --color-surface-6: {{ text | color_mix: bg, 6 }};
+    --color-surface-16: {{ text | color_mix: bg, 16 }};

@@ -51,8 +51,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.7;
-    color: {{ section.settings.text_color }};
-    opacity: 0.7;
+    color: var(--color-text-light);
     margin-bottom: var(--spacing-md);
   }
 
@@ -75,8 +74,7 @@
   }
 
   .newsletter__input::placeholder {
-    color: {{ section.settings.text_color }};
-    opacity: 0.75;
+    color: var(--color-text-light);
   }
 
   .newsletter__input:focus {
@@ -106,9 +104,8 @@
   .newsletter__disclaimer {
     font-family: var(--font-body);
     font-size: 0.75rem;
-    color: {{ section.settings.text_color }};
+    color: var(--color-text-light);
     /* 0.5 donnait 3,25:1 (Lighthouse) : 0.8 reste au-dessus de 4,5:1 */
-    opacity: 0.8;
     margin-top: var(--spacing-sm);
   }
 

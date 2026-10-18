@@ -13,6 +13,16 @@
   assign carousel_gap_mobile = columns_mobile | minus: 1
   assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
   assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
+
+  comment
+    Meme raison que dans reviews : le texte des cartes est pose sur
+    card_surface, plus sombre que le fond de section, donc son encre sourde se
+    derive sur CETTE surface.
+  endcomment
+  capture card_muted
+    render 'contrast-color', base: section.settings.text_color, bg: card_surface
+  endcapture
+  assign card_muted = card_muted | strip
 -%}
 
 {%- style -%}
@@ -140,8 +150,7 @@
     display: block;
     font-family: var(--font-body);
     font-size: 0.8125rem;
-    color: {{ section.settings.text_color }};
-    opacity: 0.65;
+    color: {{ card_muted }};
   }
 
   .testimonials__list--carousel {
@@ -260,6 +269,7 @@
                       alt=""
                       class="testimonials__avatar"
                       loading="lazy"
+                      {% render 'focal', image: block.settings.image %}
                       width="{{ block.settings.image.width }}"
                       height="{{ block.settings.image.height }}"
                     >

@@ -171,7 +171,6 @@
     font-size: 1rem;
     line-height: 1.7;
     color: {{ section.settings.text_color }};
-    opacity: 0.8;
     max-width: 600px;
     margin-bottom: var(--spacing-md);
   }
@@ -298,6 +297,7 @@
           alt="{{ section.settings.cover_image.alt | escape }}"
           class="video-banner__cover"
           loading="lazy"
+          {% render 'focal', image: section.settings.cover_image %}
           width="{{ section.settings.cover_image.width }}"
           height="{{ section.settings.cover_image.height }}"
         >
@@ -364,6 +364,13 @@
 
 <script>
   (function () {
+    /* Idempotence : ce script est reexecute apres un rechargement de section
+       dans l'editeur (assets/theme.js, rejoueScripts). Sans garde, chaque
+       rechargement empilait un ecouteur sur document — mesure : a la 2e
+       execution le panneau ne basculait plus. */
+    if (document.documentElement.dataset.videoBannerInit === 'true') return;
+    document.documentElement.dataset.videoBannerInit = 'true';
+
     var root = document.getElementById('VideoBanner-' + {{ section.id | json }});
     if (!root) return;
 

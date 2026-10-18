@@ -49,6 +49,9 @@
     "forms": {
       "error_heading": "Veuillez corriger ce qui suit :",
       "required_note": "Champ obligatoire."
+    },
+    "punctuation": {
+      "colon": " : "
     }
   },
   "accessibility": {
@@ -116,7 +119,8 @@
       "aria_label": "Logos de nos partenaires"
     },
     "gallery": {
-      "aria_label": "Galerie d’images"
+      "aria_label": "Galerie d’images",
+      "item_label": "Voir l’image {{ index }}"
     },
     "featured_collections": {
       "aria_label": "Collections en vedette"
