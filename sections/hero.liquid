@@ -60,15 +60,23 @@
     width: 3rem;
     height: 3rem;
     padding: 0;
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    border: 1px solid #ffffff;
     border-radius: 50%;
-    background-color: rgba(0, 0, 0, 0.55);
+    /* PLAQUE OPAQUE, et non rgba(0, 0, 0, 0.55) : a travers un fond translucide,
+       c'est la video qui decidait du contraste de l'icone. Mesure du 22/10/2026
+       sur le thème d'essai, accueil en 390 : l'icone, blanche en CSS (10,49:1
+       sur le papier), etait rendue #82807e sur #2f2d24, soit 2,93:1 pour un
+       seuil de 3:1 — et le chiffre changeait d'une mesure a l'autre selon
+       l'image affichee a l'instant de la capture. Sur un media, aucune couleur
+       du theme ne garantit quoi que ce soit : on prend la paire fixe sombre +
+       blanc, deja utilisee pour les anneaux poses sur une image. */
+    background-color: #1a1a1a;
     color: #ffffff;
     cursor: pointer;
   }
 
   .hero__video-control:hover {
-    border-color: #ffffff;
+    background-color: #000000;
   }
 
   .hero__video-icon {

@@ -621,6 +621,13 @@ ul, ol {
   color: var(--color-on-primary);
 }
 
+/* Un produit a la fois EN SOLDE et EPUISE rend ses deux pastilles, toutes deux
+   en absolu au meme endroit : la seconde recouvrait exactement la premiere, dont
+   il ne restait rien de lisible. La seconde descend sous la premiere. */
+.product-card__badge--sale ~ .product-card__badge--sold-out {
+  top: 3.5rem;
+}
+
 .product-card__quick-add {
   position: absolute;
   bottom: 1rem;
@@ -634,16 +641,17 @@ ul, ol {
   display: flex;
   align-items: center;
   justify-content: center;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+  /* VISIBLE AU REPOS, sur ordinateur comme au doigt (decision de Ronnie,
+     22/10/2026). Le bouton n'apparaissait qu'au survol ou au focus : d'une part
+     un contenu qui n'existe qu'au survol n'est pas atteignable au doigt, d'autre
+     part son anneau de focus etait immesurable. Quand le bouton APPARAIT au
+     focus, tout son bord se repeint sur la photo : la mesure retenait cette
+     bande-la, a 1 ou 2:1 contre l'image, au lieu de l'anneau lui-meme, qui vaut
+     16,54:1 sur ses quatre cotes (thème d'essai, 22/10/2026). Visible au repos,
+     le focus ne change plus que l'anneau. */
+  transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   z-index: 2;
   box-shadow: var(--shadow-md);
-}
-
-.product-card:hover .product-card__quick-add {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .product-card__quick-add-text {
@@ -864,10 +872,18 @@ ul, ol {
 /* ============================================
    QUICK VIEW BUTTON (sur cartes produit)
    ============================================ */
+/* COIN OPPOSE A CELUI DES PASTILLES. La pastille et ce bouton occupaient le
+   meme coin (top/left 1rem), la pastille SOUS le bouton (z-index 2 contre 3) :
+   des que le bouton est visible au repos, « On sale » se mesurait a 1,05:1 sur
+   sa plaque (mesure du 22/10/2026, collections/all en 1440 et 390). Les
+   pastilles gardent leur coin — c'est le reglage du marchand — et les deux
+   boutons du haut passent dans le coin oppose, empiles dans l'ordre du DOM
+   (apercu rapide, puis favoris) pour que l'ordre du focus suive l'ordre visuel
+   (WCAG 2.4.3). */
 .product-card__quick-view-btn {
   position: absolute;
   top: 1rem;
-  left: 1rem;
+  right: 1rem;
   width: 36px;
   height: 36px;
   background: var(--color-background);
@@ -878,15 +894,9 @@ ul, ol {
   align-items: center;
   justify-content: center;
   z-index: 3;
-  opacity: 0;
-  transform: translateY(-10px);
-  transition: opacity var(--transition-base), transform var(--transition-base), background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
+  /* Visible au repos, meme raison que .product-card__quick-add ci-dessus. */
+  transition: background-color var(--transition-base), border-color var(--transition-base), color var(--transition-base);
   box-shadow: var(--shadow-sm);
-}
-
-.product-card:hover .product-card__quick-view-btn {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 .product-card__quick-view-btn:hover {
@@ -1101,9 +1111,19 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   margin: -0.25rem 0;
 }
 
-/* Anneau en deux tons : le blanc intérieur se voit sur fond sombre, le sombre extérieur sur fond clair.
-   Le ton exterieur suit --color-text, recalcule PAR SECTION : en primaire brute il valait
-   #1a1a1a sur le #141414 d'une section sombre, soit 1,06:1 (et 1,00:1 sur le diaporama). */
+/* Anneau en deux tons : le blanc interieur se voit sur fond sombre, le sombre
+   exterieur sur fond clair. Le ton exterieur suit --color-text, recalcule PAR
+   SECTION par snippets/section-tokens.liquid : en primaire brute il valait
+   #1a1a1a sur le #141414 d'une section sombre, soit 1,06:1 (et 1,00:1 sur le
+   diaporama).
+
+   NE PAS RETIRER LE HALO BLANC en pensant que le contour derive suffit : essaye
+   et mesure le 22/10/2026 sur le thème d'essai. Il ne corrige NI le bas de
+   summary.faq__question NI la droite de l'entree de quantite (la bande blanche
+   qui y est relevee n'est pas le halo : elle reste la avec ombreCss = None), et
+   il fait TOMBER le lien d'evitement, qui se repositionne au focus et n'a plus
+   que le contour sombre sur le fond sombre de l'en-tete : accueil en 390,
+   anneauxCFondSous3 7 → 8. */
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid var(--color-text);
   outline-offset: 2px;
@@ -1112,19 +1132,18 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 }
 
 /* UN COMPOSANT QUI PORTE SON OMBRE EFFACE L'ANNEAU. box-shadow ne se cumule pas
-   d'une regle a l'autre : .btn, .wishlist-btn, .newsletter__button, les commandes
-   de carte et le bouton de pause du heros declarent leur propre box-shadow, qui
-   remplacait le « 0 0 0 2px #fff » de la regle ci-dessus (specificite 0 de
-   :where()). Mesure 1.6.1 : 0 pixel conforme sur les 320 requis pour
-   .wishlist-btn--card, et 9 boutons a 1,00-1,06:1 sur une section sombre. On
-   repose l'anneau blanc ici, avec une specificite que le composant ne depasse pas. */
+   d'une regle a l'autre : .btn, .wishlist-btn, .newsletter__button et les
+   commandes de panier declarent leur propre box-shadow, qui remplacait le
+   « 0 0 0 2px #fff » de la regle ci-dessus (specificite 0 de :where()). Mesure
+   1.6.1 : 0 pixel conforme sur les 320 requis pour .wishlist-btn--card, et 9
+   boutons a 1,00-1,06:1 sur une section sombre. On repose l'anneau blanc ici,
+   avec une specificite que le composant ne depasse pas. */
 :is(
   .btn,
   .btn--primary,
   .btn--secondary,
   .wishlist-btn,
   .newsletter__button,
-  .hero__video-control,
   .slideshow__button,
   .mini-cart__view-cart,
   .quick-view__close,
@@ -1150,25 +1169,12 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .hero__video-control,
   .hero__button,
   .slideshow__button,
   .slideshow__dot
 ):focus-visible {
   outline-color: #1a1a1a;
   box-shadow: 0 0 0 2px #fff;
-}
-
-/* Le bouton de pause du heros prend une PLAQUE OPAQUE au focus : son fond
-   translucide laissait la video decider du contraste de l'icone (mesure a 1,00:1
-   en 1.6.2). Les cinq autres boutons ronds qu'on avait mis dans cette liste ont
-   DEJA un fond opaque au repos : la plaque n'y changeait rien, et la declarer au
-   focus faisait changer tout leur interieur d'un coup, ce qui noyait leur anneau
-   dans une seule suite de pixels modifies partant du bord (voir la regle
-   suivante). Ils sont passes a l'anneau rentre. */
-.hero__video-control:focus-visible {
-  background-color: var(--color-background);
-  color: var(--color-text);
 }
 
 /* ANNEAU RENTRE DANS LA PLAQUE DU BOUTON, PAS POSE SUR L'IMAGE.
@@ -1192,6 +1198,8 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .product-card__quick-view-btn,
   .product-card__quick-add,
   .slideshow__arrow,
+  .hero__video-control,
+  .video-banner__control,
   .hero__button--primary
 ):focus-visible {
   outline: 2px solid currentColor;
@@ -1213,7 +1221,6 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .hero__video-control,
   .slideshow__button
 ):focus-visible {
   position: relative;
@@ -1228,7 +1235,6 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .hero__video-control,
   .slideshow__button
 ):focus-visible::after {
   content: '';
@@ -1444,6 +1450,12 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   z-index: 3;
 }
 
+/* Sous l'apercu rapide quand la carte en porte un ; seul en haut sinon, pour
+   ne pas laisser un trou quand le marchand coupe l'apercu rapide. */
+.product-card__media:has(.product-card__quick-view-btn) .wishlist-btn--card {
+  top: 3.75rem;
+}
+
 /* Sur ecran tactile le bouton reste visible : il n'y a pas de survol. */
 @media (hover: hover) and (pointer: fine) {
   .wishlist-btn--card {
@@ -1458,19 +1470,6 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   }
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .product-card__quick-view-btn { opacity: 0; }
-  .product-card:hover .product-card__quick-view-btn,
-  .product-card:focus-within .product-card__quick-view-btn { opacity: 1; transform: translateY(0); }
-  .product-card__quick-add { opacity: 0; }
-  .product-card:hover .product-card__quick-add,
-  .product-card:focus-within .product-card__quick-add { opacity: 1; transform: translateY(0); }
-}
-
-@media (hover: none) {
-  .product-card__quick-view-btn,
-  .product-card__quick-add { opacity: 1; transform: none; }
-}
 
 .product-card__placeholder-line {
   display: block;
@@ -1858,8 +1857,8 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 }
 
 .product-card--badge-right .product-card__quick-view-btn {
-  left: auto;
-  right: 1rem;
+  right: auto;
+  left: 1rem;
 }
 
 .product-card--badge-right .wishlist-btn--card {
