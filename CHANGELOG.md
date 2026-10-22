@@ -1,5 +1,79 @@
 # Changelog
 
+## 1.6.4 — 2026-10-23
+
+### Action required if you are updating over 1.6.3 or earlier
+- **Free shipping threshold.** You now type it in your store currency, not in
+  cents: `100` means 100.00. If your setting still holds a value in cents,
+  divide it by 100 — a saved `10000` would otherwise ask for 10,000.00 before
+  shipping becomes free. The label said "(cents)", which meant a merchant who
+  typed `100` expecting 100.00 was giving free shipping from 1.00.
+- **Wishlist page.** The theme no longer guesses a `/pages/wishlist` address
+  when the setting is empty. Pick your wishlist page under Theme settings →
+  Wishlist; until you do, the wishlist links stay hidden rather than leading to
+  a page that may not exist in your store.
+
+### Changed
+- **Quick view and quick add are always visible on product cards.** They only
+  appeared on hover on a computer, while they were already visible on a phone:
+  a control that exists only on hover cannot be reached any other way, and its
+  focus ring could not be measured because the whole button was repainted over
+  the photo when it appeared.
+- **Lookbook tiles show their title at rest on a computer**, as they already did
+  on a phone, for the same reason.
+- **Card badges keep their corner, the two buttons move to the opposite one.**
+  The badge and the quick-view button shared the top-left corner, with the badge
+  underneath: "On sale" measured 1.05:1 over the button once the button became
+  visible. The buttons are stacked in reading order, so tabbing follows what you
+  see.
+- **The pause buttons of the hero and the video banner have a solid plate.**
+  Their translucent background let the video decide the contrast of the icon,
+  which measured 2.93:1 against a threshold of 3:1 and changed from one frame to
+  the next.
+- **The free shipping bar only shows when the customer pays in your store
+  currency.** The threshold is a figure in your currency, so comparing it to a
+  cart priced in another one gave a wrong amount remaining to every customer in
+  another market.
+- **Slideshow auto-rotation cannot be set below 5 seconds** (the slider started
+  at 3).
+- The contact form's button falls back to a translated label instead of the
+  English word "Send" when you clear the field.
+
+### Fixed
+- **Filters of the "boolean" kind rendered an empty group** — a title and a
+  chevron with nothing under them. In-stock style filters now list their values,
+  and any filter kind Shopify adds later will too.
+- **The highlighted column of the comparison table had invisible text.**
+  "Signature", "€59" and "Our most popular offer" measured 1:1, dark on dark.
+  That column is painted in your highlight colour while its cells use a tinted
+  version of it: each ink is now derived against the surface it is actually laid
+  on. The check and cross marks and the countdown unit labels had the same
+  fault.
+- **Focus rings over a photo.** On the card buttons, the slideshow arrow and the
+  hero button, the ring was drawn outside the button, over the product image, so
+  its contrast depended on the picture: 17.4:1 on a dark photo, 1.69:1 on a
+  light one. These buttons all have an opaque plate, so the ring is now drawn
+  inside it and measures 16.5:1 whatever the image.
+- **A product both on sale and sold out** stacked its two badges exactly on top
+  of each other.
+- **The newsletter field's focus ring merged into the button below it** on a
+  narrow screen, where the two are stacked.
+- **An open FAQ answer sat flush under its question**, so the focus ring of the
+  question was drawn across the first line of the answer.
+- **A cart error that Shopify answers with a page instead of data** left you
+  with no message and a line still showing the refused quantity. The four cart
+  calls now read the answer without assuming it is data.
+- **The addresses page is paginated.** Past 50 saved addresses, the rest simply
+  did not appear.
+- The search overlay has an accessible name before the scripts run.
+- The video banner's cover image is no longer loaded lazily when the section
+  opens the page, which delayed the largest image of the first screen.
+
+### For developers
+- All 24 rendered snippets now carry a `{% doc %}` header with typed
+  `@param`s, so Theme Check verifies their variables and arguments.
+- `INSTALLATION.md` ships with the theme.
+
 ## 1.6.3 — 2026-10-18
 
 ### Fixed

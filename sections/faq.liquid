@@ -100,7 +100,18 @@
   }
 
   .faq__answer {
-    padding: 0 0 var(--spacing-md);
+    /* Un padding HAUT, et non zero : la question ouverte (open_first) a sa
+       reponse collee sous son summary, et l'anneau de focus du summary (2 px
+       d'ombre blanche puis 2 px de contour sombre) etait dessine par-dessus la
+       premiere ligne de cette reponse, dont l'encre est --color-text-light. Son
+       bord bas se mesurait alors a 1,56-1,74:1 sur 26 px de texte gris quand les
+       trois autres cotes valaient 17,4:1, et un visiteur au clavier voyait
+       vraiment le bas de son anneau se fondre dans le texte (mesure du
+       23/10/2026, pages/lumiere-all-sections en 390 ; les questions fermees, qui
+       n'ont que le fond de section sous elles, mesuraient bien 17,4:1 partout).
+       --spacing-xs vaut 8 px, 6 px en densite compacte : de quoi degager les
+       4 px d'anneau et le pixel de controle pris 2 px plus loin. */
+    padding: var(--spacing-xs) 0 var(--spacing-md);
     font-family: var(--font-body);
     font-size: 0.9375rem;
     color: var(--color-text-light);

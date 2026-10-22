@@ -163,6 +163,36 @@
      * message generique a la place de celui de Shopify (mesure : depassement
      * de stock).
      */
+    /**
+     * Lit la reponse d'un appel au panier SANS supposer qu'elle est du JSON.
+     *
+     * Shopify peut repondre une PAGE HTML : protection anti-robot, 5xx, limite
+     * de requetes. response.json() levait alors une SyntaxError AVANT le test
+     * response.ok, donc la branche d'erreur du panier n'etait jamais atteinte :
+     * le client ne voyait ni message ni rafraichissement, sa ligne gardait la
+     * quantite refusee, et il ne restait qu'un « Unexpected token '<' » dans la
+     * console (mesure du 23/10/2026 sur le thème d'essai, appel a /cart/change).
+     * On rend null quand le corps n'est pas du JSON : messageErreurPanier
+     * retombe sur son message par defaut et l'appelant traite le cas comme
+     * n'importe quelle erreur de panier.
+     * @param {Response} response - La reponse de l'appel au panier.
+     * @returns {Promise<object|null>} Le corps en objet, ou null.
+     */
+    async lireJsonPanier(response) {
+      let brut = '';
+      try {
+        brut = await response.text();
+      } catch (error) {
+        return null;
+      }
+      if (!brut) return null;
+      try {
+        return JSON.parse(brut);
+      } catch (error) {
+        return null;
+      }
+    },
+
     messageErreurPanier(data, repli) {
       const defaut = repli || strings.cartError;
       if (!data) return defaut;
@@ -919,9 +949,9 @@
           headers: { Accept: 'application/javascript' },
           body: formData
         });
-        const data = await response.json();
+        const data = await utils.lireJsonPanier(response);
 
-        if (!response.ok) {
+        if (!response.ok || !data) {
           Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
@@ -947,8 +977,8 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(Object.assign({ items: [{ id: Number(variantId), quantity: 1 }] }, this.sectionsRequest()))
         });
-        const data = await response.json();
-        if (!response.ok) {
+        const data = await utils.lireJsonPanier(response);
+        if (!response.ok || !data) {
           Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
@@ -980,9 +1010,9 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(Object.assign(body, this.sectionsRequest()))
         });
-        const data = await response.json();
+        const data = await utils.lireJsonPanier(response);
 
-        if (!response.ok) {
+        if (!response.ok || !data) {
           // Selon le point d'entree, Shopify met le detail dans
           // « description », dans « message », ou — pour /cart/change SANS
           // « .js » — dans « errors », qui peut etre une chaine ou un objet
@@ -1213,8 +1243,8 @@
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify(Object.assign({ items: [{ id: variantId, quantity: quantity }] }, Cart.sectionsRequest()))
         });
-        const data = await response.json();
-        if (!response.ok) {
+        const data = await utils.lireJsonPanier(response);
+        if (!response.ok || !data) {
           Notify.show(utils.messageErreurPanier(data, strings.cartAddError), 'error');
           return;
         }
