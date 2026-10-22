@@ -1,6 +1,9 @@
-{% comment %}
+{% doc %}
   Meta tags Open Graph et Twitter
-{% endcomment %}
+
+  @example
+  {% render 'meta-tags' %}
+{% enddoc %}
 {%- liquid
   case request.page_type
     when 'product'

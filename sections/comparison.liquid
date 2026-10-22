@@ -14,29 +14,53 @@
   assign head_surface = txt_color | color_mix: bg_color, 5
   assign row_surface = txt_color | color_mix: bg_color, 3
   assign hl_surface = hl_color | color_mix: bg_color, 10
-  comment
-    La colonne mise en avant a SA surface (hl_surface), qui peut etre bien plus
-    sombre que le fond de la section : --color-text-light, derive sur le fond,
-    y tombait a 1:1 (mesure 1.6.2 sur la demo : « Our most popular offer »
-    #1a1a1a sur #1a1a1a). On derive donc les encres de cette colonne sur sa
-    propre surface, comme le pied du tiroir panier.
-  endcomment
-  capture hl_text
-    render 'contrast-color', base: txt_color, bg: hl_surface
-  endcapture
-  assign hl_text = hl_text | strip
-  capture hl_muted
-    render 'contrast-color', base: txt_color, bg: hl_surface, target: 4.6
-  endcapture
-  assign hl_muted = hl_muted | strip
   assign hl_border = hl_color | color_mix: bg_color, 55
 
+  comment
+    DEUX surfaces dans la colonne mise en avant, donc DEUX encres. Son en-tete
+    (.comparison__col--highlight) est peint en hl_color ; ses cellules
+    (.comparison__cell--highlight), son pied et le survol d'une ligne en
+    hl_surface, qui est une AUTRE couleur. Une encre se derive sur la surface
+    ou elle est posee : derivees sur hl_surface puis posees sur hl_color,
+    « Signature », « €59 » et « Our most popular offer » etaient mesures
+    #1a1a1a sur #1a1a1a (1:1) sur la demo 1.6.3.
+  endcomment
   assign contrast_light = hl_color | color_contrast: '#ffffff'
   assign contrast_dark = hl_color | color_contrast: '#1a1a1a'
   assign on_highlight = '#1a1a1a'
   if contrast_light > contrast_dark
     assign on_highlight = '#ffffff'
   endif
+  capture hl_color_text
+    render 'contrast-color', base: on_highlight, bg: hl_color
+  endcapture
+  assign hl_color_text = hl_color_text | strip
+
+  capture hl_surface_text
+    render 'contrast-color', base: txt_color, bg: hl_surface
+  endcapture
+  assign hl_surface_text = hl_surface_text | strip
+
+  comment
+    Les deux marques (coche et croix) sont le seul indicateur visuel de la
+    ligne, et leurs jetons --color-accent-dark et --color-text-light sont
+    derives sur le FOND de la section, pas sur hl_surface ou elles sont
+    peintes. On les redérive sur hl_surface.
+  endcomment
+  assign accent_dark = settings.color_accent | default: '#c9a96e' | color_darken: 22
+  capture hl_surface_accent
+    render 'contrast-color', base: accent_dark, bg: hl_surface
+  endcapture
+  assign hl_surface_accent = hl_surface_accent | strip
+
+  comment
+    La pastille « recommande » inverse le couple : son aplat est on_highlight
+    et son encre hl_color, a 11 px. On releve l'encre sur son propre aplat.
+  endcomment
+  capture badge_ink
+    render 'contrast-color', base: hl_color, bg: on_highlight
+  endcapture
+  assign badge_ink = badge_ink | strip
 -%}
 
 {%- style -%}
@@ -139,7 +163,7 @@
     letter-spacing: 0.12em;
     text-transform: uppercase;
     background-color: {{ on_highlight }};
-    color: {{ hl_color }};
+    color: {{ badge_ink }};
     border-radius: var(--radius);
   }
 
@@ -159,15 +183,14 @@
     color: var(--color-text-light);
   }
 
+  .comparison__col--highlight .comparison__col-title,
   .comparison__col--highlight .comparison__col-subtitle,
-  .comparison__col--highlight .comparison__detail,
-  .comparison__cell--highlight .comparison__detail {
-    color: {{ hl_muted }};
+  .comparison__col--highlight .comparison__col-price {
+    color: {{ hl_color_text }};
   }
 
-  .comparison__col--highlight .comparison__col-title,
-  .comparison__col--highlight .comparison__col-price {
-    color: {{ hl_text }};
+  .comparison__cell--highlight .comparison__detail {
+    color: {{ hl_surface_text }};
   }
 
   .comparison__col-price {
@@ -228,6 +251,17 @@
        visually-hidden) : a opacity 0.35 l'encre composee valait 2,20:1 pour un
        seuil de 3:1. On garde la nuance discrete par un jeton derive. */
     color: var(--color-text-light);
+  }
+
+  /* Les deux jetons ci-dessus sont derives sur le fond de la section. Dans une
+     cellule mise en avant, la marque est peinte sur hl_surface : on y pose des
+     encres derivees sur hl_surface. */
+  .comparison__cell--highlight .comparison__mark--yes {
+    color: {{ hl_surface_accent }};
+  }
+
+  .comparison__cell--highlight .comparison__mark--no {
+    color: {{ hl_surface_text }};
   }
 
   .comparison__detail {

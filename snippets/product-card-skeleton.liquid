@@ -1,4 +1,4 @@
-{%- comment -%}
+{% doc %}
   Carte d'attente, au MEME encombrement qu'une vraie carte produit : elle
   reutilise .product-card__media (aspect-ratio var(--card-ratio)),
   .product-card__title et .product-card__price, donc la hauteur reservee est
@@ -9,7 +9,10 @@
   plus de sa longueur : .product-card__title reserve deux lignes dans TOUTES
   les cartes (assets/theme.css), donc l'attente et la vraie carte mesurent la
   meme chose (341,8 px contre 362,8 px avant).
-{%- endcomment -%}
+
+  @example
+  {% render 'product-card-skeleton' %}
+{% enddoc %}
 <div class="product-card product-card--skeleton" aria-hidden="true">
   <div class="product-card__media"></div>
 

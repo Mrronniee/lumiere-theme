@@ -177,13 +177,28 @@
       return defaut;
     },
 
+    /**
+     * Pose role=dialog et aria-modal le temps de l'ouverture. Un role DECLARE
+     * dans le gabarit (overlay de recherche) n'est ni repose ni retire : sans
+     * cette garde, la fermeture enlevait un role dont depend son aria-label.
+     * Le tiroir de filtres, lui, n'est un dialogue qu'en mobile : il n'en
+     * declare pas, et le garde donc seulement pendant l'ouverture.
+     * @param {HTMLElement} container
+     * @param {boolean} on
+     */
     setDialog(container, on) {
       if (!container) return;
       if (on) {
-        container.setAttribute('role', 'dialog');
+        if (!container.hasAttribute('role')) {
+          container.setAttribute('role', 'dialog');
+          container.dataset.dialogRolePose = 'true';
+        }
         container.setAttribute('aria-modal', 'true');
       } else {
-        container.removeAttribute('role');
+        if (container.dataset.dialogRolePose === 'true') {
+          container.removeAttribute('role');
+          delete container.dataset.dialogRolePose;
+        }
         container.removeAttribute('aria-modal');
       }
     },

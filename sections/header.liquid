@@ -5,23 +5,18 @@
 
 {%- liquid
   comment
-    Page des favoris. Le marchand la choisit dans les reglages (wishlist_page) :
-    le handle « wishlist » etait ecrit en dur, donc toute boutique dont la page
-    porte un autre handle avait un lien mort.
+    Page des favoris. Le marchand la choisit dans les reglages (wishlist_page).
 
-    Repli sur /pages/wishlist quand le reglage est vide. routes.root_url vaut
-    « / » dans la langue principale et « /en » (sans barre finale) dans les
-    autres : une concatenation directe donnait « /enpages/wishlist ».
+    PLUS DE REPLI SUR UN HANDLE ECRIT EN DUR. Le repli etait le handle de la
+    page de favoris de NOTRE boutique de developpement, parti dans le zip
+    vendu : chez un acheteur dont la page porte un autre handle, ou qui n'en a
+    pas cree, le coeur de l'en-tete menait a une 404 — un lien mort pire que
+    pas de lien. Sans page choisie, les points d'entree des favoris ne sont
+    donc pas rendus (le marchand voit l'aide du reglage dans l'editeur).
   endcomment
+  assign wishlist_url = blank
   if settings.wishlist_page != blank
     assign wishlist_url = settings.wishlist_page.url
-  else
-    assign wishlist_url = routes.root_url
-    assign root_last_char = wishlist_url | slice: -1
-    unless root_last_char == '/'
-      assign wishlist_url = wishlist_url | append: '/'
-    endunless
-    assign wishlist_url = wishlist_url | append: 'pages/wishlist'
   endif
 -%}
 {%- comment -%}
@@ -151,7 +146,7 @@
           </button>
         {%- endif -%}
 
-        {%- if settings.wishlist_enable and settings.show_wishlist -%}
+        {%- if settings.wishlist_enable and settings.show_wishlist and wishlist_url != blank -%}
           <a href="{{ wishlist_url }}" class="header__action header__action--wishlist">
             <span class="visually-hidden">{{ 'accessibility.wishlist' | t }}</span>
             {% render 'icon', icon: 'heart' %}
@@ -278,7 +273,7 @@
     {%- if shop.customer_accounts_enabled and settings.show_account -%}
       <a href="{{ routes.account_url }}" class="mobile-menu__footer-link">{{ 'customer.account.title' | t }}</a>
     {%- endif -%}
-    {%- if settings.wishlist_enable and settings.show_wishlist -%}
+    {%- if settings.wishlist_enable and settings.show_wishlist and wishlist_url != blank -%}
       <a href="{{ wishlist_url }}" class="mobile-menu__footer-link">{{ 'accessibility.wishlist' | t }}</a>
     {%- endif -%}
   </div>
@@ -292,7 +287,13 @@
   sections/predictive-search.liquid.
 {%- endcomment -%}
 {%- if settings.show_search -%}
-  <div class="search-overlay" id="SearchOverlay" data-search-overlay aria-hidden="true" aria-label="{{ 'general.search.title' | t }}">
+  {%- comment -%}
+    role=dialog porte ICI, pas seulement pose par le JavaScript a l'ouverture :
+    sur un <div> sans role, aria-label est interdit et ignore, donc l'overlay
+    n'avait pas de nom tant que le script n'avait pas tourne. aria-modal reste
+    au JavaScript (utils.setDialog), qui ne retire plus un role declare ici.
+  {%- endcomment -%}
+  <div class="search-overlay" id="SearchOverlay" data-search-overlay role="dialog" aria-hidden="true" aria-label="{{ 'general.search.title' | t }}">
     <div class="search-overlay__content">
       <button type="button" class="search-overlay__close" data-search-close aria-label="{{ 'accessibility.close' | t }}">
         {% render 'icon', icon: 'close' %}

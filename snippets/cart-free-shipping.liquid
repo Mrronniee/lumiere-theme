@@ -1,14 +1,30 @@
-{%- comment -%}
+{% doc %}
   Barre « livraison offerte a partir de X », rendue a l'identique dans le
   tiroir ET sur /cart. Elle n'existait que dans le tiroir : le client qui
   passait par la page panier ne voyait pas combien il lui restait a ajouter.
 
-  Parametre : class (facultatif), prefixe de classe.
+  @param {string} [class] - Prefixe de classe (defaut : cart-free-shipping).
+
+  @example
+  {% render 'cart-free-shipping', class: 'mini-cart__free-shipping' %}
+{% enddoc %}
+{%- comment -%}
+  GARDE DE DEVISE. Le seuil est saisi dans la devise de la BOUTIQUE, alors que
+  cart.total_price est dans celle de l'ACHETEUR (Shopify Markets) : un seuil de
+  100 EUR compare a un panier en USD ou en JPY donnait un reste faux a tout
+  acheteur d'un autre marche. La barre ne s'affiche que quand les deux devises
+  sont la meme ; ailleurs, mieux vaut rien qu'un chiffre faux.
 {%- endcomment -%}
-{%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 -%}
+{%- if settings.cart_show_free_shipping and settings.cart_free_shipping_threshold > 0 and cart.currency.iso_code == shop.currency -%}
   {%- liquid
     assign klass = class | default: 'cart-free-shipping'
-    assign threshold = settings.cart_free_shipping_threshold
+    comment
+      Le seuil se saisit en UNITES de la devise (100 = 100,00), pas en
+      centimes : un marchand qui tapait 100 en croyant ecrire 100,00 offrait la
+      livraison des 1,00. On le convertit ici, une seule fois, pour le comparer
+      a cart.total_price, qui est en centimes.
+    endcomment
+    assign threshold = settings.cart_free_shipping_threshold | times: 100
     assign progress = cart.total_price | times: 100 | divided_by: threshold
     assign progress = progress | at_most: 100
     assign remaining = threshold | minus: cart.total_price

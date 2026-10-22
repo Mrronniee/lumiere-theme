@@ -96,7 +96,7 @@
         },
         "wishlist_page": {
           "label": "Page des favoris",
-          "info": "La page qui utilise le gabarit « page.wishlist ». Laissez vide pour utiliser /pages/wishlist."
+          "info": "La page qui utilise le gabarit « page.wishlist ». Les liens vers les favoris restent masques jusqu'a ce que vous la choisissiez."
         }
       }
     },
@@ -247,8 +247,8 @@
           "info": "Désactivé par défaut : l’activer promet la livraison offerte à vos clients."
         },
         "cart_free_shipping_threshold": {
-          "label": "Seuil de livraison gratuite (centimes)",
-          "info": "10 000 = 100,00"
+          "label": "Seuil de livraison gratuite",
+          "info": "Dans la devise de votre boutique : 100 signifie 100,00. Affiche seulement si le client paie dans la devise de votre boutique."
         }
       }
     },

@@ -1,12 +1,16 @@
-{% comment %}
+{% doc %}
   Carte produit réutilisable avec wishlist et quick view
-  Usage: {% render 'product-card', product: product, show_vendor: 'inherit' %}
-  Parametres optionnels :
-    heading        : niveau de titre ('h3' par defaut ; 'h2' sous un h1 de page)
-    lazy           : false pour charger l'image immediatement (cartes visibles au chargement)
-    priority       : true pour fetchpriority="high" (premiere carte de la page)
-    columns_mobile : colonnes de la grille en mobile (2 par defaut), pour l'attribut sizes
-{% endcomment %}
+
+  @param {object} product - Le produit a presenter.
+  @param {string} [show_vendor] - 'inherit' pour suivre le reglage du theme.
+  @param {string} [heading] - Niveau de titre ('h3' par defaut ; 'h2' sous un h1 de page).
+  @param {boolean} [lazy] - false pour charger l'image tout de suite (cartes du premier ecran).
+  @param {boolean} [priority] - true pour fetchpriority="high" (premiere carte de la page).
+  @param {number} [columns_mobile] - Colonnes de la grille en mobile (2 par defaut), pour l'attribut sizes.
+
+  @example
+  {% render 'product-card', product: product, show_vendor: 'inherit' %}
+{% enddoc %}
 
 {%- liquid
   comment

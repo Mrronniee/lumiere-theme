@@ -1,8 +1,12 @@
-{% comment %}
+{% doc %}
   Snippet: Shopify Markets Selectors
   Selecteurs de langue, devise et pays
-  Usage: {% render 'markets-selectors' %}
-{% endcomment %}
+
+  @param {boolean} [avec_formulaire] - true pour rendre les formulaires de localisation ; le menu mobile reutilise ceux de l'en-tete.
+
+  @example
+  {% render 'markets-selectors', avec_formulaire: true %}
+{% enddoc %}
 
 {%- if settings.show_language_selector or settings.show_currency_selector or settings.show_country_selector -%}
   {%- style -%}

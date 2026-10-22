@@ -1,14 +1,16 @@
-{% comment %}
+{% doc %}
   Rend une couleur de TEXTE derivee de « base » qui atteigne le rapport
   « target » (4,6 par defaut, 3 pour un grand texte ou une bordure) sur le
   fond « bg ». On eclaircit si le fond est sombre, on assombrit sinon, par pas
   de 3 % — la teinte de la marque est conservee, seule la luminosite bouge.
 
-  Usage (la valeur se recupere par capture) :
-    {%- capture accent_text -%}
-      {%- render 'contrast-color', base: c_accent, bg: bg_color -%}
-    {%- endcapture -%}
-{% endcomment %}
+  @param {string} [base] - Couleur de depart, dont la teinte est conservee (defaut : #1a1a1a).
+  @param {string} [bg] - Fond sur lequel l'encre sera posee (defaut : #ffffff).
+  @param {number} [target] - Rapport a atteindre (defaut : 4.6 ; 3 pour un grand texte ou une bordure).
+
+  @example
+  {%- capture accent_text -%}{%- render 'contrast-color', base: c_accent, bg: bg_color -%}{%- endcapture -%}
+{% enddoc %}
 {%- liquid
   assign base = base | default: '#1a1a1a'
   assign bg = bg | default: '#ffffff'

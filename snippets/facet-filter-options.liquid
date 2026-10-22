@@ -1,0 +1,28 @@
+{% doc %}
+  Rend les valeurs d'un filtre de vitrine en cases a cocher. Sert tout type de
+  filtre decrit par une liste de valeurs : « list », « boolean », et tout type
+  que Shopify ajoutera ensuite.
+
+  @param {object} filter - Le filtre de vitrine (collection.filters ou search.filters).
+  @param {string} section_id - L'id de la section, pour des id de champ uniques.
+  @param {number} group_index - Le rang du filtre dans la liste, pour des id de champ uniques.
+
+  @example
+  {% render 'facet-filter-options', filter: filter, section_id: section_id, group_index: forloop.index %}
+{% enddoc %}
+{%- for filter_value in filter.values -%}
+  {%- assign filter_input_id = 'Filter-' | append: section_id | append: '-' | append: group_index | append: '-' | append: forloop.index -%}
+  <label class="collection-filters__option" for="{{ filter_input_id }}">
+    <input
+      type="checkbox"
+      id="{{ filter_input_id }}"
+      name="{{ filter_value.param_name }}"
+      value="{{ filter_value.value }}"
+      {% if filter_value.active %}checked{% endif %}
+      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
+      data-filter-input
+    >
+    <span>{{ filter_value.label }}</span>
+    <span class="collection-filters__option-count">({{ filter_value.count }})</span>
+  </label>
+{%- endfor -%}

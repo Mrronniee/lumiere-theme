@@ -1,4 +1,4 @@
-{%- comment -%}
+{% doc %}
   Retrait en magasin, pour la variante donnee.
 
   Shopify expose la disponibilite par point de retrait dans
@@ -10,10 +10,12 @@
   changement de variante par l'API de rendu de section
   (sections/pickup-availability.liquid, appelee par assets/theme.js).
 
-  Parametres :
-    variant (obligatoire) la variante a decrire
-    id      (facultatif)  suffixe des identifiants, pour n'en avoir qu'un par page
-{%- endcomment -%}
+  @param {object} variant - La variante a decrire.
+  @param {string} [id] - Suffixe des identifiants, pour n'en avoir qu'un par page.
+
+  @example
+  {% render 'pickup-availability', variant: product.selected_or_first_available_variant %}
+{% enddoc %}
 {%- liquid
   assign availabilities = variant.store_availabilities
   assign pickup_count = availabilities | size

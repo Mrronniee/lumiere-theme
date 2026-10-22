@@ -428,7 +428,7 @@
       {
         "type": "number",
         "id": "cart_free_shipping_threshold",
-        "default": 10000,
+        "default": 100,
         "label": "t:settings_schema.panier.settings.cart_free_shipping_threshold.label",
         "info": "t:settings_schema.panier.settings.cart_free_shipping_threshold.info"
       }

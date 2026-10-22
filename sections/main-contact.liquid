@@ -272,7 +272,17 @@
       </div>
 
       <button type="submit" class="btn btn--primary contact__submit">
-        {{ section.settings.button_label | default: 'Send' }}
+        {%- comment -%}
+          Repli traduit, pas « Send » en dur : le marchand qui vide le champ
+          affichait un bouton anglais sur une boutique francaise. Le texte du
+          marchand passe par | escape ; la chaine traduite, deja echappee par
+          | t, n'y repasse pas (sinon « S'inscrire » devient « S&#39;inscrire »).
+        {%- endcomment -%}
+        {%- if section.settings.button_label != blank -%}
+          {{- section.settings.button_label | escape -}}
+        {%- else -%}
+          {{- 'contact.form.send' | t -}}
+        {%- endif -%}
       </button>
     {%- endform -%}
 
@@ -335,8 +345,7 @@
     {
       "type": "text",
       "id": "button_label",
-      "label": "t:sections.main_contact.settings.button_label.label",
-      "default": "Send"
+      "label": "t:sections.main_contact.settings.button_label.label"
     },
     {
       "type": "checkbox",

@@ -1,20 +1,22 @@
-{%- comment -%}
+{% doc %}
   Prix d'une ligne de panier, rendu de la MEME facon dans le tiroir et sur
   /cart. Quatre points que les deux endroits rataient :
-    - le prix solde n'etait pas nomme a cote de l'ancien prix : le lecteur
-      d'ecran lisait deux montants sans dire lequel s'applique ;
-    - l'ancien prix n'etait barre que par le CSS, donc pas pour qui n'a pas le
-      CSS (il faut un <s>) ;
-    - le prix unitaire (EUR/kg) manquait, alors que la carte produit et la
-      fiche l'affichent ;
-    - les remises de ligne (codes promo, remises automatiques et remises
-      d'app) n'etaient nommees nulle part.
+  - le prix solde n'etait pas nomme a cote de l'ancien prix : le lecteur
+  d'ecran lisait deux montants sans dire lequel s'applique ;
+  - l'ancien prix n'etait barre que par le CSS, donc pas pour qui n'a pas le
+  CSS (il faut un <s>) ;
+  - le prix unitaire (EUR/kg) manquait, alors que la carte produit et la
+  fiche l'affichent ;
+  - les remises de ligne (codes promo, remises automatiques et remises
+  d'app) n'etaient nommees nulle part.
 
-  Parametres :
-    item  (obligatoire) la ligne de panier
-    scope 'line' pour le total de la ligne, sinon le prix unitaire
-    class (facultatif) prefixe de classe, 'cart-item-price' par defaut
-{%- endcomment -%}
+  @param {object} item - La ligne de panier.
+  @param {string} [scope] - 'line' pour le total de la ligne, sinon le prix unitaire.
+  @param {string} [class] - Prefixe de classe (defaut : cart-item-price).
+
+  @example
+  {% render 'cart-item-price', item: item, scope: 'line' %}
+{% enddoc %}
 {%- liquid
   assign klass = class | default: 'cart-item-price'
   if scope == 'line'

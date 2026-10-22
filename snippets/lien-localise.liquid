@@ -1,4 +1,4 @@
-{%- comment -%}
+{% doc %}
   Un lien de REGLAGE rendu dans la langue servie.
 
   Un lien choisi dans l'editeur est rendu localise par Shopify. Un chemin tape a
@@ -12,8 +12,11 @@
   deja. Les URL completes (https://…), les ancres et les liens mailto/tel sont
   rendus tels quels.
 
-  Parametre : url (le reglage).
-{%- endcomment -%}
+  @param {string} url - L'URL ou le chemin du reglage, a rendre dans la langue servie.
+
+  @example
+  <a href="{% render 'lien-localise', url: section.settings.button_link %}">
+{% enddoc %}
 {%- liquid
   assign lien = url | default: ''
   assign racine = routes.root_url

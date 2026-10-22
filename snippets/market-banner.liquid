@@ -1,4 +1,4 @@
-{% comment %}
+{% doc %}
   Bandeau « vous semblez être dans tel pays, changer de marché ? »
 
   Il vit HORS de la rangée de l'en-tête : c'est un bloc pleine largeur, comme
@@ -7,14 +7,9 @@
   tombait à 242 px et les liens se coupaient en plein mot (« HOM/E »,
   « CATALO/G »). Mesuré sur la démo 1.5.1 à 1440, en EN et en FR.
 
-  Usage : {% render 'market-banner' %} — en FIN de document (layout/theme.liquid),
-  jamais dans .header__inner ni dans la section de l'en-tête. Il est affiché
-  hors du flux, en bas de la fenêtre : révélé après une requête, dans le flux
-  il décalait toute la page de 77 px (CLS 0,1203 à 360 px) ; rendu dans
-  l'en-tête, son bouton de fermeture était le 2e arrêt de tabulation de la
-  page alors qu'il s'affiche en bas. La place qu'il occupe est rendue au
-  document par assets/theme.js (Markets.reserverPlace).
-{% endcomment %}
+  @example
+  {% render 'market-banner' %}
+{% enddoc %}
 {%- if settings.show_market_banner -%}
   {%- if settings.show_language_selector or settings.show_currency_selector or settings.show_country_selector -%}
     {%- style -%}

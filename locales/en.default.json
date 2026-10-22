@@ -499,7 +499,8 @@
       "phone": "Phone",
       "message": "Message",
       "success": "Thanks, your message has been sent. We will get back to you shortly.",
-      "error_heading": "Please correct the following:"
+      "error_heading": "Please correct the following:",
+      "send": "Send"
     }
   }
 }

@@ -96,7 +96,7 @@
         },
         "wishlist_page": {
           "label": "Wishlist page",
-          "info": "The page that uses the \"page.wishlist\" template. Leave empty to use /pages/wishlist."
+          "info": "The page that uses the \"page.wishlist\" template. The wishlist links are hidden until you choose it."
         }
       }
     },
@@ -247,8 +247,8 @@
           "info": "Off by default: turning it on promises free shipping to your customers."
         },
         "cart_free_shipping_threshold": {
-          "label": "Free shipping threshold (cents)",
-          "info": "10000 = 100.00"
+          "label": "Free shipping threshold",
+          "info": "In your store currency: 100 means 100.00. Only shown when the customer pays in your store currency."
         }
       }
     },

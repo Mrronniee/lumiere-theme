@@ -1,11 +1,13 @@
-{%- comment -%}
+{% doc %}
   Liste de tri, lue dans les options que Shopify expose (`sort_options`) plutot
   qu'ecrite en dur : la page de recherche n'en avait aucune.
 
-  Parametres :
-    filterable (obligatoire) collection ou search
-    section_id (obligatoire)
-{%- endcomment -%}
+  @param {object} filterable - La collection ou l'objet search.
+  @param {string} section_id - L'id de la section, pour des id de champ uniques.
+
+  @example
+  {% render 'facet-sort', filterable: collection, section_id: section.id %}
+{% enddoc %}
 {%- if filterable.sort_options.size > 0 -%}
   {%- assign current_sort = filterable.sort_by | default: filterable.default_sort_by -%}
   <label class="visually-hidden" for="SortBy-{{ section_id }}">{{ 'sections.collection.sort_by' | t }}</label>

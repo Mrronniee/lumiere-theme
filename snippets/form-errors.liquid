@@ -1,14 +1,16 @@
-{%- comment -%}
+{% doc %}
   Bloc d'erreurs d'un formulaire, rendu partout de la meme facon : role=alert
   pour que le lecteur d'ecran l'annonce, tabindex=-1 + autofocus pour que le
   focus y arrive apres l'envoi, et un id stable pour que chaque champ en faute
   pointe dessus avec aria-describedby.
 
-  Parametres :
-    form  (obligatoire) l'objet form du {% form %} englobant
-    id    (obligatoire) id du conteneur, cible des aria-describedby
-    class (facultatif)  classe en plus de .form__error
-{%- endcomment -%}
+  @param {object} form - L'objet form de la balise form englobante.
+  @param {string} id - Id du conteneur, cible des aria-describedby des champs en faute.
+  @param {string} [class] - Classe en plus de .form__error.
+
+  @example
+  {% render 'form-errors', form: form, id: 'ContactErrors' %}
+{% enddoc %}
 {%- if form.errors -%}
   <div
     id="{{ id }}"

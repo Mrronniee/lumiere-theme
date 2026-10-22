@@ -1,7 +1,12 @@
-{% comment %}
+{% doc %}
   Snippet d'icones SVG reutilisables
-  Usage: {% render 'icon', name: 'cart', class: 'icon-class' %}
-{% endcomment %}
+
+  @param {string} icon - Le nom de l'icone, tel que l'attend le case ci-dessous.
+  @param {string} [class] - Classe en plus de .icon et .icon-<nom>.
+
+  @example
+  {% render 'icon', icon: 'cart', class: 'header__icon' %}
+{% enddoc %}
 
 {%- liquid
   assign icon_stroke = settings.icon_stroke_width | default: 15 | divided_by: 10.0

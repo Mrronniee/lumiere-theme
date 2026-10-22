@@ -1,4 +1,4 @@
-{% comment %}
+{% doc %}
   Un montant, formaté selon le réglage « afficher le code devise »
   (settings.price_show_currency_code).
 
@@ -7,9 +7,11 @@
   panier affichait « €38,00 » pendant que la collection affichait
   « €24,00 EUR » (mesuré sur la démo 1.5.1). Un seul endroit décide désormais.
 
-  Usage : {% render 'money', amount: item.final_price %}
-          {%- capture x -%}{% render 'money', amount: v %}{%- endcapture -%}
-{% endcomment %}
+  @param {number} amount - Un montant en centimes (cart.total_price, item.final_price, variant.price…).
+
+  @example
+  {% render 'money', amount: item.final_price %}
+{% enddoc %}
 {%- if settings.price_show_currency_code -%}
   {{- amount | money_with_currency -}}
 {%- else -%}

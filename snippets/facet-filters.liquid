@@ -1,17 +1,19 @@
-{%- comment -%}
+{% doc %}
   Panneau de filtres et pastilles de filtres actifs, rendu a l'identique sur
   une collection ET sur la page de resultats de recherche : celle-ci n'avait ni
   filtres ni tri, alors que Shopify expose `search.filters` comme
   `collection.filters`.
 
-  Parametres :
-    filterable (obligatoire) l'objet qui porte `filters` : collection ou search
-    reset_url  (obligatoire) adresse sans aucun filtre
-    section_id (obligatoire) pour fabriquer des id uniques
-    terms      (facultatif)  la requete, a conserver en champ cache (recherche)
-    types      (facultatif)  le parametre `type`, a conserver (recherche)
-    sort_by    (facultatif)  le tri en cours, a conserver en champ cache
-{%- endcomment -%}
+  @param {object} filterable - L'objet qui porte `filters` : collection ou search.
+  @param {string} reset_url - Adresse sans aucun filtre.
+  @param {string} section_id - L'id de la section, pour fabriquer des id uniques.
+  @param {string} [terms] - La requete, a conserver en champ cache (recherche).
+  @param {string} [types] - Le parametre `type`, a conserver (recherche).
+  @param {string} [sort_by] - Le tri en cours, a conserver en champ cache.
+
+  @example
+  {% render 'facet-filters', filterable: collection, reset_url: collection.url, section_id: section.id %}
+{% enddoc %}
 {%- if filterable.filters.size > 0 -%}
   <div class="collection-filters__overlay" data-filter-overlay></div>
   {%- comment -%}
@@ -96,23 +98,14 @@
           </button>
           <div class="collection-filters__options">
             {%- case filter.type -%}
-              {%- when 'list' -%}
-                {%- for filter_value in filter.values -%}
-                  {%- assign filter_input_id = 'Filter-' | append: section_id | append: '-' | append: forloop.parentloop.index | append: '-' | append: forloop.index -%}
-                  <label class="collection-filters__option" for="{{ filter_input_id }}">
-                    <input
-                      type="checkbox"
-                      id="{{ filter_input_id }}"
-                      name="{{ filter_value.param_name }}"
-                      value="{{ filter_value.value }}"
-                      {% if filter_value.active %}checked{% endif %}
-                      {% if filter_value.count == 0 and filter_value.active == false %}disabled{% endif %}
-                      data-filter-input
-                    >
-                    <span>{{ filter_value.label }}</span>
-                    <span class="collection-filters__option-count">({{ filter_value.count }})</span>
-                  </label>
-                {%- endfor -%}
+              {%- when 'boolean', 'list' -%}
+                {%- comment -%}
+                  Un filtre « boolean » (En stock, par exemple) decrit lui aussi
+                  ses deux valeurs dans filter.values : il se rend comme une
+                  liste. Sans sa branche, son groupe s'affichait vide, titre et
+                  chevron compris.
+                {%- endcomment -%}
+                {% render 'facet-filter-options', filter: filter, section_id: section_id, group_index: forloop.index %}
 
               {%- when 'price_range' -%}
                 <div class="collection-filters__price-range">
@@ -142,6 +135,14 @@
                     data-filter-input
                   >
                 </div>
+
+              {%- else -%}
+                {%- comment -%}
+                  Tout type de filtre que Shopify ajoutera ensuite : ses valeurs
+                  se rendent comme une liste, plutot que de laisser un groupe
+                  vide dans la colonne de filtres.
+                {%- endcomment -%}
+                {% render 'facet-filter-options', filter: filter, section_id: section_id, group_index: forloop.index %}
             {%- endcase -%}
           </div>
         </div>

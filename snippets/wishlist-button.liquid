@@ -1,9 +1,14 @@
-{% comment %}
+{% doc %}
   Snippet: Bouton Wishlist
   Le CSS vit dans theme.css : ce snippet est rendu une fois par carte produit,
-  un bloc {% style %} ici serait dupliqué autant de fois qu'il y a de produits.
-  Usage: {% render 'wishlist-button', product: product, class: 'wishlist-btn--card' %}
-{% endcomment %}
+  un bloc de style ici serait dupliqué autant de fois qu'il y a de produits.
+
+  @param {object} product - Le produit a mettre en favori.
+  @param {string} [class] - Classe en plus de .wishlist-btn.
+
+  @example
+  {% render 'wishlist-button', product: product, class: 'wishlist-btn--card' %}
+{% enddoc %}
 
 {%- if settings.wishlist_enable -%}
   <button

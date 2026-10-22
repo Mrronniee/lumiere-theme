@@ -1,18 +1,18 @@
-{% comment %}
+{% doc %}
   Jetons de couleur recalcules POUR UNE SECTION qui porte son propre fond.
 
-  A placer dans la regle racine de la section (son {%- style -%}), pour que
+  A placer dans la regle racine de la section (dans sa balise style), pour que
   tout ce qu'elle contient herite de jetons justes : sans cela
   --color-accent-text, --color-text-light et les bordures gardent la valeur
   derivee du fond du THEME et tombent a 1,0-3,7:1 sur un fond sombre, inverse
   ou d'accent (mesure : 70 des 120 combinaisons de LUMIERE 1.5.2).
 
-  Usage :
-    .ma-section {
-      background-color: {{ bg }};
-      {% render 'section-tokens', bg: bg, text: txt %}
-    }
-{% endcomment %}
+  @param {string} [bg] - Le fond de la section (defaut : settings.color_background).
+  @param {string} [text] - L'encre de la section ; quand elle manque, elle est choisie d'apres le fond.
+
+  @example
+  {% render 'section-tokens', bg: bg_color, text: txt_color %}
+{% enddoc %}
 {%- liquid
   assign bg = bg | default: settings.color_background
 

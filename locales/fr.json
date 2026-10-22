@@ -499,7 +499,8 @@
       "phone": "Téléphone",
       "message": "Message",
       "success": "Merci, votre message a bien été envoyé. Nous vous répondrons rapidement.",
-      "error_heading": "Merci de corriger les points suivants :"
+      "error_heading": "Merci de corriger les points suivants :",
+      "send": "Envoyer"
     }
   }
 }

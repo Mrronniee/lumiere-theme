@@ -1,7 +1,11 @@
-{% comment %}
+{% doc %}
   Pagination accessible et traduite
-  Usage: {% render 'pagination', paginate: paginate %}
-{% endcomment %}
+
+  @param {object} paginate - L'objet paginate de la balise paginate englobante.
+
+  @example
+  {% render 'pagination', paginate: paginate %}
+{% enddoc %}
 {%- if paginate.pages > 1 -%}
   <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
     <ul class="pagination__list">

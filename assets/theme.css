@@ -1124,11 +1124,8 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .btn--secondary,
   .wishlist-btn,
   .newsletter__button,
-  .product-card__quick-add,
-  .product-card__quick-view-btn,
   .hero__video-control,
   .slideshow__button,
-  .slideshow__arrow,
   .mini-cart__view-cart,
   .quick-view__close,
   .search-overlay__submit
@@ -1153,32 +1150,53 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .wishlist-btn--card,
   .hero__video-control,
   .hero__button,
   .slideshow__button,
-  .slideshow__arrow,
-  .slideshow__dot,
-  .product-card__quick-view-btn,
-  .product-card__quick-add
+  .slideshow__dot
 ):focus-visible {
   outline-color: #1a1a1a;
   box-shadow: 0 0 0 2px #fff;
 }
 
-/* Et les petits boutons ronds poses sur un media prennent une PLAQUE OPAQUE au focus :
-   leur fond translucide laissait la video ou la photo decider du contraste de l'icone
-   (bouton de pause du heros mesure a 1,00:1 en 1.6.2). */
-:is(
-  .hero__video-control,
-  .slideshow__arrow,
-  .slideshow__dot,
-  .wishlist-btn--card,
-  .product-card__quick-view-btn,
-  .product-card__quick-add
-):focus-visible {
+/* Le bouton de pause du heros prend une PLAQUE OPAQUE au focus : son fond
+   translucide laissait la video decider du contraste de l'icone (mesure a 1,00:1
+   en 1.6.2). Les cinq autres boutons ronds qu'on avait mis dans cette liste ont
+   DEJA un fond opaque au repos : la plaque n'y changeait rien, et la declarer au
+   focus faisait changer tout leur interieur d'un coup, ce qui noyait leur anneau
+   dans une seule suite de pixels modifies partant du bord (voir la regle
+   suivante). Ils sont passes a l'anneau rentre. */
+.hero__video-control:focus-visible {
   background-color: var(--color-background);
   color: var(--color-text);
+}
+
+/* ANNEAU RENTRE DANS LA PLAQUE DU BOUTON, PAS POSE SUR L'IMAGE.
+   Le contraste d'un anneau se mesure contre le pixel NON MODIFIE situe juste a
+   l'exterieur de l'anneau. Pour un bouton pose sur une photo, ce pixel est un
+   pixel de la PHOTO : le theme ne le choisit pas, et le meme anneau (blanc a
+   l'interieur, #1a1a1a a l'exterieur) valait 17,4:1 sur une photo sombre et
+   1,69 a 2,04:1 des que la photo etait claire — mesures 1.6.1 et 1.6.3 sur les
+   cartes produit de l'accueil, de collections/all et de la page toutes-sections.
+   Aucune paire de couleurs ne peut garantir un rapport contre une image
+   quelconque. Ces cinq boutons portent en revanche tous un fond OPAQUE au repos
+   (--color-background, ou le fond de bouton du heros) et une encre derivee sur
+   ce fond. En rentrant l'anneau de 4 px et en lui donnant currentColor, il se
+   mesure contre cette plaque : son rapport devient celui de l'encre du bouton
+   sur son propre fond, et ne depend plus de l'image. L'ombre blanche exterieure
+   est retiree pour la meme raison — posee dehors, elle etait mesuree contre la
+   photo ; l'ombre portee du composant (5 a 8 % de noir) reste sous le seuil de
+   mesure, rien ne change donc hors du bouton. */
+:is(
+  .wishlist-btn--card,
+  .product-card__quick-view-btn,
+  .product-card__quick-add,
+  .slideshow__arrow,
+  .hero__button--primary
+):focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+  box-shadow: none;
 }
 
 /* Lien dont le contenu est une image : l'anneau exterieur tombe sur le fond de
@@ -1195,7 +1213,6 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .wishlist-btn--card,
   .hero__video-control,
   .slideshow__button
 ):focus-visible {
@@ -1211,7 +1228,6 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .wishlist-btn--card,
   .hero__video-control,
   .slideshow__button
 ):focus-visible::after {

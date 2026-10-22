@@ -1,7 +1,12 @@
-{% comment %}
+{% doc %}
   Champs d'adresse client
-  Usage: {% render 'address-fields', form: form, prefix: 'AddressNew' %}
-{% endcomment %}
+
+  @param {object} form - L'objet form de la balise form 'customer_address' englobante.
+  @param {string} prefix - Prefixe des id et des cibles de <label for>, unique par formulaire.
+
+  @example
+  {% render 'address-fields', form: form, prefix: 'AddressNew' %}
+{% enddoc %}
 {%- assign errors_id = prefix | append: 'Errors' -%}
 {% render 'form-errors', form: form, id: errors_id %}
 

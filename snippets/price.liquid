@@ -1,7 +1,11 @@
-{% comment %}
+{% doc %}
   Affichage des prix avec gestion des promotions et des prix variables
-  Usage: {% render 'price', product: product %}
-{% endcomment %}
+
+  @param {object} product - Le produit dont le prix est affiche.
+
+  @example
+  {% render 'price', product: product %}
+{% enddoc %}
 
 {%- liquid
   assign show_badge = false

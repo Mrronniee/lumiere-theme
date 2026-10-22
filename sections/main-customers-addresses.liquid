@@ -14,6 +14,12 @@
   </details>
 
   {%- if customer.addresses.size > 0 -%}
+    {%- comment -%}
+      {% paginate %} et non une boucle nue : Liquid s'arrete a 50 tours sans
+      rien dire, donc un client qui a plus de 50 adresses enregistrees ne
+      voyait plus les suivantes, ni aucun moyen d'y acceder.
+    {%- endcomment -%}
+    {%- paginate customer.addresses by 10 -%}
     <ul class="address__list">
       {%- for address in customer.addresses -%}
         <li class="address__item">
@@ -44,6 +50,8 @@
         </li>
       {%- endfor -%}
     </ul>
+    {% render 'pagination', paginate: paginate %}
+    {%- endpaginate -%}
   {%- else -%}
     <p>{{ 'customer.addresses.none' | t }}</p>
   {%- endif -%}

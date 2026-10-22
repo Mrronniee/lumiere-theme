@@ -80,6 +80,15 @@
   endif
 
   assign digit_surface = section.settings.text_color | color_mix: section.settings.background_color, 8
+  comment
+    L'etiquette d'une unite (« Days ») est peinte sur digit_surface, la surface
+    de la case, pas sur le fond de la section : --color-text-light, derive sur
+    le fond, y perdait le rapport annonce. On la redérive sur digit_surface.
+  endcomment
+  capture digit_muted
+    render 'contrast-color', base: section.settings.text_color, bg: digit_surface, target: 4.6
+  endcapture
+  assign digit_muted = digit_muted | strip
   assign digit_border = section.settings.text_color | color_mix: section.settings.background_color, 22
 -%}
 
@@ -182,7 +191,9 @@
     font-size: 0.6875rem;
     letter-spacing: 0.12em;
     text-transform: uppercase;
-    color: var(--color-text-light);
+    /* Derivee sur digit_surface, la surface de la case, et non sur le fond de
+       la section : voir le commentaire du bloc {%- liquid -%} en tete. */
+    color: {{ digit_muted }};
   }
 
   .countdown__expired {
