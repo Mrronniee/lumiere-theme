@@ -1,0 +1,10 @@
+{
+ "slug": "lumiere",
+ "version": "1.6.4",
+ "commit": "3e0e51a",
+ "zip": "LUMIERE-Kiosk.zip",
+ "empreinte": "f235118112fd7f7440d7001857f633dbb15b5c10935d398b06691d92f991aa23",
+ "sha256_cloud": "f0d463c52d4eba08d6760ce2eef5e710557f8bef384162baa3bfaea04fb67e77",
+ "format": "paquets/lumiere.json",
+ "fabrique_le": "2026-10-22"
+}
