@@ -118,24 +118,20 @@
     padding: var(--spacing-md);
   }
 
-  /* Au survol uniquement sur les appareils qui savent survoler ;
-     sur mobile le contenu reste visible et cliquable. */
-  @media (hover: hover) and (pointer: fine) {
-    .lookbook__item-overlay { opacity: 0; }
-    .lookbook__item:hover .lookbook__item-overlay,
-    .lookbook__item:focus-within .lookbook__item-overlay { opacity: 1; }
-  }
-
+  /* VOILE ET TITRE AU REPOS, sur ordinateur comme au doigt (decision de Ronnie,
+     23/10/2026, meme regle que les boutons de carte). Sur ordinateur, le voile
+     etait a opacity 0 et le contenu decale de 20 px : le titre et le lien de la
+     tuile n'existaient qu'au survol ou au focus. D'une part un contenu qui
+     n'existe qu'au survol n'est pas atteignable autrement ; d'autre part
+     focaliser le lien repeignait TOUTE la tuile par-dessus la photo, et c'etait
+     cette bande-la, large de 14 a 206 px et a 1 ou 2:1 contre l'image, que la
+     mesure retenait au lieu de l'anneau — les tuiles en defaut changeaient d'un
+     tour a l'autre, et la 1.6.1 en avait deja deux. Au repos, le focus ne change
+     plus que l'anneau. */
   .lookbook__item-content {
     color: #ffffff;
     transform: translateY(0);
     transition: transform var(--transition-base);
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .lookbook__item-content { transform: translateY(20px); }
-    .lookbook__item:hover .lookbook__item-content,
-    .lookbook__item:focus-within .lookbook__item-content { transform: translateY(0); }
   }
 
   .lookbook__item-title {

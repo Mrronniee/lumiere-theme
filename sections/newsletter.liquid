@@ -112,6 +112,14 @@
   @media screen and (max-width: 749px) {
     .newsletter__form {
       flex-direction: column;
+      /* En colonne, le champ se retrouve juste au-dessus du bouton, dont le fond
+         est --color-primary. Avec le gap de --spacing-xs (8 px), l'anneau de
+         focus du champ (2 px d'ombre + 2 px de contour) et le pixel de controle
+         pris 2 px plus loin tombaient sur le bord du bouton : contour sombre
+         contre fond sombre, 1:1 sur le bord bas, alors que les trois autres
+         cotes valaient 15,96:1 (mesure du 23/10/2026, accueil en 390). Le gap
+         degage l'anneau sur le fond de la section. */
+      gap: var(--spacing-sm);
     }
     .newsletter__button {
       width: 100%;
