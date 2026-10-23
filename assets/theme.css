@@ -869,6 +869,54 @@ ul, ol {
   }
 }
 
+/* Le bloc ci-dessus coupe la DUREE, pas le DEPLACEMENT : la carte survolee
+   arrivait agrandie d'un coup au lieu de grandir doucement, et le cas
+   mouvement-reduit-etats du lot 3 demande que rien ne glisse, ne zoome ni ne
+   pivote au survol (au plus un fondu). Les transformations de survol sont donc
+   remises a plat ici, et seulement elles : l'opacite, la couleur et l'ombre de
+   survol restent, puisqu'elles ne bougent rien.
+
+   Les selecteurs REPRENNENT EXACTEMENT ceux des sections (meme specificite) :
+   les {% stylesheet %} des sections sont chargees par content_for_header, donc
+   AVANT cette feuille, et a specificite egale c'est la regle globale qui gagne
+   (piege de cascade connu du thème). Un selecteur simplifie ici ne gagnerait
+   pas. */
+@media (prefers-reduced-motion: reduce) {
+  .header__nav-item:hover .header__nav-chevron,
+  .product-card:hover .product-card__image:not(.product-card__image--hover),
+  .wishlist-btn:hover,
+  .wishlist-btn--card,
+  .product-card:hover .wishlist-btn--card,
+  .product-card:focus-within .wishlist-btn--card,
+  .slideshow__button:hover,
+  .multi-column__card:hover .multi-column__image,
+  .multi-column__link:hover .icon,
+  .reviews__card:hover,
+  .map__media-link:hover .map__image,
+  .page-404__link:hover,
+  .testimonials__card:hover,
+  .featured-collections__card:hover .featured-collections__image,
+  .featured-collections__card:focus-visible .featured-collections__image,
+  .lookbook__item:hover .lookbook__item-image,
+  .product-add-to-cart:hover:not(:disabled),
+  .blog-posts__card:hover .blog-card__media img,
+  .blog-posts__card:focus-within .blog-card__media img,
+  .gallery__link:hover .gallery__image,
+  .gallery__link:focus-visible .gallery__image {
+    transform: none;
+  }
+
+  /* Le sous-menu de l'en-tete garde son translateX(-50%) : c'est son
+     CENTRAGE, pas un mouvement. Seul le glissement vertical de 10 px part,
+     des deux cotes, pour qu'il paraisse et disparaisse sans bouger. */
+  .header__dropdown,
+  .header__nav-item:hover .header__dropdown,
+  .header__nav-item.is-open .header__dropdown,
+  .header__nav-item.is-closed-by-esc .header__dropdown {
+    transform: translateX(-50%);
+  }
+}
+
 /* ============================================
    WISHLIST BUTTON (sur cartes produit)
    ============================================ */

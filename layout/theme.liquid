@@ -79,6 +79,14 @@
       predictive_search_url: {{ routes.predictive_search_url | json }},
       root_url: {{ routes.root_url | json }}
     };
+    {%- comment -%}
+      Reglages du thème dont le JavaScript a besoin pour rendre comme Liquid.
+      L'apercu rapide construit ses options dans le navigateur : sans ce pont,
+      il ignorait « cacher les variantes indisponibles » que la fiche respecte.
+    {%- endcomment -%}
+    window.themeSettings = {
+      variantHideUnavailable: {{ settings.variant_hide_unavailable | json }}
+    };
     window.themeStrings = {
       addToCart: {{ 'products.product.add_to_cart' | t | json }},
       soldOut: {{ 'products.product.sold_out' | t | json }},

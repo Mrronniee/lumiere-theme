@@ -522,6 +522,7 @@
           <div class="product-variants">
             {%- for option in product.options_with_values -%}
               {%- assign option_key = option.name | downcase -%}
+              {%- assign option_index = forloop.index0 -%}
               {%- assign is_color = false -%}
               {%- if color_names contains option_key -%}{%- assign is_color = true -%}{%- endif -%}
 
@@ -537,8 +538,36 @@
                     data-option-value
                     data-option-index="{{ forloop.index0 }}"
                   >
+                    {%- comment -%}
+                      Cette branche ne lisait PAS settings.variant_hide_unavailable :
+                      « cacher les variantes indisponibles » ne faisait rien pour un
+                      marchand en liste deroulante, alors que la branche boutons
+                      filtrait (relevé sur la 1.7.1, field-jacket taille L). Meme
+                      regle ici, et meme source : une valeur est disponible des qu'UNE
+                      variante vendable la porte.
+
+                      Option coupee, la valeur reste mais part `disabled` : le
+                      navigateur la grise, le lecteur d'ecran l'annonce indisponible
+                      et elle ne peut pas entrer au panier.
+                    {%- endcomment -%}
                     {%- for value in option.values -%}
-                      <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
+                      {%- liquid
+                        assign value_available = false
+                        for v in product.variants
+                          if v.available and v.options[option_index] == value
+                            assign value_available = true
+                            break
+                          endif
+                        endfor
+                      -%}
+                      {%- if settings.variant_hide_unavailable and value_available == false -%}
+                        {%- continue -%}
+                      {%- endif -%}
+                      <option
+                        value="{{ value | escape }}"
+                        {% if option.selected_value == value %}selected{% endif %}
+                        {% unless value_available %}disabled{% endunless %}
+                      >
                         {{ value | escape }}
                       </option>
                     {%- endfor -%}
@@ -582,6 +611,15 @@
                       {%- continue -%}
                     {%- endif -%}
                     <div class="product-variant__option">
+                      {%- comment -%}
+                        Option coupee : la valeur reste, et `disabled` la marque.
+                        La feuille globale portait deja la regle
+                        `.product-variant__option-input:disabled + label` (barree,
+                        grisee, curseur not-allowed), mais RIEN ne posait jamais
+                        l'attribut : une taille sans variante vendable paraissait
+                        donc achetable. L'etat natif porte aussi l'annonce du
+                        lecteur d'ecran, sans nouvelle chaine a traduire.
+                      {%- endcomment -%}
                       <input
                         type="radio"
                         id="{{ input_id }}"
@@ -591,6 +629,7 @@
                         data-option-value
                         data-option-index="{{ forloop.parentloop.index0 }}"
                         {% if option.selected_value == value %}checked{% endif %}
+                        {% unless value_available %}disabled{% endunless %}
                       >
                       <label
                         for="{{ input_id }}"

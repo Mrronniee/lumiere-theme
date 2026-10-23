@@ -8,6 +8,7 @@
 
   const strings = window.themeStrings || {};
   const routes = window.routes || {};
+  const themeSettings = window.themeSettings || {};
 
   // ============================================
   // UTILITAIRES
@@ -1156,6 +1157,17 @@
         return seen;
       };
 
+      // Meme regle que sections/main-product.liquid : une valeur est disponible
+      // des qu'UNE variante vendable la porte. L'apercu rapide la lisait de la
+      // liste complete des variantes, donc il montrait des valeurs que la fiche
+      // cachait. Reglage coupe, la valeur reste et part `disabled` (barree par
+      // la feuille globale, annoncee indisponible, non selectionnable) : c'est
+      // l'etat que la fiche rend aussi. La regle ne depend pas de la selection
+      // en cours, donc le changement de variante n'a rien a reprendre.
+      const hideUnavailable = themeSettings.variantHideUnavailable === true;
+      const isAvailable = (index, value) =>
+        this.product.variants.some((v) => v.available && v.options[index] === value);
+
       // Construit par le DOM (textContent, setAttribute) : un nom ou une valeur
       // d'option ne peut jamais etre interprete comme du HTML.
       names.forEach((name, i) => {
@@ -1173,6 +1185,9 @@
         group.setAttribute('aria-label', name);
 
         valuesFor(i).forEach((value, vi) => {
+          const available = isAvailable(i, value);
+          if (hideUnavailable && !available) return;
+
           const id = `qv-opt-${i}-${vi}`;
           const option = document.createElement('div');
           option.className = 'product-variant__option';
@@ -1183,6 +1198,7 @@
           input.value = value;
           input.id = id;
           input.className = 'product-variant__option-input';
+          input.disabled = !available;
           input.setAttribute('data-quick-view-option', '');
           input.setAttribute('data-option-index', String(i));
           if (value === selected) {

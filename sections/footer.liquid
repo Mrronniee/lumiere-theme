@@ -240,8 +240,16 @@
               s'affichait tel quel sur la version francaise.
             {%- endcomment -%}
             {%- if block.settings.menu != blank -%}
-              <div class="footer__column" {{ block.shopify_attributes }}>
-                <p class="footer__column-title">
+              {%- comment -%}
+                <nav> et non <div> : c'est un groupe de liens de navigation, et
+                le pied n'en mettait aucun dans un repere (axe region /
+                landmark-*, cas reperes-de-page du lot 3). La colonne elle-meme
+                porte le repere : pas de boite en plus, donc pas un pixel de
+                mise en page change. Son nom vient du titre deja affiche, par
+                aria-labelledby, pour que deux colonnes se distinguent.
+              {%- endcomment -%}
+              <nav class="footer__column" aria-labelledby="FooterColumnTitle-{{ block.id }}" {{ block.shopify_attributes }}>
+                <p class="footer__column-title" id="FooterColumnTitle-{{ block.id }}">
                   {%- if block.settings.title != blank -%}
                     {{- block.settings.title | escape -}}
                   {%- else -%}
@@ -255,7 +263,7 @@
                     </li>
                   {%- endfor -%}
                 </ul>
-              </div>
+              </nav>
             {%- elsif request.design_mode -%}
               <div class="footer__column" {{ block.shopify_attributes }}>
                 <p class="footer__column-empty">{{ 'sections.footer.column_needs_menu' | t }}</p>
