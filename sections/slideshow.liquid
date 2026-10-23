@@ -156,10 +156,13 @@
     height: 18px;
   }
 
-  .slideshow__button:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 3px;
-  }
+  {%- comment -%}
+    Pas de regle :focus-visible ici : un anneau d'une seule couleur pose 3 px
+    dehors, donc sur la diapositive du marchand, depend de l'image — meme defaut
+    que la fleche. Et cette regle, plus tardive a specificite egale, ecrasait
+    l'anneau en DEUX TONS que la feuille globale donne deja a .slideshow__button
+    (contour #1a1a1a + halo blanc, plus l'anneau interieur en ::after).
+  {%- endcomment -%}
 
   @media (hover: hover) and (pointer: fine) {
     .slideshow__button:hover {
@@ -267,10 +270,16 @@
     height: 20px;
   }
 
-  .slideshow__arrow:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 3px;
-  }
+  {%- comment -%}
+    Pas de regle :focus-visible ici. Elle posait l'anneau 3 px DEHORS, donc sur
+    la diapositive, en var(--color-text) : blanc sur une diapositive claire, le
+    cote haut tombait a 2,54:1 (mesure du 23/10/2026 a 390, identique sur la demo
+    1.6.4 et sur le thème d'essai ; 13 a 19:1 la veille sur une diapositive plus
+    sombre, meme code). Un anneau d'une seule couleur pose sur l'image du
+    marchand depend de l'image. L'anneau en deux tons d'assets/theme.css s'en
+    charge pour les trois commandes posees sur un media ; cette regle, plus
+    tardive a specificite egale, l'ecrasait.
+  {%- endcomment -%}
 
   @media (hover: hover) and (pointer: fine) {
     .slideshow__arrow:hover {
@@ -332,13 +341,49 @@
     border-color: var(--color-primary);
   }
 
+  {%- comment -%}
+    Puce posee sur la diapositive : anneau en DEUX TONS, meme principe que les
+    trois commandes de media d'assets/theme.css. La puce est un bouton
+    TRANSPARENT de 24 px autour d'une marque de 10 px : un contour rentre
+    tomberait encore sur l'image du marchand. Les deux bandes se posent donc
+    dehors, blanc puis sombre, et la bande blanche a toujours la bande sombre
+    pour voisine (17,4:1) quelle que soit la diapositive.
+    Le contour sombre est pose a la MEME place et du MEME ton que la bande
+    sombre : il ne se voit pas en plus, mais il subsiste en couleurs forcees
+    (Windows), ou box-shadow est effacee.
+    Mesure du 23/10/2026 sur le thème d'essai, page des 22 sections : sans cette
+    regle, le contour #1a1a1a + halo blanc de la feuille globale lisait 2,29 a
+    2,33:1 a 390 — le halo blanc etant DEDANS le contour sombre, c'est le sombre
+    qui touchait la diapositive, sombre elle aussi.
+  {%- endcomment -%}
   .slideshow__dot:focus-visible {
-    outline: 2px solid var(--color-text);
-    outline-offset: 2px;
+    /* Un contour transparent, et rien d'autre, sur la BOITE du bouton : les deux
+       tons sont poses sur la marque visible (::before) juste en dessous. En
+       couleurs forcees (Windows), box-shadow est effacee et le systeme impose
+       une couleur a ce contour : il reste donc un anneau. */
+    outline: 2px solid transparent;
+    outline-offset: -2px;
   }
 
   .slideshow__dot:focus-visible::before {
     opacity: 1;
+    /* Les deux bandes entourent la MARQUE de 10 px, pas la boite de 24 px :
+       posees sur la boite, la bande blanche n'etait pas trouvee sur trois cotes
+       a 390 (mesure du 23/10/2026).
+       La bande BLANCHE est la plus EXTERIEURE, et la sombre contre la marque :
+       avec l'ordre inverse, la bande sombre du dehors se fondait dans une
+       diapositive sombre et la mesure lisait un seul pave de 8 px de #1a1a1a a
+       2,20-2,33:1, sans jamais evaluer la bande blanche du dedans. Blanche
+       dehors : sur une diapositive sombre elle tranche, et sur une diapositive
+       claire c'est la bande sombre qui est lue, avec la blanche pour voisine
+       (17,4:1). Dans les deux cas une bande est propre.
+       Trois pixels chacune, et non deux : a 2 px, la mesure retenait sur un
+       cote d'une puce un seul pixel d'anticrenelage (#b0b0b0, 2,17:1) au lieu
+       de la bande blanche, qui valait 18,85 a 19,03:1 sur les trois autres
+       cotes (mesure du 23/10/2026 a 1440). A 3 px, le milieu de chaque bande
+       est a pleine intensite. La marque fait 10 px dans une boite de 24 : les
+       6 px des deux bandes tiennent dans les 7 px disponibles. */
+    box-shadow: 0 0 0 3px #1a1a1a, 0 0 0 6px #fff;
   }
 
   .slideshow__dot-item {

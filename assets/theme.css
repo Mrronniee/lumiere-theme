@@ -1242,6 +1242,54 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   box-shadow: none;
 }
 
+/* POURQUOI L'ANNEAU RENTRE SUFFIT, ET CE QUI L'EMPECHAIT SUR LE HEROS.
+   Mesure du 23/10/2026 (session des outils) : button.hero__video-control lisait
+   une bande grise #818080 et cFond 1 sur les quatre cotes, et la fleche du
+   diaporama 2,54:1 — on a d'abord cru qu'aucune couleur seule ne pouvait tenir
+   sur une image. Sonde au navigateur du meme jour sur le thème d'essai, bouton
+   focalise au clavier a 1440, deux causes distinctes :
+   1. Le heros peignait son VOILE de lisibilite PAR-DESSUS ses commandes
+      (.hero__video-controls etait dans .hero__media, z-index 1, qui forme un
+      contexte d'empilement ; voir sections/hero.liquid). Tout le bouton etait
+      delave de moitie : bordure blanche rendue #7f7d7a, anneau blanc #7e7c7a,
+      soit le MEME gris, cFond 1,06. Les commandes passent maintenant au-dessus
+      du voile, et le meme anneau rentre lit cAvAp 15,96 a 17,4:1 et cFond
+      14,24 a 15,96:1 sur les quatre cotes.
+   2. La fleche du diaporama et le bouton du bandeau video posaient, dans leur
+      propre section, un anneau d'une seule couleur 3 px DEHORS, donc sur
+      l'image du marchand — ces deux regles sont retirees, l'anneau rentre
+      d'ici s'applique (13 a 17:1 mesures).
+   La plaque de ces boutons est OPAQUE et choisie par le theme : l'anneau rentre
+   s'y mesure, et ne depend donc plus de l'image (WCAG 1.4.11, 2.4.13). Des
+   bandes posees DEHORS ont ete essayees et mesurees le 23/10/2026 : elles
+   tombent sur l'image et lisent cFond 1,03 a 1,04 d'un cote. L'anneau en deux
+   tons reste la bonne reponse pour ce qui n'a PAS de plaque : les puces du
+   diaporama (sections/slideshow.liquid) et les liens-image (plus bas). */
+
+/* L'ANNEAU DES COMMANDES DE MEDIA RENTRE DE 6 PX, PAS DE 4.
+   Ces trois boutons portent une bordure de 1 px (blanche sur le heros et le
+   bandeau video, pour se detacher d'une video sombre). Rentre de 4 px, l'anneau
+   blanc avait cette bordure blanche a EXACTEMENT 2 px vers le dehors — releve de
+   pixels du 23/10/2026 sur le thème d'essai, bouton du heros focalise au clavier
+   a 1440 : bordure #f3f4f3, plaque #242424, anneau #f5f5f5 sur trois pixels
+   consecutifs. Or le contraste « avec le fond exterieur » se prend sur le pixel
+   situe 2 pas avant la bande (a11y.cjs, ext = pts[a - 2]) : blanc contre blanc,
+   cFond 1,00 a 1,07:1 sur les quatre cotes, alors que l'anneau se voit
+   parfaitement (cAvAp 15,68 a 17,11:1).
+   A 6 px, le voisin pris en compte est la PLAQUE, opaque et choisie par le
+   theme : 15 a 17:1, et toujours independant de l'image (WCAG 1.4.11, 2.4.13).
+   Le bouton fait 48 px et son icone 18 a 20 px : l'anneau ne la touche pas.
+   Teinter la bordure au focus a ete essaye et mesure le meme jour : la bordure
+   devient alors elle-meme la bande qui CHANGE, et son voisin exterieur est
+   l'image — cFond 1,04 a 1,29:1. C'est l'ecart qu'il faut, pas la couleur. */
+:is(
+  .slideshow__arrow,
+  .hero__video-control,
+  .video-banner__control
+):focus-visible {
+  outline-offset: -6px;
+}
+
 /* Lien dont le contenu est une image : l'anneau exterieur tombe sur le fond de
    la section, ou se fait rogner, et il ne contrastait plus qu'a 2,1-2,9:1
    (mesure sur les pixels rendus). On pose en plus, PAR-DESSUS l'image, un

@@ -260,9 +260,15 @@
     }
   }
 
-  .multi-column__link:focus-visible,
-  .multi-column__actions .btn:focus-visible,
-
+  {%- comment -%}
+    Il y avait ici « .multi-column__link:focus-visible, .multi-column__actions
+    .btn:focus-visible, » — une liste de selecteurs SANS bloc de declarations
+    (depuis la 1.6.2, bc41c61, et encore dans la 1.6.4). La virgule finale fait
+    avaler par cette liste la regle @media qui suit : le navigateur jette les
+    deux, et la grille a trois colonnes de la tablette ne s'appliquait pas.
+    Ces deux elements sont poses sur le FOND de la section, pas sur l'image :
+    l'anneau de la feuille globale leur convient, la liste est donc retiree.
+  {%- endcomment -%}
   @media screen and (max-width: 989px) {
     .multi-column__grid {
       grid-template-columns: repeat({{ col_t }}, minmax(0, 1fr));

@@ -1,5 +1,35 @@
 # Changelog
 
+## 1.7.1 — 2026-10-23
+
+### Fixed
+- **The video pause button of the hero banner was dimmed by half.** Its
+  controls were painted *under* the banner's readability veil, so a white
+  button rendered mid-grey: its border, its icon and its focus ring all came
+  out the same grey, and nothing told you where the keyboard was. The controls
+  now sit above the veil, and the focus ring measures 15.8:1 against the button
+  instead of 1.2:1.
+- **The focus ring of the slideshow arrows, its dots and the video banner
+  button no longer depends on your image.** Those four controls drew a
+  single-colour ring *on top of* the picture or the video, so the ring faded
+  into a light slide (2.5:1 on a pale photo, and anywhere from 6.6 to 14.5:1
+  depending on the video frame). The arrows and the banner button now carry the
+  ring inside their own opaque plate, and the dots — which have no plate — carry
+  a two-tone ring, light outside and dark against the mark, so one of the two
+  always stands out whatever the slide. Measured on every side: 15.8 to 16.7:1
+  for the three buttons, 9.9 to 16.7:1 for the dots.
+- **Nothing lands under the sticky header any more.** The document carries a
+  `scroll-padding-top` equal to the measured header height, so a skip link, an
+  anchor or Shift+Tab to the top of the page never leaves the focused element
+  half hidden (WCAG 2.4.11).
+- **The video banner no longer downloads the video when a cover image exists.**
+  `preload="metadata"` was pulling 1.07 MB of video on page load even when you
+  ask for reduced motion and the video stays paused — 2.18 MB otherwise. The
+  hero banner was already fixed in 1.6.4; the banner had the same defect.
+- **The three-column tablet layout of the multi-column section was dead.** A
+  stray selector list with no rule swallowed the media query that set it (since
+  1.6.2), so tablets fell back to the desktop column count.
+
 ## 1.7.0 — 2026-10-23
 
 ### Action required if you are updating over 1.6.4 or earlier

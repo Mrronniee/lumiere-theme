@@ -241,24 +241,6 @@
           <source src="{{ source.url }}" type="{{ source.mime_type }}">
         {%- endfor -%}
       </video>
-
-      <div class="hero__video-controls">
-        <button
-          type="button"
-          class="hero__video-control"
-          data-hero-video-toggle
-          data-label-play="{{ 'sections.video_banner.play' | t }}"
-          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
-          aria-label="{{ 'sections.video_banner.pause' | t }}"
-        >
-          <span class="hero__video-icon" data-icon-pause>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
-          </span>
-          <span class="hero__video-icon" data-icon-play hidden>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
-          </span>
-        </button>
-      </div>
     {%- elsif section.settings.image != blank -%}
       <img
         srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
@@ -281,6 +263,38 @@
   </div>
 
   <div class="hero__overlay"></div>
+
+  {%- comment -%}
+    Les commandes de la video sont posees APRES le voile, pas dedans.
+    .hero__video-controls portait bien z-index: 4, mais il etait place DANS
+    .hero__media, qui a z-index: 1 et forme donc un contexte d'empilement : tout
+    son contenu, commandes comprises, se peignait SOUS .hero__overlay (z-index 2,
+    gradient reglable + plancher rgba(26, 22, 18, 0.45)). Le voile delavait le
+    bouton de moitie : sonde au navigateur du 23/10/2026, bouton focalise au
+    clavier sur le thème d'essai a 1440 — sa bordure blanche rendue #7f7d7a et
+    l'anneau blanc #7e7c7a, soit le meme gris, cFond 1,06 ; c'est aussi ce qui
+    rendait l'icone blanche en #82807e (note de la 1.6.4). Aucune couleur choisie
+    par le theme ne vaut sous un voile : la commande passe au-dessus.
+  {%- endcomment -%}
+  {%- if section.settings.video != blank -%}
+      <div class="hero__video-controls">
+        <button
+          type="button"
+          class="hero__video-control"
+          data-hero-video-toggle
+          data-label-play="{{ 'sections.video_banner.play' | t }}"
+          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
+          aria-label="{{ 'sections.video_banner.pause' | t }}"
+        >
+          <span class="hero__video-icon" data-icon-pause>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+          </span>
+          <span class="hero__video-icon" data-icon-play hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </button>
+      </div>
+  {%- endif -%}
 
   {%- comment -%}
     Un reglage rempli d'espaces n'est pas `blank` pour Liquid : sans strip, le

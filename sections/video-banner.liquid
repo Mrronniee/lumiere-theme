@@ -145,10 +145,12 @@
     border-color: #ffffff;
   }
 
-  .video-banner__control:focus-visible {
-    outline: 2px solid #ffffff;
-    outline-offset: 3px;
-  }
+  {%- comment -%}
+    Pas de regle :focus-visible ici, meme raison que la fleche du diaporama :
+    l'anneau blanc pose 3 px dehors valait de 6,6 a 14,5:1 selon l'image de la
+    video (mesure du 23/10/2026). L'anneau en deux tons d'assets/theme.css tient
+    sur une image claire comme sombre.
+  {%- endcomment -%}
 
   .video-banner__content {
     position: relative;
