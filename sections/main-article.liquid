@@ -164,6 +164,14 @@
   {%- endif -%}
 </article>
 
+{%- comment -%}
+  BlogPosting rendu par Liquid (titre, image, dates, auteur) : le filtre officiel
+  suit les champs que Google demande, un JSON-LD ecrit a la main les laisse vieillir.
+{%- endcomment -%}
+<script type="application/ld+json">
+  {{ article | structured_data }}
+</script>
+
 {% schema %}
 {
   "name": "t:sections.main_article.name",

@@ -101,8 +101,12 @@
     transition: transform var(--transition-slow);
   }
 
-  .lookbook__item:hover .lookbook__item-image {
-    transform: scale(1.05);
+  /* Survol seulement a la souris : au doigt l'etat :hover reste colle apres le
+     toucher, et l'image restait agrandie au retour en arriere. */
+  @media (hover: hover) and (pointer: fine) {
+    .lookbook__item:hover .lookbook__item-image {
+      transform: scale(1.05);
+    }
   }
 
   .lookbook__item-overlay {

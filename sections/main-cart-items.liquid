@@ -227,18 +227,23 @@
     .cart-items__header { display: none; }
 
     /* Le produit occupe toute la largeur : l'ecraser dans une colonne de 80px
-       reduisait l'image a une bande de 12px. */
+       reduisait l'image a une bande de 12px. Le prix unitaire prend sa propre
+       ligne : masque (display: none en 1.6.4), il n'existait NULLE PART dans la
+       page mobile — un client qui commande 3 articles ne lisait que le total de
+       la ligne, et ce qui disparait en mobile doit se retrouver ailleurs
+       (regle T38 : Google indexe la version mobile). */
     .cart-items__row {
       grid-template-columns: 1fr auto;
       grid-template-areas:
         'product product'
+        'price   price'
         'qty     total';
       gap: var(--spacing-sm);
     }
     .cart-items__product { grid-area: product; }
+    .cart-items__price { grid-area: price; }
     .cart-items__qty { grid-area: qty; }
     .cart-items__total { grid-area: total; text-align: right; }
-    .cart-items__price { display: none; }
     .cart-items__image { width: 80px; height: 96px; }
   }
 {%- endstyle -%}

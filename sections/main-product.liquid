@@ -46,7 +46,11 @@
   }
 
   .product-gallery__thumb.is-active { border-color: var(--color-primary); opacity: 1; }
-  .product-gallery__thumb:hover { opacity: 1; }
+  /* Au doigt, la vignette touchee gardait l'opacite de la vignette ACTIVE et
+     paraissait selectionnee : le survol ne vaut qu'a la souris. */
+  @media (hover: hover) and (pointer: fine) {
+    .product-gallery__thumb:hover { opacity: 1; }
+  }
   .product-gallery__thumb img { width: 100%; height: 100%; object-fit: cover; }
 
   .product-gallery__main {
@@ -255,10 +259,13 @@
     overflow: hidden;
   }
 
-  .product-add-to-cart:hover:not(:disabled) {
-    background: var(--color-primary-hover);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
+  /* Au doigt, le bouton restait souleve apres le toucher. */
+  @media (hover: hover) and (pointer: fine) {
+    .product-add-to-cart:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
   }
 
   /* « Epuise » porte une information utile : au lieu d'une opacite de 0,5

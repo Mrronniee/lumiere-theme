@@ -223,13 +223,21 @@
           container.setAttribute('role', 'dialog');
           container.dataset.dialogRolePose = 'true';
         }
+        if (!container.hasAttribute('aria-modal')) {
+          container.dataset.dialogModalPose = 'true';
+        }
         container.setAttribute('aria-modal', 'true');
       } else {
         if (container.dataset.dialogRolePose === 'true') {
           container.removeAttribute('role');
           delete container.dataset.dialogRolePose;
         }
-        container.removeAttribute('aria-modal');
+        // Un aria-modal declare dans le balisage reste : seul celui que ce
+        // script a pose est retire (le panneau de filtres n'est modal qu'en tiroir).
+        if (container.dataset.dialogModalPose === 'true') {
+          container.removeAttribute('aria-modal');
+          delete container.dataset.dialogModalPose;
+        }
       }
     },
 
@@ -1347,6 +1355,18 @@
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') this.closeAll();
       });
+
+      // Le panneau se ferme aussi quand le focus en sort (Tab depuis le dernier
+      // choix, ou clic ailleurs) : sinon un menu ouvert reste derriere le focus,
+      // et le lecteur d'ecran annonce des choix que personne ne voit (WCAG 1.4.13).
+      document.addEventListener('focusout', (e) => {
+        const group = e.target.closest('[data-market-dropdown]');
+        if (!group || !group.classList.contains('is-open')) return;
+        if (group.contains(e.relatedTarget)) return;
+        group.classList.remove('is-open');
+        group.querySelector('.markets-selectors__toggle')?.setAttribute('aria-expanded', 'false');
+        this.lastFocus = null;
+      });
     },
 
     closeAll() {
@@ -2228,7 +2248,7 @@
         if (!dropdown) {
           document.querySelectorAll('[data-dropdown-trigger][aria-expanded="true"]').forEach((el) => {
             el.setAttribute('aria-expanded', 'false');
-            el.closest('.header__nav-item')?.classList.remove('is-open');
+            el.closest('.header__nav-item')?.classList.remove('is-open', 'is-closed-by-esc');
           });
         }
       });
@@ -2241,15 +2261,30 @@
 
       // Sous-menus desktop : ouverture au focus clavier
       document.querySelectorAll('.header__nav-item--has-dropdown').forEach((item) => {
+        const trigger = item.querySelector('[data-dropdown-trigger]');
         item.addEventListener('focusin', () => {
+          // Rouvrir serait repartir contre Echap : le declencheur garde le focus
+          // apres une fermeture au clavier, et focusin se rejoue sur lui.
+          if (item.classList.contains('is-closed-by-esc')) return;
           item.classList.add('is-open');
-          item.querySelector('[data-dropdown-trigger]')?.setAttribute('aria-expanded', 'true');
+          trigger?.setAttribute('aria-expanded', 'true');
         });
         item.addEventListener('focusout', (e) => {
           if (!item.contains(e.relatedTarget)) {
+            item.classList.remove('is-closed-by-esc');
             item.classList.remove('is-open');
-            item.querySelector('[data-dropdown-trigger]')?.setAttribute('aria-expanded', 'false');
+            trigger?.setAttribute('aria-expanded', 'false');
           }
+        });
+        // Echap ferme le sous-menu et rend le focus au declencheur (WCAG 2.1.1) :
+        // sans lui, le focus restait dans un panneau que rien ne fermait.
+        item.addEventListener('keydown', (e) => {
+          if (e.key !== 'Escape') return;
+          if (!item.classList.contains('is-open')) return;
+          item.classList.add('is-closed-by-esc');
+          item.classList.remove('is-open');
+          trigger?.setAttribute('aria-expanded', 'false');
+          trigger?.focus();
         });
       });
     },
@@ -2363,7 +2398,7 @@
             }
           });
         },
-        { threshold: 0.1, rootMargin: '0px 0px -50px 0px' }
+        { threshold: 0.1, rootMargin: '0px 0px 15% 0px' }
       );
 
       elements.forEach((el) => observer.observe(el));

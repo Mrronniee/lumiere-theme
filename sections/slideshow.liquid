@@ -369,6 +369,52 @@
     }
   }
 
+  {%- comment -%}
+    Fort grossissement (WCAG 1.4.10) : a 400 % la fenetre ne fait plus que
+    256 px de haut, la hauteur en vh devient plus petite que le texte, et
+    « height » fixe + overflow: hidden coupait le titre. L'outil d'audit le
+    lisait alors hors du voile : h2.slideshow__title a 1,00:1 a 400 % (360x256)
+    pour un median de 19,02 (B13, 1.6.1). Sous 500 px de haut, la hauteur
+    devient un MINIMUM et la diapositive grandit avec son texte ; en fondu, les
+    diapositives passent en grille (meme cellule) pour garder une hauteur, que
+    des elements absolus ne donnent pas.
+  {%- endcomment -%}
+  @media screen and (max-height: 500px) {
+    .slideshow__viewport {
+      height: auto;
+      min-height: {{ section.settings.height }}vh;
+    }
+
+    .slideshow__track {
+      height: auto;
+    }
+
+    .slideshow__slide {
+      height: auto;
+      min-height: {{ section.settings.height }}vh;
+    }
+
+    .slideshow__content {
+      height: auto;
+    }
+
+    .slideshow--fade .slideshow__track {
+      display: grid;
+    }
+
+    .slideshow--fade .slideshow__slide {
+      position: relative;
+      grid-area: 1 / 1;
+    }
+  }
+
+  @media screen and (max-height: 500px) and (max-width: 749px) {
+    .slideshow__viewport,
+    .slideshow__slide {
+      min-height: {{ section.settings.height_mobile }}vh;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .slideshow__track,
     .slideshow--fade .slideshow__slide,

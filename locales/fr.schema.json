@@ -627,6 +627,9 @@
         }
       }
     },
+    "footer_group": {
+      "name": "Groupe du pied de page"
+    },
     "header": {
       "name": "En-tête",
       "settings": {
@@ -634,6 +637,9 @@
           "label": "Menu"
         }
       }
+    },
+    "header_group": {
+      "name": "Groupe de l’en-tête"
     },
     "hero": {
       "name": "Bannière Hero",

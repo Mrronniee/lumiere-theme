@@ -102,14 +102,19 @@
     {{ 'accessibility.skip_to_text' | t }}
   </a>
 
-  {% section 'announcement-bar' %}
-  {% section 'header' %}
+  {%- comment -%}
+    Groupes de sections (sections/header-group.json, sections/footer-group.json)
+    et non {% section %} statique : le marchand peut alors AJOUTER, retirer et
+    reordonner des sections dans l'en-tete et dans le pied depuis l'editeur, ce
+    qu'une section statique interdit.
+  {%- endcomment -%}
+  {% sections 'header-group' %}
 
   <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
     {{ content_for_layout }}
   </main>
 
-  {% section 'footer' %}
+  {% sections 'footer-group' %}
 
   {%- if settings.cart_type == 'drawer' -%}
     {% section 'mini-cart' %}

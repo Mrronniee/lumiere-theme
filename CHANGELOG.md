@@ -1,6 +1,66 @@
 # Changelog
 
-## 1.6.4 — 2026-10-23
+## 1.7.0 — 2026-10-23
+
+### Action required if you are updating over 1.6.4 or earlier
+- **The header and the footer are now section groups.** You can add, remove and
+  reorder sections inside them from the theme editor, which a static header
+  could not do. Their settings move out of the theme settings file into
+  `sections/header-group.json` and `sections/footer-group.json`, so after the
+  update open Customize → Header and Footer once and set them again if they came
+  back to the defaults (`Main menu` for the header menu, `Footer` for the footer
+  column, and your announcement bar text).
+
+### Added
+- **Header and footer section groups.** `sections/header-group.json` (type
+  `header`: the announcement bar, then the header) and
+  `sections/footer-group.json` (type `footer`). The layout now calls
+  `{% sections %}` instead of three static `{% section %}` tags, which is what
+  lets you compose both areas in the editor.
+
+### Changed
+- **The customer reviews section no longer writes `Product` structured data.**
+  Those reviews are typed by you in the editor, so the rating was built from
+  editor settings rather than from verified buyers, and the product was marked
+  up on a page that does not sell it. Both are against Google's review snippet
+  policy, and a page can only carry one `Product`: the product page keeps its
+  own markup.
+- **Blog articles now carry `BlogPosting` structured data**, rendered by
+  Shopify's own `structured_data` filter, so the title, image, dates and author
+  are readable by search engines.
+- **Hover effects now apply with a mouse only.** On a touch screen the `:hover`
+  state sticks after the tap, so the product card stayed zoomed, the wishlist
+  button enlarged, the lookbook image scaled, the add to cart and the 404 button
+  stayed lifted, the product thumbnail looked selected, and the header chevron
+  stayed turned — even after going back.
+- **The unit price stays visible in the cart on a phone.** It was hidden below
+  750 px and appeared nowhere else, so a customer ordering three of an item only
+  saw the line total. Google indexes the mobile version of a page.
+- **Scroll reveals start slightly earlier.** The observer used a negative bottom
+  margin, so an element already at the bottom of the screen waited for a scroll.
+
+### Fixed
+- **The search overlay is announced as a modal window.** It trapped Tab without
+  `aria-modal="true"`, so a screen reader walked out of the window while the
+  keyboard stayed inside it.
+- **Escape closes an open header dropdown** and gives the focus back to the menu
+  item it belongs to.
+- **The country, language and currency menus close when the focus leaves them**,
+  instead of staying open behind the rest of the page.
+- **The slideshow is no longer cut off at high zoom.** At 400 % the window is
+  only about 256 px tall, and the fixed `vh` height clipped the slide title.
+  Below 500 px of height the slide now grows with its text; in fade mode the
+  slides share one grid cell so the strip keeps a height.
+- **One `h1` per page.** The hero, contact and wishlist sections can each be
+  added only once now, and the contact and wishlist titles drop to `h2` when the
+  section is not the first of its template: added under a page that already has
+  its title, they used to add a second `h1`.
+
+### Note
+- The 1.6.4 entry below was dated 2026-10-23 by mistake; it was released on
+  2026-10-22.
+
+## 1.6.4 — 2026-10-22
 
 ### Action required if you are updating over 1.6.3 or earlier
 - **Free shipping threshold.** You now type it in your store currency, not in

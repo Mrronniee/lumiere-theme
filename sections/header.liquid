@@ -288,12 +288,14 @@
 {%- endcomment -%}
 {%- if settings.show_search -%}
   {%- comment -%}
-    role=dialog porte ICI, pas seulement pose par le JavaScript a l'ouverture :
-    sur un <div> sans role, aria-label est interdit et ignore, donc l'overlay
-    n'avait pas de nom tant que le script n'avait pas tourne. aria-modal reste
-    au JavaScript (utils.setDialog), qui ne retire plus un role declare ici.
+    role=dialog et aria-modal portes ICI, pas seulement poses par le JavaScript a
+    l'ouverture : sur un <div> sans role, aria-label est interdit et ignore, donc
+    l'overlay n'avait pas de nom tant que le script n'avait pas tourne, et sans
+    aria-modal le lecteur d'ecran sortait de la fenetre alors que le Tab y est
+    piege. utils.setDialog ne retire ni le role ni l'aria-modal declares ici.
+    aria-hidden="true" le retire des lecteurs d'ecran tant qu'il est ferme.
   {%- endcomment -%}
-  <div class="search-overlay" id="SearchOverlay" data-search-overlay role="dialog" aria-hidden="true" aria-label="{{ 'general.search.title' | t }}">
+  <div class="search-overlay" id="SearchOverlay" data-search-overlay role="dialog" aria-modal="true" aria-hidden="true" aria-label="{{ 'general.search.title' | t }}">
     <div class="search-overlay__content">
       <button type="button" class="search-overlay__close" data-search-close aria-label="{{ 'accessibility.close' | t }}">
         {% render 'icon', icon: 'close' %}

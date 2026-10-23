@@ -231,8 +231,11 @@ ul, ol {
   transition: transform var(--transition-fast);
 }
 
-.header__nav-item:hover .header__nav-chevron {
-  transform: rotate(180deg);
+@media (hover: hover) and (pointer: fine) {
+  /* Au doigt, le chevron restait tourne alors que le sous-menu etait ferme. */
+  .header__nav-item:hover .header__nav-chevron {
+    transform: rotate(180deg);
+  }
 }
 
 /* Dropdown */
@@ -250,12 +253,29 @@ ul, ol {
   padding: 1.5rem;
 }
 
-.header__nav-item:hover .header__dropdown,
 .header__nav-item:focus-within .header__dropdown,
 .header__nav-item.is-open .header__dropdown {
   opacity: 1;
   visibility: visible;
   transform: translateX(-50%) translateY(0);
+}
+
+/* L'ouverture au survol ne vaut qu'a la souris : au doigt, :hover reste colle
+   apres le toucher et le sous-menu restait ouvert par-dessus la page suivante. */
+@media (hover: hover) and (pointer: fine) {
+  .header__nav-item:hover .header__dropdown {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Echap ferme le sous-menu alors que le declencheur garde le focus : sans cette
+   regle, :focus-within le rouvrirait aussitot (meme specificite, placee apres). */
+.header__nav-item.is-closed-by-esc .header__dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(10px);
 }
 
 .header__dropdown-list {
@@ -591,8 +611,12 @@ ul, ol {
   }
 }
 
-.product-card:hover .product-card__image:not(.product-card__image--hover) {
-  transform: scale(1.03);
+/* Survol seulement a la souris : sur un ecran tactile l'etat :hover reste colle
+   apres le toucher, et la carte restait agrandie au retour en arriere. */
+@media (hover: hover) and (pointer: fine) {
+  .product-card:hover .product-card__image:not(.product-card__image--hover) {
+    transform: scale(1.03);
+  }
 }
 
 .product-card__badge {
@@ -1437,7 +1461,10 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   box-shadow: var(--shadow-sm);
 }
 
-.wishlist-btn:hover { transform: scale(1.1); }
+@media (hover: hover) and (pointer: fine) {
+  /* Meme raison : au doigt, le bouton restait agrandi apres le toucher. */
+  .wishlist-btn:hover { transform: scale(1.1); }
+}
 .wishlist-btn.is-active { color: var(--color-sale); }
 .wishlist-btn.is-active .wishlist-btn__icon--empty { display: none; }
 .wishlist-btn:not(.is-active) .wishlist-btn__icon--filled { display: none; }

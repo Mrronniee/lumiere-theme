@@ -2,7 +2,7 @@
   Section: Reviews
   Avis clients saisis manuellement par le marchand
   Note moyenne calculee a partir des blocks, etoiles en SVG inline
-  Emet un balisage Product / AggregateRating (JSON-LD) si un produit est associe
+  Aucun JSON-LD : des avis saisis dans l editeur ne sont pas des avis verifies
 {% endcomment %}
 
 {%- liquid
@@ -451,94 +451,13 @@
   </div>
 </div>
 
-{%- liquid
-  assign ld_found = false
-  assign ld_count = 0
-  assign ld_sum = 0
-  for block in section.blocks
-    if block.type != 'review'
-      continue
-    endif
-    if block.settings.product == blank
-      continue
-    endif
-    if ld_found == false
-      assign ld_product = block.settings.product
-      assign ld_found = true
-    endif
-    if block.settings.product.handle == ld_product.handle
-      assign ld_rating = block.settings.rating | at_least: 1 | at_most: 5
-      assign ld_sum = ld_sum | plus: ld_rating
-      assign ld_count = ld_count | plus: 1
-    endif
-  endfor
-
-  if ld_found and ld_count > 0
-    assign ld_average = ld_sum | times: 1.0 | divided_by: ld_count | round: 1
-    assign ld_url = ld_product.url | prepend: shop.url
-  endif
--%}
-
-{%- if ld_found and ld_count > 0 -%}
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Product",
-      "name": {{ ld_product.title | json }},
-      "url": {{ ld_url | json }},
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": {{ ld_average | json }},
-        "reviewCount": {{ ld_count | json }},
-        "bestRating": 5,
-        "worstRating": 1
-      },
-      "review": [
-        {%- assign ld_index = 0 -%}
-        {%- for block in section.blocks -%}
-          {%- if block.type != 'review' -%}
-            {%- continue -%}
-          {%- endif -%}
-          {%- if block.settings.product == blank -%}
-            {%- continue -%}
-          {%- endif -%}
-          {%- if block.settings.product.handle != ld_product.handle -%}
-            {%- continue -%}
-          {%- endif -%}
-          {%- if ld_index > 0 -%},{%- endif -%}
-          {%- liquid
-            assign ld_item_rating = block.settings.rating | at_least: 1 | at_most: 5
-            assign ld_item_name = block.settings.heading | strip_html | strip_newlines
-            assign ld_item_body = block.settings.text | strip_html | strip_newlines
-            assign ld_item_author = block.settings.author | strip_html | strip_newlines
-          -%}
-          {
-            "@type": "Review",
-            {%- if ld_item_name != blank %}
-              "name": {{ ld_item_name | json }},
-            {%- endif %}
-            {%- if ld_item_body != blank %}
-              "reviewBody": {{ ld_item_body | json }},
-            {%- endif %}
-            {%- if ld_item_author != blank %}
-              "author": {
-                "@type": "Person",
-                "name": {{ ld_item_author | json }}
-              },
-            {%- endif %}
-            "reviewRating": {
-              "@type": "Rating",
-              "ratingValue": {{ ld_item_rating | json }},
-              "bestRating": 5,
-              "worstRating": 1
-            }
-          }
-          {%- assign ld_index = ld_index | plus: 1 -%}
-        {%- endfor -%}
-      ]
-    }
-  </script>
-{%- endif -%}
+{%- comment -%}
+  Aucun JSON-LD ici (1.6.5) : les avis de cette section sont saisis par le marchand dans
+  l editeur, pas recueillis aupres d acheteurs. Un AggregateRating calcule depuis
+  block.settings.rating serait une note inventee, et le Product serait balise sur une page
+  qui ne vend pas ce produit : les deux sont refuses par les regles de Google sur les
+  extraits d avis. La fiche produit garde son propre Product.
+{%- endcomment -%}
 
 {% schema %}
 {

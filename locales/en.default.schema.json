@@ -627,6 +627,9 @@
         }
       }
     },
+    "footer_group": {
+      "name": "Footer group"
+    },
     "header": {
       "name": "Header",
       "settings": {
@@ -634,6 +637,9 @@
           "label": "Menu"
         }
       }
+    },
+    "header_group": {
+      "name": "Header group"
     },
     "hero": {
       "name": "Hero banner",

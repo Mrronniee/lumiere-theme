@@ -65,7 +65,15 @@
 
 <div class="wishlist-page" data-section-id="{{ section.id }}" data-section-type="wishlist">
   <div class="wishlist-page__header">
-    <h1 class="wishlist-page__title">{{ 'wishlist.title' | t }}</h1>
+    {%- comment -%}
+      Un seul h1 par page (regle T29) : meme raison que la section Contact,
+      cette section est ajoutable sous un gabarit qui a deja son titre.
+    {%- endcomment -%}
+    {%- if section.index == 1 -%}
+      <h1 class="wishlist-page__title">{{ 'wishlist.title' | t }}</h1>
+    {%- else -%}
+      <h2 class="wishlist-page__title">{{ 'wishlist.title' | t }}</h2>
+    {%- endif -%}
     <p
       class="wishlist-page__count"
       data-wishlist-count-text
@@ -110,6 +118,7 @@
 {% schema %}
 {
   "name": "t:sections.wishlist.name",
+  "limit": 1,
   "tag": "section",
   "class": "section-wishlist",
   "settings": [
