@@ -1,5 +1,29 @@
 # Changelog
 
+## 1.7.2 — 2026-10-23
+
+### Fixed
+- **"Hide unavailable variants" now works with drop-down selectors.** The
+  setting only filtered the button and swatch selectors: if you had chosen
+  drop-downs, every option value stayed in the list, so a size with nothing
+  left to sell still looked buyable. Both selectors now read the setting from
+  the same source — a value is available as soon as one sellable variant
+  carries it.
+- **With the setting off, an unavailable option value now says so.** It used to
+  look exactly like the others in both selectors. It is now struck through and
+  dimmed as a button, greyed out in a drop-down, announced as unavailable by
+  screen readers, and it cannot be selected or added to the cart.
+- **Quick view follows the same rule.** It built its option list in the browser
+  from the full variant list, so it showed values the product page was hiding.
+- **Your footer menus are now proper navigation landmarks.** Each footer link
+  column is a `<nav>` named after the heading you gave it, so screen reader
+  users can jump straight to it and tell two columns apart.
+- **Reduced motion now really stops the movement on hover.** Asking your system
+  for reduced motion only shortened the animations: cards, images and buttons
+  still jumped to their enlarged or shifted position instead of sliding there.
+  Nothing slides, zooms or rotates on hover any more under that preference —
+  the fades, colours and shadows stay.
+
 ## 1.7.1 — 2026-10-23
 
 ### Fixed
