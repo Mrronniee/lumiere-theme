@@ -278,6 +278,18 @@
       {% endif %}
     >
       {%- if has_native_video -%}
+        {%- comment -%}
+          preload : meme defaut que le heros (N1). « metadata » tirait 1,07 Mo de
+          HLS en 5 fichiers des le chargement alors que la video reste en pause
+          sous prefers-reduced-motion, 2,18 Mo sans mouvement reduit (mesure du
+          23/10/2026, thème d'essai, page des 22 sections a 1440). Des qu'une
+          image de couverture peint le premier ecran, on ne precharge rien ; le
+          play() plus bas, ou le clic du visiteur, declenche le chargement. Sans
+          couverture, « metadata » reste la seule facon de montrer la premiere
+          image. Ecrit en 1.7.0, retire avant sa sortie parce que la video qui
+          tournait faussait la mesure d'anneau du bouton rond ; a11y.cjs fige
+          desormais les videos (kiosk-outils ac9872a) et la regle revient en 1.7.1.
+        {%- endcomment -%}
         <video
           class="video-banner__video"
           data-video-native
@@ -285,7 +297,7 @@
           loop
           muted
           playsinline
-          preload="metadata"
+          preload="{% if section.settings.cover_image != blank %}none{% else %}metadata{% endif %}"
           {% if section.settings.video.alt != blank %}aria-label="{{ section.settings.video.alt | escape }}"{% endif %}
           {% if section.settings.cover_image != blank %}poster="{{ section.settings.cover_image | image_url: width: 1920 }}"{% endif %}
         >

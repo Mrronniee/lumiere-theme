@@ -22,6 +22,17 @@ html {
      « clip » coupe le debordement sans creer de conteneur de defilement, donc
      sans casser position: sticky — contrairement a overflow: hidden. */
   overflow-x: clip;
+  /* L'en-tete est colle en haut (.header, position: sticky, 71 px) : sans cette
+     marge, un lien d'evitement, une ancre ou un Maj+Tab vers le haut de la page
+     amenaient l'element focalise SOUS l'en-tete, en partie cache (WCAG 2.4.11,
+     cas focus-sous-en-tete). --header-height est mesure et pose par
+     assets/theme.js (Header.publishHeight) ; 71 px est la valeur de repli avant
+     le premier calcul et sans JavaScript.
+     Ecrit en 1.7.0, retire avant sa sortie parce que la mesure d'anneau
+     d'a11y.cjs lisait une bande voisine quand l'element arrivait au ras du bord
+     de l'ecran ; la mesure est corrigee (kiosk-outils ac9872a) et la regle
+     revient en 1.7.1. */
+  scroll-padding-top: var(--header-height, 71px);
 }
 
 body {
