@@ -30,6 +30,24 @@
     <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
   {%- endunless -%}
 
+  {%- comment -%}
+    Preload de la POLICE DE TITRE seule. Mesure 1.7.2 : le CLS de l'accueil a
+    390 vaut 0,04266, dont un unique decalage de 0,04198 a t = 386 ms sur
+    DIV.hero__content, et Lighthouse en nomme la cause — « Web font loaded » sur
+    h1.hero__title : le titre se replie sur une ligne de plus quand la police de
+    titre arrive. C'est 8,6 fois la valeur mesuree a 412 px et la seule ligne du
+    theme au-dessus de 0,01 (le seuil 0,1 reste tenu, d'ou une ALERTE et non un
+    BLOQUANT). Les font_face sont deja tous en font_display: swap, et un
+    preconnect ne fait qu'ouvrir la connexion : il faut demander le fichier
+    lui-meme assez tot pour que l'echange ait lieu avant la premiere peinture.
+    Seule la police de titre est prechargee : aucun decalage mesure n'est venu
+    du corps de texte, et precharger les cinq fichiers couterait plus qu'il ne
+    rapporte.
+  {%- endcomment -%}
+  {%- unless settings.font_heading.system? -%}
+    {{ settings.font_heading | font_url | preload_tag: as: 'font', type: 'font/woff2' }}
+  {%- endunless -%}
+
   {%- liquid
     assign heading_bold = settings.font_heading | font_modify: 'weight', 'bold'
     assign body_bold = settings.font_body | font_modify: 'weight', 'bold'
@@ -120,6 +138,16 @@
 
   <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
     {{ content_for_layout }}
+
+    {%- comment -%}
+      Cible d'aria-describedby pour l'annonce de rafraîchissement des
+      sélecteurs de marché. Elle vit DANS <main> et non en enfant de <body> :
+      tout contenu doit se trouver dans un repère de page (axe `region`,
+      mesure 1.7.2).
+    {%- endcomment -%}
+    <ul hidden>
+      <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
+    </ul>
   </main>
 
   {% sections 'footer-group' %}
@@ -147,11 +175,16 @@
   {%- comment -%}
     Bandeau de marché : hors du flux, en bas de la fenêtre, et rendu en fin de
     document pour que son ordre de tabulation suive son ordre visuel.
-  {%- endcomment -%}
-  {% render 'market-banner' %}
 
-  <ul hidden>
-    <li id="a11y-refresh-page-message">{{ 'accessibility.refresh_page' | t }}</li>
-  </ul>
+    Enveloppé dans un <aside> NOMMÉ, et non posé nu en enfant de <body> : tout
+    contenu doit vivre dans un repère de page (axe `region`). Mesure 1.7.2 :
+    `div.market-banner.is-visible` (role=status) et le `<ul>` ci-dessous étaient
+    les deux seuls éléments hors de tout repère — role="status" est une région
+    live, pas un repère. Le <ul> rejoint <main>, dont il décrit le contenu : il
+    sert de cible à aria-describedby pour l'annonce de rafraîchissement.
+  {%- endcomment -%}
+  <aside aria-label="{{ 'markets.banner_label' | t }}">
+    {% render 'market-banner' %}
+  </aside>
 </body>
 </html>

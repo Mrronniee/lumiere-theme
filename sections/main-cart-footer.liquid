@@ -129,7 +129,13 @@
 
   .cart-footer__free-shipping-progress {
     height: 100%;
-    background: var(--color-accent);
+    /* MEME correction que sections/mini-cart.liquid, qui l'avait deja : l'accent
+       de marque sur la piste --color-surface-16 donne 1,53:1 (mesure 1.7.2 sur
+       /cart rempli, a 1440 et a 390, rgb(201,169,110) contre rgb(214,213,212)),
+       et une progression ne se lit plus. On prend l'encre derivee de la
+       section, qui garde 4,5:1 sur le fond, donc bien plus de 3:1 sur la piste.
+       Le tiroir etait corrige, la page panier non. */
+    background: var(--color-accent-text, var(--color-accent));
     transition: width 0.5s ease;
   }
 

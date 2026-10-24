@@ -53,16 +53,30 @@
             >
               <div class="predictive-search__thumb">
                 {%- if ps_product.featured_image != blank -%}
-                  {{
-                    ps_product.featured_image
-                    | image_url: width: 120
-                    | image_tag:
-                      loading: 'lazy',
-                      alt: '',
-                      widths: '60, 120',
-                      sizes: '60px',
-                      class: 'predictive-search__image'
-                  }}
+                  {%- comment -%}
+                    Balise img ecrite a la main et non « | image_tag ».
+
+                    Mesure 1.7.2 : cette vignette est recadree en
+                    object-fit: cover (.predictive-search__image,
+                    assets/theme.css:499-502) et n'appelait ni focal ni
+                    object-position — l'une des 4 images recadrees du theme dans
+                    ce cas. Le filtre image_tag n'accepte que ses propres
+                    parametres : il ne permet pas d'ajouter l'attribut style que
+                    rend le snippet focal. On ecrit donc la balise, comme
+                    partout ailleurs dans le theme, pour que le point de focus
+                    choisi par le marchand soit respecte ici aussi.
+                  {%- endcomment -%}
+                  <img
+                    src="{{ ps_product.featured_image | image_url: width: 120 }}"
+                    srcset="{{ ps_product.featured_image | image_url: width: 60 }} 60w, {{ ps_product.featured_image | image_url: width: 120 }} 120w"
+                    sizes="60px"
+                    alt=""
+                    class="predictive-search__image"
+                    loading="lazy"
+                    {% render 'focal', image: ps_product.featured_image %}
+                    width="60"
+                    height="80"
+                  >
                 {%- endif -%}
               </div>
               <div class="predictive-search__text">

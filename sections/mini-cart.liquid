@@ -583,11 +583,20 @@
                 {%- assign upsell_shown = upsell_shown | plus: 1 -%}
                 <div class="mini-cart__upsell">
                   {%- if product.featured_image -%}
+                    {%- comment -%}
+                      focal : cette vignette est recadree en object-fit: cover
+                      (.mini-cart__upsell-image, :302-305), donc elle doit
+                      respecter le point de focus choisi par le marchand —
+                      comme la vignette de ligne de panier plus haut (:516).
+                      Mesure 1.7.2 : elle etait l'une des 4 images recadrees du
+                      theme a n'appeler ni focal ni object-position.
+                    {%- endcomment -%}
                     <img
                       src="{{ product.featured_image | image_url: width: 120 }}"
                       alt="{{ product.featured_image.alt | default: product.title | escape }}"
                       class="mini-cart__upsell-image"
                       loading="lazy"
+                      {% render 'focal', image: product.featured_image %}
                       width="60"
                       height="75"
                     >

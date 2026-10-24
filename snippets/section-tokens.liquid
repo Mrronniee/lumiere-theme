@@ -72,12 +72,30 @@
     --color-sale est recalcule sur le fond de la section. On prend, du blanc ou
     du texte de la section, celui qui contraste le plus avec l'aplat.
   endcomment
+  comment
+    Mesure 1.7.2 : comparer le blanc et le texte de la section NE SUFFIT PAS.
+    Quand le texte de la section est clair (fond sombre, inverse ou teinte), les
+    DEUX candidats sont clairs et un aplat clair recoit une encre claire —
+    1,23:1 au pixel sur 8 elements, pastille de solde a 3,73:1 (fond sombre) et
+    2,47:1 (fond teinte). Il faut toujours un candidat SOMBRE dans la
+    comparaison, comme le fait deja on_highlight de sections/comparison.liquid.
+    Les trois encres d'aplat de ce snippet suivent donc le meme patron, aligne
+    sur celui de snippets/css-variables.liquid.
+  endcomment
+  assign ink_dark = '#1a1a1a'
+
   assign sale_solid = sale_text | strip
   assign white_on_sale = sale_solid | color_contrast: '#ffffff'
   assign text_on_sale = sale_solid | color_contrast: text
+  assign dark_on_sale = sale_solid | color_contrast: ink_dark
   assign on_sale = '#ffffff'
-  if text_on_sale > white_on_sale
+  assign best_on_sale = white_on_sale
+  if text_on_sale > best_on_sale
     assign on_sale = text
+    assign best_on_sale = text_on_sale
+  endif
+  if dark_on_sale > best_on_sale
+    assign on_sale = ink_dark
   endif
 
   comment
@@ -93,16 +111,28 @@
 
   assign white_on_accent = c_accent | color_contrast: '#ffffff'
   assign text_on_accent = c_accent | color_contrast: text
+  assign dark_on_accent = c_accent | color_contrast: ink_dark
   assign on_accent = '#ffffff'
-  if text_on_accent > white_on_accent
+  assign best_on_accent = white_on_accent
+  if text_on_accent > best_on_accent
     assign on_accent = text
+    assign best_on_accent = text_on_accent
+  endif
+  if dark_on_accent > best_on_accent
+    assign on_accent = ink_dark
   endif
 
   assign white_on_primary = c_primary | color_contrast: '#ffffff'
   assign text_on_primary = c_primary | color_contrast: text
+  assign dark_on_primary = c_primary | color_contrast: ink_dark
   assign on_primary = '#ffffff'
-  if text_on_primary > white_on_primary
+  assign best_on_primary = white_on_primary
+  if text_on_primary > best_on_primary
     assign on_primary = text
+    assign best_on_primary = text_on_primary
+  endif
+  if dark_on_primary > best_on_primary
+    assign on_primary = ink_dark
   endif
 
 -%}

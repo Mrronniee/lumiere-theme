@@ -72,6 +72,15 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+  /* color: inherit comme sur « a » ci-dessus. Sans lui, un bouton qui ne
+     declare aucune couleur retombe sur « buttontext » de l'agent utilisateur,
+     c'est-a-dire du NOIR, invisible sous toute palette sombre : mesure 1.7.2 au
+     pixel sur collections/all, button.collection-filters__title et
+     .collection-grid__layout-btn > svg a 1,14:1 sur #141414 et 1,79:1 sur
+     #2f3b2f, pour un seuil de 3. C'est la famille du BLOQUANT corrige au cas
+     par cas en 1.6.1 (icones quick-view « sans color ») : on le ferme ici, a la
+     source, pour tous les boutons du theme. */
+  color: inherit;
 }
 
 ul, ol {
@@ -211,16 +220,30 @@ ul, ol {
 
 .header__nav-list {
   display: flex;
-  gap: 2.5rem;
+  /* Mesure 1.7.2, cas « menu-une-ligne » : avec un menu de 8 entrees, chaque
+     entree passait sur 2 a 3 lignes a 1440 px et jusqu'a 14 lignes a 1024 px,
+     en FR comme en EN, les libelles reduits a 10-11 px de large — le texte se
+     coupait lettre par lettre. La hauteur de l'en-tete restait 71 px : le texte
+     empile SORTAIT de la boite (top mesure a -20 px) au lieu de l'agrandir.
+     Cause : cette liste est un conteneur flex SANS flex-wrap, donc ses enfants
+     ne passent pas a la ligne — ils RETRECISSENT sous la largeur de leur
+     contenu, et rien ne les en empechait (ni flex-shrink: 0 sur l'entree, ni
+     white-space: nowrap sur le lien). Un menu de 8 entrees est le cas courant
+     chez un marchand. La marge se resserre avant le repli pour gagner de la
+     place sans rien couper. */
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  min-width: 0;
 }
 
 .header__nav-item {
   position: relative;
+  flex-shrink: 0;
 }
 
 .header__nav-link {
   display: flex;
   align-items: center;
+  white-space: nowrap;
   gap: 0.35rem;
   font-family: var(--font-body);
   font-size: 0.8125rem;
@@ -856,6 +879,22 @@ ul, ol {
   }
 }
 
+/* REPLI MESURE, et non deduit de la largeur de fenetre.
+   Mesure 1.7.2 : l'unique regle de repli etait la requete ci-dessus, donc le
+   basculement en menu replie dependait SEULEMENT de la largeur de la fenetre et
+   JAMAIS du nombre d'entrees — a 1024 px avec 8 entrees, la navigation de
+   bureau restait affichee et s'ecrasait (toggle_affiche = false aux 4 mesures).
+   Un menu assez long ne tient pas davantage a 1440 px. assets/theme.js mesure
+   donc le debordement reel de la liste et pose cette classe ; sans JavaScript,
+   la requete ci-dessus garde le comportement d'avant. */
+.header.is-nav-condensed .header__menu-toggle {
+  display: flex;
+}
+
+.header.is-nav-condensed .header__nav {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   .js.animations-on [data-animate] { opacity: 1; transform: none; }
@@ -1276,6 +1315,15 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
    est retiree pour la meme raison — posee dehors, elle etait mesuree contre la
    photo ; l'ombre portee du composant (5 a 8 % de noir) reste sous le seuil de
    mesure, rien ne change donc hors du bouton. */
+/* .product-gallery__nav-btn et .product-gallery__zoom rejoignent cette liste.
+   Mesure 1.7.2 : elles portent bien une plaque OPAQUE
+   (background: var(--color-background), sections/main-product.liquid:97-105)
+   mais ne figuraient pas ici, contrairement aux cinq autres boutons a plaque —
+   leur anneau etait donc trace DEHORS, sur l'image du marchand : cFond median
+   1,76:1 sur la fiche field-jacket a 390 (cFondMin 1,54). L'anneau restait
+   visible par la technique WCAG C40 (bande blanche interieure contre bande
+   sombre, 17,4:1 entre les deux), d'ou une ALERTE et non un BLOQUANT ; rentre
+   de 4 px, il se mesure contre la plaque et ne depend plus de la photo. */
 :is(
   .wishlist-btn--card,
   .product-card__quick-view-btn,
@@ -1283,7 +1331,9 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .slideshow__arrow,
   .hero__video-control,
   .video-banner__control,
-  .hero__button--primary
+  .hero__button--primary,
+  .product-gallery__nav-btn,
+  .product-gallery__zoom
 ):focus-visible {
   outline: 2px solid currentColor;
   outline-offset: -4px;

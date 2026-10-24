@@ -497,6 +497,13 @@
 -%}
 
 {%- if slide_count > 0 -%}
+  {%- comment -%}
+    data-header-overlay : media plein cadre, l'en-tete transparent peut se
+    superposer. Ce commentaire se tient AU-DESSUS de la balise et non entre ses
+    attributs : Theme Check 3.30.1 lit l'apostrophe d'un commentaire place dans
+    une balise ouverte comme le debut d'une valeur d'attribut (1 ERROR sur la
+    1.7.2).
+  {%- endcomment -%}
   <div
     class="slideshow{{ transition_class }}"
     data-slideshow="{{ section.id }}"
@@ -504,7 +511,6 @@
     data-autoplay="{{ autoplay_value }}"
     data-interval="{{ section.settings.autoplay_interval }}"
     data-transition="{{ section.settings.transition }}"
-    {% comment -%} Media plein cadre : l'en-tete transparent peut se superposer. {%- endcomment -%}
     data-header-overlay
     role="group"
     aria-roledescription="carousel"
@@ -557,6 +563,14 @@
                     height="{{ slide_image_mobile.height }}"
                   >
                 {%- endif -%}
+                {%- comment -%}
+                  loading et fetchpriority : la priorite haute ne vaut que si le
+                  diaporama OUVRE la page — posee sur une section placee plus
+                  bas, elle est depensee pour une image hors ecran (mesure : 4e
+                  section de la page de demo). Ce commentaire se tient AU-DESSUS
+                  de la balise : Theme Check 3.30.1 lit une apostrophe placee
+                  entre les attributs comme le debut d'une valeur d'attribut.
+                {%- endcomment -%}
                 <img
                   srcset="{%- if slide_image.width >= 375 -%}{{ slide_image | image_url: width: 375 }} 375w,{%- endif -%}
                     {%- if slide_image.width >= 750 -%}{{ slide_image | image_url: width: 750 }} 750w,{%- endif -%}
@@ -569,12 +583,6 @@
                   {% render 'focal', image: slide_image %}
                   width="{{ slide_image.width }}"
                   height="{{ slide_image.height }}"
-                  {%- comment -%}
-                    La priorite haute ne vaut que si le diaporama OUVRE la
-                    page : posee sur une section placee plus bas, elle est
-                    depensee pour une image hors ecran (mesure : 4e section de
-                    la page de demo).
-                  {%- endcomment -%}
                   {% if is_first and section.index == 1 %}
                     loading="eager"
                     fetchpriority="high"

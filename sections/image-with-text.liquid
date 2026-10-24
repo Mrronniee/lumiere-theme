@@ -145,6 +145,38 @@
   <div class="image-with-text__inner">
     <div class="image-with-text__media image-with-text__media--{{ section.settings.image_ratio }}">
       {%- if section.settings.image != blank -%}
+        {%- comment -%}
+          Les trois commentaires qui vivaient ENTRE les attributs de cette
+          balise sont remontes ici. Theme Check 3.30.1 lit l'apostrophe d'un
+          commentaire place dans une balise ouverte comme le debut d'une valeur
+          d'attribut : c'est la cause des 3 ERROR de la 1.7.2, et ce fichier en
+          portait deux de plus (« l'image est sous la ligne de flottaison » et
+          « la première »), qui n'etaient pas encore signalees parce que
+          l'analyseur ne rend qu'une erreur par fichier.
+
+          sizes. Cette image EST le LCP quand la section ouvre la page, et elle
+          est recadree en object-fit: cover sur un cadre au ratio choisi : le
+          navigateur a besoin de plus large que la moitie de la fenetre. Mesure
+          1.6.1 a 1350 : 750 px charges pour 1 085 necessaires (rapport 0,69),
+          donc une image LCP floue — d'ou le passage a 60vw et l'ajout du
+          palier 2000w. Mais mesure 1.7.2 : 60vw DEPASSE la largeur reelle de la
+          colonne. .image-with-text__inner est une grille « 1fr 1fr » (:37-39),
+          soit environ 45,5vw : a 1440 la colonne mesure 656 px quand sizes en
+          annonce 864, et le navigateur charge le fichier 1100 pour 656 px
+          peints (1,32 fois trop). C'est la moitie des 164 KiB de sur-livraison
+          relevee sur la page des sections en bureau. On annonce donc la moitie
+          de la fenetre moins la gouttiere, ce qui reste au-dessus du besoin
+          sans le depasser : a 1440, calc(50vw - 2rem) = 688 px pour 656 peints.
+
+          loading. Quand la section ouvre la page, son image est le LCP : en
+          loading="lazy" elle attendait 4 025 ms et le LCP montait a 5 791 ms
+          (audit lcp-lazy-loaded a 0). Au-dela de la deuxieme section, l'image
+          est sous la ligne de flottaison et reste differee. Les deux PREMIERES
+          sections de la page, et pas seulement la premiere : mesure sur le
+          gabarit de demo, ou un bloc de texte precede cette section et ou
+          l'image reste peinte a y = 464, dans le premier ecran — elle portait
+          un LCP de 4 317 ms en loading="lazy".
+        {%- endcomment -%}
         <img
           srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
             {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
@@ -152,30 +184,10 @@
             {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
             {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
           src="{{ section.settings.image | image_url: width: 1100 }}"
-          {% comment -%}
-            Cette image EST le LCP quand la section ouvre la page, et elle est
-            recadree en object-fit: cover sur un cadre au ratio choisi : le
-            navigateur a besoin de plus large que 50vw. Mesure 1.6.1 a 1350 :
-            750 px charges pour 1 085 necessaires (rapport 0,69), donc une image
-            LCP floue. On annonce 60vw au-dela de 750 px et on ajoute 2000w.
-          {%- endcomment -%}
-          sizes="(min-width: 750px) 60vw, 100vw"
+          sizes="(min-width: 750px) calc(50vw - 2rem), 100vw"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"
-          {% comment -%}
-            Quand la section ouvre la page, son image est le LCP : en
-            loading="lazy" elle attendait 4 025 ms et le LCP montait a
-            5 791 ms (audit lcp-lazy-loaded a 0). Au-dela de la deuxieme
-            section, l'image est sous la ligne de flottaison et reste
-            differee.
-          {%- endcomment -%}
-          {%- comment -%}
-            Les deux PREMIERES sections de la page, pas seulement la première :
-            mesuré sur le gabarit de démo, où un bloc de texte précède cette
-            section et où l'image reste peinte à y = 464, dans le premier
-            écran — elle portait un LCP de 4 317 ms en loading="lazy".
-          {%- endcomment -%}
-          {%- if section.index <= 2 -%}
+          {% if section.index <= 2 -%}
             loading="eager"
             {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
           {%- else -%}

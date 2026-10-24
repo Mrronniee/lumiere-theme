@@ -76,11 +76,29 @@
     2,0:1 sur l'accent par defaut #c9a96e. On choisit le blanc ou le texte du
     theme, celui des deux qui contraste le plus avec l'accent.
   endcomment
+  comment
+    Mesure 1.7.2 : choisir entre le blanc et le texte du theme NE SUFFIT PAS.
+    Sur une palette sombre coherente (fond #141414, texte #f4f4f4, primaire
+    #e8e8e8) les DEUX candidats sont clairs, donc un aplat clair recevait une
+    encre claire : 1,23:1 mesure au pixel sur 8 elements, et 2,64:1 sur l'icone
+    de fermeture du bandeau de marche. Il faut donc toujours un candidat SOMBRE
+    dans la comparaison. C'est ce que fait deja on_highlight de
+    sections/comparison.liquid, qui compare le blanc ET #1a1a1a : on aligne les
+    trois encres d'aplat du theme sur ce patron.
+  endcomment
+  assign c_ink_dark = '#1a1a1a'
+
   assign white_on_accent = c_accent | color_contrast: '#ffffff'
   assign text_on_accent = c_accent | color_contrast: c_text
+  assign dark_on_accent = c_accent | color_contrast: c_ink_dark
   assign c_on_accent = '#ffffff'
-  if text_on_accent > white_on_accent
+  assign best_on_accent = white_on_accent
+  if text_on_accent > best_on_accent
     assign c_on_accent = c_text
+    assign best_on_accent = text_on_accent
+  endif
+  if dark_on_accent > best_on_accent
+    assign c_on_accent = c_ink_dark
   endif
 
   assign light_weight = 55
@@ -102,21 +120,48 @@
   endcomment
   assign white_on_primary = c_primary | color_contrast: '#ffffff'
   assign text_on_primary = c_primary | color_contrast: c_text
+  assign dark_on_primary = c_primary | color_contrast: c_ink_dark
   assign c_on_primary = '#ffffff'
-  if text_on_primary > white_on_primary
+  assign best_on_primary = white_on_primary
+  if text_on_primary > best_on_primary
     assign c_on_primary = c_text
+    assign best_on_primary = text_on_primary
+  endif
+  if dark_on_primary > best_on_primary
+    assign c_on_primary = c_ink_dark
   endif
 
   comment
     Encre a poser SUR l'aplat de solde, et encre discrete d'une SURFACE interne
     (pied du tiroir panier) : les memes jetons que section-tokens, pour que
     :root les porte aussi.
+
+    Mesure 1.7.2 : --color-sale etait pose EN DUR a #c0392b dans :root alors que
+    section-tokens le derive par section. Toute zone sans reglage de fond de
+    section (grille de collection, recherche, panier, fiche produit) recevait
+    donc la couleur de marque brute : span.price__sale mesure au pixel a
+    3,39:1 sur #141414, 2,16:1 sur #2f3b2f et 2,43:1 sur #c9a96e, pour un seuil
+    de 4,5 a 14 px. Le meme jeton sert .form__error (assets/theme.css:1937) et
+    .form__required-mark (:1950), qui tombaient au meme rapport. On derive donc
+    :root avec le MEME snippet que les sections, pour que le jeton ait partout
+    le meme sens : une encre lisible sur le fond.
   endcomment
-  assign white_on_sale = '#c0392b' | color_contrast: '#ffffff'
-  assign text_on_sale = '#c0392b' | color_contrast: c_text
+  capture c_sale_text
+    render 'contrast-color', base: '#c0392b', bg: c_bg
+  endcapture
+  assign c_sale_solid = c_sale_text | strip
+
+  assign white_on_sale = c_sale_solid | color_contrast: '#ffffff'
+  assign text_on_sale = c_sale_solid | color_contrast: c_text
+  assign dark_on_sale = c_sale_solid | color_contrast: c_ink_dark
   assign c_on_sale = '#ffffff'
-  if text_on_sale > white_on_sale
+  assign best_on_sale = white_on_sale
+  if text_on_sale > best_on_sale
     assign c_on_sale = c_text
+    assign best_on_sale = text_on_sale
+  endif
+  if dark_on_sale > best_on_sale
+    assign c_on_sale = c_ink_dark
   endif
   assign surface_6 = c_text | color_mix: c_bg, 6
   capture c_text_light_surface
@@ -158,7 +203,7 @@
     --color-border: {{ c_text | color_mix: c_bg, 12 }};
     --color-border-strong: {{ c_border_strong }};
     --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
-    --color-sale: #c0392b;
+    --color-sale: {{ c_sale_solid }};
     --color-on-sale: {{ c_on_sale }};
     --color-text-light-surface: {{ c_text_light_surface }};
     --color-on-primary: {{ c_on_primary }};

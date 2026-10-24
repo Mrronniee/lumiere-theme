@@ -65,6 +65,13 @@
 <div class="collection-banner{% unless collection.image and section.settings.show_collection_image %} collection-banner--plain{% endunless %}">
   {%- if collection.image and section.settings.show_collection_image -%}
     <div class="collection-banner__image">
+      {%- comment -%}
+        fetchpriority="high" : element LCP de la page collection, et eager seul
+        laisse le navigateur le mettre en file derriere le CSS et les polices.
+        Ce commentaire se tient AU-DESSUS de la balise : Theme Check 3.30.1 lit
+        une apostrophe placee entre les attributs comme le debut d'une valeur
+        d'attribut (cause des 3 ERROR de la 1.7.2).
+      {%- endcomment -%}
       <img
         srcset="{%- if collection.image.width >= 750 -%}{{ collection.image | image_url: width: 750 }} 750w,{%- endif -%}
           {%- if collection.image.width >= 1100 -%}{{ collection.image | image_url: width: 1100 }} 1100w,{%- endif -%}
@@ -74,10 +81,6 @@
         sizes="100vw"
         alt="{{ collection.image.alt | escape }}"
         loading="eager"
-        {% comment -%}
-          Element LCP de la page collection : eager seul laisse le navigateur
-          la mettre en file derriere le CSS et les polices.
-        {%- endcomment -%}
         fetchpriority="high"
         {% render 'focal', image: collection.image %}
         width="{{ collection.image.width }}"

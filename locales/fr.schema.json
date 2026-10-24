@@ -96,7 +96,7 @@
         },
         "wishlist_page": {
           "label": "Page des favoris",
-          "info": "La page qui utilise le gabarit « page.wishlist ». Les liens vers les favoris restent masques jusqu'a ce que vous la choisissiez."
+          "info": "La page qui utilise le gabarit « page.wishlist ». Les liens vers les favoris restent masqués jusqu’à ce que vous la choisissiez."
         }
       }
     },

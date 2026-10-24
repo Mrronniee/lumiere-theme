@@ -3,7 +3,7 @@
   assign recover_errors_id = 'RecoverErrors-' | append: section.id
   assign login_errors_id = 'LoginErrors-' | append: section.id
 -%}
-<div class="page-shell page-shell--narrow">
+<div class="page-shell page-shell--narrow" data-login-root>
   <div class="page-shell__header">
     <h1 class="page-shell__title">{{ 'customer.login.title' | t }}</h1>
   </div>
@@ -86,24 +86,33 @@
 
 <script>
   (function () {
-    /* Idempotence par racine (meme regle que countdown:323). Sans garde, chaque
-       rechargement de section empilait un ecouteur sur document : a la 2e
-       execution la bascule « mot de passe oublie » ne faisait plus rien
-       (RecoverPassword.hidden true -> true, mesure 1.6.0 ET 1.6.1 : mon lot de
-       1.6.1 n'avait pas touche ce fichier). */
-    var root = document.getElementById('RecoverPassword');
-    if (!root || root.dataset.loginToggleInit === 'true') return;
-    root.dataset.loginToggleInit = 'true';
-  document.addEventListener('click', function (e) {
-    if (!e.target.closest('[data-toggle-recover]')) return;
-    var recover = document.getElementById('RecoverPassword');
-    var login = document.getElementById('LoginPanel');
-    if (!recover || !login) return;
-    var showRecover = recover.hidden;
-    recover.hidden = !showRecover;
-    login.hidden = showRecover;
-    (showRecover ? recover : login).querySelector('input')?.focus();
-  });
+    /* L'ECOUTEUR VIT SUR LA RACINE DE LA SECTION, PAS SUR document.
+
+       La garde de 1.7.x etait posee sur #RecoverPassword, c'est-a-dire sur
+       l'element que le rechargement de section REMPLACE : la racine neuve
+       n'avait pas le drapeau, l'IIFE repartait et ajoutait un SECOND ecouteur
+       sur document sans que le premier soit jamais retire. Les deux relisaient
+       « showRecover = recover.hidden » au moment du clic, sur le meme element :
+       le second defaisait le premier. Mesure 1.7.2, rendu de section injecte
+       puis shopify:section:load : bascule au 1er rendu, INERTE au 2e, de
+       nouveau au 3e — parite 1/0/1, signature d'ecouteurs empiles.
+
+       Attache sur [data-login-root], qui contient les deux panneaux, l'ecouteur
+       part avec le noeud remplace : plus rien a garder, plus rien a empiler.
+       C'est le patron que le theme applique deja dans sections/faq.liquid:242 et
+       sections/tabs.liquid:451. */
+    var root = document.querySelector('[data-login-root]');
+    if (!root) return;
+    root.addEventListener('click', function (e) {
+      if (!e.target.closest('[data-toggle-recover]')) return;
+      var recover = root.querySelector('#RecoverPassword');
+      var login = root.querySelector('#LoginPanel');
+      if (!recover || !login) return;
+      var showRecover = recover.hidden;
+      recover.hidden = !showRecover;
+      login.hidden = showRecover;
+      (showRecover ? recover : login).querySelector('input')?.focus();
+    });
   })();
 </script>
 

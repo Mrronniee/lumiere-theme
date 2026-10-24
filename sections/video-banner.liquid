@@ -261,11 +261,17 @@
   endif
 -%}
 
+{%- comment -%}
+  data-header-overlay : media plein cadre, l'en-tete transparent peut se
+  superposer. Ce commentaire se tient AU-DESSUS de la balise et non entre ses
+  attributs : Theme Check 3.30.1 lit l'apostrophe d'un commentaire place dans
+  une balise ouverte comme le debut d'une valeur d'attribut (1 ERROR sur la
+  1.7.2).
+{%- endcomment -%}
 <div
   class="video-banner video-banner--{{ section.settings.layout }}"
   id="VideoBanner-{{ section.id }}"
   data-section-id="{{ section.id }}"
-  {% comment -%} Media plein cadre : l'en-tete transparent peut se superposer. {%- endcomment -%}
   data-header-overlay
 >
   <div class="video-banner__media-wrap">
@@ -308,6 +314,15 @@
           {%- endfor -%}
         </video>
       {%- elsif section.settings.cover_image != blank -%}
+        {%- comment -%}
+          loading et fetchpriority : cette section porte un preset, elle peut
+          donc ouvrir la page, et son image de couverture est alors l'image LCP.
+          « lazy » en dur la retardait systematiquement. Meme regle que
+          sections/image-with-text.liquid. Ce commentaire se tient AU-DESSUS de
+          la balise : Theme Check 3.30.1 lit l'apostrophe d'un commentaire place
+          entre les attributs comme le debut d'une valeur d'attribut (cause des
+          3 ERROR de la 1.7.2).
+        {%- endcomment -%}
         <img
           srcset="{%- if section.settings.cover_image.width >= 375 -%}{{ section.settings.cover_image | image_url: width: 375 }} 375w,{%- endif -%}
             {%- if section.settings.cover_image.width >= 750 -%}{{ section.settings.cover_image | image_url: width: 750 }} 750w,{%- endif -%}
@@ -318,12 +333,7 @@
           sizes="100vw"
           alt="{{ section.settings.cover_image.alt | escape }}"
           class="video-banner__cover"
-          {% comment %}
-            Cette section porte un preset : elle peut ouvrir la page, et son
-            image de couverture est alors l'image LCP. « lazy » en dur la
-            retardait systematiquement. Meme regle que image-with-text.liquid.
-          {% endcomment %}
-          {%- if section.index <= 2 -%}
+          {% if section.index <= 2 -%}
             loading="eager"
             {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
           {%- else -%}

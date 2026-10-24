@@ -204,14 +204,47 @@
     {%- for block in section.blocks -%}
       <div class="lookbook__item" {{ block.shopify_attributes }}>
         {%- if block.settings.image != blank -%}
+          {%- comment -%}
+            Paliers intermédiaires : entre 375 et 750 il n'y avait rien, et
+            une tuile de 364 px à densité 1,75 (637 px nécessaires) recevait
+            le fichier 750w, soit 28 % de pixels en trop (103 Kio sur
+            l'accueil, mesure Lighthouse). Le « sizes » décrit la tuile et
+            non la fenêtre : la grille retire les marges du conteneur.
+
+            La tuile est recadree en object-fit: cover sur un cadre portrait : sa
+            largeur PEINTE n'est pas sa largeur CSS. Mesure 1.6.1 a 1350 :
+            sizes annoncait 627 px pour des tuiles de 418 px (650w servi,
+            206 KiB de trop) et une tuile demandait 1 066 px pour 650 charges
+            (rapport 0,61, image floue). On decrit la tuile et on laisse un
+            palier de 2000w pour les ecrans denses.
+
+            Mesure 1.7.2 : un seul sizes ne peut PAS decrire six largeurs de
+            tuile. La grille fait 12 colonnes et les tuiles valent span
+            7 / 5 / 5 / 4 / 4 / 4 au-dela de 989 px, donc 796 / 564 / 564 /
+            448 / 448 / 448 px a 1440, alors que « calc(33vw - 3rem) »
+            annoncait 427 px pour toutes : uses-responsive-images 0,5 et
+            84 KiB de trop en bureau, et la premiere tuile ne recevait que
+            0,52 des pixels dont elle a besoin (image floue). Le sizes est
+            donc calcule PAR TUILE, d'apres les memes spans que le CSS
+            ci-dessus (>= 990 px : span/12 ; 750-989 px : les spans de la
+            requete max-width 989 ; <= 749 px : tout en span 12). La marge
+            retiree est 2rem et non 3rem pour ne jamais sous-annoncer :
+            a 1440, 58,33vw - 2rem = 808 px pour 796 peints, 41,67vw - 2rem
+            = 568 pour 564, et 33,33vw - 2rem = 448 pour 448.
+          {%- endcomment -%}
+          {%- liquid
+            case forloop.index
+              when 1
+                assign tile_sizes = '(min-width: 990px) calc(58.33vw - 2rem), calc(100vw - 2rem)'
+              when 2, 3
+                assign tile_sizes = '(min-width: 990px) calc(41.67vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 2rem)'
+              when 4, 5
+                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 2rem)'
+              else
+                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), calc(100vw - 2rem)'
+            endcase
+          -%}
           <img
-            {% comment -%}
-              Paliers intermédiaires : entre 375 et 750 il n'y avait rien, et
-              une tuile de 364 px à densité 1,75 (637 px nécessaires) recevait
-              le fichier 750w, soit 28 % de pixels en trop (103 Kio sur
-              l'accueil, mesure Lighthouse). Le « sizes » décrit la tuile et
-              non la fenêtre : la grille retire les marges du conteneur.
-            {%- endcomment -%}
             srcset="{%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
               {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
               {%- if block.settings.image.width >= 650 -%}{{ block.settings.image | image_url: width: 650 }} 650w,{%- endif -%}
@@ -220,15 +253,7 @@
               {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
               {%- if block.settings.image.width >= 2000 -%}{{ block.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
             src="{{ block.settings.image | image_url: width: 1100 }}"
-            {% comment -%}
-              La tuile est recadree en object-fit: cover sur un cadre portrait : sa
-              largeur PEINTE n'est pas sa largeur CSS. Mesure 1.6.1 a 1350 :
-              sizes annoncait 627 px pour des tuiles de 418 px (650w servi,
-              206 KiB de trop) et une tuile demandait 1 066 px pour 650 charges
-              (rapport 0,61, image floue). On decrit la tuile et on laisse un
-              palier de 2000w pour les ecrans denses.
-            {%- endcomment -%}
-            sizes="(min-width: 1200px) calc(33vw - 3rem), (min-width: 750px) calc(50vw - 3rem), calc(100vw - 3rem)"
+            sizes="{{ tile_sizes }}"
             alt="{{ block.settings.image.alt | escape }}"
             class="lookbook__item-image"
             loading="lazy"

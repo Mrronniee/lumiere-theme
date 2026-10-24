@@ -10,12 +10,56 @@
 {% enddoc %}
 {%- if filterable.sort_options.size > 0 -%}
   {%- assign current_sort = filterable.sort_by | default: filterable.default_sort_by -%}
-  <label class="visually-hidden" for="SortBy-{{ section_id }}">{{ 'sections.collection.sort_by' | t }}</label>
-  <select class="collection-grid__sort" id="SortBy-{{ section_id }}" data-sort-select>
-    {%- for option in filterable.sort_options -%}
-      <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>
-        {{ option.name }}
-      </option>
+  {%- comment -%}
+    LE TRI MARCHE SANS JAVASCRIPT.
+
+    Mesure 1.7.2 : ce <select> etait rendu HORS du formulaire des filtres et
+    sans attribut name (name: null, dans_un_formulaire: false), et c'est
+    assets/theme.js qui posait l'adresse au changement — donc sans JavaScript le
+    tri etait inoperant, alors que les filtres ont bien leur <noscript>
+    (snippets/facet-filters.liquid:151-153). La competence liquid-theme-a11y
+    (Progressive Enhancement : « les composants interactifs doivent fonctionner
+    sans JavaScript quand c'est possible ») en fait une ALERTE et non un simple
+    detail.
+
+    Il porte donc son propre formulaire en GET, avec name="sort_by" et un bouton
+    d'envoi sous <noscript>. Les filtres actifs et les termes de recherche sont
+    rejoues en champs caches : sans eux, trier sans JavaScript aurait EFFACE les
+    filtres du client. Avec JavaScript, rien ne change : theme.js ecoute
+    toujours [data-sort-select] et navigue lui-meme, le bouton reste masque.
+  {%- endcomment -%}
+  <form method="get" class="collection-grid__sort-form" data-sort-form>
+    {%- if filterable.terms != blank -%}
+      <input type="hidden" name="q" value="{{ filterable.terms | escape }}">
+      <input type="hidden" name="options[prefix]" value="last">
+    {%- endif -%}
+    {%- for filter in filterable.filters -%}
+      {%- case filter.type -%}
+        {%- when 'price_range' -%}
+          {%- if filter.min_value.value != nil -%}
+            <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}">
+          {%- endif -%}
+          {%- if filter.max_value.value != nil -%}
+            <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}">
+          {%- endif -%}
+        {%- else -%}
+          {%- for value in filter.active_values -%}
+            <input type="hidden" name="{{ value.param_name }}" value="{{ value.value | escape }}">
+          {%- endfor -%}
+      {%- endcase -%}
     {%- endfor -%}
-  </select>
+
+    <label class="visually-hidden" for="SortBy-{{ section_id }}">{{ 'sections.collection.sort_by' | t }}</label>
+    <select class="collection-grid__sort" id="SortBy-{{ section_id }}" name="sort_by" data-sort-select>
+      {%- for option in filterable.sort_options -%}
+        <option value="{{ option.value }}" {% if option.value == current_sort %}selected{% endif %}>
+          {{ option.name }}
+        </option>
+      {%- endfor -%}
+    </select>
+
+    <noscript>
+      <button type="submit" class="btn btn--secondary">{{ 'sections.collection.sort_by' | t }}</button>
+    </noscript>
+  </form>
 {%- endif -%}

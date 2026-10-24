@@ -82,10 +82,21 @@
               d'apercu du media, qui existe pour tous les types.
             {%- endcomment -%}
             {%- assign hover_image = product.media[1].preview_image -%}
+            {%- comment -%}
+              Le palier 720w manquait a l'image de survol, alors qu'elle partage
+              le MEME sizes (card_sizes) que l'image principale, qui l'a. Mesure
+              1.7.2 : .product-card__image--hover recevait 360 px pour 526
+              necessaires sur la collection a 1350 (rapport 0,68) et 360 pour
+              718 sur les cartes « related-products » de la fiche produit
+              (0,50) — l'image de survol arrivait donc floue aux largeurs
+              bureau. Elle ne se voit qu'au survol, donc sans effet sur le LCP
+              ni sur le CLS, d'ou une ALERTE et non un echec.
+            {%- endcomment -%}
             <img
               srcset="{%- if hover_image.width >= 165 -%}{{ hover_image | image_url: width: 165 }} 165w,{%- endif -%}
                 {%- if hover_image.width >= 360 -%}{{ hover_image | image_url: width: 360 }} 360w,{%- endif -%}
-                {%- if hover_image.width >= 533 -%}{{ hover_image | image_url: width: 533 }} 533w,{%- endif -%}"
+                {%- if hover_image.width >= 533 -%}{{ hover_image | image_url: width: 533 }} 533w,{%- endif -%}
+                {%- if hover_image.width >= 720 -%}{{ hover_image | image_url: width: 720 }} 720w,{%- endif -%}"
               src="{{ hover_image | image_url: width: 533 }}"
               sizes="{{ card_sizes }}"
               alt=""

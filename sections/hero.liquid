@@ -4,6 +4,38 @@
   Compatible Shopify Online Store 2.0 avec blocks
 {% endcomment %}
 
+{%- liquid
+  comment
+    Plancher de lisibilite du heros. Deux defauts mesures en 1.7.2, tous deux
+    corriges ici :
+
+    1. La couleur du plancher etait ECRITE EN DUR (rgba(26, 22, 18, …)), donc un
+       plancher sombre meme quand le marchand choisit un texte SOMBRE : le texte
+       devenait alors illisible sur une image sombre. sections/slideshow.liquid
+       (:177-186) et sections/video-banner.liquid (:14-19) derivent deja le leur
+       de la clarte du texte ; on aligne le heros sur ce patron.
+
+    2. L'opacite 0,45 ne tenait pas. Mesure au pixel, accueil 1440, image du
+       heros remplacee par une image BLANCHE, reglages de la demo
+       (overlay_color #000000, overlay_opacity 0,4) : fond rendu #989694 et
+       textes blancs a 2,95:1 — p.hero__pretitle (16 px, seuil 4,5),
+       h1.hero__title (72 px, seuil 3) et p.hero__subtitle. Image noire :
+       17,40:1. Le diaporama tient a 5,23:1 avec le MEME 0,45 parce qu'il
+       empile le voile entier du marchand ; le heros, lui, dilue celui du
+       marchand a 35 % (voir le degrade ci-dessous), donc son plancher porte
+       seul toute la charge. Calcul : sur blanc, 0,45 donne #989694 (L 0,306,
+       soit 2,95:1) et il faut L <= 0,1833 pour atteindre 4,5:1 — c'est-a-dire
+       0,60 au minimum ; 0,62 donne 5,04:1 et laisse une marge pour la partie
+       la plus claire du degrade.
+  endcomment
+  assign hero_lightness = section.settings.text_color | color_extract: 'lightness'
+  if hero_lightness > 50
+    assign hero_floor_rgb = '26, 22, 18'
+  else
+    assign hero_floor_rgb = '250, 249, 247'
+  endif
+-%}
+
 {%- style -%}
   .hero {
     position: relative;
@@ -27,6 +59,17 @@
     object-fit: cover;
   }
 
+  /* Variante video : l'image de poster et la video se SUPERPOSENT, elles ne
+     s'empilent pas. La video vient apres dans le DOM, donc au-dessus ; tant
+     qu'elle n'a pas peint sa premiere image (preload="none"), le poster se voit
+     a travers — exactement ce que faisait l'attribut poster, mais avec une
+     image responsive. Voir le commentaire du poster dans le balisage. */
+  .hero__media--video img,
+  .hero__media--video video {
+    position: absolute;
+    inset: 0;
+  }
+
   .hero__overlay {
     position: absolute;
     inset: 0;
@@ -38,12 +81,14 @@
     z-index: 2;
   }
 
-  /* Plancher de lisibilite : garantit le contraste du texte clair sur une image claire. */
+  /* Plancher de lisibilite : garantit le contraste du texte sur une image de la
+     teinte OPPOSEE (claire sous un texte clair, sombre sous un texte sombre).
+     Couleur et opacite : voir le bloc {%- liquid -%} en tete de fichier. */
   .hero__overlay::after {
     content: '';
     position: absolute;
     inset: 0;
-    background: rgba(26, 22, 18, 0.45);
+    background: rgba({{ hero_floor_rgb }}, 0.62);
   }
 
   .hero__video-controls {
@@ -210,7 +255,7 @@
   marqueur l'en-tete garde son fond (voir assets/theme.css, HEADER TRANSPARENT).
 {%- endcomment -%}
 <div class="hero" data-section-id="{{ section.id }}" data-header-overlay>
-  <div class="hero__media">
+  <div class="hero__media{% if section.settings.video != blank %} hero__media--video{% endif %}">
     {%- if section.settings.video != blank -%}
       {%- comment -%}
         La lecture automatique est posée en JavaScript, comme dans
@@ -227,6 +272,42 @@
         poster suffit a peindre le premier ecran ; le play() de theme.js
         (HeroVideo) declenche lui-meme le chargement quand la lecture est permise.
       {%- endcomment -%}
+      {%- if section.settings.image != blank -%}
+        {%- comment -%}
+          POSTER RENDU EN BALISE IMG ET NON PAR L'ATTRIBUT poster.
+
+          Mesure 1.7.2 : le poster etait « image_url: width: 1920 », une seule
+          largeur pour toutes les fenetres, et c'est l'element LCP de l'accueil
+          (lcp.url identique a 390 et a 1440, 2 362 ms en mobile). Pese au CDN :
+          1920 = 106,7 Ko, 750 = 28,2 Ko, 550 = 19,0 Ko — donc ~87,7 Ko de trop
+          sur le LCP d'un ecran de 390 px, soit 23 % des octets d'images de
+          l'accueil. Et la regle T6 n'etait pas tenue : un attribut poster
+          n'accepte NI srcset NI fetchpriority, et aucun <link rel=preload>
+          n'etait pose (preloads [] aux deux largeurs).
+
+          Un attribut poster ne peut pas etre responsive. On rend donc le poster
+          comme une vraie balise img, avec exactement le meme balisage que la branche
+          image de cette section juste en dessous (srcset, sizes, eager,
+          fetchpriority high, focal) : la largeur suit la fenetre et le LCP est
+          charge en priorite. La video se superpose par-dessus (voir la regle
+          .hero__media--video dans le {%- style -%}).
+        {%- endcomment -%}
+        <img
+          srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
+          src="{{ section.settings.image | image_url: width: 1100 }}"
+          sizes="100vw"
+          alt=""
+          loading="eager"
+          fetchpriority="high"
+          {% render 'focal', image: section.settings.image %}
+          width="{{ section.settings.image.width }}"
+          height="{{ section.settings.image.height }}"
+        >
+      {%- endif -%}
       <video
         loop
         muted
@@ -234,7 +315,6 @@
         preload="none"
         width="{{ section.settings.video.sources.first.width | default: 1920 }}"
         height="{{ section.settings.video.sources.first.height | default: 1080 }}"
-        poster="{{ section.settings.image | image_url: width: 1920 }}"
         data-hero-video
       >
         {%- for source in section.settings.video.sources -%}
@@ -264,37 +344,6 @@
 
   <div class="hero__overlay"></div>
 
-  {%- comment -%}
-    Les commandes de la video sont posees APRES le voile, pas dedans.
-    .hero__video-controls portait bien z-index: 4, mais il etait place DANS
-    .hero__media, qui a z-index: 1 et forme donc un contexte d'empilement : tout
-    son contenu, commandes comprises, se peignait SOUS .hero__overlay (z-index 2,
-    gradient reglable + plancher rgba(26, 22, 18, 0.45)). Le voile delavait le
-    bouton de moitie : sonde au navigateur du 23/10/2026, bouton focalise au
-    clavier sur le thème d'essai a 1440 — sa bordure blanche rendue #7f7d7a et
-    l'anneau blanc #7e7c7a, soit le meme gris, cFond 1,06 ; c'est aussi ce qui
-    rendait l'icone blanche en #82807e (note de la 1.6.4). Aucune couleur choisie
-    par le theme ne vaut sous un voile : la commande passe au-dessus.
-  {%- endcomment -%}
-  {%- if section.settings.video != blank -%}
-      <div class="hero__video-controls">
-        <button
-          type="button"
-          class="hero__video-control"
-          data-hero-video-toggle
-          data-label-play="{{ 'sections.video_banner.play' | t }}"
-          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
-          aria-label="{{ 'sections.video_banner.pause' | t }}"
-        >
-          <span class="hero__video-icon" data-icon-pause>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
-          </span>
-          <span class="hero__video-icon" data-icon-play hidden>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
-          </span>
-        </button>
-      </div>
-  {%- endif -%}
 
   {%- comment -%}
     Un reglage rempli d'espaces n'est pas `blank` pour Liquid : sans strip, le
@@ -360,6 +409,47 @@
       </div>
     {%- endif -%}
   </div>
+
+  {%- comment -%}
+    ORDRE DE TABULATION. Ce bloc se tient APRES .hero__content, et non avant.
+    Mesure 1.7.2 : sautsArriere = 1 sur l'accueil a 1440 et a 390, EN et FR —
+    button.hero__video-control (peint en bas a droite) etait tabule AVANT
+    a.hero__button--primary (peint au-dessus), dy -256 px a 1440 et -159 px a
+    390. La 1.7.1 avait sorti les commandes de .hero__media pour les passer
+    au-dessus du voile (voir ci-dessous) mais les avait laissees avant le
+    contenu dans le DOM, alors qu'elles sont positionnees en absolu en bas a
+    droite. WCAG 2.4.3 : l'ordre du focus doit suivre l'ordre visuel.
+
+    Les commandes de la video sont posees APRES le voile, pas dedans.
+    .hero__video-controls portait bien z-index: 4, mais il etait place DANS
+    .hero__media, qui a z-index: 1 et forme donc un contexte d'empilement : tout
+    son contenu, commandes comprises, se peignait SOUS .hero__overlay (z-index 2,
+    gradient reglable + plancher). Le voile delavait le bouton de moitie : sonde
+    au navigateur du 23/10/2026, bouton focalise au clavier sur le theme d'essai
+    a 1440 — sa bordure blanche rendue #7f7d7a et l'anneau blanc #7e7c7a, soit
+    le meme gris, cFond 1,06 ; c'est aussi ce qui rendait l'icone blanche en
+    #82807e (note de la 1.6.4). Aucune couleur choisie par le theme ne vaut sous
+    un voile : la commande passe au-dessus.
+  {%- endcomment -%}
+  {%- if section.settings.video != blank -%}
+      <div class="hero__video-controls">
+        <button
+          type="button"
+          class="hero__video-control"
+          data-hero-video-toggle
+          data-label-play="{{ 'sections.video_banner.play' | t }}"
+          data-label-pause="{{ 'sections.video_banner.pause' | t }}"
+          aria-label="{{ 'sections.video_banner.pause' | t }}"
+        >
+          <span class="hero__video-icon" data-icon-pause>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><rect x="6" y="5" width="4" height="14"/><rect x="14" y="5" width="4" height="14"/></svg>
+          </span>
+          <span class="hero__video-icon" data-icon-play hidden>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+        </button>
+      </div>
+  {%- endif -%}
 
   {%- if section.settings.show_scroll_indicator -%}
     <div class="hero__scroll-indicator">

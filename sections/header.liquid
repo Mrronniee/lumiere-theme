@@ -76,7 +76,7 @@
       </div>
 
       {%- comment -%} Navigation desktop {%- endcomment -%}
-      <nav class="header__nav" aria-label="{{ 'accessibility.menu' | t }}">
+      <nav class="header__nav" aria-label="{{ 'accessibility.main_menu' | t }}">
         <ul class="header__nav-list">
           {%- for link in section.settings.menu.links -%}
             <li class="header__nav-item{% if link.links != blank %} header__nav-item--has-dropdown{% endif %}">
@@ -171,11 +171,33 @@
           class="header__action header__action--cart"
           {% if settings.cart_type == 'drawer' %}data-cart-toggle{% endif %}
         >
-          {%- comment -%} Nom accessible = libelle masque + compteur visible (axe : label-content-name-mismatch) {%- endcomment -%}
+          {%- comment -%}
+            NOM ACCESSIBLE = libelle masque + compteur visible
+            (axe label-content-name-mismatch, WCAG 2.5.3).
+
+            Mesure 1.7.2 : etiquetteHorsNom = 1 sur 38/38 lignes — le nom
+            accessible du lien valait « Cart » / « Panier » alors que son texte
+            visible etait « Cart 0 ». La cause est le role="status" qui etait
+            pose SUR le compteur : une region live n'entre pas dans le calcul du
+            nom par le contenu, donc le « 0 » visible en sortait. Le compteur
+            reste donc un simple span, et il compte a nouveau dans le nom ;
+            l'annonce des changements passe par la region live qui suit, placee
+            HORS du lien (c'est aussi ce que demande la competence
+            liquid-theme-a11y : la region live du panier vit a cote du composant,
+            pas dedans).
+          {%- endcomment -%}
           <span class="visually-hidden">{{ 'cart.general.title' | t }}</span>
           {% render 'icon', icon: 'cart' %}
-          <span class="header__cart-count" data-cart-count role="status" aria-live="polite">{{ cart.item_count }}</span>
+          <span class="header__cart-count" data-cart-count>{{ cart.item_count }}</span>
         </a>
+        <span
+          class="visually-hidden"
+          data-cart-count-announce
+          role="status"
+          aria-live="polite"
+          data-template-one="{{ 'cart.general.count_announce.one' | t: count: '[count]' }}"
+          data-template-other="{{ 'cart.general.count_announce.other' | t: count: '[count]' }}"
+        ></span>
       </div>
 
       {%- comment -%} Markets selectors {%- endcomment -%}
@@ -189,7 +211,7 @@
 
 {%- comment -%} Menu mobile {%- endcomment -%}
 <div class="mobile-menu__overlay" data-menu-overlay></div>
-<nav class="mobile-menu" id="MobileMenu" data-mobile-menu aria-label="{{ 'accessibility.menu' | t }}" aria-hidden="true">
+<nav class="mobile-menu" id="MobileMenu" data-mobile-menu aria-label="{{ 'accessibility.mobile_menu' | t }}" aria-hidden="true">
   <div class="mobile-menu__header">
     <span class="mobile-menu__title">{{ 'accessibility.menu' | t }}</span>
     <button type="button" class="mobile-menu__close" data-menu-close aria-label="{{ 'accessibility.close_menu' | t }}">

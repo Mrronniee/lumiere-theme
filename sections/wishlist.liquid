@@ -74,10 +74,28 @@
     {%- else -%}
       <h2 class="wishlist-page__title">{{ 'wishlist.title' | t }}</h2>
     {%- endif -%}
+    {%- comment -%}
+      LE PLURIEL SE CHOISIT EN JAVASCRIPT, DONC LES DEUX FORMES PARTENT ICI.
+
+      Mesure 1.7.2 : « wishlist.count » n'est pas une chaine mais un parent de
+      pluralisation (.one et .other). Appele avec la CHAINE '[count]', Shopify
+      ne peut pas choisir la forme et retient .one une fois pour toutes :
+      data-template rendait « [count] article », et assets/theme.js y
+      substituait le nombre, donc « 2 article » en FR et « 2 item » en EN des
+      2 favoris. Relu sur la demo FR.
+
+      On passe donc les deux formes, chacune obtenue en adressant la sous-cle
+      directement (ce qui court-circuite le choix de Shopify), et theme.js
+      tranche avec Intl.PluralRules sur la langue de la page — une API du
+      navigateur, pas une regle de pluriel reecrite a la main. Le texte rendu
+      par Liquid, lui, garde l'appel normal : la aussi Shopify choisit bien,
+      puisqu'il recoit un vrai nombre.
+    {%- endcomment -%}
     <p
       class="wishlist-page__count"
       data-wishlist-count-text
-      data-template="{{ 'wishlist.count' | t: count: '[count]' }}"
+      data-template-one="{{ 'wishlist.count.one' | t: count: '[count]' }}"
+      data-template-other="{{ 'wishlist.count.other' | t: count: '[count]' }}"
     >
       {{- 'wishlist.count' | t: count: 0 -}}
     </p>

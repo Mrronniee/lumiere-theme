@@ -58,6 +58,8 @@
     "skip_to_text": "Skip to content",
     "close": "Close",
     "menu": "Menu",
+    "main_menu": "Main menu",
+    "mobile_menu": "Mobile menu",
     "open_menu": "Open menu",
     "close_menu": "Close menu",
     "refresh_page": "Choice selected, refresh the page",
@@ -259,7 +261,11 @@
       "upsell_title": "Complete your look",
       "free_shipping_progress_html": "Only <strong>{{ amount }}</strong> away from free shipping",
       "free_shipping_success": "Free shipping unlocked!",
-      "cart_error": "An error occurred while updating your cart. Please try again."
+      "cart_error": "An error occurred while updating your cart. Please try again.",
+      "count_announce": {
+        "one": "{{ count }} item in cart",
+        "other": "{{ count }} items in cart"
+      }
     },
     "label": {
       "product": "Product",
@@ -486,6 +492,7 @@
     "email_label": "Email address"
   },
   "markets": {
+    "banner_label": "Market notice",
     "banner_html": "You seem to be in {{ country }}. Change market?",
     "switch": "Change",
     "country": "Country",

@@ -120,9 +120,20 @@
        les candidats un par un : ce conteneur seul fait retomber scrollWidth a
        390 et scrollX a 0 ; le tableau qu'il porte est force a min-width: 720px
        sous 989 px (plus bas). min-width: 0 neutralise le min-width implicite
-       d'un element flex ou grid, max-width: 100% le borne dans tous les cas. */
+       d'un element flex ou grid, max-width: 100% le borne dans tous les cas.
+       Ces deux proprietes NE SUFFISENT PAS : mesure 1.7.2 (trois audits, chiffres
+       identiques au pixel), le conteneur fait bien clientWidth 342 / scrollWidth
+       720, et la fenetre defile quand meme de 275 px. Mesure du correctif, en
+       page et sans recharger : forcer ce conteneur en overflow-x: hidden laisse
+       665 / 275 (inefficace), tandis que contain: paint le ramene a 390 / 0.
+       La containment de peinture est la bonne reponse pour un conteneur
+       defilant — rien de son contenu ne doit peindre au-dehors — et elle garde
+       le tableau a 720 px, donc lisible, avec son defilement interne ; passer le
+       tableau a min-width: 0 corrigerait aussi la mesure mais ecraserait les
+       colonnes sous 989 px. */
     min-width: 0;
     max-width: 100%;
+    contain: paint;
   }
 
 

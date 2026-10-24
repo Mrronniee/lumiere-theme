@@ -1,5 +1,82 @@
 # Changelog
 
+## 1.7.3 — 2026-10-24
+
+### Fixed
+- **Pages no longer scroll sideways on a phone.** The comparison table forced a
+  720&nbsp;px width on small screens, and that width escaped its own scrolling
+  box: the whole page could be dragged 275&nbsp;px to the side. The table still
+  scrolls on its own, inside its box, and the page does not.
+- **Your colour choices are respected on filled shapes.** Buttons, badges, the
+  cart counter, pagination and the market bar picked their text colour between
+  white and your body text colour only. On a dark palette both are light, so a
+  light shape got light text — unreadable. A dark ink is now considered too, so
+  a filled shape always gets the readable one.
+- **Sale prices and form errors stay readable on any background.** The sale
+  colour was used raw outside sections that set their own background, so sale
+  prices on the collection grid, search, cart and product page — and every form
+  error message, which shares the colour — could fall well below the contrast
+  minimum. It is now derived from your background everywhere, as it already was
+  inside sections.
+- **Buttons without their own colour no longer turn black.** Two controls on the
+  collection page fell back to the browser's default button colour, invisible on
+  any dark palette. Every button now inherits the surrounding text colour, the
+  way links already did.
+- **The countdown respects its digit colour setting.** The colour was applied as
+  typed, so leaving it white on a light section made the digits and the keyboard
+  focus ring disappear. Digits, label and focus ring are now each derived for
+  the surface they sit on.
+- **Hero text stays readable over a light image.** The readability veil was fixed
+  at one strength and one colour: white text over a pale photo sat just under
+  3:1. The veil now follows your text colour — dark under light text, light under
+  dark text — and is strong enough to hold the contrast minimum.
+- **The hero loads its first image far faster on a phone.** The video poster was
+  served at a single 1920&nbsp;px width to every screen, around 88&nbsp;KB more
+  than a phone needs, and it is the largest thing the visitor waits for. It now
+  comes in the size that fits the screen and is fetched at high priority.
+- **The hero title no longer nudges the page as fonts load.** Your heading font
+  is now requested early enough to arrive before the first paint.
+- **Keyboard focus follows what you see in the hero.** The video pause button,
+  painted bottom right, was reached before the heading and the call to action
+  painted above it.
+- **A long main menu no longer collapses into a column of single letters.** With
+  eight entries the header squeezed each label until the text broke letter by
+  letter and spilled out of the header, and it never switched to the collapsed
+  menu because that depended only on window width. Labels now stay on one line
+  and the menu collapses as soon as it genuinely does not fit, at any width.
+- **Wishlist counts use the right plural.** It read "2 item" instead of
+  "2 items" as soon as you had more than one, in both languages.
+- **The login and address pages keep working after an editor reload.** The
+  "forgot password" switch went dead every other reload, and deleting an address
+  could ask for confirmation several times over.
+- **Your image focal points are respected in three more places.** The cart
+  drawer's suggestion thumbnail and the predictive search thumbnail ignored
+  them; quick view now shows the whole image instead of cropping it, since it is
+  filled in the browser where the focal point is not available.
+- **Contact form entries survive an error.** The name and phone fields were
+  named in the visitor's language, so Shopify could not refill them after a
+  failed submission and what the visitor typed was lost. The label is still
+  translated; the field name no longer changes with the language.
+- **Sorting a collection works without JavaScript.** The sort menu had no form
+  behind it, unlike the filters. It now submits on its own and keeps the filters
+  the visitor had applied.
+- **The cart says so when something fails.** Saving an order note failed in
+  silence from the cart drawer, and after a failed quantity change the field
+  kept showing a quantity the cart did not have.
+- **Screen readers announce the cart link and the two menus correctly.** The
+  cart link's name left out the item count it displays, the header menu and the
+  mobile menu were both called "Menu", and the market bar sat outside every
+  page landmark.
+- **The free shipping bar is visible on the cart page.** Its progress was almost
+  indistinguishable from its track, as it had already been fixed in the drawer.
+- **Focus rings on the product gallery arrows no longer sit on your photo.**
+  They are drawn inside the button's own plate, like the theme's other controls.
+- **Hover images on product cards are sharp on desktop.** They stopped one size
+  short of the main image while claiming the same display width.
+- **Lookbook tiles load the right image size.** One description was used for six
+  different tile widths, so the large tile came out soft and the small ones
+  loaded far more than they showed.
+
 ## 1.7.2 — 2026-10-23
 
 ### Fixed

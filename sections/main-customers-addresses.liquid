@@ -59,20 +59,29 @@
 
 <script>
   (function () {
-    /* Idempotence par racine, comme les autres sections a script en ligne : sans
-       garde, un rechargement de section empilait un ecouteur de suppression
-       d'adresse sur document (releve en 1.6.0, non corrige par mon lot de
-       1.6.1, qui n'avait pas touche ce fichier). */
+    /* L'ECOUTEUR VIT SUR LA RACINE DE LA SECTION, PAS SUR document.
+
+       Meme defaut et meme correction que sections/main-customers-login.liquid :
+       la garde etait posee sur [data-addresses-root], c'est-a-dire sur
+       l'element que le rechargement de section REMPLACE. La racine neuve n'a
+       pas le drapeau, l'IIFE repart et ajoute un SECOND ecouteur sur document
+       sans que le premier soit retire — apres N rechargements, un clic de
+       suppression declenchait N confirm() et N postLink. Releve en 1.6.0, puis
+       en 1.6.1, puis en 1.7.2 par identite de patron avec la bascule de
+       connexion, elle mesuree (parite 1/0/1).
+
+       Attache sur la racine, l'ecouteur part avec le noeud remplace : plus rien
+       a garder, plus rien a empiler. Patron deja applique dans
+       sections/faq.liquid:242 et sections/tabs.liquid:451. */
     var root = document.querySelector('[data-addresses-root]');
-    if (!root || root.dataset.addressesInit === 'true') return;
-    root.dataset.addressesInit = 'true';
-  document.addEventListener('click', function (e) {
-    var link = e.target.closest('[data-address-delete]');
-    if (!link) return;
-    e.preventDefault();
-    if (!window.confirm(link.dataset.confirm)) return;
-    Shopify.postLink(link.dataset.url, { parameters: { _method: 'delete' } });
-  });
+    if (!root) return;
+    root.addEventListener('click', function (e) {
+      var link = e.target.closest('[data-address-delete]');
+      if (!link) return;
+      e.preventDefault();
+      if (!window.confirm(link.dataset.confirm)) return;
+      Shopify.postLink(link.dataset.url, { parameters: { _method: 'delete' } });
+    });
   })();
 </script>
 

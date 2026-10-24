@@ -23,6 +23,36 @@
     },
 
     /**
+     * Rend un texte pluralise a partir des deux formes portees par l'element en
+     * data-template-one et data-template-other, « [count] » remplace par n.
+     *
+     * Pourquoi : une cle de locale pluralisee (.one / .other) appelee en Liquid
+     * avec une CHAINE au lieu d'un nombre fige la forme singulier — Shopify ne
+     * peut pas choisir. Mesure 1.7.2 : « 2 article » en FR et « 2 item » en EN
+     * des 2 favoris (sections/wishlist.liquid). Les deux formes partent donc du
+     * Liquid et c'est ici qu'on tranche, avec Intl.PluralRules sur la langue de
+     * la page : une API du navigateur, et non une regle de pluriel reecrite a la
+     * main (le francais met 0 au singulier, l'anglais au pluriel).
+     *
+     * @param {HTMLElement} el - Element portant les deux formes en data-*.
+     * @param {number} n - Le compte.
+     * @returns {string} Le texte pluralise, ou '' si aucune forme n'est fournie.
+     */
+    pluralTemplate(el, n) {
+      let forme = n === 1 ? 'one' : 'other';
+      if (typeof Intl !== 'undefined' && Intl.PluralRules) {
+        try {
+          forme = new Intl.PluralRules(document.documentElement.lang || 'en').select(n);
+        } catch (err) {
+          // Langue non reconnue : on garde le repli ci-dessus.
+        }
+      }
+      const cle = `template${forme.charAt(0).toUpperCase()}${forme.slice(1)}`;
+      const tpl = el.dataset[cle] || el.dataset.templateOther || el.dataset.template || '';
+      return tpl.replace('[count]', n);
+    },
+
+    /**
      * Formate un montant en centimes comme la boutique l'affiche.
      * Modele prefere : l'echantillon rendu par Liquid dans la devise AFFICHEE
      * (window.themeMoneySample = {{ 123456 | money }}), dont on deduit symbole,
@@ -505,9 +535,10 @@
         el.hidden = this.items.length === 0;
       });
 
+      // Pluriel : les deux formes arrivent du Liquid en data-*, utils tranche
+      // avec la regle de la langue (voir utils.pluralTemplate).
       document.querySelectorAll('[data-wishlist-count-text]').forEach((el) => {
-        const tpl = el.dataset.template || '';
-        el.textContent = tpl.replace('[count]', this.items.length);
+        el.textContent = utils.pluralTemplate(el, this.items.length);
       });
 
       const grid = document.querySelector('[data-wishlist-grid]');
@@ -645,9 +676,21 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
           body: JSON.stringify({ note: note.value })
-        }).catch(() => {
-          /* la note part de toute facon avec le formulaire de la page panier */
-        });
+        })
+          .then((reponse) => {
+            if (!reponse.ok) throw new Error(`HTTP ${reponse.status}`);
+          })
+          .catch(() => {
+            // L'ECHEC SE DIT, il ne s'avale pas.
+            // Le « .catch(() => {}) » d'avant se justifiait par « la note part
+            // de toute facon avec le formulaire de la page panier » : vrai sur
+            // /cart, FAUX dans le tiroir, dont le champ n'a aucun formulaire de
+            // repli. Mesure 1.7.2, requetes du panier coupees au navigateur :
+            // la note etait perdue sans un mot ni une annonce, alors que
+            // l'ajout au panier, lui, affichait bien son message. On passe donc
+            // par la meme region live que les autres echecs du panier.
+            Notify.show(window.themeStrings?.cartError, 'error');
+          });
       });
 
       // Echap : on se fie a l'etat rendu (classe) plutot qu'au seul drapeau
@@ -920,6 +963,18 @@
       document.querySelectorAll('[data-cart-count]').forEach((el) => {
         el.textContent = cart.item_count;
       });
+      // Le compteur du lien panier n'est plus lui-meme une region live : il doit
+      // compter dans le nom accessible du lien (WCAG 2.5.3, voir le commentaire
+      // de sections/header.liquid). L'annonce passe donc par cette region,
+      // placee hors du lien. Motif « vider puis ecrire » pour que l'annonce
+      // reparte meme quand le texte ne change pas.
+      document.querySelectorAll('[data-cart-count-announce]').forEach((el) => {
+        const message = utils.pluralTemplate(el, cart.item_count);
+        el.textContent = '';
+        requestAnimationFrame(() => {
+          el.textContent = message;
+        });
+      });
       document.querySelectorAll('[data-cart-count-text]').forEach((el) => {
         el.textContent = `(${cart.item_count})`;
       });
@@ -1038,6 +1093,22 @@
       } catch (error) {
         console.error('Could not update the cart:', error);
         Notify.show(strings.cartError, 'error');
+        // RETOUR EN ARRIERE DE L'AFFICHAGE OPTIMISTE.
+        // La branche « !response.ok » ci-dessus re-rend bien le panier ; ce
+        // catch-ci, lui, ne le faisait pas. Mesure 1.7.2, requetes du panier
+        // coupees au navigateur : apres un « +1 » dans le tiroir, le message
+        // etait bien annonce mais le champ de quantite restait a 3 alors que
+        // cart.js et le sous-total restaient a 2 (« Subtotal €236,00 EUR ») —
+        // le client lisait une quantite que son panier n'avait pas
+        // (liquid-theme-standards, Optimistic UI : « revert on failure »).
+        try {
+          await this.refresh();
+        } catch (erreurRetour) {
+          // Hors ligne, le re-rendu echoue aussi : on remet alors le champ a la
+          // valeur que le serveur avait rendue, qui est la derniere connue.
+          const champ = itemEl?.querySelector('input[name="updates[]"], [data-quantity-input]');
+          if (champ && typeof champ.defaultValue === 'string') champ.value = champ.defaultValue;
+        }
       } finally {
         this.state.isUpdating = false;
       }
@@ -1368,9 +1439,28 @@
         this.closeAll();
       });
 
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') this.closeAll();
-      });
+      // UN SEUL ECHAP = UNE SEULE FERMETURE.
+      // Mesure 1.7.2 : deux ecouteurs independants sur « document », celui-ci
+      // et celui du Header (qui ferme le menu mobile), sans stopPropagation ni
+      // garde « un panneau est ouvert ». Un seul Echap fermait donc le panneau
+      // de marche ET le menu mobile (#MobileMenu aria-hidden repassait a true),
+      // et le focus partait sur button.header__menu-toggle au lieu de revenir
+      // au bouton du panneau. Mesure a 390 et a 320.
+      // La phase de CAPTURE, et non la bulle : on passe ainsi avant l'ecouteur
+      // du Header, pose sur le meme document, quel que soit l'ordre
+      // d'enregistrement des deux modules. stopPropagation suffit alors a
+      // empecher l'ecouteur de bulle de se jouer.
+      document.addEventListener(
+        'keydown',
+        (e) => {
+          if (e.key !== 'Escape' && e.key !== 'Esc') return;
+          if (this.closeAll()) {
+            e.stopPropagation();
+            e.preventDefault();
+          }
+        },
+        true
+      );
 
       // Le panneau se ferme aussi quand le focus en sort (Tab depuis le dernier
       // choix, ou clic ailleurs) : sinon un menu ouvert reste derriere le focus,
@@ -1385,13 +1475,29 @@
       });
     },
 
+    /**
+     * Ferme tous les panneaux de marche.
+     * @returns {boolean} vrai si au moins un panneau etait ouvert — l'appelant
+     *   s'en sert pour ne pas enchainer une seconde fermeture (voir l'ecouteur
+     *   d'Echap).
+     */
     closeAll() {
       // Le focus ne revient au declencheur que s'il etait DANS le panneau qu'on
       // ferme : sinon un clic ailleurs sur la page volerait le focus.
       let focusWasInside = false;
+      let closed = false;
       document.querySelectorAll('[data-market-dropdown]').forEach((group) => {
-        if (group.classList.contains('is-open') && group.contains(document.activeElement)) {
-          focusWasInside = true;
+        if (group.classList.contains('is-open')) {
+          closed = true;
+          if (group.contains(document.activeElement)) focusWasInside = true;
+          // Le focus peut aussi se tenir SUR le declencheur du panneau, et non
+          // dedans : c'est le cas mesure en 1.7.2 dans le menu mobile, ou l'on
+          // ouvre le panneau a Entree depuis son bouton. Ni focusWasInside ni
+          // « plus rien de focalise » n'etaient alors vrais, donc le focus
+          // n'etait pas rendu (focusSurBouton: false a 390 et a 320).
+          if (group.querySelector('.markets-selectors__toggle') === document.activeElement) {
+            focusWasInside = true;
+          }
         }
         group.classList.remove('is-open');
         group.querySelector('.markets-selectors__toggle')?.setAttribute('aria-expanded', 'false');
@@ -1406,6 +1512,7 @@
         utils.focusBack(this.lastFocus, '.markets-selectors__toggle');
       }
       this.lastFocus = null;
+      return closed;
     },
 
     submit(field, value) {
@@ -2194,11 +2301,76 @@
       this.search = document.querySelector('[data-search-overlay]');
 
       this.publishHeight();
+      this.condenseNav();
 
       if (!this.bound) {
         this.bindEvents();
         this.bindScroll();
         this.bound = true;
+      }
+    },
+
+    /**
+     * Replie le menu principal quand il NE TIENT PAS, au lieu de n'obeir qu'a
+     * la largeur de la fenetre.
+     *
+     * Mesure 1.7.2 (cas « menu-une-ligne ») : l'unique regle de repli du theme
+     * etait @media (max-width: 989px), donc a 1024 px avec 8 entrees la
+     * navigation de bureau restait affichee et s'ecrasait — 7 a 14 lignes par
+     * entree, libelles a 10-11 px de large, texte coupe lettre par lettre, et
+     * le texte empile sortait de la boite de l'en-tete (top a -20 px). Un menu
+     * assez long ne tient pas davantage a 1440 px : le repli doit se mesurer.
+     *
+     * La place disponible se calcule sur .header__inner moins le logo et les
+     * actions, et JAMAIS sur .header__nav : la classe posee ici met
+     * .header__nav en display: none, donc sa largeur vaudrait 0 et l'etat se
+     * mesurerait lui-meme (le menu resterait replie pour toujours).
+     */
+    condenseNav() {
+      const header = this.el;
+      if (!header) return;
+
+      const inner = header.querySelector('.header__inner');
+      const nav = header.querySelector('.header__nav');
+      const list = nav?.querySelector('.header__nav-list');
+      if (!inner || !nav || !list) return;
+
+      const measure = () => {
+        const logo = inner.querySelector('.header__logo');
+        const actions = inner.querySelector('.header__actions');
+        const place =
+          inner.clientWidth - (logo?.offsetWidth || 0) - (actions?.offsetWidth || 0);
+        // scrollWidth de la liste = la largeur dont les entrees ont besoin,
+        // puisque flex-shrink: 0 et white-space: nowrap les empechent de
+        // retrecir ou de se replier (assets/theme.css, .header__nav-list).
+        const besoin = list.scrollWidth;
+        // Marge de securite : la liste est centree, donc elle a besoin d'un peu
+        // d'air de chaque cote pour ne pas toucher le logo ni les actions.
+        const condense = place > 0 && besoin > place - 32;
+        header.classList.toggle('is-nav-condensed', condense);
+      };
+
+      measure();
+
+      if (this.navWatched) return;
+      this.navWatched = true;
+      if ('ResizeObserver' in window) {
+        // On observe .header__inner et la liste : la place change avec la
+        // fenetre et avec la taille du logo, le besoin change avec le menu que
+        // le marchand choisit.
+        const observer = new ResizeObserver(() => {
+          // La mesure doit se faire a l'etat DEPLIE, sinon .header__nav est en
+          // display: none et son contenu n'a plus de largeur.
+          header.classList.remove('is-nav-condensed');
+          requestAnimationFrame(measure);
+        });
+        observer.observe(inner);
+        observer.observe(list);
+      } else {
+        window.addEventListener('resize', () => {
+          header.classList.remove('is-nav-condensed');
+          requestAnimationFrame(measure);
+        });
       }
     },
 

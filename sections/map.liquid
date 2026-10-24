@@ -207,7 +207,17 @@
   assign view_map_label = 'sections.map.view_map' | t
   assign directions_label = 'sections.map.directions' | t
   assign call_label = 'sections.map.call' | t: phone: phone_display
-  assign image_alt = section.settings.image.alt | default: view_map_label | escape
+  comment
+    DOUBLE ECHAPPEMENT. « assign image_alt = …alt | default: view_map_label |
+    escape » appliquait escape au resultat du default, donc aussi au repli
+    view_map_label, qui sort de « | t » et est DEJA echappe (regle du § 4 :
+    jamais « | t | escape »). Effet nul sur les locales de la 1.7.2 (« View the
+    map » et « Voir la carte » n'ont aucun caractere echappable), mais la
+    premiere reformulation avec une apostrophe aurait affiche « l&#39;emplacement »
+    dans l'attribut alt. On echappe donc la seule valeur libre du marchand, et
+    on laisse le repli traduit intact.
+  endcomment
+  assign image_alt = section.settings.image.alt | escape | default: view_map_label
 -%}
 
 <div

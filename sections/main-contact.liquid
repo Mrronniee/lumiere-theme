@@ -220,10 +220,24 @@
           <label class="contact__label" for="ContactName-{{ section.id }}">
             {{ 'contact.form.name' | t }}
           </label>
+          {%- comment -%}
+            name="contact[name]" ET NON contact[{{ 'contact.form.name' | t }}].
+
+            Mesure 1.7.2 : la cle envoyee suivait la langue du visiteur —
+            contact[Name] en anglais, contact[Nom] en francais. Or Shopify ne
+            repeuple form.name et form.phone que sur les cles STANDARD : apres
+            un POST en erreur, l'URL portait bien contact[Name]=Audit+KIOSK
+            mais le champ rendu valait "" (contact[email] et contact[body],
+            eux, gardaient leur valeur). Le cas erreurs-croisees-formulaires
+            exige que chaque champ garde sa valeur. Effet secondaire corrige du
+            meme coup : l'intitule recu par le marchand ne change plus avec la
+            langue du visiteur. Le LIBELLE reste traduit, c'est la cle qui est
+            stable.
+          {%- endcomment -%}
           <input
             type="text"
             id="ContactName-{{ section.id }}"
-            name="contact[{{ 'contact.form.name' | t }}]"
+            name="contact[name]"
             class="contact__input"
             value="{{ form.name }}"
             autocomplete="name"
@@ -256,10 +270,14 @@
           <label class="contact__label" for="ContactPhone-{{ section.id }}">
             {{ 'contact.form.phone' | t }}
           </label>
+          {%- comment -%}
+            name="contact[phone]" : meme correction que pour le nom ci-dessus —
+            seule une cle standard fait repeupler form.phone apres une erreur.
+          {%- endcomment -%}
           <input
             type="tel"
             id="ContactPhone-{{ section.id }}"
-            name="contact[{{ 'contact.form.phone' | t }}]"
+            name="contact[phone]"
             class="contact__input"
             value="{{ form.phone }}"
             autocomplete="tel"
