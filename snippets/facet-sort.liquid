@@ -36,11 +36,23 @@
     {%- for filter in filterable.filters -%}
       {%- case filter.type -%}
         {%- when 'price_range' -%}
+          {%- comment -%}
+            EN UNITES DE LA DEVISE, PAS EN CENTIMES.
+
+            filter.min_value.value et filter.max_value.value sont rendus en
+            CENTIMES, alors que le parametre d'URL que Shopify relit
+            (filter.v.price.gte) attend des unites de la devise : rejoues bruts,
+            ces champs caches auraient change « a partir de 25 € » en « a partir
+            de 2 500 € » des que le client trie, c'est-a-dire efface son filtre
+            de prix en silence. Les champs visibles du panneau de filtres
+            divisent deja par 100 (snippets/facet-filters.liquid:119 et :132) :
+            les champs caches du tri suivent la meme ecriture.
+          {%- endcomment -%}
           {%- if filter.min_value.value != nil -%}
-            <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value }}">
+            <input type="hidden" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100.0 }}">
           {%- endif -%}
           {%- if filter.max_value.value != nil -%}
-            <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value }}">
+            <input type="hidden" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100.0 }}">
           {%- endif -%}
         {%- else -%}
           {%- for value in filter.active_values -%}

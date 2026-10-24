@@ -38,14 +38,14 @@
       "settings": {
         "logo": {
           "label": "Logo",
-          "info": "Format SVG ou PNG transparent recommandé"
+          "info": "Format .svg ou .png transparent recommandé"
         },
         "logo_width": {
           "label": "Largeur du logo (ordinateur)"
         },
         "favicon": {
           "label": "Favicon",
-          "info": "Format .ico ou .png, 32 × 32 px minimum"
+          "info": "Format .ico ou .png, 32 × 32 px minimum"
         }
       }
     },
@@ -581,6 +581,10 @@
     "footer": {
       "name": "Pied de page",
       "settings": {
+        "show_follow_on_shop": {
+          "label": "Afficher le bouton « Suivre dans Shop »",
+          "info": "Permet aux visiteurs de suivre votre boutique dans l’application « Shop »."
+        },
         "show_payment_icons": {
           "label": "Afficher les logos des moyens de paiement"
         },
@@ -642,7 +646,7 @@
       "name": "Groupe de l’en-tête"
     },
     "hero": {
-      "name": "Bannière Hero",
+      "name": "Bannière hero",
       "settings": {
         "header__1": {
           "content": "Contenu"
@@ -752,7 +756,7 @@
         }
       },
       "presets": {
-        "name": "Bannière Hero"
+        "name": "Bannière hero"
       }
     },
     "lookbook": {
@@ -797,7 +801,7 @@
       },
       "blocks": {
         "image": {
-          "name": "Image Lookbook",
+          "name": "Image lookbook",
           "settings": {
             "image": {
               "label": "Image"
@@ -837,7 +841,7 @@
       "name": "Articles du panier"
     },
     "main_collection_banner": {
-      "name": "Bannière Collection",
+      "name": "Bannière collection",
       "settings": {
         "show_collection_image": {
           "label": "Afficher l’image de la collection"
@@ -845,7 +849,7 @@
       }
     },
     "main_collection_product_grid": {
-      "name": "Grille Collection",
+      "name": "Grille collection",
       "settings": {
         "products_per_page": {
           "label": "Produits par page"
@@ -964,7 +968,7 @@
       "name": "Recherche"
     },
     "mini_cart": {
-      "name": "Mini Panier",
+      "name": "Mini panier",
       "settings": {
         "upsell_collection": {
           "label": "Collection de ventes complémentaires"
@@ -1416,7 +1420,7 @@
             },
             "image": {
               "label": "Photo",
-              "info": "Facultatif. Image carrée recommandée, 200 × 200 px minimum."
+              "info": "Facultatif. Image carrée recommandée, 200 × 200 px minimum."
             }
           }
         }
@@ -1614,7 +1618,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Format SVG ou PNG transparent recommandé"
+              "info": "Format .svg ou .png transparent recommandé"
             },
             "link": {
               "label": "Lien"
@@ -1692,7 +1696,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Format recommandé : 1 200 × 1 600 px. Renseignez le texte alternatif depuis la bibliothèque de contenus."
+              "info": "Format recommandé : 1 200 × 1 600 px. Renseignez le texte alternatif depuis la bibliothèque de contenus."
             },
             "caption": {
               "label": "Légende",
@@ -2114,7 +2118,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Format recommandé : 2 400 × 1 600 px."
+              "info": "Format recommandé : 2 400 × 1 600 px."
             },
             "image_mobile": {
               "label": "Image mobile",

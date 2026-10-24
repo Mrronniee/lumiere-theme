@@ -387,12 +387,25 @@
       {%- if product.media.size > 1 -%}
         <div class="product-gallery__thumbnails" role="tablist" aria-label="{{ product.title | escape }}">
           {%- for media in product.media -%}
+            {%- comment -%}
+              PATRON D'ONGLETS COMPLET (APG Tabs, competence liquid-theme-a11y
+              « Tabs »). Les vignettes etaient en role="tab" sans aria-controls,
+              sans panneau en role="tabpanel", sans tabindex itinerant et sans
+              fleches : un lecteur d'ecran annoncait un onglet qui ne designait
+              rien, et au clavier il fallait un Tab par vignette au lieu des
+              fleches. Un seul arret de tabulation pour toute la galerie : la
+              vignette active porte tabindex="0", les autres -1 ; les fleches
+              gauche et droite deplacent la selection (assets/theme.js, Gallery).
+            {%- endcomment -%}
             <button
               type="button"
               class="product-gallery__thumb{% if forloop.first %} is-active{% endif %}"
+              id="ProductThumb-{{ section.id }}-{{ media.id }}"
               data-media-id="{{ media.id }}"
               role="tab"
               aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+              aria-controls="ProductSlide-{{ section.id }}-{{ media.id }}"
+              tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
               aria-label="{{ media.alt | default: product.title | escape }}"
             >
               <img
@@ -412,7 +425,12 @@
         {%- for media in product.media -%}
           <div
             class="product-gallery__slide{% if forloop.first %} is-active{% endif %}"
+            id="ProductSlide-{{ section.id }}-{{ media.id }}"
             data-media-id="{{ media.id }}"
+            {%- if product.media.size > 1 %}
+              role="tabpanel"
+              aria-labelledby="ProductThumb-{{ section.id }}-{{ media.id }}"
+            {%- endif %}
             aria-hidden="{% if forloop.first %}false{% else %}true{% endif %}"
           >
             {%- case media.media_type -%}

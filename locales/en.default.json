@@ -6,7 +6,7 @@
     "search": {
       "search": "Search",
       "title": "Search",
-      "placeholder": "Search for a product...",
+      "placeholder": "Search for a product…",
       "no_results": "No results found for",
       "results_for": "Results for",
       "results_count": {
@@ -40,7 +40,7 @@
       "page": "Page {{ number }}"
     },
     "meta": {
-      "tags": "Tagged \"{{ tags }}\""
+      "tags": "Tagged “{{ tags }}”"
     },
     "footer": {
       "rights_reserved": "All rights reserved.",
@@ -75,7 +75,9 @@
     "wishlist": "Wishlist",
     "add_to_wishlist": "Add to wishlist",
     "remove_from_wishlist": "Remove from wishlist",
-    "social_link": "Follow us on {{ name }}"
+    "social_link": "Follow us on {{ name }}",
+    "new_window": "(opens in a new tab)",
+    "scrollable_table": "Table, scrolls horizontally"
   },
   "sections": {
     "header": {
@@ -186,8 +188,7 @@
       "hours_label": "Opening hours",
       "directions": "Get directions",
       "view_map": "View the map",
-      "call": "Call {{ phone }}",
-      "new_window": "(opens in a new tab)"
+      "call": "Call {{ phone }}"
     },
     "comparison": {
       "scroller_label": "Comparison table, scrolls horizontally",
@@ -251,7 +252,7 @@
       "taxes_included_but_shipping_at_checkout": "Tax included. Shipping calculated at checkout.",
       "taxes_and_shipping_policy_at_checkout_html": "Taxes and <a href=\"{{ link }}\">shipping</a> calculated at checkout.",
       "note": "Order note",
-      "note_placeholder": "Special delivery instructions...",
+      "note_placeholder": "Special delivery instructions…",
       "summary": "Summary",
       "view_cart": "View cart",
       "checkout": "Checkout",
@@ -321,7 +322,10 @@
     },
     "share": "Share",
     "share_title": "My wishlist",
-    "share_text": "I have {{ count }} items in my wishlist!",
+    "share_text": {
+      "one": "I have {{ count }} item in my wishlist!",
+      "other": "I have {{ count }} items in my wishlist!"
+    },
     "clear": "Clear wishlist",
     "clear_confirm": "Clear your wishlist?",
     "empty_title": "Your wishlist is empty",
@@ -372,6 +376,7 @@
     },
     "orders": {
       "title": "Order history",
+      "table_caption": "Your orders, most recent first",
       "order_number": "Order",
       "date": "Date",
       "payment_status": "Payment status",
@@ -381,6 +386,7 @@
     },
     "order": {
       "title": "Order {{ name }}",
+      "table_caption": "Items in this order",
       "date_html": "Placed on {{ date }}",
       "product": "Product",
       "sku": "SKU",

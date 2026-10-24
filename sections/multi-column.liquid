@@ -79,7 +79,6 @@
   endcomment
   assign h300 = 300 | times: crop_ratio | round
   assign h450 = 450 | times: crop_ratio | round
-  assign h550 = 550 | times: crop_ratio | round
   assign h600 = 600 | times: crop_ratio | round
   assign h700 = 700 | times: crop_ratio | round
   assign h900 = 900 | times: crop_ratio | round
@@ -353,7 +352,6 @@
                   <img
                     srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300, height: h300, crop: 'center' }} 300w,{%- endif -%}
                       {%- if img.width >= 450 -%}{{ img | image_url: width: 450, height: h450, crop: 'center' }} 450w,{%- endif -%}
-                      {%- if img.width >= 550 -%}{{ img | image_url: width: 550, height: h550, crop: 'center' }} 550w,{%- endif -%}
                       {%- if img.width >= 600 -%}{{ img | image_url: width: 600, height: h600, crop: 'center' }} 600w,{%- endif -%}
                       {%- if img.width >= 700 -%}{{ img | image_url: width: 700, height: h700, crop: 'center' }} 700w,{%- endif -%}
                       {%- if img.width >= 900 -%}{{ img | image_url: width: 900, height: h900, crop: 'center' }} 900w,{%- endif -%}

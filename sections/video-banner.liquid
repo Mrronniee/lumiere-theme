@@ -65,6 +65,21 @@
     height: 100%;
   }
 
+  /* Variante « video avec couverture » : le poster et la video se SUPERPOSENT,
+     ils ne s'empilent pas. La video vient apres dans le DOM, donc au-dessus ;
+     tant qu'elle n'a pas peint sa premiere image (preload="none"), le poster se
+     voit a travers — exactement ce que faisait l'attribut poster, mais avec une
+     image responsive. Meme patron que .hero__media--video. */
+  .video-banner__media--poster {
+    position: relative;
+  }
+
+  .video-banner__media--poster > img,
+  .video-banner__media--poster > video {
+    position: absolute;
+    inset: 0;
+  }
+
   .video-banner__video,
   .video-banner__iframe,
   .video-banner__cover,
@@ -276,7 +291,7 @@
 >
   <div class="video-banner__media-wrap">
     <div
-      class="video-banner__media"
+      class="video-banner__media{% if has_native_video and section.settings.cover_image != blank %} video-banner__media--poster{% endif %}"
       {% if has_external_video %}
         data-video-embed
         data-video-type="{{ section.settings.video_url.type | escape }}"
@@ -298,6 +313,50 @@
           tournait faussait la mesure d'anneau du bouton rond ; a11y.cjs fige
           desormais les videos (kiosk-outils ac9872a) et la regle revient en 1.7.1.
         {%- endcomment -%}
+        {%- if section.settings.cover_image != blank -%}
+          {%- comment -%}
+            POSTER RENDU EN BALISE IMG, PAS PAR L'ATTRIBUT poster.
+
+            L'attribut poster n'accepte NI srcset NI sizes NI fetchpriority : il
+            servait la couverture en « image_url: width: 1920 » a toutes les
+            fenetres, 1920 px aussi sur telephone, alors que c'est la premiere
+            image peinte de la section. Le heros avait le meme defaut et il a ete
+            ferme de cette facon en 1.7.3 (hero.liquid, N8) : on rend la
+            couverture comme une vraie balise img, avec les memes paliers que la
+            branche « image seule » plus bas, et la video se superpose par-dessus
+            (regle .video-banner__media--poster dans la feuille de la section).
+
+            La video garde preload="none" : le poster peint le premier ecran et
+            c'est theme.js qui declenche la lecture quand elle est permise.
+
+            Le cas LAZY se teste par « section.index > 2 » et non l'inverse :
+            section.index vaut nil dans l'editeur de theme et dans une reponse de
+            la Section Rendering API, et « nil <= 2 » est faux — ecrite a
+            l'endroit, la condition differait l'image qui ouvre la page. Les
+            tirets Liquid restent hors de la balise : ils mangeraient le blanc
+            qui separe deux attributs.
+          {%- endcomment -%}
+          <img
+            srcset="{%- if section.settings.cover_image.width >= 375 -%}{{ section.settings.cover_image | image_url: width: 375 }} 375w,{%- endif -%}
+              {%- if section.settings.cover_image.width >= 750 -%}{{ section.settings.cover_image | image_url: width: 750 }} 750w,{%- endif -%}
+              {%- if section.settings.cover_image.width >= 1100 -%}{{ section.settings.cover_image | image_url: width: 1100 }} 1100w,{%- endif -%}
+              {%- if section.settings.cover_image.width >= 1500 -%}{{ section.settings.cover_image | image_url: width: 1500 }} 1500w,{%- endif -%}
+              {%- if section.settings.cover_image.width >= 1920 -%}{{ section.settings.cover_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
+            src="{{ section.settings.cover_image | image_url: width: 1100 }}"
+            sizes="100vw"
+            alt=""
+            class="video-banner__cover"
+            {% if section.index > 2 -%}
+              loading="lazy"
+            {%- else %}
+              loading="eager"
+              {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
+            {%- endif %}
+            {% render 'focal', image: section.settings.cover_image %}
+            width="{{ section.settings.cover_image.width }}"
+            height="{{ section.settings.cover_image.height }}"
+          >
+        {%- endif -%}
         <video
           class="video-banner__video"
           data-video-native
@@ -307,7 +366,6 @@
           playsinline
           preload="{% if section.settings.cover_image != blank %}none{% else %}metadata{% endif %}"
           {% if section.settings.video.alt != blank %}aria-label="{{ section.settings.video.alt | escape }}"{% endif %}
-          {% if section.settings.cover_image != blank %}poster="{{ section.settings.cover_image | image_url: width: 1920 }}"{% endif %}
         >
           {%- for source in section.settings.video.sources -%}
             <source src="{{ source.url }}" type="{{ source.mime_type }}">
@@ -322,6 +380,11 @@
           la balise : Theme Check 3.30.1 lit l'apostrophe d'un commentaire place
           entre les attributs comme le debut d'une valeur d'attribut (cause des
           3 ERROR de la 1.7.2).
+
+          Le cas LAZY se teste par « section.index > 2 » et non l'inverse :
+          section.index vaut nil dans l'editeur de theme et dans une reponse de
+          la Section Rendering API, et « nil <= 2 » est faux — ecrite a
+          l'endroit, la condition differait l'image qui ouvre la page.
         {%- endcomment -%}
         <img
           srcset="{%- if section.settings.cover_image.width >= 375 -%}{{ section.settings.cover_image | image_url: width: 375 }} 375w,{%- endif -%}
@@ -333,11 +396,11 @@
           sizes="100vw"
           alt="{{ section.settings.cover_image.alt | escape }}"
           class="video-banner__cover"
-          {% if section.index <= 2 -%}
+          {% if section.index > 2 -%}
+            loading="lazy"
+          {%- else %}
             loading="eager"
             {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
-          {%- else -%}
-            loading="lazy"
           {%- endif %}
           {% render 'focal', image: section.settings.cover_image %}
           width="{{ section.settings.cover_image.width }}"

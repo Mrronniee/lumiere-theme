@@ -27,7 +27,7 @@
                   srcset="{{ collection.image | image_url: width: 360 }} 360w, {{ collection.image | image_url: width: 720 }} 720w"
                   sizes="(min-width: 990px) 33vw, (min-width: 750px) 50vw, calc(100vw - 3rem)"
                   alt="{{ collection.image.alt | escape }}"
-                  {% if section.index <= 2 and forloop.index <= 3 -%}loading="eager"{%- else -%}loading="lazy"{%- endif %}
+                  {% if section.index > 2 or forloop.index > 3 -%}loading="lazy"{%- else -%}loading="eager"{%- endif %}
                   {% render 'focal', image: collection.image %}
                   width="{{ collection.image.width }}"
                   height="{{ collection.image.height }}"

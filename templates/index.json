@@ -7,7 +7,7 @@
         "title": "",
         "description": "",
         "button_label": "",
-        "button_link": "/collections/all",
+        "button_link": "shopify://collections/all",
         "button_label_2": "",
         "button_link_2": "",
         "text_alignment": "center",
@@ -67,7 +67,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "lookbook_2": {
@@ -76,7 +76,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "lookbook_3": {
@@ -85,7 +85,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "lookbook_4": {
@@ -94,7 +94,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "lookbook_5": {
@@ -103,7 +103,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "lookbook_6": {
@@ -112,7 +112,7 @@
             "title": "",
             "subtitle": "",
             "link_label": "",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         }
       },

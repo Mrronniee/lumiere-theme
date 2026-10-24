@@ -11,6 +11,7 @@
       {%- paginate customer.orders by 20 -%}
         {%- if customer.orders.size > 0 -%}
           <table class="account__table">
+            <caption class="visually-hidden">{{ 'customer.orders.table_caption' | t }}</caption>
             <thead>
               <tr>
                 <th scope="col">{{ 'customer.orders.order_number' | t }}</th>

@@ -18,7 +18,7 @@
         "button_1": {
           "type": "button",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         }
       },
@@ -32,7 +32,7 @@
     "image_with_text": {
       "type": "image-with-text",
       "settings": {
-        "button_link": "/collections/all"
+        "button_link": "shopify://collections/all"
       }
     },
     "multi_column": {
@@ -44,7 +44,7 @@
             "title": "Sustainable materials",
             "text": "<p>Fabrics selected from European ateliers, traced from thread to finished garment.</p>",
             "link_label": "Learn more",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "column_2": {
@@ -53,7 +53,7 @@
             "title": "Local production",
             "text": "<p>Each piece is assembled in small runs, as close as possible to our partner ateliers.</p>",
             "link_label": "Learn more",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "column_3": {
@@ -62,7 +62,7 @@
             "title": "Delivered with care",
             "text": "<p>Dispatch within 48 hours, recycled packaging and free returns for 30 days.</p>",
             "link_label": "Learn more",
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         }
       },
@@ -82,7 +82,7 @@
             "title": "Everyday elegance",
             "text": "Timeless pieces, made to last and to be worn season after season.",
             "button_label": "Discover",
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         },
         "slide_2": {
@@ -92,7 +92,7 @@
             "title": "The winter wardrobe",
             "text": "Soft wools, clean cuts and responsible materials, in limited quantities.",
             "button_label": "View the selection",
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         },
         "slide_3": {
@@ -102,7 +102,7 @@
             "title": "Made in Europe",
             "text": "Every piece is made in partner ateliers, to our exacting standards.",
             "button_label": "Our story",
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         }
       },
@@ -146,37 +146,37 @@
         "image_1": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "image_2": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "image_3": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "image_4": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "image_5": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         },
         "image_6": {
           "type": "image",
           "settings": {
-            "link": "/collections/all"
+            "link": "shopify://collections/all"
           }
         }
       },
@@ -338,7 +338,7 @@
             "has_4": false,
             "has_5": false,
             "has_6": false,
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         },
         "column_2": {
@@ -357,7 +357,7 @@
             "has_6": true,
             "feature_1": "From €50",
             "feature_5": "Response within 24 hours",
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         },
         "column_3": {
@@ -375,7 +375,7 @@
             "has_5": true,
             "has_6": true,
             "feature_5": "Dedicated advisor",
-            "button_link": "/collections/all"
+            "button_link": "shopify://collections/all"
           }
         }
       },
@@ -388,7 +388,7 @@
     "countdown": {
       "type": "countdown",
       "settings": {
-        "button_link": "/collections/all"
+        "button_link": "shopify://collections/all"
       }
     },
     "faq": {

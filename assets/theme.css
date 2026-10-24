@@ -1876,7 +1876,13 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 .rte iframe,
 .rte video { height: auto; }
 
-/* Un tableau large defile DANS son cadre au lieu d'elargir la page. */
+/* Un tableau large defile DANS son cadre au lieu d'elargir la page.
+   Une zone qui defile doit pouvoir prendre le focus, sinon ses colonnes de
+   droite sont hors d'atteinte au clavier seul (WCAG 2.1.1, axe
+   scrollable-region-focusable). Ce tableau vient de l'editeur de texte
+   enrichi du marchand : le theme ne le rend pas, donc c'est assets/theme.js
+   (module RichText) qui lui pose tabindex="0", role="region" et un nom,
+   et seulement quand il deborde vraiment. */
 .rte table {
   display: block;
   width: 100%;
@@ -2020,6 +2026,9 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 .password-page__shop, .password-page__title { font-family: var(--font-heading); font-weight: 400; }
 .password-page__title { font-size: 1.5rem; margin-bottom: var(--spacing-xs); }
 .password-page__message { color: var(--color-text-light); margin-bottom: var(--spacing-md); }
+/* Le message du marchand est du HTML enrichi : son dernier paragraphe ne
+   doit pas ajouter sa marge a celle du bloc. */
+.password-page__message > :last-child { margin-bottom: 0; }
 .password-page__form { display: flex; flex-direction: column; gap: 0.75rem; }
 .password-page__input { padding: 0.85rem 1rem; border: 1px solid var(--color-border); font-family: var(--font-body); }
 .password-page__admin { margin-top: var(--spacing-md); font-size: 0.8125rem; }

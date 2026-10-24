@@ -61,13 +61,33 @@
     {{ body_italic | font_face: font_display: 'swap' }}
   {% endstyle %}
 
-  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+  {%- comment -%}
+    LE CSS DU THEME PASSE AVANT content_for_header.
 
-  {{ content_for_header }}
+    content_for_header charge les scripts de Shopify et des applications, et
+    c'est aussi lui qui injecte les feuilles de section (balise stylesheet) : le
+    CSS global qui le SUIVAIT arrivait donc apres elles, et retardait d'autant la
+    premiere peinture. Les jetons de couleur (css-variables) et la feuille du
+    theme passent devant.
 
+    Ce que cela change dans la cascade, mesure a l'appui : a specificite egale,
+    une regle de section l'emporte maintenant sur la regle globale, alors que
+    c'etait l'inverse. Le controle « styles de section non ecrases » comptait 0
+    declaration de section ecrasee par assets/theme.css au commit a57c10c :
+    l'ensemble des regles dont le gagnant change est donc VIDE, et le
+    deplacement ne retourne aucune declaration existante. Aucune feuille de
+    section n'ecrit sur :root (verifie sur les 25 du theme), donc les jetons
+    globaux restent les jetons globaux. Les blocs de style en ligne des sections
+    (balise style), eux, sont rendus dans le corps de page et passaient deja
+    apres : rien ne change pour eux.
+  {%- endcomment -%}
   {% render 'css-variables' %}
 
   {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+
+  {{ content_for_header }}
 
   {%- capture money_sample -%}{% render 'money', amount: 123456 %}{%- endcapture -%}
   <script>
@@ -115,8 +135,19 @@
       wishlistAdded: {{ 'wishlist.added' | t | json }},
       wishlistClearConfirm: {{ 'wishlist.clear_confirm' | t | json }},
       wishlistShareTitle: {{ 'wishlist.share_title' | t | json }},
-      wishlistShareText: {{ 'wishlist.share_text' | t: count: '[count]' | json }},
+      {%- comment -%}
+        Les DEUX formes partent d'ici : appelee avec la chaine « [count] »,
+        une cle pluralisee figerait la forme singulier (Shopify ne peut pas
+        choisir sans nombre), et le partage annoncait « I have 1 items in my
+        wishlist! ». assets/theme.js tranche avec Intl.PluralRules sur la
+        langue de la page (utils.pluralString).
+      {%- endcomment -%}
+      wishlistShareText: {
+        one: {{ 'wishlist.share_text.one' | t: count: '[count]' | json }},
+        other: {{ 'wishlist.share_text.other' | t: count: '[count]' | json }}
+      },
       linkCopied: {{ 'wishlist.link_copied' | t | json }},
+      scrollableTable: {{ 'accessibility.scrollable_table' | t | json }},
       marketBanner: {{ 'markets.banner_html' | t: country: '[country]' | json }},
       searchError: {{ 'general.search.error' | t | json }}
     };

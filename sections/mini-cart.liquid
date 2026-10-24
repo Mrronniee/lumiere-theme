@@ -168,11 +168,16 @@
     margin-bottom: 0.25rem;
   }
 
-  .mini-cart__item-variant {
+  .mini-cart__item-variant,
+  .mini-cart__item-plan {
     font-family: var(--font-body);
     font-size: 0.8125rem;
     color: var(--color-text-light);
     margin-bottom: var(--spacing-xs);
+  }
+
+  .mini-cart__item-plan {
+    display: block;
   }
 
   .mini-cart__item-properties {
@@ -526,6 +531,17 @@
               {%- unless item.product.has_only_default_variant -%}
                 <span class="mini-cart__item-variant">{{ item.variant.title | escape }}</span>
               {%- endunless -%}
+              {%- comment -%}
+                ABONNEMENT : le nom du plan choisi, affiche sur la ligne.
+                Exigence du Theme Store (« selling plans »). Sans lui, un client
+                qui a choisi « Livraison tous les mois — 10 % » voyait une ligne
+                identique a un achat unique, au prix de l'abonnement, sans rien
+                qui le dise. selling_plan_allocation est nil hors abonnement,
+                donc la ligne ne change pas pour un achat simple.
+              {%- endcomment -%}
+              {%- if item.selling_plan_allocation -%}
+                <span class="mini-cart__item-plan">{{ item.selling_plan_allocation.selling_plan.name | escape }}</span>
+              {%- endif -%}
               {%- comment -%}
                 `item.properties.size` ne repond pas chez Shopify : la liste ne
                 s'affichait jamais. Elle est construite, puis affichee seulement si

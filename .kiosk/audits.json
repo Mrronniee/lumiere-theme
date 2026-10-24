@@ -89,7 +89,8 @@
         "etat": "mesuré",
         "mesure": "Compétence shopify-liquid-themes lue avant de juger, dans cette session : /root/.claude/skills/shopify-liquid-themes/SKILL.md en entier (315 lignes) et references/filters-language.md en entier (917 lignes). Sections appliquées et effet : (1) SKILL.md § Translations → « Variable interpolation » — effet double, 11 ALERTES requalifiées en OK (les 11 clés signalées absentes sont des parents de pluralisation .one/.other, les 11 sites d'appel relus passent tous count:, donc 0 orpheline au lieu de 11 faux BLOQUANTS) ET 1 défaut trouvé grâce à la règle (sections/wishlist.liquid:80 passe count: '[count]', une chaîne, à une clé pluralisée : data-template rendu « [count] article », forme singulier figée, mesuré sur la démo) ; (2) § Translations → « Every user-facing string must use the t filter » — appliquée au balayage des 57 .liquid modifiés depuis 7149a05 (0 texte figé) et à la remesure des 2 deux-points en dur de 1.6.1, rien changé, le thème était conforme ; (3) § Translations → « Locale file structure » — les 4 fichiers attendus existent, ce qui qualifie parite-editeur en vraie parité 963 ↔ 963 au lieu d'un INFO « éditeur en anglais », rien changé ; (4) § Translations → « Key naming conventions » — 1 INFO ajouté grâce à la règle (3 clés vitrine à 4 niveaux, products.product.price.regular_price/.sale_price/.unit_price, au-delà des 3 niveaux recommandés ; 0 clé hors snake_case sur 346) et validation des 2 clés nouvelles sections.header_group.name / sections.footer_group.name (3 niveaux, snake_case, sentence case, préfixe t:) ; (5) references/filters-language.md — rien changé au jugement, mais constat à signaler aux outils : ce fichier n'a aucune section Localization (Array, Date, Default, Format, Math, String seulement), donc le renvoi de SKILL.md:77 vers lui pour le filtre t ne mène à rien."
       }
-    }
+    },
+    "correction": "1.7.3"
   },
   "theme-editeur-checker": {
     "version": "1.7.2",
@@ -196,7 +197,8 @@
         "etat": "mesuré",
         "mesure": "Compétence lue avant tout jugement : shopify-liquid-themes — $HOME/.claude/skills/shopify-liquid-themes/SKILL.md (lu en entier) et references/schema-and-settings.md (lu en entier). Sections appliquées : Schema Tag (structure de section et de bloc, limit entier 1-2, max_blocks 1-50, entrées @theme/@app), Setting Types (33 types : champs obligatoires de range min/max/default, select.options, font_picker.default, header et paragraph sans id), Presets, Conditional Visibility (visible_if, et la liste des types qui ne le prennent pas), Translations (t: sur les libellés, snake_case, casse de phrase), Critical Gotchas. Trois effets mesurables sur le jugement : (1) une ALERTE requalifiée — les 4 valeurs content non-t: de sections/tabs.liquid (presets[0].blocks[*].settings.content) sortent du compte des libellés en dur, la section Presets montrant que presets[].settings porte du CONTENU et non des libellés ; mon premier passage en comptait 4, le compte juste est 0 ; (2) un contrôle rendu décisif — la table enabled_on/disabled_on (valeurs de templates autorisées, groups réservé aux groupes de sections) m'a fait croiser les 23 fichiers JSON avec les restrictions de leurs sections : 0 restriction déclarée, donc le piège BLOQUANT « section templates: [product] dans un gabarit non-produit » est écarté par mesure et non par supposition ; (3) les bornes documentées ont validé les 2 nouveautés de 1.7.x — limit est un entier 1-2, donc hero limit 1 et wishlist limit 1 sont conformes, et max_blocks 1-50 couvre les 19 sections à limites ; la même table a validé les 4 social_* sans clé default (pas de default vide, piège §4 de CLAUDE.md) et les 2 font_picker avec leur default obligatoire"
       }
-    }
+    },
+    "correction": "1.7.3"
   },
   "theme-parcours-tester": {
     "version": "1.7.2",
@@ -411,7 +413,8 @@
         "etat": "mesuré",
         "mesure": "Lues avec l'outil Read avant tout jugement : (1) $HOME/.claude/skills/liquid-theme-a11y/SKILL.md — sections Forms, Cart Drawer, Product Filters, Live Region (et Progressive Enhancement). Ce qu'elles ont changé : la section Forms (« Error messages: role=alert + aria-describedby linking to input », « aria-invalid=\"true\" on invalid inputs ») m'a fait relire aria-describedby jusqu'à sa cible et vérifier qu'elle existe (A2 jugé corrigé sur cette base, pas seulement sur la présence du message) ; elle m'a aussi fait mesurer la conservation des valeurs, d'où le défaut N6 que je n'aurais pas cherché. La section Cart Drawer (« Live region for cart count updates », « Return focus to trigger on close ») m'a fait relire le focus rendu après Échap (tiroir -> bouton d'ajout, fenêtre d'options -> .product-card__quick-view-btn) et classer l'absence d'annonce de la recherche prédictive hors ligne en ALERTE N7 plutôt qu'en détail. La section Product Filters (aria-expanded sur les boutons, zone aria-live pour le compte de résultats) m'a fait garder l'ALERTE N8 au rang d'ALERTE et non d'échec : les filtres eux-mêmes annoncent et marchent, seul le tri n'a pas de repli. La section Progressive Enhancement (« Interactive components should work without JavaScript where possible ») est ce qui a requalifié le tri sans name en défaut au lieu d'une simple remarque. (2) $HOME/.claude/skills/liquid-theme-standards/references/javascript-patterns.md — sections Web Component Lifecycle / AbortController, Data Loading Pattern, Optimistic UI, Error Handling. Ce qu'elles ont changé : le motif « Optimistic UI » (étape 4, « Revert on failure ») a fait d'un détail (le champ de quantité resté à 3 après l'échec) une ALERTE nommée ; « Error Handling » (console.error dans le catch, AbortError ignoré) m'a fait classer les 3 console.error de theme.js pendant la coupure comme conformes au motif et NON comme des erreurs JS du thème, ce qui laisse le point console à 0 ; « Data Loading Pattern » (aria-busy pendant le chargement) m'a fait chercher un état de chargement sur chaque geste, trouvé sur l'ajout (.is-loading + disabled) et absent sur la note et la prédictive — c'est ce qui a nourri l'ALERTE N7."
       }
-    }
+    },
+    "correction": "1.7.3"
   },
   "theme-a11y-auditor": {
     "version": "1.7.2",
@@ -558,7 +561,8 @@
         "etat": "mesuré",
         "mesure": "liquid-theme-a11y lue en entier (SKILL.md, references/focus-and-keyboard.md, references/component-patterns.md). Sections appliquées : Focus Indicators (jugement des anneaux sur px3 et cFond, origine du BLOQUANT 6), Focus Trapping / Opening a Modal (protocole Entrée + 25 Tab + Échap + focus rendu sur 9 ouvrants, origine de l'ALERTE 1), Landmarks (noms de <nav> distincts : ALERTE 6, invisible pour la mesure brute), Product Media Gallery + Tabs (ALERTE REQUALIFIÉE : les vignettes sans aria-current sont conformes en role=tablist/aria-selected), Price Display (prix soldé et normal nommés tous les deux : conforme), Color Contrast (seuils 4,5 / 3 appliqués a 3 098 textes et 560 icônes), Cart Drawer (compteur en région vivante, bouton retirer nommé avec le produit, quantité étiquetée : conformes)."
       }
-    }
+    },
+    "correction": "1.7.3 et 1.8.0"
   },
   "theme-perf-auditor": {
     "version": "1.7.2",
@@ -633,6 +637,7 @@
         "etat": "mesuré",
         "mesure": "Lues avant de juger, outil Read, en entier : liquid-theme-standards/SKILL.md (sections appliquées : Performance, Images, Reduced Motion, Defensive CSS) et shopify-liquid-themes/references/filters-html-media.md (image_url, image_tag, srcset/sizes, preload_tag, video_tag). Effets sur le jugement : (1) Reduced Motion m'a fait exiger la preuve RÉSEAU et pas seulement l'état CSS pour l'ALERTE N1 — d'où la mesure 0 requête / 0 Ko de média sous prefers-reduced-motion qui la requalifie en « corrigée, prouvée » (2 127,9 Ko en 1.6.1) ; (2) Defensive CSS (min-width: 0, max-width: 100%, aspect-ratio) m'a fait tester ces remèdes EN PAGE pour N6 : ils sont déjà posés sur .comparison__scroller et ne suffisent pas (scroller forcé en overflow hidden : 665/275 inchangé ; min-width 0 sur le tableau : 390/0), donc la cause est bien .comparison__table min-width 720px (comparison.liquid:318) et pas le conteneur ; (3) la fiche preload_tag et l'absence de tout srcset possible sur un attribut poster m'ont fait requalifier N8 en défaut du THÈME et non en limite de la plateforme (la largeur du poster est choisie en Liquid, la priorité peut venir d'un preload) ; (4) la section Images (width/height obligatoires, lazy sous la flottaison) a confirmé que N9 est un décalage de police et non d'image (unsized-images 1 partout)."
       }
-    }
+    },
+    "correction": "1.7.3"
   }
 }

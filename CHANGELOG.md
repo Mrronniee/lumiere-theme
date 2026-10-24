@@ -1,5 +1,65 @@
 # Changelog
 
+## 1.8.0 — 2026-10-24
+
+### Added
+- **A Follow on Shop button in the footer.** Visitors can follow your store in
+  the Shop app. It is off by default, under Footer in the editor, and it carries
+  Shopify's own label, so there is nothing to translate.
+- **Subscription plans are named on cart lines.** If a customer chose a
+  subscription — "Every month, save 10%" — the cart page and the cart drawer now
+  say so on that line. Before, the line looked exactly like a one-time purchase
+  at the subscription price.
+
+### Fixed
+- **Your password page shows the message you wrote.** The text you set under
+  Preferences, Store password, was never displayed: visitors read the theme's
+  generic sentence instead. Yours comes first now; the theme's is the fallback
+  when you have not written one.
+- **Keyboard focus is never hidden under the market bar.** The bar is fixed to
+  the bottom of the window, and on a short screen it covered the control the
+  visitor had just reached with Tab. The page now keeps a margin for it and
+  scrolls that control clear.
+- **The product gallery thumbnails work as a proper tab list.** They announced
+  themselves as tabs without pointing at anything, and reaching the last photo
+  took one Tab per thumbnail. Left and right arrows now move between photos, the
+  whole gallery is a single tab stop, and each thumbnail names the photo it
+  shows.
+- **The video section loads a poster sized for the screen.** It was served at
+  1920&nbsp;px to every visitor, phones included, although it is the first thing
+  painted in that section. Same fix the hero got in 1.7.3.
+- **Sorting a collection keeps your price filter.** The sort menu replayed the
+  filter in cents, so "from 25" silently became "from 2,500" the moment a
+  visitor sorted.
+- **Wishlist sharing uses the right plural.** It read "I have 1 items in my
+  wishlist!" with a single item, in both languages. French also puts zero in the
+  singular, which a hand-written rule got wrong.
+- **Tables you write in a page now scroll with the keyboard.** A wide table
+  scrolls inside its own frame, but it could not take focus, so its right-hand
+  columns were out of reach without a mouse.
+- **The order tables on the account pages have a caption**, so a screen reader
+  says what the table holds before reading it.
+- **External links in the footer say they open a new tab**, as the map section's
+  links already did.
+- **Images below the fold are no longer loaded eagerly in the editor.** Five
+  sections decided eager loading from the section's position, which Shopify
+  leaves empty in the editor and in section reloads — so the test read false and
+  the first image of the page was deferred instead.
+- **Smaller work:** French typography (non-breaking spaces around ×, real
+  ellipses), English quotes and file extensions written Shopify's way, French
+  editor labels in sentence case, and two image sets trimmed from seven widths
+  to six.
+
+### Changed
+- **The theme's stylesheet now loads before Shopify's scripts.** It sat after
+  them, which delayed the first paint. One consequence worth knowing if you
+  write your own CSS: at equal specificity a section's own rule now wins over
+  the global stylesheet, where it used to be the other way round. Nothing in the
+  theme relied on the old order.
+- **Home page links point at a chosen resource instead of a written path.** The
+  hero button and the six lookbook tiles pointed at `/collections/all` as text,
+  so a visitor browsing in one language landed back in the other.
+
 ## 1.7.3 — 2026-10-24
 
 ### Fixed

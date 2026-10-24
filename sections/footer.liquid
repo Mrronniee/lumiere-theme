@@ -147,6 +147,11 @@
     opacity: 0.6;
   }
 
+  .footer__follow {
+    display: flex;
+    align-items: center;
+  }
+
   @media screen and (max-width: 989px) {
     .footer__top {
       grid-template-columns: repeat(2, 1fr);
@@ -210,22 +215,22 @@
 
               <div class="footer__socials">
                 {%- if settings.social_instagram != blank -%}
-                  <a href="{{ settings.social_instagram }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Instagram' }}">
+                  <a href="{{ settings.social_instagram }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Instagram' }} {{ 'accessibility.new_window' | t }}">
                     {% render 'icon', icon: 'instagram' %}
                   </a>
                 {%- endif -%}
                 {%- if settings.social_facebook != blank -%}
-                  <a href="{{ settings.social_facebook }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Facebook' }}">
+                  <a href="{{ settings.social_facebook }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Facebook' }} {{ 'accessibility.new_window' | t }}">
                     <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                   </a>
                 {%- endif -%}
                 {%- if settings.social_pinterest != blank -%}
-                  <a href="{{ settings.social_pinterest }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Pinterest' }}">
+                  <a href="{{ settings.social_pinterest }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'Pinterest' }} {{ 'accessibility.new_window' | t }}">
                     <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
                   </a>
                 {%- endif -%}
                 {%- if settings.social_tiktok != blank -%}
-                  <a href="{{ settings.social_tiktok }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'TikTok' }}">
+                  <a href="{{ settings.social_tiktok }}" class="footer__social-link" target="_blank" rel="noopener" aria-label="{{ 'accessibility.social_link' | t: name: 'TikTok' }} {{ 'accessibility.new_window' | t }}">
                     <svg class="icon" aria-hidden="true" focusable="false" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
                   </a>
                 {%- endif -%}
@@ -277,6 +282,16 @@
       <p class="footer__copyright">
         &copy; {{ 'now' | date: '%Y' }} {{ shop.name }}. {% if section.settings.copyright_text != blank %}{{ section.settings.copyright_text }}{% else %}{{ 'general.footer.rights_reserved' | t }}{% endif %}
       </p>
+      {%- comment -%}
+        FOLLOW ON SHOP. Exigence du Theme Store : la vitrine offre au visiteur de
+        suivre la boutique dans l'application Shop. Le filtre login_button rend
+        le bouton de Shopify, qui porte son propre libelle et sa propre
+        traduction : rien a traduire ici. Derriere un reglage, et decoche par
+        defaut, parce qu'il ne convient pas a toutes les marques.
+      {%- endcomment -%}
+      {%- if section.settings.show_follow_on_shop -%}
+        <div class="footer__follow">{{ shop | login_button: action: 'follow' }}</div>
+      {%- endif -%}
       {%- if section.settings.show_payment_icons and shop.enabled_payment_types.size > 0 -%}
         <ul class="footer__payments" role="list" aria-label="{{ 'general.payment.methods' | t }}">
           {%- for type in shop.enabled_payment_types -%}
@@ -318,6 +333,13 @@
       "id": "show_payment_icons",
       "label": "t:sections.footer.settings.show_payment_icons.label",
       "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_follow_on_shop",
+      "label": "t:sections.footer.settings.show_follow_on_shop.label",
+      "info": "t:sections.footer.settings.show_follow_on_shop.info",
+      "default": false
     },
     {
       "type": "text",

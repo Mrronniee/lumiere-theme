@@ -38,7 +38,7 @@
       "settings": {
         "logo": {
           "label": "Logo",
-          "info": "Transparent SVG or PNG recommended"
+          "info": "Transparent .svg or .png recommended"
         },
         "logo_width": {
           "label": "Logo width (desktop)"
@@ -96,7 +96,7 @@
         },
         "wishlist_page": {
           "label": "Wishlist page",
-          "info": "The page that uses the \"page.wishlist\" template. The wishlist links are hidden until you choose it."
+          "info": "The page that uses the “page.wishlist” template. The wishlist links are hidden until you choose it."
         }
       }
     },
@@ -520,7 +520,7 @@
           "options__no": "No"
         },
         "show_view_all": {
-          "label": "Show \"View all\" button"
+          "label": "Show “View all” button"
         },
         "view_all_label": {
           "label": "Button text"
@@ -581,6 +581,10 @@
     "footer": {
       "name": "Footer",
       "settings": {
+        "show_follow_on_shop": {
+          "label": "Show Follow on Shop button",
+          "info": "Lets visitors follow your store in the Shop app."
+        },
         "show_payment_icons": {
           "label": "Show payment method logos"
         },
@@ -1614,7 +1618,7 @@
           "settings": {
             "image": {
               "label": "Image",
-              "info": "Transparent SVG or PNG recommended"
+              "info": "Transparent .svg or .png recommended"
             },
             "link": {
               "label": "Link"
@@ -1907,7 +1911,7 @@
           "label": "Show author"
         },
         "show_view_all": {
-          "label": "Show \"View all\" button",
+          "label": "Show “View all” button",
           "info": "The button links to the selected blog."
         },
         "view_all_label": {
@@ -2603,11 +2607,11 @@
             },
             "price": {
               "label": "Price",
-              "info": "Free text, for example \"$29\" or \"On request\"."
+              "info": "Free text, for example “$29” or “On request”."
             },
             "highlight": {
               "label": "Highlight this column",
-              "info": "Adds a \"Recommended\" badge and applies the highlight color."
+              "info": "Adds a “Recommended” badge and applies the highlight color."
             },
             "button_label": {
               "label": "Button label"
@@ -2670,7 +2674,7 @@
         },
         "divider_style": {
           "label": "Style",
-          "info": "\"Empty space\" shows no line: only the spacing is applied.",
+          "info": "“Empty space” shows no line: only the spacing is applied.",
           "options__1": {
             "label": "Empty space"
           },
@@ -2726,7 +2730,7 @@
         },
         "width": {
           "label": "Width",
-          "info": "\"Full width\" removes the side margins: your code handles its own spacing.",
+          "info": "“Full width” removes the side margins: your code handles its own spacing.",
           "options__1": {
             "label": "Full width"
           },

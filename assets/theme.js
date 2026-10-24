@@ -7,6 +7,9 @@
   'use strict';
 
   const strings = window.themeStrings || {};
+  // Marge entre un element focalise et un bandeau fixe (WCAG 2.4.11) : voir
+  // Markets.reserverPlace et Markets.gardeFocus.
+  const MARGE_FOCUS_PX = 8;
   const routes = window.routes || {};
   const themeSettings = window.themeSettings || {};
 
@@ -23,6 +26,32 @@
     },
 
     /**
+     * La forme de pluriel de la langue de la page pour n (« one », « other », et
+     * ce que la langue demande de plus).
+     *
+     * Le choix vient d'Intl.PluralRules et de rien d'autre. Une regle ecrite a
+     * la main se trompe des qu'on change de langue, et la 1.7.3 en gardait une
+     * en repli — « n === 1 ? one : other » — qui donnait « 0 articles » la ou le
+     * francais veut « 0 article » (le francais met 0 au singulier, l'anglais au
+     * pluriel). Quand l'API manque (navigateur d'avant 2018) on rend « other »,
+     * la seule forme que toutes les langues possedent : c'est un defaut, pas une
+     * regle de pluriel.
+     *
+     * @param {number} n - Le compte.
+     * @returns {string} Le nom de la forme.
+     */
+    pluralForm(n) {
+      if (typeof Intl !== 'undefined' && Intl.PluralRules) {
+        try {
+          return new Intl.PluralRules(document.documentElement.lang || 'en').select(n);
+        } catch (err) {
+          // Langue non reconnue : on rend « other » ci-dessous.
+        }
+      }
+      return 'other';
+    },
+
+    /**
      * Rend un texte pluralise a partir des deux formes portees par l'element en
      * data-template-one et data-template-other, « [count] » remplace par n.
      *
@@ -30,25 +59,32 @@
      * avec une CHAINE au lieu d'un nombre fige la forme singulier — Shopify ne
      * peut pas choisir. Mesure 1.7.2 : « 2 article » en FR et « 2 item » en EN
      * des 2 favoris (sections/wishlist.liquid). Les deux formes partent donc du
-     * Liquid et c'est ici qu'on tranche, avec Intl.PluralRules sur la langue de
-     * la page : une API du navigateur, et non une regle de pluriel reecrite a la
-     * main (le francais met 0 au singulier, l'anglais au pluriel).
+     * Liquid et c'est ici qu'on tranche.
      *
      * @param {HTMLElement} el - Element portant les deux formes en data-*.
      * @param {number} n - Le compte.
      * @returns {string} Le texte pluralise, ou '' si aucune forme n'est fournie.
      */
     pluralTemplate(el, n) {
-      let forme = n === 1 ? 'one' : 'other';
-      if (typeof Intl !== 'undefined' && Intl.PluralRules) {
-        try {
-          forme = new Intl.PluralRules(document.documentElement.lang || 'en').select(n);
-        } catch (err) {
-          // Langue non reconnue : on garde le repli ci-dessus.
-        }
-      }
+      const forme = this.pluralForm(n);
       const cle = `template${forme.charAt(0).toUpperCase()}${forme.slice(1)}`;
       const tpl = el.dataset[cle] || el.dataset.templateOther || el.dataset.template || '';
+      return tpl.replace('[count]', n);
+    },
+
+    /**
+     * Meme choix de forme, mais sur des formes passees en objet plutot que
+     * portees par un element : les textes de window.themeStrings, qui ne vivent
+     * sur aucune balise (partage de la liste d'envies, layout/theme.liquid).
+     *
+     * @param {Object<string, string>|string} formes - Les formes de la cle, par
+     *   nom ; une chaine simple est rendue telle quelle (cle non pluralisee).
+     * @param {number} n - Le compte.
+     * @returns {string} Le texte pluralise, « [count] » remplace par n.
+     */
+    pluralString(formes, n) {
+      if (typeof formes === 'string') return formes.replace('[count]', n);
+      const tpl = (formes && (formes[this.pluralForm(n)] || formes.other)) || '';
       return tpl.replace('[count]', n);
     },
 
@@ -577,7 +613,7 @@
     },
 
     async share() {
-      const text = utils.interpolate(strings.wishlistShareText, 'count', this.items.length);
+      const text = utils.pluralString(strings.wishlistShareText, this.items.length);
       const data = { title: strings.wishlistShareTitle, text: text, url: window.location.href };
 
       if (navigator.share) {
@@ -1585,8 +1621,16 @@
       const poser = () => {
         const h = banner.offsetHeight;
         if (!h) return;
+        // Le remplissage du BAS DU DOCUMENT vaut exactement la hauteur du
+        // bandeau : le pied finit alors pile au-dessus de lui, sans trou.
         document.body.style.paddingBottom = `${h}px`;
-        racine.style.scrollPaddingBottom = `${h}px`;
+        // Le remplissage du DEFILEMENT, lui, prend une marge. Mesure 1.7.3 sur
+        // le theme d'essai (390x480, collections/all) : a l'exact, le
+        // defilement que le navigateur fait lui-meme pour amener l'element
+        // focalise dans la fenetre le posait PILE sur le bord du bandeau, et
+        // l'arrondi laissait 3 a 5 px de recouvrement sur les boutons de
+        // favoris des cartes. Avec la marge : 0 arret couvert.
+        racine.style.scrollPaddingBottom = `${h + MARGE_FOCUS_PX}px`;
       };
       poser();
       if (!this.hauteurSuivie && 'ResizeObserver' in window) {
@@ -1595,6 +1639,51 @@
           if (banner.classList.contains('is-visible')) poser();
         }).observe(banner);
       }
+      this.gardeFocus(banner);
+    },
+
+    /**
+     * Degage du dessous du bandeau l'element qui vient de prendre le focus.
+     *
+     * La place rendue au document par le bas (reserverPlace) et le
+     * scroll-padding-bottom suffisent quand le navigateur DOIT defiler pour
+     * amener l'element dans la fenetre. Ils ne suffisent pas quand l'element est
+     * deja visible mais sous le bandeau : aucun defilement n'a lieu, donc aucun
+     * rembourrage ne s'applique. Mesure 1.7.2, point focus-sous-en-tete : le
+     * bandeau recouvrait encore 2 a 14 arrets de tabulation aux petites hauteurs
+     * (fenetre de 480 px, zoom 400 %), ou il prend plusieurs lignes et une large
+     * part de la fenetre. WCAG 2.4.11 (Focus Not Obscured).
+     *
+     * On mesure donc le recouvrement reel a chaque prise de focus et on defile
+     * juste assez. La souris n'est pas concernee : le defilement ne part que
+     * pour un focus VISIBLE au clavier (:focus-visible), sinon un clic sur un
+     * bouton bas de page ferait sauter la page sous le doigt.
+     */
+    gardeFocus(banner) {
+      if (this.focusGarde) return;
+      this.focusGarde = true;
+      document.addEventListener('focusin', (e) => {
+        const cible = e.target;
+        if (!banner.classList.contains('is-visible')) return;
+        if (!cible || !cible.getBoundingClientRect || banner.contains(cible)) return;
+        try {
+          if (!cible.matches(':focus-visible')) return;
+        } catch (err) {
+          // :focus-visible non reconnu : on continue, le defilement reste juste.
+        }
+        // Deux images avant de mesurer : le navigateur fait SON defilement
+        // d'amenee a la fenetre apres l'evenement focusin, et une mesure prise
+        // tout de suite etait defaite juste apres (mesure 1.7.3 : la page
+        // defilait bien de 20 px, puis le navigateur la ramenait).
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          if (document.activeElement !== cible) return;
+          const haut = banner.getBoundingClientRect().top;
+          const boite = cible.getBoundingClientRect();
+          const cache = boite.bottom - haut;
+          if (cache <= 0) return;
+          window.scrollBy({ top: cache + MARGE_FOCUS_PX, left: 0, behavior: 'auto' });
+        }));
+      });
     },
 
     async suggestMarket() {
@@ -1697,6 +1786,26 @@
           this.goToSlide(target);
         }
       });
+
+      // Les vignettes sont une liste d'onglets (role="tablist") : les fleches
+      // gauche et droite deplacent la selection, Debut et Fin vont aux bouts, et
+      // le focus suit la selection. Un seul arret de tabulation pour toute la
+      // galerie, c'est ce que demande le patron APG Tabs.
+      section.addEventListener('keydown', (e) => {
+        const thumb = e.target.closest('.product-gallery__thumb');
+        if (!thumb) return;
+        const thumbs = Array.from(section.querySelectorAll('.product-gallery__thumb'));
+        const ici = thumbs.indexOf(thumb);
+        let cible = -1;
+        if (e.key === 'ArrowLeft') cible = (ici - 1 + thumbs.length) % thumbs.length;
+        else if (e.key === 'ArrowRight') cible = (ici + 1) % thumbs.length;
+        else if (e.key === 'Home') cible = 0;
+        else if (e.key === 'End') cible = thumbs.length - 1;
+        if (cible < 0) return;
+        e.preventDefault();
+        this.goToSlide(cible);
+        thumbs[cible].focus();
+      });
     },
 
     goToSlide(index) {
@@ -1709,8 +1818,12 @@
         slide.setAttribute('aria-hidden', active ? 'false' : 'true');
       });
       thumbs.forEach((thumb, i) => {
-        thumb.classList.toggle('is-active', i === index);
-        thumb.setAttribute('aria-selected', i === index ? 'true' : 'false');
+        const actif = i === index;
+        thumb.classList.toggle('is-active', actif);
+        thumb.setAttribute('aria-selected', actif ? 'true' : 'false');
+        // tabindex ITINERANT : seule la vignette selectionnee est dans l'ordre
+        // de tabulation, les fleches font le reste (APG Tabs).
+        thumb.setAttribute('tabindex', actif ? '0' : '-1');
       });
     },
 
@@ -2740,6 +2853,49 @@
   };
 
   // ============================================
+  // TEXTE ENRICHI DU MARCHAND
+  // ============================================
+  /**
+   * Rend focalisable au clavier un tableau du marchand qui defile de cote.
+   *
+   * assets/theme.css fait defiler .rte table dans son cadre (display: block ;
+   * overflow-x: auto) pour qu'un tableau large n'elargisse pas la page. Mais une
+   * zone qui defile et ne peut pas prendre le focus n'est pas atteignable au
+   * clavier seul : on ne peut pas en voir les colonnes de droite (WCAG 2.1.1,
+   * axe scrollable-region-focusable). Les tableaux que le THEME rend portent
+   * deja leur enveloppe focalisable (comparison.liquid:396,
+   * size-guide.liquid:215) ; celui-ci vient de l'editeur de texte enrichi, donc
+   * on l'habille apres coup.
+   *
+   * Seuls les tableaux qui DEBORDENT reellement reçoivent le focus : un tableau
+   * qui tient dans son cadre n'a rien a faire dans l'ordre de tabulation.
+   */
+  const RichText = {
+    init(scope) {
+      const racine = scope && scope.querySelectorAll ? scope : document;
+      for (const table of racine.querySelectorAll('.rte table:not([data-scroll-ready])')) {
+        table.dataset.scrollReady = 'true';
+        const juger = () => {
+          const deborde = table.scrollWidth > table.clientWidth + 1;
+          if (deborde) {
+            table.setAttribute('tabindex', '0');
+            table.setAttribute('role', 'region');
+            if (strings.scrollableTable) table.setAttribute('aria-label', strings.scrollableTable);
+          } else {
+            table.removeAttribute('tabindex');
+            table.removeAttribute('role');
+            table.removeAttribute('aria-label');
+          }
+        };
+        juger();
+        // La largeur disponible change avec la fenetre : un tableau qui tient a
+        // 1440 deborde a 390.
+        if ('ResizeObserver' in window) new ResizeObserver(juger).observe(table);
+      }
+    },
+  };
+
+  // ============================================
   // INITIALISATION
   // ============================================
   function initAll(scope) {
@@ -2757,6 +2913,7 @@
     Animations.init();
     HeroVideo.init();
     FormFeedback.init();
+    RichText.init(scope);
   }
 
   if (document.readyState === 'loading') {

@@ -6,7 +6,7 @@
     "search": {
       "search": "Rechercher",
       "title": "Recherche",
-      "placeholder": "Rechercher un produit...",
+      "placeholder": "Rechercher un produit…",
       "no_results": "Aucun résultat trouvé pour",
       "results_for": "Résultats pour",
       "results_count": {
@@ -75,7 +75,9 @@
     "wishlist": "Favoris",
     "add_to_wishlist": "Ajouter aux favoris",
     "remove_from_wishlist": "Retirer des favoris",
-    "social_link": "Suivez-nous sur {{ name }}"
+    "social_link": "Suivez-nous sur {{ name }}",
+    "new_window": "(ouvre un nouvel onglet)",
+    "scrollable_table": "Tableau, défile horizontalement"
   },
   "sections": {
     "header": {
@@ -186,8 +188,7 @@
       "hours_label": "Horaires",
       "directions": "Itinéraire",
       "view_map": "Voir la carte",
-      "call": "Appeler le {{ phone }}",
-      "new_window": "(ouvre un nouvel onglet)"
+      "call": "Appeler le {{ phone }}"
     },
     "comparison": {
       "scroller_label": "Tableau comparatif, défilement horizontal",
@@ -251,7 +252,7 @@
       "taxes_included_but_shipping_at_checkout": "Taxes incluses. Frais de livraison calculés à la caisse.",
       "taxes_and_shipping_policy_at_checkout_html": "Taxes et <a href=\"{{ link }}\">frais de livraison</a> calculés à la caisse.",
       "note": "Note de commande",
-      "note_placeholder": "Instructions spéciales pour la livraison...",
+      "note_placeholder": "Instructions spéciales pour la livraison…",
       "summary": "Récapitulatif",
       "view_cart": "Voir le panier",
       "checkout": "Passer la commande",
@@ -321,7 +322,10 @@
     },
     "share": "Partager",
     "share_title": "Mes favoris",
-    "share_text": "J’ai {{ count }} articles dans mes favoris !",
+    "share_text": {
+      "one": "J’ai {{ count }} article dans mes favoris !",
+      "other": "J’ai {{ count }} articles dans mes favoris !"
+    },
     "clear": "Vider les favoris",
     "clear_confirm": "Vider vos favoris ?",
     "empty_title": "Votre liste de favoris est vide",
@@ -372,6 +376,7 @@
     },
     "orders": {
       "title": "Historique des commandes",
+      "table_caption": "Vos commandes, de la plus récente à la plus ancienne",
       "order_number": "Commande",
       "date": "Date",
       "payment_status": "Statut du paiement",
@@ -381,6 +386,7 @@
     },
     "order": {
       "title": "Commande {{ name }}",
+      "table_caption": "Articles de cette commande",
       "date_html": "Passée le {{ date }}",
       "product": "Produit",
       "sku": "Référence",
