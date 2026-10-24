@@ -1,22 +1,26 @@
 {
   "liquid-validator": {
-    "version": "1.5.2",
-    "date": "2026-10-17",
+    "version": "1.7.2",
+    "date": "2026-10-24",
     "verdict": "passé",
-    "resume": "Contrôle complet code de sortie 0, 17/17 contrôles OK. Validateur brut sur les 77 .liquid en 2 lots (40 + 37) : VALID, 0 ERROR, 0 WARNING, 0 INFO. 0 BLOQUANT, 0 ALERTE. En plus, contrôle des arguments de render ajouté à verifier-theme.py en fe2bab5 (absent de la version installée ici) : 77 fichiers, 0 argument fautif.",
-    "commit": "f8a4485",
+    "resume": "Contrôle complet code de sortie 0, 135/135 contrôles OK, 0 BLOQUANT, 0 ALERTE. Validateur brut sur les 113 fichiers livrés (84 .liquid + 29 JSON) en un seul lot : VALID, 113/113 SUCCESS, 0 ERROR, 0 WARNING, 0 INFO. Bibliothèque lue (shopify-liquid-themes, liquid-theme-standards) : 16 !important et 14 sélecteurs #shopify-section jugés conformes, 33 .forEach() classés préférence de style, 1 risque latent de double échappement relevé à sections/map.liquid:210 (| escape sur un repli traduit, effet nul mesuré sur les locales actuelles « View the map » / « Voir la carte »). Audit complet et non reprise ciblée : verifier-theme et theme-check mesurés en entier au lieu d'être repris de 1.5.2, le code ayant changé entre les deux versions (mesures locales, aucun crédit cloud).",
+    "commit": "2c7d5ee",
     "couverture": {
       "verifier-theme": {
         "etat": "mesuré",
-        "mesure": "OPT_OUT_INSTRUMENTATION=true python3 kiosk-outils/liquid-tools/verifier-theme.py lumiere-theme --nom \"LUMIERE\" (complet, sans --rapide) : code de sortie 0, 17 contrôles OK sur 17, 0 en ALERTE, 0 en ÉCHEC. 54 schémas JSON, 33 balises <img>, 1907 sorties Liquid inspectées, LUMIERE 1.5.2, 9/9 fonctions commerce, 75 fichiers pour les variables CSS. Pas de --zip : aucun dossier release/ dans le cloud, le zip est fabriqué sur le Mac par paquet.py (le zip est le point du theme-paquet-checker, pas de celui-ci). Outil utilisé : la copie installée du clone (87c1270) ; la copie d'origin/main (80416d3) est refusée par la garde de cette session, qui est encore celle du clone."
+        "mesure": "verifier-theme.py complet (sans --rapide) sur /home/user/lumiere-theme --nom LUMIERE : code de sortie réel 0, 135/135 contrôles OK, 0 ALERTE, 0 ÉCHEC. Les 2 contrôles GSAP rendus « sans objet » par l'outil vérifiés indépendamment (grep gsap/ScrollTrigger = 0 occurrence)."
       },
       "theme-check": {
         "etat": "mesuré",
-        "mesure": "Validateur brut (node scripts/validate.mjs) sur les 77 fichiers .liquid du thème, en 2 lots de 40 et 37, une commande par lot avec la liste écrite en entier : **Overall Status:** ✅ VALID sur les deux, Total Files 40 puis 37. 0 ERROR, 0 WARNING, 0 INFO. Le validateur distingue bien les trois niveaux (severityLabel → ERROR / WARNING / INFO) et aurait rendu « ⚠️ VALID (with warnings) » s'il y avait eu un WARNING ou un INFO : c'est « ✅ VALID », donc zéro des trois. Lancé en plus de verifier-theme.py, qui masque les WARNING et les INFO."
+        "mesure": "Validateur brut (node scripts/validate.mjs) en un seul appel sur les 113 fichiers livrés (84 .liquid + 29 JSON de config/, sections/, locales/, templates/, snippets/, layout/, assets/), liste écrite en entier : Overall Status VALID, Total Files 113, 113/113 SUCCESS, 0 ERROR, 0 WARNING, 0 INFO. Cohérent avec le « 113 fichiers dont 29 JSON » du contrôle complet."
       },
       "alertes-lues": {
         "etat": "mesuré",
-        "mesure": "0 ALERTE à classer : les 17 contrôles de verifier-theme.py sont en OK, aucun en ALERTE ni en ÉCHEC, et le validateur brut ne rend aucune offense sur les 77 fichiers. Aucun chemin sous archive/ (ce dossier n'existe pas dans ce thème), donc aucune alerte à regrouper à part."
+        "mesure": "0 ALERTE et 0 ÉCHEC sur 135 contrôles : rien à classer. Croisement avec les compétences : 16 !important tous lus et justifiés (theme.css:86, 90-98, 866-868, countdown:106, video-banner:30 ; lookbook:188 redondant mais sans effet), 14 sélecteurs #shopify-section-{{ section.id }} en {% style %} légitimes (mécanisme de portée Shopify), 33 .forEach() = préférence de style non bloquante, 1 risque latent de double échappement sections/map.liquid:210 à effet nul mesuré."
+      },
+      "bibliotheque": {
+        "etat": "mesuré",
+        "mesure": "shopify-liquid-themes/SKILL.md lu en entier avant jugement (sections Critical Gotchas, Schema Tag, Translations) et liquid-theme-standards/SKILL.md lu en entier (sections CSS in Liquid Themes, JavaScript in Liquid Themes, HTML Standards). Effet sur le jugement : aucune ALERTE à requalifier (0 ALERTE) ; Translations a fait trouver le | escape sur repli traduit à sections/map.liquid:210, non signalé par les 135 contrôles ; CSS Specificity + Reduced Motion ont écarté comme conformes les 16 !important et les 14 sélecteurs d'id ; JavaScript Rules classe les 33 .forEach() en style non bloquant."
       }
     }
   },
