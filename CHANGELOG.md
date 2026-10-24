@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.8.1 — 2026-10-24
+
+### Fixed
+- **Gift cards now carry a QR code.** The recipient can have it scanned in
+  store instead of reading the code out loud. It is drawn by Shopify's own
+  encoder, served from their CDN — nothing is added to the theme files, and
+  nothing to install. The printed card keeps the code in plain text, so a
+  visitor without JavaScript loses nothing.
+
 ## 1.8.0 — 2026-10-24
 
 ### Added

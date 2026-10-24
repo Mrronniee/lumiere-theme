@@ -8,6 +8,41 @@
   {{ content_for_header }}
   {% render 'css-variables' %}
   {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  {%- comment -%}
+    L'ENCODEUR QR EST SERVI PAR SHOPIFY, PAS PAR LE THEME.
+
+    « shopify_asset_url » rend l'adresse CDN d'un fichier globalement
+    accessible de Shopify (reference de la bibliotheque, filtres HTML et
+    media) : vendor/qrcode.js ne vit donc NI dans assets/, NI dans le zip
+    vendu, et ce n'est pas une dependance externe — c'est le meme fichier que
+    le theme Dawn de Shopify charge sur sa page de carte cadeau
+    (templates/gift_card.liquid:6). Rien a installer chez l'acheteur.
+
+    « defer » : le fichier s'execute apres l'analyse du document et donc AVANT
+    DOMContentLoaded, ou le script de fin de page construit le code.
+  {%- endcomment -%}
+  <script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}" defer></script>
+
+  {%- style -%}
+    .gift-card__qr-code {
+      display: flex;
+      justify-content: center;
+      margin-block: var(--spacing-md);
+    }
+
+    .gift-card__qr-code:empty {
+      display: none;
+    }
+
+    .gift-card__qr-code :is(img, canvas) {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      background: #ffffff;
+      padding: var(--spacing-xs);
+    }
+  {%- endstyle -%}
 </head>
 <body class="template-gift-card">
   <main class="page-shell page-shell--narrow" role="main">
@@ -23,15 +58,26 @@
       <p class="gift-card__code"><code>{{ gift_card.code | format_code }}</code></p>
 
       {%- comment -%}
+        LE CODE QR A PRESENTER EN BOUTIQUE.
+
+        `gift_card.qr_identifier` est la chaine a encoder ; Shopify ne sert
+        aucune image toute faite, c'est l'encodeur de son CDN (charge dans le
+        <head>) qui la dessine. Le conteneur reste vide jusque-la, et la regle
+        « :empty » du style ci-dessus l'efface donc si le JavaScript manque :
+        le code en clair juste au-dessus suffit alors a utiliser la carte, et
+        rien ne laisse un cadre vide a l'ecran.
+
+        Le texte alternatif est traduit (gift_cards.issued.qr_image_alt, EN et
+        FR) et passe au dessin par le script de fin de page.
+      {%- endcomment -%}
+      {%- if gift_card.qr_identifier != blank -%}
+        <div class="gift-card__qr-code" data-identifier="{{ gift_card.qr_identifier }}"></div>
+      {%- endif -%}
+
+      {%- comment -%}
         Carte a emporter : `gift_card.pass_url` est l'adresse documentee du
         laissez-passer Apple Wallet. Le client ajoute la carte a son telephone
         et la presente en boutique, sans lire le code a voix haute.
-
-        Le QR code lui-meme n'est PAS rendu ici : `gift_card.qr_identifier` est
-        une simple chaine a encoder, Shopify ne sert aucune image. Il faudrait
-        un encodeur QR en JavaScript dans assets/ (c'est ce que fait Dawn, avec
-        une bibliotheque tierce) : a decider avec Ronnie, pas a improviser dans
-        un theme vendu.
       {%- endcomment -%}
       {%- if gift_card.pass_url != blank -%}
         <p class="gift-card__pass">
@@ -52,5 +98,27 @@
       <button type="button" class="btn btn--link" onclick="window.print()">{{ 'gift_cards.issued.print' | t }}</button>
     </div>
   </main>
+
+  {%- comment -%}
+    Le dessin du code QR. Le texte alternatif passe par « | json » et non entre
+    apostrophes : une chaine traduite peut contenir une apostrophe, qui
+    casserait le script (piege connu du Liquid dans du JavaScript).
+
+    DOMContentLoaded : l'encodeur du <head> porte « defer », il est donc deja
+    execute quand l'evenement part. On ne touche a rien si le conteneur est
+    absent (carte sans identifiant) ou si l'encodeur n'a pas repondu.
+  {%- endcomment -%}
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var cible = document.querySelector('.gift-card__qr-code');
+      if (!cible || typeof QRCode === 'undefined') return;
+      new QRCode(cible, {
+        text: cible.dataset.identifier,
+        width: 160,
+        height: 160,
+        imageAltText: {{ 'gift_cards.issued.qr_image_alt' | t | json }}
+      });
+    });
+  </script>
 </body>
 </html>

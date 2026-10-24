@@ -470,6 +470,7 @@
       "title": "Voici votre carte-cadeau de {{ value }} pour {{ shop }} !",
       "subtext": "Votre carte-cadeau",
       "expires_on": "Expire le {{ expiry }}",
+      "qr_image_alt": "Code QR — scannez-le pour utiliser votre carte-cadeau en boutique",
       "redeem": "Utilisez ce code à la caisse pour utiliser votre carte-cadeau",
       "shop_link": "Commencer mes achats",
       "print": "Imprimer",
