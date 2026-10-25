@@ -34,6 +34,36 @@
   else
     assign hero_floor_rgb = '250, 249, 247'
   endif
+
+  comment
+    SIZES DU HEROS : LE RECADRAGE EST PILOTE PAR LA HAUTEUR. « 100vw » decrit
+    la largeur de la BOITE, mais l'image est recadree en « cover » depuis un
+    paysage dans une boite haute : le navigateur a besoin de
+    hauteur_de_boite x rapport_de_l_image, pas de la largeur de la boite.
+    Mesure de l'audit de performance 1.8.1 : a 390, 750 px charges pour 1 182
+    necessaires (rapport 0,63) ; a 1440, 1 500 pour 1 620 (0,93). La hauteur
+    est un reglage en vh (height, height_mobile), le rapport se lit sur
+    l'image : on peut donc ecrire le besoin exactement. max() garde la
+    largeur quand c'est elle qui pilote (boite large et basse).
+  endcomment
+  assign hero_ratio = 1.78
+  if section.settings.image != blank and section.settings.image.height > 0
+    assign hero_ratio = section.settings.image.width | times: 1.0 | divided_by: section.settings.image.height
+  endif
+  assign hero_sizes_mobile = section.settings.height_mobile | default: 70
+  assign hero_sizes_desk = section.settings.height | default: 90
+  capture hero_sizes
+    echo '(max-width: 749px) max(100vw, calc('
+    echo hero_sizes_mobile
+    echo 'vh * '
+    echo hero_ratio
+    echo ')), max(100vw, calc('
+    echo hero_sizes_desk
+    echo 'vh * '
+    echo hero_ratio
+    echo '))'
+  endcapture
+  assign hero_sizes = hero_sizes | strip
 -%}
 
 {%- style -%}
@@ -299,7 +329,7 @@
             {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
             {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
           src="{{ section.settings.image | image_url: width: 1100 }}"
-          sizes="100vw"
+          sizes="{{ hero_sizes }}"
           alt=""
           loading="eager"
           fetchpriority="high"
@@ -329,7 +359,7 @@
           {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
           {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
         src="{{ section.settings.image | image_url: width: 1920 }}"
-        sizes="100vw"
+        sizes="{{ hero_sizes }}"
         alt="{{ section.settings.image.alt | escape }}"
         loading="eager"
         fetchpriority="high"

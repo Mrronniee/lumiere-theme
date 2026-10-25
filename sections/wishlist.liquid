@@ -34,6 +34,9 @@
   }
 
   .wishlist-page__empty { text-align: center; padding: var(--spacing-xl) 0; }
+
+  /* Reserve sa place sans se peindre ni se lire, jusqu'a l'hydratation. */
+  .wishlist-page__empty[data-reserving] { visibility: hidden; }
   .wishlist-page__empty-icon { margin-bottom: var(--spacing-md); opacity: 0.3; }
 
   .wishlist-page__empty-title {
@@ -115,8 +118,19 @@
 
   <div class="wishlist-page__grid" data-wishlist-grid hidden></div>
 
-  {%- comment -%} Masqué par défaut : sans cela le message s'affiche avant l'hydratation JS {%- endcomment -%}
-  <div class="wishlist-page__empty" data-wishlist-empty hidden>
+  {%- comment -%}
+    LA PLACE EST RESERVEE DES LE PREMIER RENDU. Le serveur ne peut pas lire le
+    stockage local : les deux blocs etaient donc « hidden », le pied de page
+    remontait, et le JS revelait ensuite le bloc vide — le pied redescendait de
+    362 px a 412 et de 508 px a 1350, CLS 0,2639 et 0,1401 pour un seuil de 0,1
+    (audit de performance 1.8.1). « hidden » avait ete choisi pour que le
+    message « liste vide » ne s'affiche pas avant l'hydratation.
+    « visibility: hidden » tient les deux a la fois : le bloc occupe sa place
+    exacte, donc le pied est d'emblee a sa position finale, mais il ne se
+    peint pas et ne se lit pas (il sort de l'arbre d'accessibilite). Le JS n'a
+    plus qu'a le rendre visible, sans rien deplacer.
+  {%- endcomment -%}
+  <div class="wishlist-page__empty" data-wishlist-empty data-reserving>
     <div class="wishlist-page__empty-icon">
       {% render 'icon', icon: 'heart' %}
     </div>

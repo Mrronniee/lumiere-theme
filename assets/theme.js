@@ -612,13 +612,21 @@
       if (this.items.length === 0) {
         grid.hidden = true;
         grid.innerHTML = '';
-        if (empty) empty.hidden = false;
+        // Le bloc vide occupait deja sa place (data-reserving, visibility:
+        // hidden) : on ne fait que le rendre visible, donc rien ne bouge.
+        if (empty) {
+          empty.removeAttribute('data-reserving');
+          empty.hidden = false;
+        }
         if (actions) actions.hidden = true;
         return;
       }
 
       grid.hidden = false;
-      if (empty) empty.hidden = true;
+      if (empty) {
+        empty.hidden = true;
+        empty.removeAttribute('data-reserving');
+      }
       if (actions) actions.hidden = false;
       this.render(grid);
     },
