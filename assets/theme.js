@@ -2449,10 +2449,34 @@
       if (!inner || !nav || !list) return;
 
       const measure = () => {
-        const logo = inner.querySelector('.header__logo');
-        const actions = inner.querySelector('.header__actions');
-        const place =
-          inner.clientWidth - (logo?.offsetWidth || 0) - (actions?.offsetWidth || 0);
+        // LA PLACE DISPONIBLE = .header__inner MOINS TOUS SES AUTRES ENFANTS,
+        // gouttieres comprises.
+        //
+        // Mesure 1.8.1 (audit bilingue) : ce calcul ne retirait que le logo et
+        // les actions. Il oubliait .header__markets (sections/header.liquid:204,
+        // rendu des que la boutique a plusieurs marches ou langues — ici FR/BE
+        // et FR/EN) et les gouttieres de .header__inner (gap: 1rem,
+        // assets/theme.css:1042, qui gagne sur la regle sans gap de la :172).
+        // Il annoncait 1109 px de place pour 874 px reels : a 1440 px avec un
+        // menu de 8 entrees, « is-nav-condensed » n'etait pas pose, et
+        // .header__inner servait 1376 px pour un scrollWidth de 1596 px en FR —
+        // .header__markets sortait de 252 px et ses libelles se repliaient sur
+        // 3 a 4 lignes dans un en-tete reste a 71 px. A 1280 et 1024 px le repli
+        // se declenchait bien : le defaut ne se voyait qu'en grand.
+        //
+        // On SOMME les autres enfants au lieu de les nommer : un enfant ajoute
+        // plus tard a .header__inner ne rouvrira pas le defaut. Un enfant en
+        // display: none ne prend ni largeur ni gouttiere (le bouton de menu
+        // mobile, masque a cette largeur).
+        const gap = parseFloat(getComputedStyle(inner).columnGap) || 0;
+        let occupe = 0;
+        let rendus = 0;
+        for (const enfant of inner.children) {
+          if (getComputedStyle(enfant).display === 'none') continue;
+          rendus += 1;
+          if (enfant !== nav) occupe += enfant.offsetWidth;
+        }
+        const place = inner.clientWidth - occupe - Math.max(0, rendus - 1) * gap;
         // scrollWidth de la liste = la largeur dont les entrees ont besoin,
         // puisque flex-shrink: 0 et white-space: nowrap les empechent de
         // retrecir ou de se replier (assets/theme.css, .header__nav-list).
