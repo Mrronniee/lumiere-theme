@@ -13,6 +13,18 @@
     render 'contrast-color', base: section.settings.input_border, bg: section.settings.background_color, target: 3
   endcapture
   assign input_border = input_border | strip
+
+  comment
+    L'APLAT DU CHAMP ET SON ENCRE SONT DEUX REGLAGES INDEPENDANTS ici
+    (input_bg et text_color) : le marchand peut donc poser un texte clair sur
+    un champ clair. Mesure de l'audit d'accessibilite 1.8.1 : meme patron que
+    les 4 champs de contact a 1,00:1. L'encre du champ se derive donc sur
+    l'aplat du champ, en gardant la teinte choisie, comme input_border ci-dessus.
+  endcomment
+  capture input_text
+    render 'contrast-color', base: section.settings.text_color, bg: section.settings.input_bg
+  endcapture
+  assign input_text = input_text | strip
 -%}
 
 {%- style -%}
@@ -69,7 +81,7 @@
     font-size: 1rem;
     border: 1px solid {{ input_border }};
     background-color: {{ section.settings.input_bg }};
-    color: {{ section.settings.text_color }};
+    color: {{ input_text }};
     transition: border-color var(--transition-fast);
   }
 

@@ -1523,9 +1523,13 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   background-color: var(--input-bg, #fff);
   font-family: var(--font-body);
   font-size: 0.875rem;
-  color: var(--color-text);
+  /* Meme aplat que les autres champs, donc meme encre : --color-text etait
+     derive du fond du theme (1,00:1 sur un champ blanc en palette sombre). */
+  color: var(--color-on-input, var(--color-text));
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  /* Fleche derivee sur l'aplat du champ (snippets/css-variables) : son stroke
+     etait fige a #333, invisible sur un champ sombre (WCAG 1.4.11, 3:1). */
+  background-image: var(--select-arrow);
   background-repeat: no-repeat;
   background-position: right 1rem center;
 }
@@ -2078,6 +2082,12 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   border-radius: var(--input-radius, 0);
   border-width: var(--input-border, 1px);
   background-color: var(--input-bg, #fff);
+  /* L'ENCRE VIENT DE L'APLAT, PAS DU FOND DU THEME. Cette regle posait
+     --input-bg sans poser d'encre : le texte saisi restait celui du theme,
+     derive d'un AUTRE fond. Sur une palette sombre avec un champ blanc, les
+     4 champs de contact mesuraient 1,00:1 (audit d'accessibilite 1.8.1).
+     --color-on-input est derive sur --input-bg dans snippets/css-variables. */
+  color: var(--color-on-input, var(--color-text));
   /* Le bord d'un champ porte une information : 3:1 exige (WCAG 1.4.11).
      --color-border, un filet decoratif a 12 %, mesurait 1,28:1. */
   border-color: var(--color-border-strong, var(--color-border));
@@ -2334,6 +2344,13 @@ textarea {
   border: var(--input-border, 1px) solid var(--color-border);
   border-radius: var(--input-radius, 0);
   background: var(--input-bg, #fff);
+  /* Meme aplat que les autres champs, donc meme encre. Ces champs ne figurent
+     que dans la liste des bordures plus haut : leur encre restait celle du
+     theme, derivee d'un autre fond. Meme defaut que les 4 champs de contact
+     mesures a 1,00:1 (audit d'accessibilite 1.8.1) ; la page de carte cadeau
+     n'est pas servie par la boutique de dev, donc l'audit ne pouvait pas la
+     voir. */
+  color: var(--color-on-input, var(--color-text));
   font-family: var(--font-body);
   font-size: 0.9375rem;
 }

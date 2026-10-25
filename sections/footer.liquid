@@ -152,6 +152,14 @@
     align-items: center;
   }
 
+  /* Le filtre login_button ne rend RIEN quand la boutique n'est pas eligible
+     au canal Shop : le conteneur restait alors dans la page, vide et en
+     display:flex (mesure du 25/10/2026 sur la demo, ou la boutique n'a aucun
+     moyen de paiement active). Meme garde que le QR de la carte cadeau. */
+  .footer__follow:empty {
+    display: none;
+  }
+
   @media screen and (max-width: 989px) {
     .footer__top {
       grid-template-columns: repeat(2, 1fr);

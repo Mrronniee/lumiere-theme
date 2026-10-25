@@ -134,6 +134,14 @@
     min-width: 0;
     max-width: 100%;
     contain: paint;
+    /* UN ARRET DE TABULATION ENTRE EN ENTIER. Quand le navigateur amene de
+       lui-meme un element focalise dans cette zone, il s'arrete des que
+       l'element touche le bord : a 390 et 320, 2 a 3 arrets du tableau
+       n'etaient visibles qu'a 33-67 % une fois focalises (audit
+       d'accessibilite 1.8.1 ; WCAG 2.4.11 tenu, 2.4.12 non). Le defilement
+       reserve donc une gouttiere de chaque cote, de la largeur de la marge
+       des cellules. */
+    scroll-padding-inline: var(--spacing-sm);
   }
 
 

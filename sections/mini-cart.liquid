@@ -474,6 +474,10 @@
     border: var(--input-border, 1px) solid var(--color-border-strong, var(--color-border));
     border-radius: var(--input-radius, 0);
     background: var(--input-bg, #fff);
+    /* Meme aplat que les autres champs, donc meme encre : sans « color », la
+       note heritait du texte du tiroir, derive d'un autre fond (meme defaut
+       que les 4 champs de contact a 1,00:1, audit d'accessibilite 1.8.1). */
+    color: var(--color-on-input, var(--color-text));
     font-family: var(--font-body);
     font-size: 1rem;
     resize: vertical;

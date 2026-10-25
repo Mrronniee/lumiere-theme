@@ -55,9 +55,16 @@
         color: inherit;
       }
 
+      /* L'ENCRE SUIT L'APLAT. --color-text-light est derive pour le fond du
+         THEME, pas pour l'aplat de marque --color-primary du bandeau :
+         l'icone de fermeture, seul repere visuel du bouton, mesurait
+         2,88 / 1,02 / 1,65 / 1,60:1 sous 4 des 5 palettes, pour un seuil de
+         3:1 (WCAG 1.4.11, audit d'accessibilite 1.8.1). On herite donc de
+         --color-on-primary que .market-banner pose plus haut, comme le fait
+         deja .market-banner__link. */
       .market-banner__close {
         margin-left: 1rem;
-        color: var(--color-text-light);
+        color: inherit;
         transition: opacity var(--transition-fast);
       }
 

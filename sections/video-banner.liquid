@@ -14,9 +14,39 @@
   assign vb_lightness = section.settings.text_color | color_extract: 'lightness'
   if vb_lightness > 50
     assign vb_floor_rgb = '26, 22, 18'
+    assign vb_floor_hex = '#1a1612'
+    assign vb_pire_cas = '#ffffff'
   else
     assign vb_floor_rgb = '250, 249, 247'
+    assign vb_floor_hex = '#faf9f7'
+    assign vb_pire_cas = '#000000'
   endif
+
+  comment
+    OPACITE DU PLANCHER, CALCULEE ET NON FIGEE. Le plancher etait a 0,45, une
+    valeur dimensionnee pour 3:1 (grand texte) : le PARAGRAPHE du bandeau fait
+    16 px et demande 4,5:1, et il mesurait 3,56:1 (audit d'accessibilite
+    1.8.1). Ce qui est sous le plancher est une video, donc quelconque : le
+    pire cas est le pixel qui rapproche le composite de l'encre — le blanc
+    sous un plancher sombre, le noir sous un plancher clair. On monte donc
+    l'opacite jusqu'a ce que le composite du PIRE CAS atteigne 4,5:1 avec
+    l'encre choisie. Plafond a 85 % pour que la video reste visible : au-dela,
+    autant couper la video. Meme mecanique que snippets/contrast-color.liquid,
+    mais en resolvant l'opacite au lieu de la luminosite.
+  endcomment
+  assign vb_floor_pct = 45
+  for i in (1..14)
+    assign vb_composite = vb_floor_hex | color_mix: vb_pire_cas, vb_floor_pct
+    assign vb_ratio = section.settings.text_color | color_contrast: vb_composite
+    if vb_ratio >= 4.5
+      break
+    endif
+    if vb_floor_pct >= 85
+      break
+    endif
+    assign vb_floor_pct = vb_floor_pct | plus: 3
+  endfor
+  assign vb_floor_alpha = vb_floor_pct | divided_by: 100.0
 -%}
 
 {%- style -%}
@@ -105,7 +135,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-color: rgba({{ vb_floor_rgb }}, 0.45);
+    background-color: rgba({{ vb_floor_rgb }}, {{ vb_floor_alpha }});
   }
 
   .video-banner__controls {

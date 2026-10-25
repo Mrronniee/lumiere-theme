@@ -308,9 +308,24 @@
       }
     },
 
+    /** Calques qui piegent le focus, du plus ancien au plus recent. */
+    focusTraps: [],
+
     trapFocus(container, firstFocus) {
       // Une reouverture ne doit pas empiler un second piege sur le premier.
       utils.releaseFocus(container);
+
+      // PILE DE CALQUES. Deux pieges actifs en meme temps s'arrachaient le
+      // focus : chacun ecoute focusin en capture et ramene le focus dans SON
+      // conteneur, donc le focusin de l'un declenche celui de l'autre, sans
+      // fin (mesure de l'audit de parcours 1.8.1 : 1 148 « Maximum call stack
+      // size exceeded », 20 Tab en 1 115 ms au lieu de 70, focus gele sur le
+      // bouton de fermeture du menu, et un seul Echap refermant les deux
+      // calques). Les pieges sont donc empiles et seul CELUI DU DESSUS agit ;
+      // les autres restent en place et reprennent la main des qu'il est libere.
+      utils.focusTraps.push(container);
+      const estDuDessus = () => utils.focusTraps[utils.focusTraps.length - 1] === container;
+
       const selector =
         'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
@@ -341,6 +356,7 @@
           utils.releaseFocus(container);
           return;
         }
+        if (!estDuDessus()) return;
         const items = focusable();
         if (!items.length) {
           e.preventDefault();
@@ -371,6 +387,7 @@
           utils.releaseFocus(container);
           return;
         }
+        if (!estDuDessus()) return;
         if (container.contains(e.target)) return;
         const items = focusable();
         if (items.length) items[0].focus();
@@ -411,7 +428,12 @@
     },
 
     releaseFocus(container) {
-      if (container && container._releaseFocusTrap) {
+      if (!container) return;
+      // On depile ce calque : le piege du dessous, toujours en place, reprend
+      // la main au prochain focusin.
+      const rang = utils.focusTraps.lastIndexOf(container);
+      if (rang !== -1) utils.focusTraps.splice(rang, 1);
+      if (container._releaseFocusTrap) {
         container._releaseFocusTrap();
         delete container._releaseFocusTrap;
       }
@@ -557,7 +579,7 @@
       });
     },
 
-    updateUI() {
+    refreshControls() {
       document.querySelectorAll('[data-wishlist-btn]').forEach((btn) => {
         const active = this.has(btn.dataset.productId);
         btn.classList.toggle('is-active', active);
@@ -576,6 +598,10 @@
       document.querySelectorAll('[data-wishlist-count-text]').forEach((el) => {
         el.textContent = utils.pluralTemplate(el, this.items.length);
       });
+    },
+
+    updateUI() {
+      this.refreshControls();
 
       const grid = document.querySelector('[data-wishlist-grid]');
       if (!grid) return;
@@ -585,21 +611,36 @@
 
       if (this.items.length === 0) {
         grid.hidden = true;
+        grid.innerHTML = '';
         if (empty) empty.hidden = false;
         if (actions) actions.hidden = true;
-      } else {
-        grid.hidden = false;
-        if (empty) empty.hidden = true;
-        if (actions) actions.hidden = false;
-        this.render(grid);
+        return;
       }
+
+      grid.hidden = false;
+      if (empty) empty.hidden = true;
+      if (actions) actions.hidden = false;
+      this.render(grid);
     },
 
     async render(container) {
+      // RENDUS CONCURRENTS. Un rendu lance avant un changement de liste peut
+      // repondre apres lui : sans jeton il reinjecte des cartes perimees, et
+      // une liste videe gardait sa carte a l'ecran (mesure de l'audit de
+      // parcours 1.8.1). Le dernier rendu lance est le seul a pouvoir ecrire,
+      // et les requetes du precedent sont abandonnees.
+      this.renderToken = (this.renderToken || 0) + 1;
+      const token = this.renderToken;
+      if (this.renderAbort) this.renderAbort.abort();
+      const abort = new AbortController();
+      this.renderAbort = abort;
+
       const cards = await Promise.all(
         this.items.map(async (item) => {
           try {
-            const res = await fetch(utils.localizedPath(`/products/${item.handle}?view=card`));
+            const res = await fetch(utils.localizedPath(`/products/${item.handle}?view=card`), {
+              signal: abort.signal,
+            });
             if (!res.ok) return null;
             const html = await res.text();
             return html;
@@ -608,8 +649,18 @@
           }
         })
       );
+
+      if (token !== this.renderToken) return;
       container.innerHTML = cards.filter(Boolean).join('');
-      this.updateUI();
+
+      // LES CONTROLES, PAS updateUI(). Les cartes qu'on vient d'injecter
+      // portent leurs propres [data-wishlist-btn], qu'il faut remettre a
+      // jour ; mais appeler updateUI() ici le faisait rappeler render(), qui
+      // rappelait updateUI() : boucle sans fin, 206 requetes ?view=card en
+      // 15 s sur la page des favoris et aucun calme reseau en 90 s (mesure de
+      // l'audit de parcours 1.8.1 ; defaut present depuis c123b83, declenche
+      // par le seul fait d'arriver sur la page avec un favori en stockage).
+      this.refreshControls();
     },
 
     async share() {
@@ -859,8 +910,16 @@
      * Le compteur du header vient du panier renvoye par la mutation, sinon du
      * tiroir re-rendu, sinon de /cart.js.
      * @param {{sections?: Object, cart?: Object}} [fresh]
+     * @returns {Promise<boolean>} true si l'affichage du panier a bien ete
+     *   refait (sections re-rendues, ou compteurs remis d'apres un vrai
+     *   panier). false quand le reseau a tout fait echouer : l'appelant doit
+     *   alors defaire son affichage optimiste. Cette fonction ne LEVE pas —
+     *   elle avalait donc son echec en silence, et le repli de l'appelant,
+     *   place dans un catch, ne s'executait jamais (ALERTE N7 du parcours
+     *   1.7.2, encore mesuree en 1.8.1 : champ a 3 pour un panier a 2).
      */
     async refresh(fresh) {
+      let rafraichi = false;
       const focusMemo = this.rememberFocus();
       const wanted = this.sectionsWanted();
       let sections = fresh && fresh.sections && typeof fresh.sections === 'object' ? fresh.sections : null;
@@ -878,17 +937,22 @@
         wanted
           .filter((id) => id !== 'mini-cart' && sections[id])
           .forEach((id) => this.replaceSection(id, sections[id]));
+        rafraichi = true;
       }
 
       const cart = fresh && fresh.cart && typeof fresh.cart.item_count === 'number' ? fresh.cart : null;
       if (cart) {
         this.updateCounters(cart, !sections);
+        rafraichi = true;
       } else if (sections && sections['mini-cart'] && this.countFromDrawer(sections['mini-cart']) !== null) {
         this.updateCounters({ item_count: this.countFromDrawer(sections['mini-cart']) }, false);
       } else {
         try {
           const res = await fetch(`${routes.cart_url || '/cart'}.js`);
-          if (res.ok) this.updateCounters(await res.json(), !sections);
+          if (res.ok) {
+            this.updateCounters(await res.json(), !sections);
+            rafraichi = true;
+          }
         } catch (e) {
           /* silencieux : les sections re-rendues font deja foi */
         }
@@ -901,6 +965,18 @@
         utils.trapFocus(this.drawer, restored || this.drawer.querySelector('[data-mini-cart-close]'));
       }
       Wishlist.updateUI();
+      return rafraichi;
+    },
+
+    /**
+     * Defait l'affichage optimiste d'une ligne quand le panier n'a pas pu etre
+     * re-rendu : le champ reprend la valeur que le serveur avait rendue, qui
+     * est la derniere quantite connue du panier.
+     * @param {Element} [itemEl] La ligne du panier touchee.
+     */
+    revertQuantity(itemEl) {
+      const champ = itemEl && itemEl.querySelector('input[name="updates[]"], [data-quantity-input]');
+      if (champ && typeof champ.defaultValue === 'string') champ.value = champ.defaultValue;
     },
 
     /** Nombre d'articles lu dans le tiroir re-rendu (data-cart-item-count), sinon null. */
@@ -1122,7 +1198,7 @@
           Notify.show(utils.messageErreurPanier(data), 'error');
           // La ligne affichait encore la quantite refusee (9 saisi, 3 au
           // panier) : on re-rend le panier pour revenir a l'etat reel.
-          await this.refresh();
+          if (!(await this.refresh())) this.revertQuantity(itemEl);
           return;
         }
         await this.refresh({ sections: data.sections, cart: data });
@@ -1137,14 +1213,12 @@
         // cart.js et le sous-total restaient a 2 (« Subtotal €236,00 EUR ») —
         // le client lisait une quantite que son panier n'avait pas
         // (liquid-theme-standards, Optimistic UI : « revert on failure »).
-        try {
-          await this.refresh();
-        } catch (erreurRetour) {
-          // Hors ligne, le re-rendu echoue aussi : on remet alors le champ a la
-          // valeur que le serveur avait rendue, qui est la derniere connue.
-          const champ = itemEl?.querySelector('input[name="updates[]"], [data-quantity-input]');
-          if (champ && typeof champ.defaultValue === 'string') champ.value = champ.defaultValue;
-        }
+        //
+        // Le repli etait place dans un catch autour de refresh(), qui ne LEVE
+        // pas : il avale son echec et rend simplement false. Le repli ne
+        // s'executait donc jamais, et l'alerte etait encore mesuree en 1.8.1
+        // (champ a 3, panier a 2). On lit maintenant ce que refresh() repond.
+        if (!(await this.refresh())) this.revertQuantity(itemEl);
       } finally {
         this.state.isUpdating = false;
       }
@@ -2580,8 +2654,29 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
-        if (this.menu?.classList.contains('is-open')) this.closeMenu();
-        if (this.search?.classList.contains('is-active')) this.closeSearch();
+        // UN SEUL CALQUE PAR ECHAP. Les deux « if » successifs d'avant
+        // fermaient le menu ET la recherche d'un seul coup quand les deux
+        // etaient ouverts (mesure de l'audit de parcours 1.8.1). On ne ferme
+        // que le calque du dessus : la pile des pieges a focus en donne
+        // l'ordre, et chaque Echap ne descend que d'un cran.
+        const menuOuvert = this.menu && this.menu.classList.contains('is-open');
+        const rechercheOuverte = this.search && this.search.classList.contains('is-active');
+        const dessus = utils.focusTraps[utils.focusTraps.length - 1];
+        if (dessus === this.search && rechercheOuverte) {
+          this.closeSearch();
+          return;
+        }
+        if (dessus === this.menu && menuOuvert) {
+          this.closeMenu();
+          return;
+        }
+        // Aucun des deux n'est le calque du dessus (pile vide : un panneau
+        // ouvert sans piege) : on ferme celui qui est ouvert, un seul.
+        if (rechercheOuverte) {
+          this.closeSearch();
+          return;
+        }
+        if (menuOuvert) this.closeMenu();
       });
 
       // Sous-menus desktop : ouverture au focus clavier

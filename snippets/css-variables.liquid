@@ -88,6 +88,39 @@
   endcomment
   assign c_ink_dark = '#1a1a1a'
 
+  comment
+    ENCRE DES CHAMPS DE SAISIE. --input-bg est un aplat que le marchand choisit
+    (settings.input_background), tandis que l'encre des champs venait de
+    --color-text, derive du FOND DU THEME : deux sources independantes. Un
+    champ blanc sur une palette sombre recevait donc une encre claire — 1,00:1
+    mesure au pixel sur les 4 champs de contact, bordures comprises, et le meme
+    patron sur .newsletter__input et .product-variant__select (audit
+    d'accessibilite 1.8.1). L'encre se derive maintenant SUR l'aplat du champ,
+    en gardant la teinte du texte du theme. --input-bg n'etant defini qu'ici,
+    l'aplat est le meme partout : un seul jeton suffit, et il n'a pas a etre
+    recalcule par section.
+  endcomment
+  assign c_input_bg = settings.input_background | default: '#ffffff'
+  capture c_on_input
+    render 'contrast-color', base: c_text, bg: c_input_bg
+  endcapture
+  assign c_on_input = c_on_input | strip
+
+  comment
+    FLECHE DES <select>. Elle est dessinee dans une data-URI, qui ne peut pas
+    lire une variable CSS : son stroke etait fige a #333 et devenait invisible
+    des que le marchand choisit un --input-bg sombre (meme classe que l'encre
+    ci-dessus, seuil 3:1 de WCAG 1.4.11 pour un element non textuel ; non
+    relevee par l'audit 1.8.1 parce que la demo a un champ blanc). Liquid
+    fabrique donc la data-URI ENTIERE avec une teinte relevee sur l'aplat du
+    champ, publiee en jeton et reutilisee par les deux <select> du theme.
+    Le « # » doit etre encode en « %23 » dans une URL.
+  endcomment
+  capture c_arrow
+    render 'contrast-color', base: '#333333', bg: c_input_bg, target: 3
+  endcapture
+  assign c_arrow = c_arrow | strip | remove_first: '#'
+
   assign white_on_accent = c_accent | color_contrast: '#ffffff'
   assign text_on_accent = c_accent | color_contrast: c_text
   assign dark_on_accent = c_accent | color_contrast: c_ink_dark
@@ -242,7 +275,9 @@
 
     --input-radius: {{ settings.input_radius | default: 0 }}px;
     --input-border: {{ settings.input_border_width | default: 1 }}px;
-    --input-bg: {{ settings.input_background | default: '#ffffff' }};
+    --input-bg: {{ c_input_bg }};
+    --color-on-input: {{ c_on_input }};
+    --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23{{ c_arrow }}' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
 
     --icon-stroke: {{ settings.icon_stroke_width | default: 15 | divided_by: 10.0 }};
     --icon-size: {{ settings.icon_size | default: 24 }}px;

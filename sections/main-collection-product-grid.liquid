@@ -56,8 +56,15 @@
     font-family: var(--font-body);
     font-size: 1rem;
     background: var(--color-background);
+    /* L'ENCRE MANQUAIT. Sans « color », le texte du select restait le noir par
+       defaut du navigateur, pose sur l'aplat de la palette : « Alphabetically,
+       A-Z » mesurait 1,21:1 sur une palette sombre (audit d'accessibilite
+       1.8.1). L'encre vient donc de la meme source que l'aplat. */
+    color: var(--color-text);
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    /* Fleche derivee sur l'aplat du champ (snippets/css-variables) : son
+       stroke etait fige a #333, invisible sur un champ sombre. */
+    background-image: var(--select-arrow);
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     min-width: 0;

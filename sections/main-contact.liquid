@@ -72,7 +72,10 @@
     padding: 0.9rem 1rem;
     border: 1px solid var(--color-border-strong, var(--color-border));
     background: var(--input-bg, var(--color-background));
-    color: var(--color-text);
+    /* L'encre se derive sur l'aplat du champ : --color-text vient du fond du
+       theme, et mesurait 1,00:1 sur un champ blanc en palette sombre (audit
+       d'accessibilite 1.8.1, 4 champs et leurs bordures). */
+    color: var(--color-on-input, var(--color-text));
     font-family: var(--font-body);
     font-size: 1rem;
     transition: border-color var(--transition-fast);
