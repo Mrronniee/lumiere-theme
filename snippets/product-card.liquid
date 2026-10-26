@@ -92,13 +92,59 @@
               bureau. Elle ne se voit qu'au survol, donc sans effet sur le LCP
               ni sur le CLS, d'ou une ALERTE et non un echec.
             {%- endcomment -%}
+            {%- liquid
+              comment
+                LE BESOIN EST PILOTE PAR LA HAUTEUR, PAS PAR LA LARGEUR.
+                card_sizes decrit la largeur de la carte, mais l'image est
+                recadree en « cover » dans une boite dont le rapport est un
+                reglage du theme (product_card_aspect_ratio : 1/1, 4/3, sinon
+                3/4). Quand l'image est plus large que la boite, c'est la
+                HAUTEUR qui commande l'echelle : il faut
+                largeur_de_boite x rapport_image / rapport_boite.
+                Mesure de l'audit de performance 1.8.1 : 165 px charges pour
+                387 necessaires a 390 (0,43), 360 pour 771 a 1440 (0,47).
+                Le facteur se calcule sur l'image de survol elle-meme, et il
+                ne touche QUE celle-la : l'image principale de la carte est
+                mesuree bonne, et l'elargir chargerait 16 images de plus par
+                page de collection pour rien.
+              endcomment
+              assign hover_box_ratio = 0.75
+              case settings.product_card_aspect_ratio
+                when 'square'
+                  assign hover_box_ratio = 1.0
+                when 'landscape'
+                  assign hover_box_ratio = 1.3333
+              endcase
+              assign hover_img_ratio = 1.0
+              if hover_image.height > 0
+                assign hover_img_ratio = hover_image.width | times: 1.0 | divided_by: hover_image.height
+              endif
+              assign hover_facteur = hover_img_ratio | divided_by: hover_box_ratio
+              if hover_facteur < 1
+                assign hover_facteur = 1
+              endif
+              capture hover_sizes
+                echo '(min-width: 1200px) calc(25vw * '
+                echo hover_facteur
+                echo '), (min-width: 990px) calc(33vw * '
+                echo hover_facteur
+                echo '), (min-width: 750px) calc(50vw * '
+                echo hover_facteur
+                echo '), calc('
+                echo card_mobile_size
+                echo ' * '
+                echo hover_facteur
+                echo ')'
+              endcapture
+              assign hover_sizes = hover_sizes | strip
+            -%}
             <img
               srcset="{%- if hover_image.width >= 165 -%}{{ hover_image | image_url: width: 165 }} 165w,{%- endif -%}
                 {%- if hover_image.width >= 360 -%}{{ hover_image | image_url: width: 360 }} 360w,{%- endif -%}
                 {%- if hover_image.width >= 533 -%}{{ hover_image | image_url: width: 533 }} 533w,{%- endif -%}
                 {%- if hover_image.width >= 720 -%}{{ hover_image | image_url: width: 720 }} 720w,{%- endif -%}"
               src="{{ hover_image | image_url: width: 533 }}"
-              sizes="{{ card_sizes }}"
+              sizes="{{ hover_sizes }}"
               alt=""
               class="product-card__image product-card__image--hover"
               loading="lazy"

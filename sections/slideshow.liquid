@@ -321,6 +321,17 @@
     cursor: pointer;
   }
 
+  /* LA PUCE PORTE SON PROPRE APLAT, ELLE NE SE FIE PAS A L'IMAGE.
+     Les puces sont posees sur la diapositive : leur bord tirait sa couleur de
+     la palette et la puce entiere etait a opacity 0.55, donc son contraste
+     dependait de l'image en dessous — mesure du theme d'essai le 26/10/2026 :
+     bord #1a1a1a sur #58534d (l'image), 2,21:1 pour un seuil de 3 (WCAG
+     1.4.11), sur 8 releves et jusqu'a 1,00:1 sur un media noir.
+     La puce est donc OPAQUE, et son bord sombre est pris entre deux zones
+     claires : son remplissage a l'interieur, un lisere de fond a l'exterieur.
+     Le rapport mesure devient celui de la palette (texte contre fond), que le
+     controle verifie deja. L'etat actif ne se distingue plus par l'opacite
+     mais par la taille et le remplissage — jamais par la couleur seule. */
   .slideshow__dot::before {
     content: '';
     display: block;
@@ -329,16 +340,14 @@
     border: 1px solid var(--color-text);
     border-radius: 50%;
     background-color: var(--color-background);
-    opacity: 0.55;
-    box-shadow: var(--shadow-sm);
-    transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+    box-shadow: 0 0 0 1px var(--color-background), var(--shadow-sm);
+    transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
   }
 
   .slideshow__dot.is-active::before {
-    opacity: 1;
     transform: scale(1.35);
     background-color: var(--color-primary);
-    border-color: var(--color-primary);
+    border-color: var(--color-on-primary);
   }
 
   {%- comment -%}

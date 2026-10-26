@@ -1466,6 +1466,19 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 
 .btn--primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); }
 
+/* ANNEAU SUR UN APLAT DE MARQUE. L'anneau global est « 2px solid
+   var(--color-text) » double d'un halo blanc : sur un aplat de
+   --color-primary CLAIR (palette inverse : primaire #e5e5e5, texte #e5e5e5)
+   le contour ET le halo sont clairs, et aucun pixel de l'anneau ne contraste
+   — mesure du theme d'essai, px 0 sur 292 requis, focusVisible vrai
+   (26/10/2026). Sur cet aplat, les deux tons se prennent donc DANS l'aplat :
+   l'encre qui y est deja lisible (--color-on-primary, choisie pour le
+   contraste maximal avec la primaire) et la primaire elle-meme. */
+.btn--primary:focus-visible {
+  outline-color: var(--color-on-primary);
+  box-shadow: 0 0 0 2px var(--color-primary);
+}
+
 .btn--secondary {
   background: transparent;
   color: var(--color-primary-text, var(--color-primary));

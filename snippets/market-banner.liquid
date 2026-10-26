@@ -71,6 +71,18 @@
       .market-banner__close:hover {
         opacity: 1;
       }
+
+      /* MEME RAISON QUE L'ENCRE CI-DESSUS, POUR L'ANNEAU DE FOCUS. L'anneau
+         global est « 2px solid var(--color-text) » double d'un halo blanc :
+         sur l'aplat --color-primary du bandeau, clair en palette inverse
+         (primaire #e5e5e5, texte #e5e5e5), le contour et le halo sont tous
+         deux clairs et aucun pixel ne contraste — mesure du theme d'essai,
+         px 0 sur 292 requis, focusVisible vrai, sur 20 releves (26/10/2026).
+         Les deux tons se prennent donc dans l'aplat lui-meme. */
+      .market-banner :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+        outline-color: var(--color-on-primary);
+        box-shadow: 0 0 0 2px var(--color-primary);
+      }
     {%- endstyle -%}
 
     {%- comment -%}

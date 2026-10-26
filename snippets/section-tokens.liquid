@@ -34,6 +34,27 @@
       assign text = settings.color_text
     endif
   endif
+
+  comment
+    UNE ENCRE FOURNIE QUI NE TIENT PAS SUR LE FOND SE RELEVE. Jusqu'ici l'encre
+    n'etait choisie d'apres le fond que lorsque le reglage MANQUAIT : quand le
+    marchand en fournissait une qui contraste mal avec le fond de SA section,
+    elle passait telle quelle. Mesure du theme d'essai le 26/10/2026, consigne
+    C15, chaque couleur que le marchand peut choisir : le tri de collection
+    rendait une encre sombre sur un media noir, rapport 1,21 pour un seuil de
+    4,5 ; la meme cause produisait la plus grande part des releves etiquetes
+    par un fond et une encre choisis.
+    On garde donc la TEINTE que le marchand a choisie, et on ne corrige que sa
+    luminosite, jusqu'au seuil, par contrast-color. Un marchand qui choisit une
+    encre lisible ne voit aucun changement : la boucle s'arrete au premier tour.
+  endcomment
+  assign text_sur_bg = bg | color_contrast: text
+  if text_sur_bg < 4.5
+    capture text_releve
+      render 'contrast-color', base: text, bg: bg
+    endcapture
+    assign text = text_releve | strip
+  endif
   assign c_accent = settings.color_accent | default: '#c9a96e'
   assign c_primary = settings.color_primary | default: '#1a1a1a'
 

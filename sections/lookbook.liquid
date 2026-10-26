@@ -244,13 +244,24 @@
                 assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), calc(100vw - 2rem)'
             endcase
           -%}
+          {%- comment -%}
+            LARGEURS RESSERREES LA OU LES TUILES EN ONT BESOIN. Les largeurs
+            allaient de 550 a 750 puis a 1100 : pour une tuile qui demande
+            564 px le navigateur prenait 750 (1,33 x sa boite) et pour 448 il
+            prenait 550 (1,23 x) — 5 tuiles en sur-livraison, 103 Ko sur mobile
+            et 114 Ko en bureau de gras (audit de performance 1.8.1, ALERTE A5).
+            Le palier de 2000 px ne sert jamais : la plus grande tuile fait
+            58,33vw, donc 840 px CSS a 1440. On le remplace par 500 et 600, qui
+            tombent juste sur les besoins mesures. Le nombre de largeurs reste
+            a 6, comme l'exige le controle du theme (4 a 6 valeurs).
+          {%- endcomment -%}
           <img
             srcset="{%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-              {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
+              {%- if block.settings.image.width >= 500 -%}{{ block.settings.image | image_url: width: 500 }} 500w,{%- endif -%}
+              {%- if block.settings.image.width >= 600 -%}{{ block.settings.image | image_url: width: 600 }} 600w,{%- endif -%}
               {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
               {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-              {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-              {%- if block.settings.image.width >= 2000 -%}{{ block.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
+              {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
             src="{{ block.settings.image | image_url: width: 1100 }}"
             sizes="{{ tile_sizes }}"
             alt="{{ block.settings.image.alt | escape }}"

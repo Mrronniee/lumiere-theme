@@ -328,7 +328,7 @@
             {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
             {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
             {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-          src="{{ section.settings.image | image_url: width: 1100 }}"
+          src="{{ section.settings.image | image_url: width: 1500 }}"
           sizes="{{ hero_sizes }}"
           alt=""
           loading="eager"
@@ -338,6 +338,46 @@
           height="{{ section.settings.image.height }}"
         >
       {%- endif -%}
+      {%- comment -%}
+        PRECHARGEMENT DU POSTER, AVEC SES LARGEURS. Le poster est ce qui peint
+        la video, donc l'element LCP de l'accueil : il part en preload, avec le
+        meme srcset et le meme sizes que l'<img>, pour arriver tot ET a la
+        bonne largeur. C'est aussi ce qu'exige le controle du theme, qui refuse
+        un poster d'image_url sans preload dans la section (« image et poster
+        du heros en plusieurs largeurs »). Reserve a la section qui ouvre la
+        page : precharger un heros place plus bas volerait la priorite au vrai
+        LCP.
+      {%- endcomment -%}
+      {%- if section.index == 1 and section.settings.image != blank -%}
+        <link
+          rel="preload"
+          as="image"
+          fetchpriority="high"
+          href="{{ section.settings.image | image_url: width: 1500 }}"
+          imagesrcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
+            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
+            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
+            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
+            {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
+          imagesizes="{{ hero_sizes }}"
+        >
+      {%- endif -%}
+      {%- comment -%}
+        LA VIDEO DOIT PEINDRE TOT, SINON ELLE PREND LE LCP A L'ARRIVEE DU FLUX.
+        En 1.7.2 elle portait poster="…width: 1920" : elle peignait a 2 362 ms
+        et l'accueil mobile valait 93. En sortant le poster dans l'<img>
+        voisine (correction de l'ALERTE N8 : 106,7 Ko -> 16,6 Ko) la video a
+        perdu sa peinture precoce ; comme sa boite fait 38 px² de plus que
+        celle de l'<img> (412 x 576,09 contre 412 x 576,00), c'est ELLE que le
+        navigateur retient comme LCP, et elle ne peint qu'apres 2 127,9 Ko de
+        HLS : LCP 10 015 ms, accueil mobile 56 (audit de performance 1.8.1).
+        Le poster revient donc, mais a 1500 px et non 1920 : avec le sizes
+        calcule plus haut, une fenetre de 390 a besoin de 1 182 px et prend
+        l'entree 1500w du srcset de l'<img> — meme URL que ce poster, donc UN
+        SEUL telechargement sur mobile, la ou le defaut se mesure. En bureau
+        l'<img> prend 1920w et le poster coute une requete de 1500w, sur une
+        page qui vaut 98.
+      {%- endcomment -%}
       <video
         loop
         muted
@@ -345,6 +385,7 @@
         preload="none"
         width="{{ section.settings.video.sources.first.width | default: 1920 }}"
         height="{{ section.settings.video.sources.first.height | default: 1080 }}"
+        poster="{{ section.settings.image | image_url: width: 1500 }}"
         data-hero-video
       >
         {%- for source in section.settings.video.sources -%}

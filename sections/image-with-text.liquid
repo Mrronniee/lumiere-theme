@@ -18,6 +18,41 @@
         assign ratio_value = ''
     endcase
 
+    comment
+      LE BESOIN EST PILOTE PAR LA HAUTEUR QUAND LA BOITE EST PLUS HAUTE QUE
+      L'IMAGE. « calc(50vw - 2rem) » decrit la largeur de la boite, mais
+      l'image est recadree en « cover » dans un rapport que le marchand
+      choisit (image_ratio) : il faut largeur x rapport_image / rapport_boite.
+      Mesure de l'audit de performance 1.8.1 : 750 px charges pour 1 166
+      necessaires a 1440 (0,64) et 0,69 a 1350. En « adapt » la boite suit
+      l'image, donc le facteur vaut 1 et rien ne change.
+    endcomment
+    assign iwt_box_ratio = 0
+    case section.settings.image_ratio
+      when 'square'
+        assign iwt_box_ratio = 1.0
+      when 'portrait'
+        assign iwt_box_ratio = 0.75
+      when 'landscape'
+        assign iwt_box_ratio = 1.3333
+    endcase
+    assign iwt_facteur = 1
+    if iwt_box_ratio > 0 and section.settings.image != blank and section.settings.image.height > 0
+      assign iwt_img_ratio = section.settings.image.width | times: 1.0 | divided_by: section.settings.image.height
+      assign iwt_facteur = iwt_img_ratio | divided_by: iwt_box_ratio
+      if iwt_facteur < 1
+        assign iwt_facteur = 1
+      endif
+    endif
+    capture iwt_sizes
+      echo '(min-width: 750px) calc((50vw - 2rem) * '
+      echo iwt_facteur
+      echo '), calc(100vw * '
+      echo iwt_facteur
+      echo ')'
+    endcapture
+    assign iwt_sizes = iwt_sizes | strip
+
     case section.settings.content_alignment
       when 'top'
         assign align_value = 'start'
@@ -190,7 +225,7 @@
             {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
             {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
           src="{{ section.settings.image | image_url: width: 1100 }}"
-          sizes="(min-width: 750px) calc(50vw - 2rem), 100vw"
+          sizes="{{ iwt_sizes }}"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"
           {% if section.index > 2 -%}
