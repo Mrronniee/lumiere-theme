@@ -1034,6 +1034,13 @@ ul, ol {
   align-items: center;
 }
 
+/* Les declencheurs de marche ne se replient pas sur plusieurs lignes : c'est
+   l'en-tete qui se replie quand ils ne tiennent plus (voir ci-dessus). */
+.header__markets .markets-selectors__toggle,
+.header__markets .markets-selectors__label {
+  white-space: nowrap;
+}
+
 .header__inner {
   display: flex;
   align-items: center;
@@ -1335,14 +1342,28 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .product-gallery__nav-btn,
   .product-gallery__zoom
 ):focus-visible {
-  /* L'anneau est rentre dans la plaque du bouton : il se juge donc sur CETTE
-     plaque. currentColor y vaut --color-primary, une couleur de marque qui
-     peut etre aussi sombre que la plaque — mesure du theme d'essai sous la
-     palette sombre, 2 releves. --color-primary-text est la meme teinte,
-     relevee pour etre lisible sur le fond. */
-  outline: 2px solid var(--color-primary-text, currentColor);
+  /* currentColor, ET PAS UN JETON DU FOND DU THEME. Ces boutons sont poses sur
+     un media ou portent leur propre plaque : leur encre a deja ete choisie pour
+     s'y lire, et currentColor la reprend. En 1.8.2 j'avais mis
+     --color-primary-text ici pour reparer les 2 boutons de galerie, et ca a
+     casse les cinq autres : 23 releves sur button.hero__video-control, 3 sur
+     button.video-banner__control et 2 sur a.hero__button--primary, px 0 sur
+     384 requis (mesure du theme d'essai, tour 4) — --color-primary-text est
+     derive pour le FOND DU THEME, qui n'est pas ce qu'il y a sous ces boutons.
+     Meme piege qu'en 1.6.2, ou un anneau partage change pour 9 boutons en
+     avait casse 7 bons. Les deux boutons de galerie, qui ont bien une plaque
+     de --color-background, sont traites seuls juste en dessous. */
+  outline: 2px solid currentColor;
   outline-offset: -4px;
   box-shadow: none;
+}
+
+/* Les boutons de la galerie produit, eux, portent une plaque de
+   --color-background et une encre de marque : sous la palette sombre les deux
+   etaient sombres, 4 px d'anneau mesures (tour 2). --color-primary-text garde
+   la teinte de marque en la relevant sur cette plaque. */
+:where(.product-gallery__nav-btn, .product-gallery__zoom):focus-visible {
+  outline-color: var(--color-primary-text, currentColor);
 }
 
 /* POURQUOI L'ANNEAU RENTRE SUFFIT, ET CE QUI L'EMPECHAIT SUR LE HEROS.
@@ -1829,7 +1850,20 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 }
 
 @media screen and (min-width: 990px) {
-  .mobile-menu, .mobile-menu__overlay { display: none; }
+  /* LE MENU MOBILE RESTE DISPONIBLE QUAND L'EN-TETE EST REPLIE. Depuis que
+     l'en-tete se replie a n'importe quelle largeur ou le menu ne tient pas,
+     il montre son bouton au-dessus de 990 px — mais cette regle y gardait le
+     panneau en display: none, donc le bouton n'ouvrait rien. On ne masque
+     donc le panneau que lorsque l'en-tete n'est PAS replie, ce qui laisse a
+     l'element son display d'origine dans l'autre cas. */
+  body:not(:has(.header.is-nav-condensed)) .mobile-menu,
+  body:not(:has(.header.is-nav-condensed)) .mobile-menu__overlay { display: none; }
+
+  /* Et quand il est replie, pays/langue/devise passent dans ce panneau, comme
+     sous 990 px : dans l'en-tete ils debordaient de 199 px a 1280 et de 410 px
+     a 1024 avec un menu de 8 entrees, et leur texte partait sur 3 a 4 lignes
+     (mesure du theme d'essai, cas menu-une-ligne, tour 4). */
+  .header.is-nav-condensed .header__markets { display: none; }
 }
 
 /* ============================================

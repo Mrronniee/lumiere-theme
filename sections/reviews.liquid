@@ -220,10 +220,16 @@
     flex: 0 0 auto;
   }
 
+  /* 24 px DE HAUT AU MOINS. Ce lien ne faisait que 18,19 px (mesure du theme
+     d'essai a 390 : 276 x 18,19, WCAG 2.5.8). Il est bien espace de ses
+     voisins, ce qui est l'exception du critere, mais la barre du Theme Store
+     demande 24 x 24 pour toute cible tactile. La hauteur minimale ne deplace
+     rien : le texte reste centre dans la cible. */
   .reviews__product {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-height: 24px;
     text-decoration: none;
     color: {{ section.settings.text_color }};
     transition: color var(--transition-fast), opacity var(--transition-fast);
