@@ -144,6 +144,16 @@
     scroll-padding-inline: var(--spacing-sm);
   }
 
+  /* L'ANNEAU RENTRE, PARCE QUE LA ZONE ROGNE CE QUI DEPASSE. Cette zone porte
+     « contain: paint » (voir plus haut) : un anneau pose a 2 px A L'EXTERIEUR
+     du bouton est rogne au bord de la zone, et il n'en reste pas assez pour
+     etre mesure — 2 releves sur le bouton de la colonne mise en avant (mesure
+     du theme d'essai). On le rentre dans le bouton, comme le fait deja le
+     theme pour les boutons poses sur une image. */
+  .comparison__scroller :where(a, button):focus-visible {
+    outline-offset: -3px;
+  }
+
 
   .comparison__table {
     width: 100%;

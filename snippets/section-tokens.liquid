@@ -120,6 +120,18 @@
   endif
 
   comment
+    LE MEILLEUR DES TROIS CANDIDATS NE SUFFIT PAS TOUJOURS. Sur l'aplat de
+    solde d'une palette inverse le meilleur des trois ne montait qu'a 4,27 pour
+    un seuil de 4,5 : la pastille restait en defaut (mesure du theme d'essai,
+    2 releves). On releve donc le candidat retenu jusqu'au seuil, en gardant sa
+    teinte ; quand il y est deja, la boucle s'arrete au premier tour.
+  endcomment
+  capture on_sale_releve
+    render 'contrast-color', base: on_sale, bg: sale_solid
+  endcapture
+  assign on_sale = on_sale_releve | strip
+
+  comment
     Encre discrete posee sur une SURFACE INTERNE (pied du tiroir panier,
     recapitulatif du panier) et non sur le fond de la section :
     --color-text-light est derive pour 4,6:1 sur le FOND, et tombait a 4,37:1

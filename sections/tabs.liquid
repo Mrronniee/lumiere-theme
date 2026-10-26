@@ -19,6 +19,18 @@
     render 'contrast-color', base: active_color, bg: bg_color
   endcapture
   assign active_text = active_text | strip
+  comment
+    L'ANNEAU DE FOCUS PORTE UNE INFORMATION : 3:1 exige sur le fond ou il est
+    dessine, WCAG 1.4.11. La couleur active choisie par le marchand y etait
+    posee telle quelle : sur un fond vif elle tombait a l'invisible, encre
+    blanche relevee sur le panneau d'onglets (mesure du theme d'essai, variante
+    fond=vive). On garde sa teinte et on la releve juste ce qu'il faut.
+  endcomment
+  capture active_ring
+    render 'contrast-color', base: active_color, bg: bg_color, target: 3
+  endcapture
+  assign active_ring = active_ring | strip
+
   assign border_color = text_color | color_mix: bg_color, 18
   assign media_color = text_color | color_mix: bg_color, 6
 
@@ -153,7 +165,7 @@
   }
 
   .tabs__panel:focus-visible {
-    outline: 2px solid {{ active_color }};
+    outline: 2px solid {{ active_ring }};
     outline-offset: 4px;
   }
 

@@ -1335,7 +1335,12 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .product-gallery__nav-btn,
   .product-gallery__zoom
 ):focus-visible {
-  outline: 2px solid currentColor;
+  /* L'anneau est rentre dans la plaque du bouton : il se juge donc sur CETTE
+     plaque. currentColor y vaut --color-primary, une couleur de marque qui
+     peut etre aussi sombre que la plaque — mesure du theme d'essai sous la
+     palette sombre, 2 releves. --color-primary-text est la meme teinte,
+     relevee pour etre lisible sur le fond. */
+  outline: 2px solid var(--color-primary-text, currentColor);
   outline-offset: -4px;
   box-shadow: none;
 }
@@ -1517,9 +1522,15 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   letter-spacing: 0.05em;
 }
 
+/* PAS D'OPACITE SUR DU TEXTE. La valeur choisie etait estompee par
+   « opacity: 0.6 », donc son contraste dependait de l'aplat sous elle : encre
+   #1b1a1a a 0,6 sur l'aplat d'accent #c8a96e, soit 3,34:1 pour un seuil de
+   4,5 (mesure du theme d'essai, palette vive, 6 releves). --color-text-light
+   est deja derive pour 4,6:1 sur le fond courant : on estompe par la couleur,
+   a pleine opacite. */
 .product-variant__label span {
   font-weight: 400;
-  opacity: 0.6;
+  color: var(--color-text-light);
   text-transform: none;
   margin-left: 0.25rem;
 }
@@ -2102,8 +2113,12 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
      --color-on-input est derive sur --input-bg dans snippets/css-variables. */
   color: var(--color-on-input, var(--color-text));
   /* Le bord d'un champ porte une information : 3:1 exige (WCAG 1.4.11).
-     --color-border, un filet decoratif a 12 %, mesurait 1,28:1. */
-  border-color: var(--color-border-strong, var(--color-border));
+     --color-border, un filet decoratif a 12 %, mesurait 1,28:1.
+     --color-border-strong est derive pour 3:1 sur le fond du THEME, alors que
+     le bord longe l'aplat DU CHAMP : sur le champ de quantite le rapport
+     tombait a 1,05 (mesure du theme d'essai, 9 releves).
+     --color-border-input est derive sur --input-bg. */
+  border-color: var(--color-border-input, var(--color-border-strong, var(--color-border)));
 }
 
 /* Memes 3:1 pour les autres controles de saisie : quantites, cases de
@@ -2122,7 +2137,7 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
 .gift-card-recipient__fields input,
 .gift-card-recipient__fields select,
 .gift-card-recipient__fields textarea {
-  border-color: var(--color-border-strong, var(--color-border));
+  border-color: var(--color-border-input, var(--color-border-strong, var(--color-border)));
 }
 
 /* Un champ de saisie fait au moins 16 px : en dessous, Safari iOS zoome la
