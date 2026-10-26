@@ -311,6 +311,23 @@
     /** Calques qui piegent le focus, du plus ancien au plus recent. */
     focusTraps: [],
 
+    /**
+     * Vrai quand ce calque est celui du dessus, donc celui qu'Echap doit
+     * fermer. UN SEUL ECHAP NE DESCEND QUE D'UN CRAN : chaque calque ecoute
+     * Echap sur document, donc sans ce test ils se fermaient tous ensemble —
+     * 4 releves « superposes-echap-multiple » sur button.mini-cart__close
+     * (mesure d'interactions.cjs, 26/10/2026). Quand aucun piege n'est pose,
+     * le calque repond comme avant.
+     * @param {Element} [conteneur] Le calque qui veut repondre a Echap.
+     * @returns {boolean}
+     */
+    echapPourMoi(conteneur) {
+      const pile = utils.focusTraps;
+      if (!pile.length) return true;
+      if (!conteneur) return false;
+      return pile[pile.length - 1] === conteneur;
+    },
+
     trapFocus(container, firstFocus) {
       // Une reouverture ne doit pas empiler un second piege sur le premier.
       utils.releaseFocus(container);
@@ -703,9 +720,38 @@
     init() {
       this.overlay = document.querySelector('[data-mini-cart-overlay]');
       this.drawer = document.querySelector('[data-mini-cart]');
+      this.promouvoirDeclencheurs();
       if (!this.bound) {
         this.bindEvents();
         this.bound = true;
+      }
+    },
+
+    /**
+     * Le declencheur du tiroir reste un <a href> dans le HTML, pour que le
+     * panier marche sans JavaScript. Mais des que le JS prend la main il
+     * n'emmene plus nulle part : il ouvre une fenetre. Un lecteur d'ecran
+     * annoncait donc « lien » pour quelque chose qui se comporte comme un
+     * bouton (mesure d'interactions.cjs, code declencheur-lien, 2 releves sur
+     * a.header__action--cart). On le promeut ici, au moment ou le JS le prend
+     * en charge : le repli sans JavaScript garde son href intact.
+     */
+    promouvoirDeclencheurs() {
+      if (!this.drawer) return;
+      for (const el of document.querySelectorAll('[data-cart-toggle]')) {
+        if (el.tagName !== 'A') continue;
+        el.setAttribute('role', 'button');
+        el.setAttribute('aria-haspopup', 'dialog');
+        el.setAttribute('aria-controls', this.drawer.id || 'MiniCart');
+        el.setAttribute('aria-expanded', this.state.isOpen ? 'true' : 'false');
+      }
+    },
+
+    /** Tient aria-expanded des declencheurs a jour avec l'etat du tiroir. */
+    synchroniserDeclencheurs() {
+      for (const el of document.querySelectorAll('[data-cart-toggle]')) {
+        if (el.tagName !== 'A') continue;
+        el.setAttribute('aria-expanded', this.state.isOpen ? 'true' : 'false');
       }
     },
 
@@ -796,6 +842,7 @@
           if (e.key !== 'Escape' && e.key !== 'Esc') return;
           const drawer = this.drawer || document.querySelector('[data-mini-cart]');
           if (!this.state.isOpen && !drawer?.classList.contains('is-open')) return;
+          if (!utils.echapPourMoi(drawer)) return;
           e.preventDefault();
           this.close();
         },
@@ -863,6 +910,7 @@
       this.overlay?.classList.add('is-visible');
       utils.lockScroll(true);
       utils.trapFocus(this.drawer, this.drawer.querySelector('[data-mini-cart-close]'));
+      this.synchroniserDeclencheurs();
     },
 
     close() {
@@ -873,6 +921,7 @@
       this.overlay?.classList.remove('is-visible');
       utils.lockScroll(false);
       utils.releaseFocus(this.drawer);
+      this.synchroniserDeclencheurs();
       // Le declencheur peut avoir ete remplace par un re-rendu de section :
       // on retombe alors sur le bouton panier du header.
       const candidate = this.lastFocus;
@@ -1260,7 +1309,10 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.modal.classList.contains('is-active')) this.close();
+        if (e.key !== 'Escape') return;
+        if (!this.modal.classList.contains('is-active')) return;
+        if (!utils.echapPourMoi(this.modal)) return;
+        this.close();
       });
 
       this.modal.addEventListener('click', (e) => {
@@ -2091,7 +2143,10 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.modal.classList.contains('is-active')) this.close();
+        if (e.key !== 'Escape') return;
+        if (!this.modal.classList.contains('is-active')) return;
+        if (!utils.echapPourMoi(this.modal)) return;
+        this.close();
       });
     },
 
@@ -2176,7 +2231,10 @@
       });
 
       document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && this.filters?.classList.contains('is-open')) this.closeFilters();
+        if (e.key !== 'Escape') return;
+        if (!this.filters || !this.filters.classList.contains('is-open')) return;
+        if (!utils.echapPourMoi(this.filters)) return;
+        this.closeFilters();
       });
     },
 
