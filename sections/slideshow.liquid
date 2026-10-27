@@ -547,6 +547,42 @@
             if forloop.first
               assign is_first = true
             endif
+
+            comment
+              SIZES PILOTE PAR LA HAUTEUR : la diapositive fait height vh de
+              haut et l'image y est recadree en « cover ». « 100vw » ne decrit
+              que la largeur : 1 100 px charges pour 1 440 necessaires a 1440
+              (0,76) sur les diapositives non actives (audit de performance
+              1.8.1, ALERTE A4). Meme mecanique que sections/hero.liquid.
+            endcomment
+            assign slide_ratio = 1.78
+            if slide_image.height > 0
+              assign slide_ratio = slide_image.width | times: 1.0 | divided_by: slide_image.height
+            endif
+            assign slide_ratio_mobile = slide_ratio
+            if slide_image_mobile != blank and slide_image_mobile.height > 0
+              assign slide_ratio_mobile = slide_image_mobile.width | times: 1.0 | divided_by: slide_image_mobile.height
+            endif
+            capture slide_sizes_mobile
+              echo 'max(100vw, calc('
+              echo section.settings.height_mobile | default: 65
+              echo 'vh * '
+              echo slide_ratio_mobile
+              echo '))'
+            endcapture
+            assign slide_sizes_mobile = slide_sizes_mobile | strip
+            capture slide_sizes
+              echo '(max-width: 749px) max(100vw, calc('
+              echo section.settings.height_mobile | default: 65
+              echo 'vh * '
+              echo slide_ratio
+              echo ')), max(100vw, calc('
+              echo section.settings.height | default: 85
+              echo 'vh * '
+              echo slide_ratio
+              echo '))'
+            endcapture
+            assign slide_sizes = slide_sizes | strip
           -%}
           <div
             class="slideshow__slide{% if forloop.first %} is-active{% endif %}"
@@ -567,7 +603,7 @@
                       {%- if slide_image_mobile.width >= 550 -%}{{ slide_image_mobile | image_url: width: 550 }} 550w,{%- endif -%}
                       {%- if slide_image_mobile.width >= 750 -%}{{ slide_image_mobile | image_url: width: 750 }} 750w,{%- endif -%}
                       {%- if slide_image_mobile.width >= 1100 -%}{{ slide_image_mobile | image_url: width: 1100 }} 1100w,{%- endif -%}"
-                    sizes="100vw"
+                    sizes="{{ slide_sizes_mobile }}"
                     width="{{ slide_image_mobile.width }}"
                     height="{{ slide_image_mobile.height }}"
                   >
@@ -587,7 +623,7 @@
                     {%- if slide_image.width >= 1500 -%}{{ slide_image | image_url: width: 1500 }} 1500w,{%- endif -%}
                     {%- if slide_image.width >= 1920 -%}{{ slide_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
                   src="{{ slide_image | image_url: width: 1920 }}"
-                  sizes="100vw"
+                  sizes="{{ slide_sizes }}"
                   alt="{{ slide_image.alt | escape }}"
                   {% render 'focal', image: slide_image %}
                   width="{{ slide_image.width }}"
@@ -830,6 +866,16 @@
           }
         });
 
+        /* Editeur de theme : le bloc choisi est montre, et la rotation attend
+           que le marchand le quitte. */
+        root.addEventListener('shopify:block:select', function (event) {
+          var index = slides.indexOf(event.target.closest('[data-slide]'));
+          if (index < 0) return;
+          pause();
+          goTo(index);
+        });
+        root.addEventListener('shopify:block:deselect', resume);
+
         root.addEventListener('mouseenter', pause);
         root.addEventListener('mouseleave', resume);
         root.addEventListener('focusin', pause);
@@ -864,6 +910,9 @@
       })();
     </script>
   {%- endif -%}
+{%- elsif request.design_mode -%}
+  {%- comment -%} Message pour l'editeur seulement : en boutique la section reste vide. {%- endcomment -%}
+  <p class="editor-empty container">{{ 'sections.slideshow.no_blocks' | t }}</p>
 {%- endif -%}
 
 {% schema %}

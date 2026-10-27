@@ -84,7 +84,8 @@
     color: {{ section.settings.text_color }};
   }
 
-  .size-guide__table thead th {
+  .size-guide__table thead th,
+  .size-guide__table thead td {
     font-family: var(--font-heading);
     font-size: 0.875rem;
     font-weight: 400;
@@ -218,7 +219,11 @@
           <caption class="size-guide__caption">{{ caption_text }}</caption>
           <thead>
             <tr>
-              <th scope="col">{{ section.settings.row_heading | escape }}</th>
+              {%- if section.settings.row_heading != blank -%}
+                <th scope="col">{{ section.settings.row_heading | escape }}</th>
+              {%- else -%}
+                <td></td>
+              {%- endif -%}
               {%- for col in active_cols -%}
                 {%- assign heading_key = 'col_' | append: col | append: '_heading' -%}
                 <th scope="col">{{ section.settings[heading_key] | escape }}</th>
@@ -229,7 +234,11 @@
             {%- for block in section.blocks -%}
               {%- if block.type == 'row' -%}
                 <tr {{ block.shopify_attributes }}>
-                  <th scope="row">{{ block.settings.label | escape }}</th>
+                  {%- if block.settings.label != blank -%}
+                    <th scope="row">{{ block.settings.label | escape }}</th>
+                  {%- else -%}
+                    <td></td>
+                  {%- endif -%}
                   {%- for col in active_cols -%}
                     {%- assign value_key = 'col_' | append: col -%}
                     <td>{{ block.settings[value_key] | escape }}</td>

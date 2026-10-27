@@ -174,10 +174,6 @@
         "layout_container_width": {
           "label": "Container width"
         },
-        "layout_section_spacing": {
-          "label": "Section spacing",
-          "info": "Vertical spacing between sections"
-        },
         "layout_corner_radius": {
           "label": "Corner radius"
         }

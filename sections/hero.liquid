@@ -322,46 +322,30 @@
           charge en priorite. La video se superpose par-dessus (voir la regle
           .hero__media--video dans le {%- style -%}).
         {%- endcomment -%}
-        <img
-          srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-          src="{{ section.settings.image | image_url: width: 1500 }}"
-          sizes="{{ hero_sizes }}"
-          alt=""
-          loading="eager"
-          fetchpriority="high"
-          {% render 'focal', image: section.settings.image %}
-          width="{{ section.settings.image.width }}"
-          height="{{ section.settings.image.height }}"
-        >
+        {%- liquid
+          assign hero_preload = false
+          if section.index == 1
+            assign hero_preload = true
+          endif
+          assign hero_focal = section.settings.image.presentation.focal_point | default: '50% 50%' | prepend: 'object-position: '
+        -%}
+        {{ section.settings.image | image_url: width: 1500 | image_tag:
+          widths: '375, 750, 1100, 1500, 1920',
+          sizes: hero_sizes,
+          alt: '',
+          loading: 'eager',
+          fetchpriority: 'high',
+          preload: hero_preload,
+          style: hero_focal
+        }}
       {%- endif -%}
       {%- comment -%}
-        PRECHARGEMENT DU POSTER, AVEC SES LARGEURS. Le poster est ce qui peint
-        la video, donc l'element LCP de l'accueil : il part en preload, avec le
-        meme srcset et le meme sizes que l'<img>, pour arriver tot ET a la
-        bonne largeur. C'est aussi ce qu'exige le controle du theme, qui refuse
-        un poster d'image_url sans preload dans la section (« image et poster
-        du heros en plusieurs largeurs »). Reserve a la section qui ouvre la
-        page : precharger un heros place plus bas volerait la priorite au vrai
-        LCP.
+        PRECHARGEMENT DU POSTER, AVEC SES LARGEURS : preload: true sur l'image_tag
+        ci-dessus, que Shopify rend en en-tete Link avec le meme srcset et le meme
+        sizes que l'<img> (avertissement AssetPreload du Theme Check pour un
+        <link rel="preload"> ecrit a la main). Reserve a la section qui ouvre la
+        page : precharger un heros place plus bas volerait la priorite au vrai LCP.
       {%- endcomment -%}
-      {%- if section.index == 1 and section.settings.image != blank -%}
-        <link
-          rel="preload"
-          as="image"
-          fetchpriority="high"
-          href="{{ section.settings.image | image_url: width: 1500 }}"
-          imagesrcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {%- if section.settings.image.width >= 1920 -%}{{ section.settings.image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-          imagesizes="{{ hero_sizes }}"
-        >
-      {%- endif -%}
       {%- comment -%}
         LA VIDEO DOIT PEINDRE TOT, SINON ELLE PREND LE LCP A L'ARRIVEE DU FLUX.
         En 1.7.2 elle portait poster="…width: 1920" : elle peignait a 2 362 ms

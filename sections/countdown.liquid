@@ -302,7 +302,7 @@
         data-countdown-timer
         role="timer"
         aria-live="off"
-        {% if is_expired %}hidden{% endif %}
+        {% if is_expired or has_target == false %}hidden{% endif %}
       >
         <div class="countdown__unit">
           <span class="countdown__value" data-unit="days">{{ days_display }}</span>
@@ -340,10 +340,16 @@
         {%- endif -%}
       </p>
 
-      {%- if section.settings.expired_message != blank -%}
-        <p class="countdown__expired" data-countdown-expired {% unless is_expired %}hidden{% endunless %}>
-          {{- section.settings.expired_message | escape -}}
-        </p>
+      {%- comment -%}
+        Le message de fin est celui du marchand, sinon la phrase traduite du
+        theme : a zero, le compte a rebours dit qu'il est termine.
+      {%- endcomment -%}
+      <p class="countdown__expired" data-countdown-expired {% unless is_expired %}hidden{% endunless %}>
+        {{- expired_announcement | escape -}}
+      </p>
+
+      {%- if has_target == false and request.design_mode -%}
+        <p class="editor-empty">{{ 'sections.countdown.no_date' | t }}</p>
       {%- endif -%}
 
       {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
@@ -507,8 +513,7 @@
       "type": "text",
       "id": "target_date",
       "label": "t:sections.countdown.settings.target_date.label",
-      "info": "t:sections.countdown.settings.target_date.info",
-      "default": "2026-12-24"
+      "info": "t:sections.countdown.settings.target_date.info"
     },
     {
       "type": "text",
@@ -537,7 +542,7 @@
       "type": "textarea",
       "id": "text",
       "label": "t:sections.countdown.settings.text.label",
-      "default": "Take 20% off the whole collection until the timer runs out."
+      "default": "Our seasonal selection is available until the timer runs out."
     },
     {
       "type": "text",
@@ -559,8 +564,7 @@
       "type": "text",
       "id": "expired_message",
       "label": "t:sections.countdown.settings.expired_message.label",
-      "info": "t:sections.countdown.settings.expired_message.info",
-      "default": "This offer has ended. Thank you all."
+      "info": "t:sections.countdown.settings.expired_message.info"
     },
     {
       "type": "checkbox",

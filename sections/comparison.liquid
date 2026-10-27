@@ -154,6 +154,14 @@
     outline-offset: -3px;
   }
 
+  /* La zone elle-meme est un arret de tabulation (tabindex 0, pour defiler au
+     clavier) et occupe toute la largeur a 320 : un anneau pose a l'exterieur
+     sortait de la fenetre (1 anneau non mesurable a 320, audit d'accessibilite
+     1.8.1). Il est rentre dans la zone. */
+  .comparison__scroller:focus-visible {
+    outline-offset: -2px;
+  }
+
 
   .comparison__table {
     width: 100%;
@@ -577,13 +585,13 @@
       "type": "text",
       "id": "row_label_1",
       "label": "t:sections.comparison.settings.row_label_1.label",
-      "default": "Free shipping"
+      "default": "Delivery options"
     },
     {
       "type": "text",
       "id": "row_label_2",
       "label": "t:sections.comparison.settings.row_label_2.label",
-      "default": "Free returns within 30 days"
+      "default": "Gift wrapping"
     },
     {
       "type": "text",
@@ -607,7 +615,7 @@
       "type": "text",
       "id": "row_label_6",
       "label": "t:sections.comparison.settings.row_label_6.label",
-      "default": "Two-year extended warranty"
+      "default": "Repair service"
     },
     {
       "type": "header",
@@ -655,7 +663,7 @@
           "id": "price",
           "label": "t:sections.comparison.blocks.column.settings.price.label",
           "info": "t:sections.comparison.blocks.column.settings.price.info",
-          "default": "€29"
+          "default": "Your price"
         },
         {
           "type": "checkbox",
@@ -759,7 +767,7 @@
           "settings": {
             "title": "Essential",
             "subtitle": "A first taste of the house",
-            "price": "€29",
+            "price": "Your price",
             "highlight": false,
             "button_label": "Choose this plan",
             "has_1": true,
@@ -775,7 +783,7 @@
           "settings": {
             "title": "Signature",
             "subtitle": "Our most popular offer",
-            "price": "€59",
+            "price": "Your price",
             "highlight": true,
             "button_label": "Choose this plan",
             "has_1": true,
@@ -784,8 +792,8 @@
             "has_4": false,
             "has_5": true,
             "has_6": true,
-            "feature_1": "From €50",
-            "feature_5": "Response within 24 hours"
+            "feature_1": "Included",
+            "feature_5": "Priority replies"
           }
         },
         {
@@ -793,7 +801,7 @@
           "settings": {
             "title": "Atelier",
             "subtitle": "Tailored support",
-            "price": "€99",
+            "price": "Your price",
             "highlight": false,
             "button_label": "Choose this plan",
             "has_1": true,

@@ -259,7 +259,6 @@
     --color-text-light: {{ c_text_light }};
     --color-border: {{ c_text | color_mix: c_bg, 12 }};
     --color-border-strong: {{ c_border_strong }};
-    --color-overlay: {{ c_primary | color_modify: 'alpha', 0.4 }};
     --color-sale: {{ c_sale_solid }};
     --color-on-sale: {{ c_on_sale }};
     --color-text-light-surface: {{ c_text_light_surface }};
@@ -287,7 +286,6 @@
 
     --container-width: {{ settings.layout_container_width | default: 1440 }}px;
     --container-padding: 2rem;
-    --section-spacing: {{ settings.layout_section_spacing | default: 64 }}px;
     --radius: {{ settings.layout_corner_radius | default: 0 }}px;
 
     --btn-radius: {{ settings.button_radius | default: 0 }}px;
@@ -303,9 +301,6 @@
     --color-on-input: {{ c_on_input }};
     --color-border-input: {{ c_border_input }};
     --select-arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23{{ c_arrow }}' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-
-    --icon-stroke: {{ settings.icon_stroke_width | default: 15 | divided_by: 10.0 }};
-    --icon-size: {{ settings.icon_size | default: 24 }}px;
 
     --drawer-width: {{ settings.drawer_width | default: 460 }}px;
     --drawer-overlay: rgba(0, 0, 0, {{ settings.drawer_overlay_opacity | default: 50 | divided_by: 100.0 }});

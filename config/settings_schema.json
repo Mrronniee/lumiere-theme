@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.8.1",
+    "theme_version": "1.8.2",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -290,17 +290,6 @@
         "default": 1440,
         "unit": "px",
         "label": "t:settings_schema.mise_en_page.settings.layout_container_width.label"
-      },
-      {
-        "type": "range",
-        "id": "layout_section_spacing",
-        "min": 32,
-        "max": 160,
-        "step": 8,
-        "default": 64,
-        "unit": "px",
-        "label": "t:settings_schema.mise_en_page.settings.layout_section_spacing.label",
-        "info": "t:settings_schema.mise_en_page.settings.layout_section_spacing.info"
       },
       {
         "type": "range",

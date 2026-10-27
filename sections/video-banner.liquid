@@ -47,6 +47,48 @@
     assign vb_floor_pct = vb_floor_pct | plus: 3
   endfor
   assign vb_floor_alpha = vb_floor_pct | divided_by: 100.0
+
+  comment
+    SIZES DE LA COUVERTURE, PILOTE PAR LA HAUTEUR. « 100vw » decrit la largeur
+    de la boite, mais la couverture est recadree en « cover » : en fond, la
+    boite fait au moins height vh de haut, donc le besoin est hauteur x rapport
+    de l'image quand c'est la hauteur qui commande ; integree, la boite est en
+    16/9 (4/3 en mobile) dans le conteneur. Releve de la session des outils
+    (sonde perf.cjs, 25/10/2026) : couverture servie a 0,51 de sa taille sur la
+    page des sections. Meme mecanique que sections/hero.liquid.
+  endcomment
+  assign vb_img_ratio = 1.78
+  if section.settings.cover_image != blank and section.settings.cover_image.height > 0
+    assign vb_img_ratio = section.settings.cover_image.width | times: 1.0 | divided_by: section.settings.cover_image.height
+  endif
+  if section.settings.layout == 'background'
+    assign vb_h_mobile = section.settings.height_mobile | default: 60
+    assign vb_h_desk = section.settings.height | default: 80
+    capture vb_sizes
+      echo '(max-width: 749px) max(100vw, calc('
+      echo vb_h_mobile
+      echo 'vh * '
+      echo vb_img_ratio
+      echo ')), max(100vw, calc('
+      echo vb_h_desk
+      echo 'vh * '
+      echo vb_img_ratio
+      echo '))'
+    endcapture
+  else
+    assign vb_f_mobile = vb_img_ratio | divided_by: 1.3333 | at_least: 1
+    assign vb_f_desk = vb_img_ratio | divided_by: 1.7778 | at_least: 1
+    capture vb_sizes
+      echo '(max-width: 749px) calc((100vw - 3rem) * '
+      echo vb_f_mobile
+      echo '), calc(min(100vw - 4rem, '
+      echo settings.layout_container_width | default: 1440
+      echo 'px) * '
+      echo vb_f_desk
+      echo ')'
+    endcapture
+  endif
+  assign vb_sizes = vb_sizes | strip
 -%}
 
 {%- style -%}
@@ -373,7 +415,7 @@
               {%- if section.settings.cover_image.width >= 1500 -%}{{ section.settings.cover_image | image_url: width: 1500 }} 1500w,{%- endif -%}
               {%- if section.settings.cover_image.width >= 1920 -%}{{ section.settings.cover_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
             src="{{ section.settings.cover_image | image_url: width: 1100 }}"
-            sizes="100vw"
+            sizes="{{ vb_sizes }}"
             alt=""
             class="video-banner__cover"
             {% if section.index > 2 -%}
@@ -423,7 +465,7 @@
             {%- if section.settings.cover_image.width >= 1500 -%}{{ section.settings.cover_image | image_url: width: 1500 }} 1500w,{%- endif -%}
             {%- if section.settings.cover_image.width >= 1920 -%}{{ section.settings.cover_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
           src="{{ section.settings.cover_image | image_url: width: 1920 }}"
-          sizes="100vw"
+          sizes="{{ vb_sizes }}"
           alt="{{ section.settings.cover_image.alt | escape }}"
           class="video-banner__cover"
           {% if section.index > 2 -%}

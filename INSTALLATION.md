@@ -49,14 +49,14 @@ at the bottom of the left sidebar):
 | Layout · Buttons · Inputs · Icons · Badges | Container width, corner radius, button case and border, field background, icon stroke width. |
 | Product cards | Image ratio, text alignment, vendor. |
 | Prices | Currency code, "from" prefix on variable prices, sale display (colour, badge, or both). |
-| Variant pickers · Colour swatches | Buttons or dropdown, hide unavailable variants, swatch size and shape, and the colour mapping below. |
+| Variant pickers · Color swatches | Buttons or dropdown, hide unavailable variants, swatch size and shape, and the colour mapping below. |
 | Cart · Drawers | Side drawer or dedicated page, order note, free-shipping threshold, drawer width and side. |
 | Shopify Markets | Country, language and currency selectors. |
 | Animations · Popovers and modals · Search · Custom CSS | Reveal style and duration, overlay opacity, results per page, and a free-form CSS box. |
 
-### Colour swatches, in one sentence
+### Color swatches, in one sentence
 
-Under **Theme settings → Colour swatches**, map your product option values to
+Under **Theme settings → Color swatches**, map your product option values to
 hex codes, one per line:
 
 ```

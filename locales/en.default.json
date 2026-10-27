@@ -130,7 +130,8 @@
       "aria_label": "Featured collections"
     },
     "trust_badges": {
-      "aria_label": "Our guarantees"
+      "aria_label": "Our guarantees",
+      "no_blocks": "Add an item to this section."
     },
     "blog_posts": {
       "view_all": "View all posts",
@@ -147,7 +148,8 @@
       "slide_label": "Slide {{ index }} of {{ total }}",
       "previous": "Previous slide",
       "next": "Next slide",
-      "go_to_slide": "Go to slide {{ index }}"
+      "go_to_slide": "Go to slide {{ index }}",
+      "no_blocks": "Add a slide to this section."
     },
     "countdown": {
       "aria_label": "Countdown",
@@ -156,11 +158,13 @@
       "minutes": "Minutes",
       "seconds": "Seconds",
       "summary": "Time remaining: {{ days }} days, {{ hours }} hours, {{ minutes }} minutes.",
-      "finished": "The countdown has ended."
+      "finished": "The countdown has ended.",
+      "no_date": "Choose an end date to start the countdown."
     },
     "tabs": {
       "tablist_label": "Content tabs",
-      "tab_fallback": "Tab {{ index }}"
+      "tab_fallback": "Tab {{ index }}",
+      "no_blocks": "Add a tab to this section."
     },
     "size_guide": {
       "aria_label": "Size guide",
@@ -234,6 +238,9 @@
     "footer": {
       "column_needs_menu": "Choose a menu for this column to appear.",
       "brand_needs_description": "Add a short description of your store."
+    },
+    "announcement_bar": {
+      "editor_empty": "Turn on the announcement and write its text to show this bar."
     }
   },
   "cart": {

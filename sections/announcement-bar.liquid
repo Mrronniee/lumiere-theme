@@ -20,6 +20,9 @@
       {%- endif -%}
     </div>
   </div>
+{%- elsif request.design_mode -%}
+  {%- comment -%} Message pour l'editeur seulement : en boutique la section reste vide. {%- endcomment -%}
+  <p class="editor-empty container">{{ 'sections.announcement_bar.editor_empty' | t }}</p>
 {%- endif -%}
 
 {% schema %}

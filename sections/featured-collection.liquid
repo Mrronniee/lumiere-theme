@@ -62,7 +62,7 @@
      quand le marchand a coupe les animations ou quand le visiteur demande
      moins de mouvement, et un element a opacite 0 n'est jamais candidat LCP —
      la priorite haute posee sur la premiere carte etait donc perdue. */
-  .js.animations-on .featured-collection__product {
+  .js.animations-on .featured-collection__product[data-animate] {
     opacity: 0;
     transform: translateY(30px);
   }
@@ -129,7 +129,12 @@
   {%- if collection != blank -%}
     <div class="featured-collection__grid">
       {%- for product in collection.products limit: section.settings.products_to_show -%}
-        <div class="featured-collection__product" data-animate>
+        {%- comment -%}
+          Pas de fondu sur la premiere rangee : quand la section ouvre la page,
+          une carte a opacite 0 n'est peinte qu'apres le fondu, et l'une d'elles
+          est l'element LCP en mobile.
+        {%- endcomment -%}
+        <div class="featured-collection__product"{% if forloop.index > 4 %} data-animate{% endif %}>
           {%- comment -%}
             Les premieres cartes sont au-dessus de la ligne de flottaison et
             l'une d'elles est l'element LCP en mobile : chargement immediat, la
@@ -193,7 +198,12 @@
     <div class="featured-collection__grid">
       {%- assign placeholder_count = section.settings.products_to_show | at_most: 6 -%}
       {%- for i in (1..placeholder_count) -%}
-        <div class="featured-collection__product" data-animate>
+        {%- comment -%}
+          Pas de fondu sur la premiere rangee : quand la section ouvre la page,
+          une carte a opacite 0 n'est peinte qu'apres le fondu, et l'une d'elles
+          est l'element LCP en mobile.
+        {%- endcomment -%}
+        <div class="featured-collection__product"{% if forloop.index > 4 %} data-animate{% endif %}>
           <div class="product-card product-card--placeholder">
             <div class="product-card__media">
               <span class="placeholder-wrap" aria-hidden="true">{{ 'product-' | append: i | placeholder_svg_tag: 'placeholder-svg' }}</span>

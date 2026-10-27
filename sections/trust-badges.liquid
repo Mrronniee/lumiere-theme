@@ -178,6 +178,9 @@
       {%- endfor -%}
     </ul>
   </div>
+{%- elsif request.design_mode -%}
+  {%- comment -%} Message pour l'editeur seulement : en boutique la section reste vide. {%- endcomment -%}
+  <p class="editor-empty container">{{ 'sections.trust_badges.no_blocks' | t }}</p>
 {%- endif -%}
 
 {% schema %}
@@ -308,13 +311,13 @@
           "type": "text",
           "id": "title",
           "label": "t:sections.trust_badges.blocks.item.settings.title.label",
-          "default": "Free shipping"
+          "default": "Delivery"
         },
         {
           "type": "text",
           "id": "text",
           "label": "t:sections.trust_badges.blocks.item.settings.text.label",
-          "default": "Free shipping on orders over €100."
+          "default": "Tell customers how their order reaches them."
         }
       ]
     }
@@ -328,15 +331,15 @@
           "type": "item",
           "settings": {
             "icon": "truck",
-            "title": "Free shipping",
-            "text": "Free shipping on orders over €100."
+            "title": "Delivery",
+            "text": "Tell customers how their order reaches them."
           }
         },
         {
           "type": "item",
           "settings": {
             "icon": "refresh",
-            "title": "30-day returns",
+            "title": "Easy returns",
             "text": "Change your mind, we'll take care of the rest."
           }
         },

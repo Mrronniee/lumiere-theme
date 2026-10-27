@@ -1,5 +1,40 @@
 # Changelog
 
+## 1.8.2 — 2026-10-27
+
+### Fixed
+- **Text and form fields stay readable on every color you choose.** Field text,
+  borders and select arrows now take their color from the field background, the
+  close icon of the market bar from the bar itself, and the video section keeps
+  its paragraph at full reading contrast over any video. Focus rings are judged
+  on the color right under them, including on slideshow dots and gallery
+  buttons.
+- **The wishlist page no longer loops, and no longer jumps.** With a saved item
+  it kept reloading cards; empty, its footer moved after the page appeared.
+- **Keyboard and dialogs.** Escape closes only the top layer, two open panels no
+  longer fight over focus, the cart icon announces itself as a button, and the
+  menu button of a condensed header now opens its menu at every width.
+- **The cart drawer undoes a quantity change it could not save,** instead of
+  showing a number the cart does not have.
+- **Search results are laid out in a grid** — four, three or two columns, like
+  collections — instead of one product per row.
+- **Images load at the size they are shown.** The hero, slideshow, video
+  section, image with text, lookbook and card hover images now ask for the
+  width their cropped frame really needs; the hero preloads its poster, and the
+  first row of a featured collection no longer fades in, so it paints at once.
+- **The theme editor shows what you select.** Choosing a slide shows it,
+  choosing a product tab opens it, a testimonial scrolls into view, and an empty
+  section (announcement bar, slideshow, tabs, trust badges, a countdown without
+  a date) tells you what it needs instead of disappearing. Placeholder blog posts
+  are now shown in the editor only.
+- **Default texts no longer make promises for you.** Shipping times, free
+  returns, warranties, prices, a fixed countdown date, a sample street address
+  and signed reviews were replaced with neutral text you can fill in. Translated
+  fallbacks now show when you leave a button, tab or end-of-countdown text empty.
+- **Smaller fixes.** The password page carries the browser theme color, empty
+  contact and size-guide cells are no longer rendered, and the unused “Section
+  spacing” setting was removed (it never changed anything).
+
 ## 1.8.1 — 2026-10-24
 
 ### Fixed

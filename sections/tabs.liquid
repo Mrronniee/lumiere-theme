@@ -477,6 +477,9 @@
       activate(0, false, false);
     })();
   </script>
+{%- elsif request.design_mode -%}
+  {%- comment -%} Message pour l'editeur seulement : en boutique la section reste vide. {%- endcomment -%}
+  <p class="editor-empty container">{{ 'sections.tabs.no_blocks' | t }}</p>
 {%- endif -%}
 
 {% schema %}
@@ -560,8 +563,7 @@
           "type": "text",
           "id": "title",
           "label": "t:sections.tabs.blocks.tab.settings.title.label",
-          "info": "t:sections.tabs.blocks.tab.settings.title.info",
-          "default": "Description"
+          "info": "t:sections.tabs.blocks.tab.settings.title.info"
         },
         {
           "type": "richtext",
@@ -608,7 +610,7 @@
           "type": "tab",
           "settings": {
             "title": "Shipping & returns",
-            "content": "<p>Shipped within 48 working hours, free delivery over €120. Free returns for 30 days after receipt.</p>"
+            "content": "<p>Explain how orders are shipped and how returns work. A few sentences are enough.</p>"
           }
         }
       ]

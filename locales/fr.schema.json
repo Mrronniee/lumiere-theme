@@ -174,10 +174,6 @@
         "layout_container_width": {
           "label": "Largeur du conteneur"
         },
-        "layout_section_spacing": {
-          "label": "Espacement des sections",
-          "info": "Marge verticale entre les sections"
-        },
         "layout_corner_radius": {
           "label": "Arrondi des angles"
         }

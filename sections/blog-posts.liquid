@@ -248,7 +248,11 @@
   {%- elsif section_blog != blank -%}
     <p class="blog-posts__empty">{{ 'blogs.general.empty' | t }}</p>
 
-  {%- else -%}
+  {%- elsif request.design_mode -%}
+    {%- comment -%}
+      Exemples de billets pour l'editeur seulement : sans blog choisi, la
+      boutique ne montre pas de faux articles aux clients.
+    {%- endcomment -%}
     <div class="blog-posts__grid">
       {%- assign placeholder_count = posts_limit | at_most: 3 -%}
       {%- for i in (1..placeholder_count) -%}
@@ -354,8 +358,7 @@
     {
       "type": "text",
       "id": "view_all_label",
-      "label": "t:sections.blog_posts.settings.view_all_label.label",
-      "default": "Read all articles"
+      "label": "t:sections.blog_posts.settings.view_all_label.label"
     },
     {
       "type": "header",

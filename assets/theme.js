@@ -3151,6 +3151,23 @@
     if (e.target.querySelector('[data-quick-view]')) QuickView.openEmpty();
   });
 
+  /**
+   * Editeur de theme : choisir un bloc doit le montrer. Un <details> ferme
+   * (onglet de la fiche produit) s'ouvre, et un bloc pose dans un rail qui
+   * defile (temoignages) est amene dans la vue. Les diaporamas qui changent de
+   * diapositive ecoutent l'evenement eux-memes (sections/slideshow.liquid).
+   */
+  document.addEventListener('shopify:block:select', (e) => {
+    if (!(e.target instanceof Element)) return;
+    e.target.scrollIntoView({ block: 'nearest', inline: 'start', behavior: e.detail?.load ? 'auto' : 'smooth' });
+  });
+
+  document.addEventListener('shopify:block:select', (e) => {
+    if (!(e.target instanceof Element)) return;
+    const details = e.target.matches('details') ? e.target : e.target.querySelector('details');
+    if (details && !details.open) details.open = true;
+  });
+
   document.addEventListener('shopify:section:deselect', (e) => {
     if (e.target.querySelector('[data-mini-cart]')) Cart.close();
     if (e.target.querySelector('[data-quick-view]')) QuickView.close();

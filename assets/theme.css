@@ -861,10 +861,10 @@ ul, ol {
 }
 
 /* Stagger children */
-.featured-collection__grid .featured-collection__product:nth-child(1) { transition-delay: 0s; }
-.featured-collection__grid .featured-collection__product:nth-child(2) { transition-delay: 0.1s; }
-.featured-collection__grid .featured-collection__product:nth-child(3) { transition-delay: 0.2s; }
-.featured-collection__grid .featured-collection__product:nth-child(4) { transition-delay: 0.3s; }
+.featured-collection__grid .featured-collection__product:nth-child(5) { transition-delay: 0s; }
+.featured-collection__grid .featured-collection__product:nth-child(6) { transition-delay: 0.1s; }
+.featured-collection__grid .featured-collection__product:nth-child(7) { transition-delay: 0.2s; }
+.featured-collection__grid .featured-collection__product:nth-child(8) { transition-delay: 0.3s; }
 
 /* ============================================
    RESPONSIVE
@@ -1982,6 +1982,22 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 @media screen and (max-width: 749px) {
   .search-page__submit { padding: 1rem 1.25rem; }
 }
+/* Grille des resultats de recherche. Elle n'etait stylee que dans le
+   {% style %} de main-collection-product-grid, que la page recherche ne charge
+   pas : une carte par rangee en bureau, une colonne en mobile (images servies a
+   0,26 et 0,62 de leur taille). Les colonnes suivent le sizes de
+   snippets/product-card.liquid : 4 des 1200 px, 3 des 990, 2 en dessous. */
+.search-page__results {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-md);
+}
+@media screen and (min-width: 990px) {
+  .search-page__results { grid-template-columns: repeat(3, 1fr); }
+}
+@media screen and (min-width: 1200px) {
+  .search-page__results { grid-template-columns: repeat(4, 1fr); }
+}
 .search-page__page { grid-column: 1 / -1; padding: var(--spacing-sm) 0; border-bottom: 1px solid var(--color-border); }
 .search-page__page-title { font-family: var(--font-heading); font-size: 1.25rem; font-weight: 400; }
 .search-page__page-excerpt { color: var(--color-text-light); font-size: 0.9375rem; }
@@ -2120,8 +2136,6 @@ a.pagination__item:hover { border-color: var(--color-primary); background: var(-
   right: auto;
   left: 1rem;
 }
-
-.shopify-section { --section-gap: var(--section-spacing, 64px); }
 
 
 /* ============================================
@@ -2421,4 +2435,13 @@ textarea {
   font-size: 0.75rem;
   color: var(--color-text-light);
   margin: -0.5rem 0 0;
+}
+
+/* Message pour l'editeur seulement (request.design_mode) : une section vide
+   dit au marchand ce qui lui manque au lieu de disparaitre. */
+.editor-empty {
+  padding-block: var(--spacing-md, 1.5rem);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--color-text-light);
 }

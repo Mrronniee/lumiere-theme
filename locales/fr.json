@@ -130,7 +130,8 @@
       "aria_label": "Collections en vedette"
     },
     "trust_badges": {
-      "aria_label": "Nos garanties"
+      "aria_label": "Nos garanties",
+      "no_blocks": "Ajoutez un argument à cette section."
     },
     "blog_posts": {
       "view_all": "Voir tous les articles",
@@ -147,7 +148,8 @@
       "slide_label": "Diapositive {{ index }} sur {{ total }}",
       "previous": "Diapositive précédente",
       "next": "Diapositive suivante",
-      "go_to_slide": "Aller à la diapositive {{ index }}"
+      "go_to_slide": "Aller à la diapositive {{ index }}",
+      "no_blocks": "Ajoutez une diapositive à cette section."
     },
     "countdown": {
       "aria_label": "Compte à rebours",
@@ -156,11 +158,13 @@
       "minutes": "Minutes",
       "seconds": "Secondes",
       "summary": "Temps restant : {{ days }} jours, {{ hours }} heures, {{ minutes }} minutes.",
-      "finished": "Le compte à rebours est terminé."
+      "finished": "Le compte à rebours est terminé.",
+      "no_date": "Choisissez une date de fin pour lancer le compte à rebours."
     },
     "tabs": {
       "tablist_label": "Onglets de contenu",
-      "tab_fallback": "Onglet {{ index }}"
+      "tab_fallback": "Onglet {{ index }}",
+      "no_blocks": "Ajoutez un onglet à cette section."
     },
     "size_guide": {
       "aria_label": "Guide des tailles",
@@ -234,6 +238,9 @@
     "footer": {
       "column_needs_menu": "Choisissez un menu pour que cette colonne s’affiche.",
       "brand_needs_description": "Ajoutez une courte description de votre boutique."
+    },
+    "announcement_bar": {
+      "editor_empty": "Activez l’annonce et écrivez son texte pour afficher cette barre."
     }
   },
   "cart": {
