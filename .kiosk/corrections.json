@@ -102,13 +102,6 @@
       "raison": "L'ALERTE A2 vise le registre, pas le code : show_follow_on_shop (checkbox, default false) n'etait pas dans demo.options_activees ; le reglage agit (footer.liquid:292) et l'audit de performance 1.8.1 le mesure active sur la demo (div 0 x 0, 0 requete). A inscrire au registre par la session des outils."
     },
     {
-      "id": "audit-theme-editeur-checker-reglages-globaux@1.8.1-5eccb3b-20261025",
-      "version": "1.8.2",
-      "etat": "pas_un_defaut",
-      "ou": "config/settings_schema.json:1",
-      "raison": "Mesure saine (76 declares = 76 lus, 0 mort) ; seul « 0 color_scheme_group » y figure, juge avec [code-editeur-du-theme-store]. Depuis fc7a3c4, layout_section_spacing, qui n'avait aucun effet (relevé par le controle EDIT-06), est retire."
-    },
-    {
       "id": "audit-theme-editeur-checker-bibliotheque@1.8.1-5eccb3b-20261025",
       "version": "1.8.2",
       "etat": "pas_un_defaut",
@@ -266,13 +259,6 @@
       "raison": "La couverture du video-banner prend un sizes pilote par la hauteur (fond : max(100vw, height vh x rapport) ; integre : boite 16/9 ou 4/3 dans le conteneur) au lieu de 100vw ; les 676 Kio de sur-livraison mobile de la page des sections sont la somme des images de ses sections, dont lookbook (22ab1ac) et diaporama (fc7a3c4)."
     },
     {
-      "id": "code-editeur-du-theme-store",
-      "version": "1.8.2",
-      "etat": "pas_un_defaut",
-      "ou": "config/settings_schema.json:1",
-      "raison": "Voulu : LUMIERE n'a pas de schemas de couleurs Shopify ; il a des couleurs globales et, dans chaque section, des palettes (fond, encre, accent) dont toutes les encres et anneaux sont derives par snippets/section-tokens.liquid et css-variables.liquid. Passer a color_scheme_group est une refonte de toutes les sections (fonction nouvelle, version mineure), pas une correction : a decider par Ronnie."
-    },
-    {
       "id": "code-image-lcp-du-premier-ecran-ni-lazy-ni-sans-fetchpriority-ni",
       "version": "1.8.2",
       "etat": "corrige",
@@ -350,6 +336,30 @@
       "ou": "sections/hero.liquid:338",
       "commit": "fc7a3c4",
       "raison": "Le <link rel=\"preload\"> ecrit a la main est remplace par image_tag preload: true sur l'<img> du poster (meme srcset et sizes)."
+    },
+    {
+      "id": "connu-8009666e",
+      "version": "1.9.0",
+      "etat": "corrige",
+      "ou": "config/settings_schema.json:45",
+      "commit": "1f24f95",
+      "raison": "color_scheme_group « color_schemes » (fond, texte, accent, bouton, texte du bouton, bordures, role renseigné) dans le groupe Couleurs ; 4 schémas de départ dans config/settings_data.json (clair #ffffff, ivoire #faf9f7, gris #f5f5f5, sombre #1a1a1a) ; réglage color_scheme dans les 27 sections à couleurs propres et le bloc slide du diaporama, à la place de leurs réglages de fond, d'encre, de bouton et de bordure, défaut = le schéma du rendu d'avant ; classes .color-scheme-N générées depuis settings.color_schemes (snippets/css-variables.liquid) ; libellés t: EN et FR. Contrôle complet : ligne « schemas de couleurs » disparue, 0 ÉCHEC, contraste des schémas OK."
+    },
+    {
+      "id": "audit-theme-editeur-checker-reglages-globaux@1.8.1-5eccb3b-20261025",
+      "version": "1.9.0",
+      "etat": "corrige",
+      "ou": "config/settings_schema.json:45",
+      "commit": "1f24f95",
+      "raison": "Le seul relevé restant (« 0 color_scheme_group ») est fermé par le color_scheme_group ajouté en 1.9.0 (voir connu-8009666e)."
+    },
+    {
+      "id": "code-editeur-du-theme-store",
+      "version": "1.9.0",
+      "etat": "corrige",
+      "ou": "config/settings_schema.json:45",
+      "commit": "1f24f95",
+      "raison": "color_scheme_group ajouté : verifier-theme.py complet ne relève plus « schemas de couleurs : config/settings_schema.json — aucun reglage color_scheme_group » (ligne « editeur du Theme Store » en OK)."
     }
   ]
 }
