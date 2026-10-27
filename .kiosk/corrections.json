@@ -1,0 +1,355 @@
+{
+  "points": [
+    {
+      "id": "audit-theme-a11y-auditor-resume@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "snippets/css-variables.liquid:301",
+      "commit": "af487b7",
+      "raison": "BLOQUANT 1 : --color-on-input derive sur --input-bg et pose partout ou l'aplat l'est (theme.css, contact, variante, tri de collection avec l'encre de sa palette) ; BLOQUANT 2 : icone de fermeture du bandeau de marche sur --color-on-primary (snippets/market-banner.liquid:55-63) ; BLOQUANT 3 : plancher du video-banner calcule jusqu'a 4,5:1 (sections/video-banner.liquid:37) ; ALERTE : scroll-padding-inline sur la zone du comparatif (sections/comparison.liquid:144, af487b7) et anneau de la zone rentre (:161, fc7a3c4)."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-contraste-texte@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "snippets/css-variables.liquid:301",
+      "commit": "af487b7",
+      "raison": "Les 3 BLOQUANT renvoient a variantes-fond et icones : encre des champs derivee sur leur aplat, icone du bandeau sur --color-on-primary, plancher du video-banner calcule pour 4,5:1."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-variantes-fond@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "snippets/css-variables.liquid:301",
+      "commit": "af487b7",
+      "raison": "D1 : --color-on-input derive sur --input-bg ; select de tri avec l'encre de sa palette ; bordures sur --color-border-input (65b5e82) ; encre de section relevee sur son fond (snippets/section-tokens.liquid, 22ab1ac)."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-icones@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "snippets/market-banner.liquid:55",
+      "commit": "af487b7",
+      "raison": "L'icone de fermeture herite de --color-on-primary pose par .market-banner, au lieu de --color-text-light derive du fond du theme."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-fonds-et-schemas@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/video-banner.liquid:37",
+      "commit": "af487b7",
+      "raison": "Les 3 BLOQUANT (champs, icone du bandeau, paragraphe du bandeau video) corriges a la source, voir variantes-fond."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-titres-formulaires-html@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2144",
+      "commit": "65b5e82",
+      "raison": "Bordure des champs de contact sur --color-border-input, derive sur l'aplat du champ, et encre --color-on-input (af487b7)."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-texte-sur-image-claire@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/video-banner.liquid:37",
+      "commit": "af487b7",
+      "raison": "Opacite du plancher montee jusqu'a ce que le composite du pire cas atteigne 4,5:1 avec l'encre choisie, plafond 85 %."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-clavier@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "af487b7",
+      "raison": "Les arrets du comparatif entrent en entier : scroll-padding-inline sur la zone qui defile ; l'anneau de la zone elle-meme est rentre (outline-offset -2px, :161, fc7a3c4)."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-clavier-complet@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "af487b7",
+      "raison": "Meme ALERTE que clavier : gouttiere de defilement dans .comparison__scroller."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-petits-ecrans-zoom@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:161",
+      "commit": "fc7a3c4",
+      "raison": "Arrets du comparatif a 390 et 320 : scroll-padding-inline (af487b7) ; l'anneau non mesurable de .comparison__scroller a 320 est rentre dans la zone."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-demo-en@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "templates/index.json:1",
+      "raison": "Les 11 textes accentues de /en sont du contenu de la boutique de dev (vendeur « Eclat Studio », produits « Citron Givre », « Lumiere Ring », alt des bijoux partages exposes par /en/search?q=ring) : aucun ne vient du code du theme (0 texte accentue dans locales/en.default.json et les schemas, langues.py --controler : 0 probleme)."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-bibliotheque@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "sections/wishlist.liquid:97",
+      "raison": "Point de methode : l'agent y dit avoir requalifie 8 ALERTES en OK (parents de pluralisation) ; aucun defaut du theme n'y est nomme, et la correction de 1.7.2 qu'il cite est en place (formes feuilles one/other, lignes 97-98)."
+    },
+    {
+      "id": "audit-theme-editeur-checker-resume@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "sections/footer.liquid:338",
+      "raison": "L'ALERTE A2 vise le registre, pas le code : show_follow_on_shop (checkbox, default false) n'etait pas dans demo.options_activees ; le reglage agit (footer.liquid:292) et l'audit de performance 1.8.1 le mesure active sur la demo (div 0 x 0, 0 requete). A inscrire au registre par la session des outils."
+    },
+    {
+      "id": "audit-theme-editeur-checker-reglages-globaux@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "config/settings_schema.json:1",
+      "raison": "Mesure saine (76 declares = 76 lus, 0 mort) ; seul « 0 color_scheme_group » y figure, juge avec [code-editeur-du-theme-store]. Depuis fc7a3c4, layout_section_spacing, qui n'avait aucun effet (relevé par le controle EDIT-06), est retire."
+    },
+    {
+      "id": "audit-theme-editeur-checker-bibliotheque@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "config/settings_schema.json:1",
+      "raison": "Point de methode (competence lue, ALERTE requalifiee) ; aucun defaut du theme n'y est nomme."
+    },
+    {
+      "id": "audit-theme-parcours-tester-resume@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.js:599",
+      "commit": "af487b7",
+      "raison": "N11 : refreshControls() separe d'updateUI(), render() ne rappelle plus updateUI(), jeton de rendu et AbortController ; N7 : refresh() du panier rend un booleen et la ligne est defaite (theme.js:1258) ; N10 : pieges a focus empiles, Echap ne descend que d'un calque (utils.echapPourMoi, theme.js:324, 6a3bc5d)."
+    },
+    {
+      "id": "audit-theme-parcours-tester-console@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.js:324",
+      "commit": "af487b7",
+      "raison": "Les 1 148 « Maximum call stack size exceeded » venaient des deux pieges a focus concurrents : pile de pieges, seul celui du dessus agit (af487b7, Echap par calque 6a3bc5d)."
+    },
+    {
+      "id": "audit-theme-parcours-tester-echec-reseau@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.js:1258",
+      "commit": "af487b7",
+      "raison": "CartDrawer.refresh() dit s'il a rafraichi ; l'appelant defait la quantite optimiste quand il ne l'a pas fait."
+    },
+    {
+      "id": "audit-theme-parcours-tester-pieges-a-focus-superposes@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.js:324",
+      "commit": "6a3bc5d",
+      "raison": "Pieges empiles (af487b7) et utils.echapPourMoi : seul le calque du dessus repond a Echap (tiroir panier, vue rapide, zoom, filtres)."
+    },
+    {
+      "id": "audit-theme-parcours-tester-bibliotheque@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "assets/theme.js:324",
+      "raison": "Point de methode (Focus Trapping de la competence) ; les defauts qu'il a fait mesurer sont fermes par resume, console et pieges-a-focus-superposes."
+    },
+    {
+      "id": "audit-theme-perf-auditor-resume@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/slideshow.liquid:585",
+      "commit": "fc7a3c4",
+      "raison": "B1 favoris : bloc vide reserve par visibility: hidden (sections/wishlist.liquid:39, dc8e811) ; A1 : la video du heros repeint tot par son poster 1500 (sections/hero.liquid:372, 22ab1ac) ; A2 : sizes du heros pilote par la hauteur (hero.liquid:66, dc8e811) ; A3 : sizes de l'image de survol (snippets/product-card.liquid:139, 22ab1ac) ; A4 : sizes de image-with-text (image-with-text.liquid:54, 22ab1ac) et des diapositives (slideshow.liquid:585, fc7a3c4) ; A5 : largeurs du lookbook resserrees (lookbook.liquid:260, 22ab1ac)."
+    },
+    {
+      "id": "audit-theme-perf-auditor-lighthouse-mobile@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:372",
+      "commit": "22ab1ac",
+      "raison": "L'accueil mobile perdait 37 points parce que la <video> prenait le LCP a l'arrivee du flux : elle repeint par son poster (1500 px, meme URL que l'entree 1500w de l'<img> sur mobile)."
+    },
+    {
+      "id": "audit-theme-perf-auditor-lcp@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:66",
+      "commit": "dc8e811",
+      "raison": "A1 : poster rendu sur la video (hero.liquid:372, 22ab1ac) ; A2 : sizes calcule hauteur x rapport de l'image avec max(100vw, …)."
+    },
+    {
+      "id": "audit-theme-perf-auditor-reseau-lent@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:372",
+      "commit": "22ab1ac",
+      "raison": "Meme cause que lcp (A1) : la video peint son poster au lieu d'attendre 2 127,9 Ko de HLS."
+    },
+    {
+      "id": "audit-theme-perf-auditor-seuils-theme-store@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:372",
+      "commit": "22ab1ac",
+      "raison": "La marge mobile tombait par l'A1 de l'accueil, corrigee a la source."
+    },
+    {
+      "id": "audit-theme-perf-auditor-image-lcp-prioritaire@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:338",
+      "commit": "fc7a3c4",
+      "raison": "Le poster du heros garde eager + fetchpriority high et passe en image_tag preload: true quand la section ouvre la page ; image-with-text garde fetchpriority high en 1re section et un sizes juste (:54, 22ab1ac)."
+    },
+    {
+      "id": "audit-theme-perf-auditor-pieges-kiosk@1.8.1-5eccb3b-20261025",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/slideshow.liquid:585",
+      "commit": "fc7a3c4",
+      "raison": "A3 survol des cartes (product-card.liquid:139, 22ab1ac), A4 image-with-text (22ab1ac) et diapositives (sizes pilote par la hauteur, fc7a3c4), A5 lookbook (22ab1ac)."
+    },
+    {
+      "id": "connu-9e41ee30",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:588",
+      "commit": "a844c0e",
+      "raison": "La boucle de la liste deroulante saute la valeur quand settings.variant_hide_unavailable est actif et qu'aucune variante vendable ne la porte, sinon la rend disabled ; le JavaScript de la fiche (onOptionChange, theme.js:1964) ne reconstruit pas les options, la regle Liquid tient donc au changement de variante ; la vue rapide applique la meme regle (theme.js:1408-1442)."
+    },
+    {
+      "id": "complement-3c088fb2",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:34",
+      "commit": "353743d",
+      "raison": "Les encres de l'en-tete de la colonne mise en avant (hl_color_text) sont derivees sur hl_color, la surface ou elles sont posees ; hl_surface_text reste pour les cellules en hl_surface."
+    },
+    {
+      "id": "complement-aebf9581",
+      "version": "1.8.2",
+      "etat": "defaut_outil",
+      "ou": "sections/slideshow.liquid:768",
+      "raison": "Faux positif de a11y.cjs, corrige cote outil (5d54a72) : les liens des diapositives sortent du cycle de tabulation pendant la rotation (render(), tabindex -1 hors diapositive active) ; rien a corriger dans le theme."
+    },
+    {
+      "id": "complement-de456406",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1256",
+      "commit": "4d53fbb",
+      "raison": "Anneaux des boutons poses sur un media (favoris, apercu rapide, fleches) juges sur le fond peint sous eux depuis 4d53fbb ; puces du diaporama opaques avec liseré de fond (22ab1ac) et anneau a currentColor sur les boutons poses sur un media (67a15b0) ; l'audit 1.8.1 mesure 1 638 anneaux sans echec sur ces boutons."
+    },
+    {
+      "id": "complement-097145d8",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "CHANGELOG.md:298",
+      "commit": "b1d278b",
+      "raison": "L'entree porte « ## 1.6.4 — 2026-10-22 », la date du commit 3e0e51a (2026-10-22 21:21 UTC)."
+    },
+    {
+      "id": "complement-2a60cc3e",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1990",
+      "commit": "fc7a3c4",
+      "raison": "La grille .search-page__results est stylee dans theme.css (2 colonnes, 3 des 990 px, 4 des 1200 px, comme le sizes de product-card) au lieu de dependre du {% style %} de main-collection-product-grid."
+    },
+    {
+      "id": "complement-ead7aea2",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/video-banner.liquid:91",
+      "commit": "fc7a3c4",
+      "raison": "La couverture du video-banner prend un sizes pilote par la hauteur (fond : max(100vw, height vh x rapport) ; integre : boite 16/9 ou 4/3 dans le conteneur) au lieu de 100vw ; les 676 Kio de sur-livraison mobile de la page des sections sont la somme des images de ses sections, dont lookbook (22ab1ac) et diaporama (fc7a3c4)."
+    },
+    {
+      "id": "code-editeur-du-theme-store",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "config/settings_schema.json:1",
+      "raison": "Voulu : LUMIERE n'a pas de schemas de couleurs Shopify ; il a des couleurs globales et, dans chaque section, des palettes (fond, encre, accent) dont toutes les encres et anneaux sont derives par snippets/section-tokens.liquid et css-variables.liquid. Passer a color_scheme_group est une refonte de toutes les sections (fonction nouvelle, version mineure), pas une correction : a decider par Ronnie."
+    },
+    {
+      "id": "code-image-lcp-du-premier-ecran-ni-lazy-ni-sans-fetchpriority-ni",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/featured-collection.liquid:137",
+      "commit": "fc7a3c4",
+      "raison": "data-animate n'est pose qu'apres la 1re rangee (forloop.index > 4) et la regle d'opacite 0 de la section ne vise plus que [data-animate] ; la ligne a disparu du controle."
+    },
+    {
+      "id": "code-chaque-reglage-du-theme-agit",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "snippets/css-variables.liquid:259",
+      "commit": "fc7a3c4",
+      "raison": "--color-overlay, --icon-stroke, --icon-size et --section-spacing retires, --section-gap retire de theme.css ; le reglage layout_section_spacing, lu nulle part, retire du schema et des deux locales d'editeur (icon_stroke_width et icon_size restent : snippets/icon.liquid les lit)."
+    },
+    {
+      "id": "code-aide-de-l-editeur-cachee-en-boutique-section-vide-expliquee",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/blog-posts.liquid:250",
+      "commit": "fc7a3c4",
+      "raison": "Faux billets du blog sous {% elsif request.design_mode %} ; message d'editeur (.editor-empty, cles EN et FR) quand l'annonce, le diaporama, les onglets ou la reassurance sont vides."
+    },
+    {
+      "id": "code-aucune-balise-rendue-quand-son-reglage-est-vide",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/size-guide.liquid:222",
+      "commit": "fc7a3c4",
+      "raison": "<div class=\"rte\"> du contact sous if content != blank (main-contact.liquid:329) ; <th> de coin et de ligne remplaces par un <td> vide quand leur libelle l'est."
+    },
+    {
+      "id": "code-page-mot-de-passe-avec-son-layout-et-les-reglages-globaux",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "layout/password.liquid:6",
+      "commit": "fc7a3c4",
+      "raison": "<meta name=\"theme-color\"> tire de settings.color_primary, comme layout/theme.liquid:7."
+    },
+    {
+      "id": "code-langue-repli-traduit-masque-francais-en-base-anglaise-libell",
+      "version": "1.8.2",
+      "etat": "pas_un_defaut",
+      "ou": "templates/page.toutes-sections.json:453",
+      "raison": "Les 4 defaults de schema qui masquaient un repli traduit sont vides (blog-posts view_all_label, countdown expired_message, tabs title ; fc7a3c4). Restent « Care » et « Shipping & returns », titres d'onglet du gabarit de demo page.toutes-sections.json, que paquet.py exclut du zip (GABARITS_DEMO) : aucun acheteur ne les recoit, et .kiosk/contenu-fr.json les traduit (Entretien, Livraison et retours)."
+    },
+    {
+      "id": "code-evenements-de-l-editeur-geres",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "assets/theme.js:3160",
+      "commit": "fc7a3c4",
+      "raison": "Ecouteurs shopify:block:select globaux (bloc amene dans la vue, <details> ouvert) et, dans le diaporama, diapositive choisie montree avec la rotation en pause (sections/slideshow.liquid:871)."
+    },
+    {
+      "id": "code-valeurs-par-defaut-qui-n-engagent-pas-le-marchand",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:588",
+      "commit": "fc7a3c4",
+      "raison": "Livraison et retours offerts, garantie, montants, delais, date du compte a rebours, adresse type, auteurs signes et dates d'avis remplaces ou retires dans comparison, countdown, faq, map, multi-column, reviews, tabs, testimonials et trust-badges ; dictionnaire FR suivi (langues.py --controler : 0 probleme)."
+    },
+    {
+      "id": "code-documents-livres-a-jour-du-code",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "INSTALLATION.md:59",
+      "commit": "fc7a3c4",
+      "raison": "« Theme settings → Color swatches », le nom du groupe dans l'editeur."
+    },
+    {
+      "id": "code-police-prechargee-par-preload-tag-panneaux-en-dvh-sizes-des",
+      "version": "1.8.2",
+      "etat": "corrige",
+      "ou": "sections/hero.liquid:338",
+      "commit": "fc7a3c4",
+      "raison": "Le <link rel=\"preload\"> ecrit a la main est remplace par image_tag preload: true sur l'<img> du poster (meme srcset et sizes)."
+    }
+  ]
+}
