@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "LUMIERE",
-    "theme_version": "1.8.2",
+    "theme_version": "1.9.0",
     "theme_author": "KIOSK",
     "theme_documentation_url": "https://kioskthemes.com/docs/lumiere/",
     "theme_support_url": "https://kioskthemes.com/support/"
@@ -36,6 +36,64 @@
         "id": "color_text",
         "label": "t:settings_schema.couleurs.settings.color_text.label",
         "default": "#1a1a1a"
+      },
+      {
+        "type": "header",
+        "content": "t:settings_schema.couleurs.settings.color_schemes.header"
+      },
+      {
+        "type": "color_scheme_group",
+        "id": "color_schemes",
+        "definition": [
+          {
+            "type": "color",
+            "id": "background",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.background.label",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "text",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.text.label",
+            "default": "#1a1a1a"
+          },
+          {
+            "type": "color",
+            "id": "accent",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.accent.label",
+            "default": "#c9a96e"
+          },
+          {
+            "type": "color",
+            "id": "primary_button",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.primary_button.label",
+            "default": "#1a1a1a"
+          },
+          {
+            "type": "color",
+            "id": "on_primary_button",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.on_primary_button.label",
+            "default": "#ffffff"
+          },
+          {
+            "type": "color",
+            "id": "border",
+            "label": "t:settings_schema.couleurs.settings.color_schemes.border.label",
+            "default": "#e0e0e0"
+          }
+        ],
+        "role": {
+          "background": "background",
+          "text": "text",
+          "primary_button": "primary_button",
+          "on_primary_button": "on_primary_button",
+          "primary_button_border": "primary_button",
+          "secondary_button": "background",
+          "on_secondary_button": "text",
+          "secondary_button_border": "text",
+          "icons": "text",
+          "links": "text"
+        }
       }
     ]
   },

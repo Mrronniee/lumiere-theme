@@ -6,8 +6,8 @@
 {% endcomment %}
 
 {%- liquid
-  assign bg_color = section.settings.background_color
-  assign text_color = section.settings.text_color
+  assign bg_color = section.settings.color_scheme.settings.background
+  assign text_color = section.settings.color_scheme.settings.text
   assign active_color = section.settings.active_color
   comment
     L'encre de l'onglet ACTIF est un reglage du marchand : posee telle quelle,
@@ -46,7 +46,7 @@
   .tabs {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
-    {% render 'section-tokens', bg: bg_color, text: text_color %}
+    {% render 'section-tokens', bg: bg_color, text: text_color, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .tabs__inner {
@@ -275,7 +275,7 @@
 
 {%- if section.blocks.size > 0 -%}
   <div
-    class="tabs"
+    class="tabs color-{{ section.settings.color_scheme }}"
     id="Tabs-{{ section.id }}"
     data-section-id="{{ section.id }}"
     role="region"
@@ -535,16 +535,11 @@
       "content": "t:sections.tabs.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.tabs.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.tabs.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "color",

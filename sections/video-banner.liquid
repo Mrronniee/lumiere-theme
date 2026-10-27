@@ -11,7 +11,7 @@
     Polarite du plancher de lisibilite : sombre sous un texte clair, clair
     sous un texte sombre.
   endcomment
-  assign vb_lightness = section.settings.text_color | color_extract: 'lightness'
+  assign vb_lightness = section.settings.color_scheme.settings.text | color_extract: 'lightness'
   if vb_lightness > 50
     assign vb_floor_rgb = '26, 22, 18'
     assign vb_floor_hex = '#1a1612'
@@ -37,7 +37,7 @@
   assign vb_floor_pct = 45
   for i in (1..14)
     assign vb_composite = vb_floor_hex | color_mix: vb_pire_cas, vb_floor_pct
-    assign vb_ratio = section.settings.text_color | color_contrast: vb_composite
+    assign vb_ratio = section.settings.color_scheme.settings.text | color_contrast: vb_composite
     if vb_ratio >= 4.5
       break
     endif
@@ -94,8 +94,8 @@
 {%- style -%}
   .video-banner {
     position: relative;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .video-banner [hidden] {
@@ -259,7 +259,7 @@
     font-weight: 400;
     line-height: 1.15;
     letter-spacing: -0.01em;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -267,7 +267,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.7;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     max-width: 600px;
     margin-bottom: var(--spacing-md);
   }
@@ -293,13 +293,13 @@
     text-transform: uppercase;
     text-decoration: none;
     border: none;
-    background-color: {{ section.settings.button_bg }};
-    color: {{ section.settings.button_text }};
+    background-color: {{ section.settings.color_scheme.settings.primary_button }};
+    color: {{ section.settings.color_scheme.settings.on_primary_button }};
     transition: background-color var(--transition-base), color var(--transition-base), transform var(--transition-base);
   }
 
   .video-banner__button:hover {
-    background-color: {{ section.settings.button_bg | color_darken: 10 }};
+    background-color: {{ section.settings.color_scheme.settings.primary_button | color_darken: 10 }};
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
@@ -356,7 +356,7 @@
   1.7.2).
 {%- endcomment -%}
 <div
-  class="video-banner video-banner--{{ section.settings.layout }}"
+  class="video-banner color-{{ section.settings.color_scheme }} video-banner--{{ section.settings.layout }}"
   id="VideoBanner-{{ section.id }}"
   data-section-id="{{ section.id }}"
   data-header-overlay
@@ -707,7 +707,10 @@
     {
       "type": "video_url",
       "id": "video_url",
-      "accept": ["youtube", "vimeo"],
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
       "label": "t:sections.video_banner.settings.video_url.label",
       "info": "t:sections.video_banner.settings.video_url.info",
       "placeholder": "t:sections.video_banner.settings.video_url.placeholder"
@@ -791,16 +794,11 @@
       "content": "t:sections.video_banner.settings.header__4.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.video_banner.settings.background_color.label",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.video_banner.settings.text_color.label",
-      "default": "#ffffff"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-4"
     },
     {
       "type": "color",
@@ -817,18 +815,6 @@
       "default": 0.4,
       "label": "t:sections.video_banner.settings.overlay_opacity.label",
       "info": "t:sections.video_banner.settings.overlay_opacity.info"
-    },
-    {
-      "type": "color",
-      "id": "button_bg",
-      "label": "t:sections.video_banner.settings.button_bg.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_text",
-      "label": "t:sections.video_banner.settings.button_text.label",
-      "default": "#1a1a1a"
     }
   ],
   "presets": [

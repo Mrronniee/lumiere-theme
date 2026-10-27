@@ -11,8 +11,8 @@
   assign carousel_gap_desktop = columns_desktop | minus: 1
   assign carousel_gap_tablet = columns_tablet | minus: 1
   assign carousel_gap_mobile = columns_mobile | minus: 1
-  assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
-  assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
+  assign card_border = section.settings.color_scheme.settings.text | color_mix: section.settings.color_scheme.settings.background, 18
+  assign card_surface = section.settings.color_scheme.settings.text | color_mix: section.settings.color_scheme.settings.background, 4
 
   comment
     Meme raison que dans reviews : le texte des cartes est pose sur
@@ -20,7 +20,7 @@
     derive sur CETTE surface.
   endcomment
   capture card_muted
-    render 'contrast-color', base: section.settings.text_color, bg: card_surface
+    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: card_surface
   endcapture
   assign card_muted = card_muted | strip
 -%}
@@ -28,8 +28,8 @@
 {%- style -%}
   .testimonials {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .testimonials__inner {
@@ -58,7 +58,7 @@
     font-size: clamp(1.75rem, 3vw, 2.75rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .testimonials__list {
@@ -104,7 +104,7 @@
     width: 16px;
     height: 16px;
     flex: 0 0 auto;
-    fill: {{ section.settings.text_color }};
+    fill: {{ section.settings.color_scheme.settings.text }};
     opacity: 0.22;
   }
 
@@ -117,7 +117,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     line-height: 1.75;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin: 0;
   }
 
@@ -143,7 +143,7 @@
     font-size: 1rem;
     font-weight: 400;
     font-style: normal;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .testimonials__author-role {
@@ -197,7 +197,7 @@
   }
 {%- endstyle -%}
 
-<div class="testimonials" data-section-id="{{ section.id }}">
+<div class="testimonials color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="testimonials__inner">
     {%- if section.settings.pretitle != blank or section.settings.title != blank -%}
       <div class="testimonials__header">
@@ -374,16 +374,11 @@
       "content": "t:sections.testimonials.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.testimonials.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.testimonials.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     }
   ],
   "blocks": [

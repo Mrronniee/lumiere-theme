@@ -17,6 +17,31 @@
         },
         "color_text": {
           "label": "Text color"
+        },
+        "color_schemes": {
+          "header": "Color schemes",
+          "background": {
+            "label": "Background"
+          },
+          "text": {
+            "label": "Text"
+          },
+          "accent": {
+            "label": "Accent"
+          },
+          "primary_button": {
+            "label": "Button"
+          },
+          "on_primary_button": {
+            "label": "Button label"
+          },
+          "border": {
+            "label": "Borders"
+          }
+        },
+        "color_scheme": {
+          "label": "Color scheme",
+          "info": "Edit schemes in Theme settings > Colors."
         }
       }
     },
@@ -524,21 +549,6 @@
         "header__2": {
           "content": "Style"
         },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
-        "button_bg": {
-          "label": "Button background"
-        },
-        "button_text": {
-          "label": "Button text"
-        },
-        "button_border": {
-          "label": "Button border"
-        },
         "text_alignment": {
           "label": "Text alignment",
           "options__1": {
@@ -583,15 +593,6 @@
         },
         "show_payment_icons": {
           "label": "Show payment method logos"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
-        "border_color": {
-          "label": "Border color"
         },
         "copyright_text": {
           "label": "Copyright text"
@@ -696,9 +697,6 @@
             "label": "Right"
           }
         },
-        "text_color": {
-          "label": "Text color"
-        },
         "overlay_color": {
           "label": "Overlay color"
         },
@@ -719,24 +717,6 @@
           "options__4": {
             "label": "Right to left"
           }
-        },
-        "button_primary_bg": {
-          "label": "Primary button background"
-        },
-        "button_primary_text": {
-          "label": "Primary button text"
-        },
-        "button_secondary_text": {
-          "label": "Secondary button text"
-        },
-        "button_secondary_border": {
-          "label": "Secondary button border"
-        },
-        "button_secondary_bg": {
-          "label": "Secondary button background on hover"
-        },
-        "button_secondary_bg_text": {
-          "label": "Secondary button text on hover"
         },
         "header__5": {
           "content": "Layout"
@@ -772,12 +752,6 @@
         },
         "header__2": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "text_alignment": {
           "label": "Text alignment",
@@ -998,23 +972,8 @@
         "header__2": {
           "content": "Style"
         },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
         "input_bg": {
           "label": "Email field background"
-        },
-        "input_border": {
-          "label": "Email field border"
-        },
-        "button_bg": {
-          "label": "Button background"
-        },
-        "button_text": {
-          "label": "Button text"
         }
       },
       "presets": {
@@ -1052,12 +1011,6 @@
           "options__inherit": "Inherit from theme settings",
           "options__yes": "Yes",
           "options__no": "No"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "columns_desktop": {
           "label": "Columns (desktop)"
@@ -1169,12 +1122,6 @@
       "settings": {
         "header__1": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "header__2": {
           "content": "Layout"
@@ -1329,12 +1276,6 @@
         "header__3": {
           "content": "Style"
         },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
         "content_alignment": {
           "label": "Content vertical alignment",
           "options__1": {
@@ -1390,12 +1331,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "blocks": {
@@ -1446,12 +1381,6 @@
         },
         "header__2": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "max_width": {
           "label": "Maximum width",
@@ -1548,24 +1477,12 @@
         "header__4": {
           "content": "Style"
         },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
         "overlay_color": {
           "label": "Overlay color"
         },
         "overlay_opacity": {
           "label": "Overlay opacity",
           "info": "Applies to the “Background video” layout."
-        },
-        "button_bg": {
-          "label": "Button background"
-        },
-        "button_text": {
-          "label": "Button text"
         }
       },
       "presets": {
@@ -1600,12 +1517,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "blocks": {
@@ -1678,12 +1589,6 @@
         },
         "header__3": {
           "content": "Colors"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "blocks": {
@@ -1755,12 +1660,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "blocks": {
@@ -1815,15 +1714,6 @@
         },
         "header__2": {
           "content": "Colors"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
-        "icon_color": {
-          "label": "Icon color"
         }
       },
       "blocks": {
@@ -1915,12 +1805,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "text_alignment": {
           "label": "Text alignment",
@@ -2024,12 +1908,6 @@
         },
         "header__4": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "blocks": {
@@ -2103,9 +1981,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
         }
       },
       "blocks": {
@@ -2147,10 +2022,6 @@
               "options__3": {
                 "label": "Right"
               }
-            },
-            "text_color": {
-              "label": "Text color",
-              "info": "The button and the overlay adapt automatically to stay readable."
             },
             "overlay_opacity": {
               "label": "Overlay opacity",
@@ -2209,16 +2080,6 @@
         },
         "header__4": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
-        "digits_color": {
-          "label": "Digits color",
-          "info": "Also used for the overline. Check the contrast against the background color."
         }
       },
       "presets": {
@@ -2255,12 +2116,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "active_color": {
           "label": "Active tab color",
@@ -2344,12 +2199,6 @@
           "label": "Alternating rows",
           "info": "Every other row is lightly tinted to make the table easier to read."
         },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
         "max_width": {
           "label": "Maximum width",
           "info": "Width of the block, in pixels."
@@ -2422,12 +2271,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         },
         "star_color": {
           "label": "Star color",
@@ -2524,12 +2367,6 @@
         },
         "header__4": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "presets": {
@@ -2579,16 +2416,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
-        },
-        "highlight_color": {
-          "label": "Highlighted column color",
-          "info": "Used for the header and background of the highlighted column. Text color adapts automatically to stay readable."
         }
       },
       "blocks": {
@@ -2690,9 +2517,6 @@
         "line_width": {
           "label": "Line width"
         },
-        "line_color": {
-          "label": "Line color"
-        },
         "header__2": {
           "content": "Spacing"
         },
@@ -2702,9 +2526,6 @@
         },
         "space_below": {
           "label": "Space below"
-        },
-        "background_color": {
-          "label": "Background color"
         }
       },
       "presets": {
@@ -2745,12 +2566,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "background_color": {
-          "label": "Background color"
-        },
-        "text_color": {
-          "label": "Text color"
         }
       },
       "presets": {
@@ -2789,12 +2604,6 @@
           "options__inherit": "Inherit from theme settings",
           "options__yes": "Yes",
           "options__no": "No"
-        },
-        "background_color": {
-          "label": "Background"
-        },
-        "text_color": {
-          "label": "Text"
         },
         "padding_top": {
           "label": "Top padding"

@@ -10,8 +10,8 @@
     choisissait un fond clair. On melange le texte vers le fond jusqu'a
     atteindre 4,5:1, comme --color-text-light dans css-variables.
   endcomment
-  assign footer_bg = section.settings.background_color
-  assign footer_text = section.settings.text_color
+  assign footer_bg = section.settings.color_scheme.settings.background
+  assign footer_text = section.settings.color_scheme.settings.text
   assign muted_weight = 55
   assign footer_muted = footer_text | color_mix: footer_bg, muted_weight
   for i in (1..15)
@@ -26,9 +26,9 @@
 
 {%- style -%}
   .footer {
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
-    color: {{ section.settings.text_color }};
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    color: {{ section.settings.color_scheme.settings.text }};
     padding: var(--spacing-xl) 0 var(--spacing-md);
   }
 
@@ -44,7 +44,7 @@
     grid-template-columns: 2fr repeat({{ extra_columns }}, 1fr);
     gap: var(--spacing-lg);
     padding-bottom: var(--spacing-lg);
-    border-bottom: 1px solid {{ section.settings.border_color }};
+    border-bottom: 1px solid {{ section.settings.color_scheme.settings.border }};
   }
 
   .footer__brand {
@@ -56,7 +56,7 @@
     font-size: 1.75rem;
     font-weight: 400;
     margin-bottom: var(--spacing-sm);
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .footer__description {
@@ -78,8 +78,8 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border: 1px solid {{ section.settings.border_color }};
-    color: {{ section.settings.text_color }};
+    border: 1px solid {{ section.settings.color_scheme.settings.border }};
+    color: {{ section.settings.color_scheme.settings.text }};
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   }
 
@@ -98,7 +98,7 @@
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin-bottom: var(--spacing-md);
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .footer__links {
@@ -118,7 +118,7 @@
   }
 
   .footer__link:hover {
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .footer__bottom {
@@ -184,7 +184,7 @@
   }
 {%- endstyle -%}
 
-<footer class="footer" data-section-id="{{ section.id }}">
+<footer class="footer color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="footer__inner">
     <div class="footer__top">
       {%- for block in section.blocks -%}
@@ -319,22 +319,11 @@
   "max_blocks": 5,
   "settings": [
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.footer.settings.background_color.label",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.footer.settings.text_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "border_color",
-      "label": "t:sections.footer.settings.border_color.label",
-      "default": "#333333"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-4"
     },
     {
       "type": "checkbox",

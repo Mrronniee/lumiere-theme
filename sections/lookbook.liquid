@@ -11,8 +11,8 @@
     derive donc ici une variante de l'accent ajustee a CE fond, en eclaircissant
     si le fond est sombre et en assombrissant s'il est clair.
   endcomment
-  assign lb_bg = section.settings.background_color | default: '#1a1a1a'
-  assign lb_accent = settings.color_accent | default: '#c9a96e'
+  assign lb_bg = section.settings.color_scheme.settings.background | default: '#1a1a1a'
+  assign lb_accent = section.settings.color_scheme.settings.accent | default: '#c9a96e'
   assign lb_white_ratio = lb_bg | color_contrast: '#ffffff'
   assign lb_bg_is_dark = false
   if lb_white_ratio > 2.5
@@ -34,8 +34,8 @@
 {%- style -%}
   .lookbook {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .lookbook__header {
@@ -59,7 +59,7 @@
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -191,7 +191,7 @@
   }
 {%- endstyle -%}
 
-<div class="lookbook" data-section-id="{{ section.id }}">
+<div class="lookbook color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="lookbook__header">
     <p class="lookbook__pretitle">{%- if section.settings.pretitle != blank -%}{{ section.settings.pretitle | escape }}{%- else -%}{{ 'sections.lookbook.default_pretitle' | t }}{%- endif -%}</p>
 
@@ -339,16 +339,11 @@
       "content": "t:sections.lookbook.settings.header__2.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.lookbook.settings.background_color.label",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.lookbook.settings.text_color.label",
-      "default": "#ffffff"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-4"
     },
     {
       "type": "select",

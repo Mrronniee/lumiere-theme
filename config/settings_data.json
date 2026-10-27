@@ -1,6 +1,49 @@
 {
   "current": "Default",
   "presets": {
-    "Default": {}
+    "Default": {
+      "color_schemes": {
+        "scheme-1": {
+          "settings": {
+            "background": "#ffffff",
+            "text": "#1a1a1a",
+            "accent": "#c9a96e",
+            "primary_button": "#1a1a1a",
+            "on_primary_button": "#ffffff",
+            "border": "#e0e0e0"
+          }
+        },
+        "scheme-2": {
+          "settings": {
+            "background": "#faf9f7",
+            "text": "#1a1a1a",
+            "accent": "#c9a96e",
+            "primary_button": "#1a1a1a",
+            "on_primary_button": "#ffffff",
+            "border": "#e3ded6"
+          }
+        },
+        "scheme-3": {
+          "settings": {
+            "background": "#f5f5f5",
+            "text": "#1a1a1a",
+            "accent": "#c9a96e",
+            "primary_button": "#1a1a1a",
+            "on_primary_button": "#ffffff",
+            "border": "#e0e0e0"
+          }
+        },
+        "scheme-4": {
+          "settings": {
+            "background": "#1a1a1a",
+            "text": "#ffffff",
+            "accent": "#c9a96e",
+            "primary_button": "#ffffff",
+            "on_primary_button": "#1a1a1a",
+            "border": "#333333"
+          }
+        }
+      }
+    }
   }
 }

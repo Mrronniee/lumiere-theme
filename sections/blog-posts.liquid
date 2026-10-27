@@ -7,8 +7,8 @@
 {%- style -%}
   .blog-posts {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .blog-posts__header {
@@ -32,7 +32,7 @@
     font-size: clamp(2rem, 4vw, 3.5rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -96,7 +96,7 @@
   }
 
   .blog-posts__card .blog-card__title {
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .blog-posts__title-link {
@@ -110,7 +110,7 @@
   }
 
   .blog-posts__card .blog-card__more {
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .blog-posts__empty {
@@ -148,7 +148,7 @@
   assign posts_limit = section.settings.posts_to_show
 -%}
 
-<div class="blog-posts" data-section-id="{{ section.id }}">
+<div class="blog-posts color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="blog-posts__header">
     {%- if section.settings.pretitle != blank -%}
       <p class="blog-posts__pretitle">{{ section.settings.pretitle | escape }}</p>
@@ -365,16 +365,11 @@
       "content": "t:sections.blog_posts.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.blog_posts.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.blog_posts.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "select",

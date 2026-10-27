@@ -8,9 +8,9 @@
 {%- style -%}
   .size-guide {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
-    color: {{ section.settings.text_color }};
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .size-guide__inner {
@@ -28,7 +28,7 @@
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-xs);
   }
 
@@ -80,8 +80,8 @@
   .size-guide__table th,
   .size-guide__table td {
     padding: 0.75rem var(--spacing-sm);
-    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.14 }};
-    color: {{ section.settings.text_color }};
+    border-bottom: 1px solid {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.14 }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .size-guide__table thead th,
@@ -91,8 +91,8 @@
     font-weight: 400;
     letter-spacing: 0.04em;
     text-transform: uppercase;
-    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.06 }};
-    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.28 }};
+    background-color: {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.06 }};
+    border-bottom: 1px solid {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.28 }};
     white-space: nowrap;
   }
 
@@ -108,7 +108,7 @@
 
   .size-guide__table--striped tbody tr:nth-child(even) th,
   .size-guide__table--striped tbody tr:nth-child(even) td {
-    background-color: {{ section.settings.text_color | color_modify: 'alpha', 0.04 }};
+    background-color: {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.04 }};
   }
 
   .size-guide__table tbody tr:last-child th,
@@ -189,7 +189,7 @@
 -%}
 
 <div
-  class="size-guide"
+  class="size-guide color-{{ section.settings.color_scheme }}"
   data-section-id="{{ section.id }}"
   role="region"
   {% if section.settings.title != blank %}
@@ -356,16 +356,11 @@
       "default": true
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.size_guide.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.size_guide.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "range",

@@ -9,9 +9,10 @@
 
   @param {string} [bg] - Le fond de la section (defaut : settings.color_background).
   @param {string} [text] - L'encre de la section ; quand elle manque, elle est choisie d'apres le fond.
+  @param {string} [accent] - L'accent du schema de couleurs de la section (defaut : settings.color_accent).
 
   @example
-  {% render 'section-tokens', bg: bg_color, text: txt_color %}
+  {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent %}
 {% enddoc %}
 {%- liquid
   assign bg = bg | default: settings.color_background
@@ -55,7 +56,7 @@
     endcapture
     assign text = text_releve | strip
   endif
-  assign c_accent = settings.color_accent | default: '#c9a96e'
+  assign c_accent = accent | default: settings.color_accent | default: '#c9a96e'
   assign c_primary = settings.color_primary | default: '#1a1a1a'
 
   capture accent_text

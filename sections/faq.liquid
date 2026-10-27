@@ -7,8 +7,8 @@
 {%- style -%}
   .faq {
     padding: var(--spacing-xl) var(--container-padding);
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .faq__inner {
@@ -36,7 +36,7 @@
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -50,11 +50,11 @@
   }
 
   .faq__list {
-    border-top: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.15 }};
+    border-top: 1px solid {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.15 }};
   }
 
   .faq__item {
-    border-bottom: 1px solid {{ section.settings.text_color | color_modify: 'alpha', 0.15 }};
+    border-bottom: 1px solid {{ section.settings.color_scheme.settings.text | color_modify: 'alpha', 0.15 }};
   }
 
   .faq__question {
@@ -68,7 +68,7 @@
     font-size: 1.125rem;
     font-weight: 400;
     line-height: 1.4;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     cursor: pointer;
     list-style: none;
     transition: color var(--transition-fast);
@@ -158,7 +158,7 @@
 -%}
 
 <div
-  class="faq"
+  class="faq color-{{ section.settings.color_scheme }}"
   data-section-id="{{ section.id }}"
   role="region"
   {% if section.settings.title != blank %}
@@ -331,16 +331,11 @@
       "content": "t:sections.faq.settings.header__2.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.faq.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.faq.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "range",

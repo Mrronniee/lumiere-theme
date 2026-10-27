@@ -345,6 +345,20 @@
     --shopify-account-radius-base: {{ settings.layout_corner_radius | default: 0 }}px;
   }
 
+  {%- comment -%}
+    Schemas de couleurs (Parametres du theme > Couleurs) : une classe par
+    schema, posee sur la racine de chaque section qui en choisit un. Les jetons
+    sont ceux de section-tokens, derives sur le fond du schema, pour qu'une
+    encre ou un accent choisis par le marchand restent lisibles.
+  {%- endcomment -%}
+  {%- for scheme in settings.color_schemes %}
+  .color-{{ scheme.id }} {
+    background-color: {{ scheme.settings.background }};
+    {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent %}
+    color: var(--color-text);
+  }
+  {%- endfor %}
+
   @media screen and (max-width: 749px) {
     :root {
       --container-padding: 1.5rem;

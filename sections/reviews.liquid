@@ -9,9 +9,9 @@
   assign columns_desktop = section.settings.columns_desktop
   assign columns_tablet = section.settings.columns_tablet
   assign columns_mobile = section.settings.columns_mobile
-  assign card_border = section.settings.text_color | color_mix: section.settings.background_color, 18
-  assign card_surface = section.settings.text_color | color_mix: section.settings.background_color, 4
-  assign star_empty = section.settings.text_color | color_mix: section.settings.background_color, 22
+  assign card_border = section.settings.color_scheme.settings.text | color_mix: section.settings.color_scheme.settings.background, 18
+  assign card_surface = section.settings.color_scheme.settings.text | color_mix: section.settings.color_scheme.settings.background, 4
+  assign star_empty = section.settings.color_scheme.settings.text | color_mix: section.settings.color_scheme.settings.background, 22
 
   comment
     Les textes des cartes sont poses sur card_surface, PLUS SOMBRE que le fond
@@ -19,12 +19,12 @@
     dixiemes. « Verifie » mesurait 4,21:1 et la date 4,45:1 pour un seuil de
     4,5. Les deux encres sont donc derivees sur la SURFACE DE LA CARTE.
   endcomment
-  assign accent_dark_base = settings.color_accent | default: '#c9a96e' | color_darken: 22
+  assign accent_dark_base = section.settings.color_scheme.settings.accent | default: '#c9a96e' | color_darken: 22
   capture card_accent
     render 'contrast-color', base: accent_dark_base, bg: card_surface
   endcapture
   capture card_muted
-    render 'contrast-color', base: section.settings.text_color, bg: card_surface
+    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: card_surface
   endcapture
   assign card_accent = card_accent | strip
   assign card_muted = card_muted | strip
@@ -33,8 +33,8 @@
 {%- style -%}
   .reviews {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .reviews__inner {
@@ -63,7 +63,7 @@
     font-size: clamp(1.75rem, 3vw, 2.75rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .reviews__average {
@@ -79,7 +79,7 @@
     font-size: 1.375rem;
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .reviews__average-count {
@@ -175,7 +175,7 @@
     font-size: 1.0625rem;
     font-weight: 400;
     line-height: 1.35;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin: 0;
   }
 
@@ -200,7 +200,7 @@
     font-size: 0.875rem;
     font-weight: 500;
     font-style: normal;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .reviews__verified {
@@ -231,7 +231,7 @@
     gap: 0.5rem;
     min-height: 24px;
     text-decoration: none;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     transition: color var(--transition-fast), opacity var(--transition-fast);
   }
 
@@ -318,7 +318,7 @@
 -%}
 
 <div
-  class="reviews"
+  class="reviews color-{{ section.settings.color_scheme }}"
   data-section-id="{{ section.id }}"
   role="region"
   {% if section.settings.title != blank %}
@@ -531,16 +531,11 @@
       "content": "t:sections.reviews.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.reviews.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.reviews.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "color",

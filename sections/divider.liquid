@@ -8,7 +8,7 @@
   assign divider_style = section.settings.divider_style
   assign thickness = section.settings.line_thickness | at_least: 1
   assign line_width = section.settings.line_width | at_least: 10 | at_most: 100
-  assign line_color = section.settings.line_color
+  assign line_color = section.settings.color_scheme.settings.border
   assign space_above = section.settings.space_above
   assign space_below = section.settings.space_below
   assign space_above_mobile = space_above | times: 65 | divided_by: 100
@@ -20,7 +20,7 @@
 {%- style -%}
   .divider-{{ section.id }} {
     padding: {{ space_above }}px var(--container-padding) {{ space_below }}px;
-    background-color: {{ section.settings.background_color }};
+    background-color: {{ section.settings.color_scheme.settings.background }};
   }
 
   .divider-{{ section.id }} .divider__inner {
@@ -62,7 +62,7 @@
   }
 {%- endstyle -%}
 
-<div class="divider divider-{{ section.id }}" data-section-id="{{ section.id }}" aria-hidden="true">
+<div class="divider color-{{ section.settings.color_scheme }} divider-{{ section.id }}" data-section-id="{{ section.id }}" aria-hidden="true">
   <div class="divider__inner">
     {%- if divider_style != 'space' -%}
       <div class="divider__line"></div>
@@ -126,10 +126,11 @@
       "label": "t:sections.divider.settings.line_width.label"
     },
     {
-      "type": "color",
-      "id": "line_color",
-      "label": "t:sections.divider.settings.line_color.label",
-      "default": "#e3ded6"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-2"
     },
     {
       "type": "header",
@@ -155,12 +156,6 @@
       "default": 40,
       "unit": "px",
       "label": "t:sections.divider.settings.space_below.label"
-    },
-    {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.divider.settings.background_color.label",
-      "default": "#00000000"
     }
   ],
   "presets": [

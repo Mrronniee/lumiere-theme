@@ -28,7 +28,7 @@
        0,60 au minimum ; 0,62 donne 5,04:1 et laisse une marge pour la partie
        la plus claire du degrade.
   endcomment
-  assign hero_lightness = section.settings.text_color | color_extract: 'lightness'
+  assign hero_lightness = section.settings.color_scheme.settings.text | color_extract: 'lightness'
   if hero_lightness > 50
     assign hero_floor_rgb = '26, 22, 18'
   else
@@ -178,7 +178,7 @@
     font-weight: 500;
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -187,7 +187,7 @@
     font-size: clamp(2.5rem, 5vw, 5rem);
     font-weight: 400;
     line-height: 1.1;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
     letter-spacing: -0.02em;
   }
@@ -196,7 +196,7 @@
     font-family: var(--font-body);
     font-size: clamp(1rem, 2vw, 1.25rem);
     line-height: 1.6;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-md);
     max-width: 600px;
   }
@@ -225,26 +225,26 @@
   }
 
   .hero__button--primary {
-    background-color: {{ section.settings.button_primary_bg }};
-    color: {{ section.settings.button_primary_text }};
+    background-color: {{ section.settings.color_scheme.settings.primary_button }};
+    color: {{ section.settings.color_scheme.settings.on_primary_button }};
   }
 
   .hero__button--primary:hover {
-    background-color: {{ section.settings.button_primary_bg | color_darken: 10 }};
+    background-color: {{ section.settings.color_scheme.settings.primary_button | color_darken: 10 }};
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
 
   .hero__button--secondary {
     background-color: transparent;
-    color: {{ section.settings.button_secondary_text }};
-    border: 1px solid {{ section.settings.button_secondary_border }};
+    color: {{ section.settings.color_scheme.settings.text }};
+    border: 1px solid {{ section.settings.color_scheme.settings.text }};
   }
 
   .hero__button--secondary:hover {
-    background-color: {{ section.settings.button_secondary_bg }};
-    color: {{ section.settings.button_secondary_bg_text }};
-    border-color: {{ section.settings.button_secondary_bg }};
+    background-color: {{ section.settings.color_scheme.settings.text }};
+    color: {{ section.settings.color_scheme.settings.background }};
+    border-color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .hero__scroll-indicator {
@@ -253,7 +253,7 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 3;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     animation: bounce 2s infinite;
   }
 
@@ -603,10 +603,11 @@
       "default": "center"
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.hero.settings.text_color.label",
-      "default": "#ffffff"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-4"
     },
     {
       "type": "color",
@@ -646,42 +647,6 @@
         }
       ],
       "default": "to bottom"
-    },
-    {
-      "type": "color",
-      "id": "button_primary_bg",
-      "label": "t:sections.hero.settings.button_primary_bg.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_primary_text",
-      "label": "t:sections.hero.settings.button_primary_text.label",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "button_secondary_text",
-      "label": "t:sections.hero.settings.button_secondary_text.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_secondary_border",
-      "label": "t:sections.hero.settings.button_secondary_border.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_secondary_bg",
-      "label": "t:sections.hero.settings.button_secondary_bg.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "button_secondary_bg_text",
-      "label": "t:sections.hero.settings.button_secondary_bg_text.label",
-      "default": "#1a1a1a"
     },
     {
       "type": "header",

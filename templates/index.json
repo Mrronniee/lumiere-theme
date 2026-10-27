@@ -11,15 +11,9 @@
         "button_label_2": "",
         "button_link_2": "",
         "text_alignment": "center",
-        "text_color": "#ffffff",
         "overlay_color": "#000000",
         "overlay_opacity": 0.4,
         "overlay_direction": "to bottom",
-        "button_primary_bg": "#ffffff",
-        "button_primary_text": "#1a1a1a",
-        "button_secondary_text": "#ffffff",
-        "button_secondary_border": "#ffffff",
-        "button_secondary_bg": "#ffffff",
         "height": 90,
         "height_mobile": 70,
         "show_scroll_indicator": true
@@ -36,11 +30,6 @@
         "show_vendor": "inherit",
         "show_view_all": true,
         "view_all_label": "",
-        "background_color": "#faf9f7",
-        "text_color": "#1a1a1a",
-        "button_bg": "#1a1a1a",
-        "button_text": "#ffffff",
-        "button_border": "#1a1a1a",
         "text_alignment": "center",
         "columns_desktop": 4,
         "columns_tablet": 3,
@@ -55,8 +44,6 @@
         "pretitle": "",
         "title": "",
         "description": "",
-        "background_color": "#1a1a1a",
-        "text_color": "#ffffff",
         "text_alignment": "center",
         "grid_gap": 16
       },
@@ -134,12 +121,7 @@
         "placeholder": "",
         "button_label": "",
         "disclaimer": "",
-        "background_color": "#f5f5f5",
-        "text_color": "#1a1a1a",
-        "input_bg": "#ffffff",
-        "input_border": "#e0e0e0",
-        "button_bg": "#1a1a1a",
-        "button_text": "#ffffff"
+        "input_bg": "#ffffff"
       }
     }
   },

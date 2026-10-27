@@ -1,5 +1,26 @@
 # Changelog
 
+## 1.9.0 — 2026-10-27
+
+### Added
+- **Color schemes.** Theme settings > Colors now holds color schemes: create,
+  rename, reorder or delete them, and set each one's background, text, accent,
+  button, button label and borders. The theme ships four schemes: light, ivory,
+  light gray and dark.
+- **Every section with its own colors picks a scheme** in one click (hero,
+  slideshow and each slide, featured collection and product, footer,
+  newsletter, countdown, video banner, FAQ, tabs, reviews and the others),
+  instead of separate background and text pickers. Each default scheme
+  reproduces the colors the section had before, so a new install looks the
+  same. Text, links and borders inside a section are still adjusted to stay
+  readable on its background.
+
+### Changed
+- The section color pickers (background, text, button, border, digits, icons,
+  highlight) are replaced by the color scheme. If you update from an earlier
+  version, sections whose colors you had changed return to their default
+  scheme: choose or edit a scheme to get your colors back.
+
 ## 1.8.2 — 2026-10-27
 
 ### Fixed

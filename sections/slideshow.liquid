@@ -10,14 +10,13 @@
 {%- style -%}
   .slideshow {
     position: relative;
-    background-color: {{ section.settings.background_color }};
+    background-color: {{ section.settings.color_scheme.settings.background }};
     {%- comment -%}
-      Pas de « text: » ici : le diaporama n'a pas de couleur de texte de SECTION, elle
-      se regle par BLOC (block.settings.text_color). Passer section.settings.text_color
-      ne donnait rien (nil) et faisait croire a un reglage inexistant ; le snippet deduit
-      l'encre du fond, ce qui est deja ce qui se rendait.
+      Le schema de couleurs de la SECTION donne le fond et l'encre des fleches et
+      des points ; chaque diapositive regle l'encre de son texte par son propre
+      schema (block.settings.color_scheme.settings.text).
     {%- endcomment -%}
-    {% render 'section-tokens', bg: section.settings.background_color %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .slideshow__viewport {
@@ -174,7 +173,7 @@
   /* Alignements et couleurs, diapositive par diapositive */
   {%- for block in section.blocks -%}
     {%- liquid
-      assign slide_lightness = block.settings.text_color | color_extract: 'lightness'
+      assign slide_lightness = block.settings.color_scheme.settings.text | color_extract: 'lightness'
       if slide_lightness > 50
         assign overlay_rgb = '0, 0, 0'
         assign floor_rgb = '26, 22, 18'
@@ -207,7 +206,7 @@
 
     {{ slide_selector }} .slideshow__inner {
       text-align: {{ block.settings.text_alignment }};
-      color: {{ block.settings.text_color }};
+      color: {{ block.settings.color_scheme.settings.text }};
       {%- if block.settings.text_alignment == 'center' %}
         margin-left: auto;
         margin-right: auto;
@@ -226,12 +225,12 @@
     {{ slide_selector }} .slideshow__pretitle,
     {{ slide_selector }} .slideshow__title,
     {{ slide_selector }} .slideshow__text {
-      color: {{ block.settings.text_color }};
+      color: {{ block.settings.color_scheme.settings.text }};
     }
 
     {{ slide_selector }} .slideshow__button {
-      background-color: {{ block.settings.text_color }};
-      border-color: {{ block.settings.text_color }};
+      background-color: {{ block.settings.color_scheme.settings.text }};
+      border-color: {{ block.settings.color_scheme.settings.text }};
       color: {{ button_text_color }};
     }
   {%- endfor -%}
@@ -514,7 +513,7 @@
     1.7.2).
   {%- endcomment -%}
   <div
-    class="slideshow{{ transition_class }}"
+    class="slideshow color-{{ section.settings.color_scheme }}{{ transition_class }}"
     data-slideshow="{{ section.id }}"
     data-section-id="{{ section.id }}"
     data-autoplay="{{ autoplay_value }}"
@@ -1011,10 +1010,11 @@
       "content": "t:sections.slideshow.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.slideshow.settings.background_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-4"
     }
   ],
   "blocks": [
@@ -1085,11 +1085,11 @@
           "default": "center"
         },
         {
-          "type": "color",
-          "id": "text_color",
-          "label": "t:sections.slideshow.blocks.slide.settings.text_color.label",
-          "info": "t:sections.slideshow.blocks.slide.settings.text_color.info",
-          "default": "#ffffff"
+          "type": "color_scheme",
+          "id": "color_scheme",
+          "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+          "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+          "default": "scheme-4"
         },
         {
           "type": "range",

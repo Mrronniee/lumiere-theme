@@ -65,8 +65,8 @@
 
   .image-with-text {
     padding: var(--spacing-xl) var(--container-padding);
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .image-with-text__inner {
@@ -135,7 +135,7 @@
     font-size: clamp(1.75rem, 3vw, 2.75rem);
     font-weight: 400;
     line-height: 1.2;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
     margin-bottom: var(--spacing-sm);
   }
 
@@ -174,7 +174,7 @@
 {%- endstyle -%}
 
 <div
-  class="image-with-text image-with-text--image-{{ section.settings.image_position }}"
+  class="image-with-text color-{{ section.settings.color_scheme }} image-with-text--image-{{ section.settings.image_position }}"
   data-section-id="{{ section.id }}"
 >
   <div class="image-with-text__inner">
@@ -378,16 +378,11 @@
       "content": "t:sections.image_with_text.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.image_with_text.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.image_with_text.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     },
     {
       "type": "select",

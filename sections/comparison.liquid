@@ -6,9 +6,9 @@
 {% endcomment %}
 
 {%- liquid
-  assign bg_color = section.settings.background_color
-  assign txt_color = section.settings.text_color
-  assign hl_color = section.settings.highlight_color
+  assign bg_color = section.settings.color_scheme.settings.background
+  assign txt_color = section.settings.color_scheme.settings.text
+  assign hl_color = section.settings.color_scheme.settings.primary_button
 
   assign border_color = txt_color | color_mix: bg_color, 18
   assign head_surface = txt_color | color_mix: bg_color, 5
@@ -47,7 +47,7 @@
     derives sur le FOND de la section, pas sur hl_surface ou elles sont
     peintes. On les redérive sur hl_surface.
   endcomment
-  assign accent_dark = settings.color_accent | default: '#c9a96e' | color_darken: 22
+  assign accent_dark = section.settings.color_scheme.settings.accent | default: '#c9a96e' | color_darken: 22
   capture hl_surface_accent
     render 'contrast-color', base: accent_dark, bg: hl_surface
   endcapture
@@ -67,7 +67,7 @@
   .comparison {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
-    {% render 'section-tokens', bg: bg_color, text: txt_color %}
+    {% render 'section-tokens', bg: bg_color, text: txt_color, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .comparison__inner {
@@ -400,7 +400,7 @@
   assign actions_label = 'sections.comparison.actions' | t
 -%}
 
-<div class="comparison" data-section-id="{{ section.id }}">
+<div class="comparison color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="comparison__inner">
     {%- if section.settings.pretitle != blank or section.settings.title != blank or section.settings.description != blank -%}
       <div class="comparison__header">
@@ -622,23 +622,11 @@
       "content": "t:sections.comparison.settings.header__3.content"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.comparison.settings.background_color.label",
-      "default": "#ffffff"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.comparison.settings.text_color.label",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "highlight_color",
-      "label": "t:sections.comparison.settings.highlight_color.label",
-      "info": "t:sections.comparison.settings.highlight_color.info",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-1"
     }
   ],
   "blocks": [

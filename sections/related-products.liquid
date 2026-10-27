@@ -5,8 +5,8 @@
 {%- style -%}
   .related-products {
     padding: var(--spacing-xl) 0;
-    background-color: {{ section.settings.background_color }};
-    {% render 'section-tokens', bg: section.settings.background_color, text: section.settings.text_color %}
+    background-color: {{ section.settings.color_scheme.settings.background }};
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
   }
 
   .related-products__header {
@@ -19,7 +19,7 @@
     font-family: var(--font-heading);
     font-size: clamp(1.75rem, 3vw, 2.5rem);
     font-weight: 400;
-    color: {{ section.settings.text_color }};
+    color: {{ section.settings.color_scheme.settings.text }};
   }
 
   .related-products__grid {
@@ -47,7 +47,7 @@
 
 {%- assign related_collection = collections[section.settings.collection] -%}
 
-<div class="related-products" data-section-id="{{ section.id }}">
+<div class="related-products color-{{ section.settings.color_scheme }}" data-section-id="{{ section.id }}">
   <div class="related-products__header">
     <h2 class="related-products__title">
       {%- if section.settings.title != blank -%}
@@ -166,25 +166,29 @@
       "type": "select",
       "id": "show_vendor",
       "options": [
-        { "value": "inherit", "label": "t:sections.related_products.settings.show_vendor.options__inherit" },
-        { "value": "yes", "label": "t:sections.related_products.settings.show_vendor.options__yes" },
-        { "value": "no", "label": "t:sections.related_products.settings.show_vendor.options__no" }
+        {
+          "value": "inherit",
+          "label": "t:sections.related_products.settings.show_vendor.options__inherit"
+        },
+        {
+          "value": "yes",
+          "label": "t:sections.related_products.settings.show_vendor.options__yes"
+        },
+        {
+          "value": "no",
+          "label": "t:sections.related_products.settings.show_vendor.options__no"
+        }
       ],
       "default": "inherit",
       "label": "t:sections.related_products.settings.show_vendor.label",
       "info": "t:sections.related_products.settings.show_vendor.info"
     },
     {
-      "type": "color",
-      "id": "background_color",
-      "label": "t:sections.related_products.settings.background_color.label",
-      "default": "#faf9f7"
-    },
-    {
-      "type": "color",
-      "id": "text_color",
-      "label": "t:sections.related_products.settings.text_color.label",
-      "default": "#1a1a1a"
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:settings_schema.couleurs.settings.color_scheme.label",
+      "info": "t:settings_schema.couleurs.settings.color_scheme.info",
+      "default": "scheme-2"
     },
     {
       "type": "range",
@@ -235,7 +239,12 @@
     }
   ],
   "presets": [
-    {"name": "t:sections.related_products.presets.complementary.name", "settings": {"intent": "complementary"}},
+    {
+      "name": "t:sections.related_products.presets.complementary.name",
+      "settings": {
+        "intent": "complementary"
+      }
+    },
     {
       "name": "t:sections.related_products.presets.name",
       "category": "t:categories.product"
