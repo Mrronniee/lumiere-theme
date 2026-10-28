@@ -299,13 +299,6 @@
       "raison": "<meta name=\"theme-color\"> tire de settings.color_primary, comme layout/theme.liquid:7."
     },
     {
-      "id": "code-langue-repli-traduit-masque-francais-en-base-anglaise-libell",
-      "version": "1.8.2",
-      "etat": "pas_un_defaut",
-      "ou": "templates/page.toutes-sections.json:453",
-      "raison": "Les 4 defaults de schema qui masquaient un repli traduit sont vides (blog-posts view_all_label, countdown expired_message, tabs title ; fc7a3c4). Restent « Care » et « Shipping & returns », titres d'onglet du gabarit de demo page.toutes-sections.json, que paquet.py exclut du zip (GABARITS_DEMO) : aucun acheteur ne les recoit, et .kiosk/contenu-fr.json les traduit (Entretien, Livraison et retours)."
-    },
-    {
       "id": "code-evenements-de-l-editeur-geres",
       "version": "1.8.2",
       "etat": "corrige",
@@ -360,6 +353,126 @@
       "ou": "config/settings_schema.json:45",
       "commit": "1f24f95",
       "raison": "color_scheme_group ajouté : verifier-theme.py complet ne relève plus « schemas de couleurs : config/settings_schema.json — aucun reglage color_scheme_group » (ligne « editeur du Theme Store » en OK)."
+    },
+    {
+      "id": "complement-ccc5819a",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "snippets/section-tokens.liquid:75",
+      "commit": "b16c51f",
+      "raison": "(c) plus aucun réglage de couleur propre : newsletter input_bg, tabs active_color, reviews star_color, hero et video-banner overlay_color retirés (schémas, templates/index.json, locales), remplacés par l'aplat des champs du thème, l'accent du schéma et un voile de polarité opposée au texte du schéma ; (e) snippets/section-tokens.liquid prend le schéma (scheme:) et pose --color-primary, --color-primary-hover, --color-on-primary (relevé à 4,5:1) et --color-border depuis primary_button, on_primary_button et border, pour les 25 sections qui le rendent et pour la classe .color-<schéma> de snippets/css-variables.liquid ; .btn--primary de rich-text et image-with-text suit donc le bouton du schéma (scheme-4 : #ffffff)."
+    },
+    {
+      "id": "complement-14aedf92",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "snippets/section-tokens.liquid:75",
+      "commit": "b16c51f",
+      "raison": "Se ferme avec connu-8009666e (complement-ccc5819a), dont (c) et (e) sont faits : (c) plus aucun réglage de couleur propre : newsletter input_bg, tabs active_color, reviews star_color, hero et video-banner overlay_color retirés (schémas, templates/index.json, locales), remplacés par l'aplat des champs du thème, l'accent du schéma et un voile de polarité opposée au texte du schéma ; (e) snippets/section-tokens.liquid prend le schéma (scheme:) et pose --color-primary, --color-primary-hover, --color-on-primary (relevé à 4,5:1) et --color-border depuis primary_button, on_primary_button et border, pour les 25 sections qui le rendent et pour la classe .color-<schéma> de snippets/css-variables.liquid ; .btn--primary de rich-text et image-with-text suit donc le bouton du schéma (scheme-4 : #ffffff)."
+    },
+    {
+      "id": "complement-d050d5e2",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "snippets/section-tokens.liquid:75",
+      "commit": "b16c51f",
+      "raison": "Critères (a) à (f) remplis ; manques (c) et (e) corrigés : (c) plus aucun réglage de couleur propre : newsletter input_bg, tabs active_color, reviews star_color, hero et video-banner overlay_color retirés (schémas, templates/index.json, locales), remplacés par l'aplat des champs du thème, l'accent du schéma et un voile de polarité opposée au texte du schéma ; (e) snippets/section-tokens.liquid prend le schéma (scheme:) et pose --color-primary, --color-primary-hover, --color-on-primary (relevé à 4,5:1) et --color-border depuis primary_button, on_primary_button et border, pour les 25 sections qui le rendent et pour la classe .color-<schéma> de snippets/css-variables.liquid ; .btn--primary de rich-text et image-with-text suit donc le bouton du schéma (scheme-4 : #ffffff)."
+    },
+    {
+      "id": "complement-5a52ba14",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "sections/divider.liquid:14",
+      "commit": "b16c51f",
+      "raison": "Réglage transparent_background (vrai par défaut) : fond transparent et pas de classe de schéma, le séparateur laisse voir le fond de la page comme avant 9fbd01d ; le schéma donne la couleur du filet (scheme-2 garde #e3ded6)."
+    },
+    {
+      "id": "complement-769d0307",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2507",
+      "commit": "b16c51f",
+      "raison": ".product-gallery__thumb ajouté aux listes position: relative et ::after (anneau rentré deux tons inset 3px #fff + 6px #1a1a1a), outline-offset -6px et opacity 1 en :focus-visible."
+    },
+    {
+      "id": "complement-66b2e4de",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "sections/tabs.liquid:152",
+      "commit": "b16c51f",
+      "raison": ".tabs__tab:focus-visible : outline-offset -3px, box-shadow none ; filet de l'onglet actif à bottom: 0 au lieu de -1px."
+    },
+    {
+      "id": "complement-90e706f8",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2517",
+      "commit": "b16c51f",
+      "raison": ".markets-selectors__item:focus-visible : outline 2px solid currentColor, outline-offset -4px, box-shadow none (règle en fin de theme.css, après celles de même spécificité)."
+    },
+    {
+      "id": "complement-b30e6eed",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2515",
+      "commit": "b16c51f",
+      "raison": ".mobile-menu__link et .mobile-menu__sublink : outline 2px solid currentColor, outline-offset -4px, box-shadow none en :focus-visible."
+    },
+    {
+      "id": "complement-34cb8bf4",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "snippets/facet-filter-options.liquid:18",
+      "commit": "b16c51f",
+      "raison": "Titre du filtre id=FilterTitle-<section>-<rang> (facet-filters) ; cases dans div role=group aria-labelledby ce titre (facet-filter-options), plage de prix aussi (role=group sur .collection-filters__price-range) ; couvre listes, booléens, défaut et prix."
+    },
+    {
+      "id": "complement-8aa30db0",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "sections/testimonials.liquid:128",
+      "commit": "b16c51f",
+      "raison": "Étoile pleine = accent du schéma relevé par contrast-color à 3:1 sur card_surface ; étoile vide en creux (fill none, stroke card_muted 1,5) sans opacité."
+    },
+    {
+      "id": "complement-60a6794f",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "sections/reviews.liquid:138",
+      "commit": "b16c51f",
+      "raison": "star_color retiré (réglage hors schéma) ; étoile pleine = accent du schéma relevé à 3:1 sur card_surface ; étoile vide en creux (fill none, stroke card_muted 1,5) au lieu de l'aplat à 22 %."
+    },
+    {
+      "id": "complement-7b33757e",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2535",
+      "commit": "b16c51f",
+      "raison": "video:focus-visible dans .product-gallery__slide et .video-banner__media-wrap : outline rentré (-6px), et anneau deux tons inset posé en ::after sur le parent par :has(video:focus-visible)."
+    },
+    {
+      "id": "complement-49eba2dd",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1978",
+      "commit": "b16c51f",
+      "raison": ".rte th, .rte td { padding: 0.5rem 0.75rem } : les liens des cellules de bord dégagent leur anneau."
+    },
+    {
+      "id": "code-langue-repli-traduit-masque-francais-en-base-anglaise-libell",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "templates/page.toutes-sections.json:453",
+      "commit": "b16c51f",
+      "raison": "Titres d'onglet du gabarit de démo « Care » et « Shipping & returns » remplacés par des mots identiques en anglais et en français (« Notes », « Services ») : la ligne n'est plus relevée par verifier-theme.py (0 ALERTE)."
+    },
+    {
+      "id": "code-puces-a-3-1-anneau-de-focus-non-rogne-cases-en-serie-groupee",
+      "version": "1.9.1",
+      "etat": "corrige",
+      "ou": "assets/theme.css:263",
+      "commit": "b16c51f",
+      "raison": "Page courante soulignée ; option de recherche active, barre de livraison offerte et pastille de retrait à l'encre du texte (indisponible en creux) ; bordures de champ et des sélecteurs à --color-border-strong ; anneaux rentrés (vignettes, carte, panier, vue rapide, diaporama, filtres, marchés, menu mobile) ; étoiles ; cases groupées. verifier-theme.py complet : la ligne n'est plus relevée (0 ALERTE, 0 ÉCHEC)."
     }
   ]
 }
