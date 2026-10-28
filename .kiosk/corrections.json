@@ -468,11 +468,11 @@
     },
     {
       "id": "code-puces-a-3-1-anneau-de-focus-non-rogne-cases-en-serie-groupee",
-      "version": "1.9.1",
+      "version": "1.9.2",
       "etat": "corrige",
-      "ou": "assets/theme.css:263",
-      "commit": "b16c51f",
-      "raison": "Page courante soulignée ; option de recherche active, barre de livraison offerte et pastille de retrait à l'encre du texte (indisponible en creux) ; bordures de champ et des sélecteurs à --color-border-strong ; anneaux rentrés (vignettes, carte, panier, vue rapide, diaporama, filtres, marchés, menu mobile) ; étoiles ; cases groupées. verifier-theme.py complet : la ligne n'est plus relevée (0 ALERTE, 0 ÉCHEC)."
+      "ou": "assets/theme.css:2462",
+      "commit": "e649318",
+      "raison": "Les deux bordures en raccourci relevées (theme.css:1589 .product-variant__select, theme.css:2462 .gift-card-recipient__fields input/textarea) prenaient --color-border, filet à 12 % (1,3:1) ; elles prennent maintenant --color-border-input (dérivé pour 3:1 sur --input-bg), comme la règle groupée des contrôles de saisie. La règle de la carte cadeau venant après la règle groupée à spécificité égale, c'est elle qui s'affichait à 1,3:1 ; le sélecteur était déjà recouvert. verifier-theme.py complet sur e649318 : code 0, 212 OK, 0 ALERTE, 0 ÉCHEC, la ligne n'est plus relevée."
     }
   ]
 }
