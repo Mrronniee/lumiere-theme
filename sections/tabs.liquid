@@ -8,9 +8,14 @@
 {%- liquid
   assign bg_color = section.settings.color_scheme.settings.background
   assign text_color = section.settings.color_scheme.settings.text
-  assign active_color = section.settings.active_color
   comment
-    L'encre de l'onglet ACTIF est un reglage du marchand : posee telle quelle,
+    L'onglet actif prend l'accent du schema de couleurs, assombri comme
+    --color-accent-dark (#c9a96e donne #917136, l'ancien reglage propre valait
+    #916e36) : plus de couleur hors du schema.
+  endcomment
+  assign active_color = section.settings.color_scheme.settings.accent | default: settings.color_accent | color_darken: 22
+  comment
+    L'encre de l'onglet ACTIF est une couleur du marchand : posee telle quelle,
     elle valait 2,03:1 (fond d'accent) et 2,58:1 (fond sombre teinte) en 1.6.1.
     On la releve sur le fond de la section comme les autres encres du theme, en
     gardant sa teinte ; le filet sous l'onglet garde la couleur choisie.
@@ -46,7 +51,7 @@
   .tabs {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
-    {% render 'section-tokens', bg: bg_color, text: text_color, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: bg_color, text: text_color, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .tabs__inner {
@@ -120,7 +125,9 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -1px;
+    /* 0 et non -1px : la liste defile, donc rogne sa boite de padding, et le
+       pixel pose sur la bordure du bas etait coupe (filet de 1 px au lieu de 2). */
+    bottom: 0;
     height: 2px;
     background-color: {{ active_color }};
     transform: scaleX(0);
@@ -137,9 +144,15 @@
     transform: scaleX(1);
   }
 
+  {%- comment -%}
+    Anneau RENTRE dans l'onglet : la liste defile (overflow-x: auto met aussi
+    overflow-y en auto) et l'onglet en touche le haut et le bas ; dessine 2 px
+    dehors avec le halo blanc global, il ne restait que deux barres verticales.
+  {%- endcomment -%}
   .tabs__tab:focus-visible {
     outline: 2px solid {{ active_text }};
-    outline-offset: 2px;
+    outline-offset: -3px;
+    box-shadow: none;
   }
 
   @media (hover: hover) and (pointer: fine) {
@@ -540,13 +553,6 @@
       "label": "t:settings_schema.couleurs.settings.color_scheme.label",
       "info": "t:settings_schema.couleurs.settings.color_scheme.info",
       "default": "scheme-1"
-    },
-    {
-      "type": "color",
-      "id": "active_color",
-      "label": "t:sections.tabs.settings.active_color.label",
-      "info": "t:sections.tabs.settings.active_color.info",
-      "default": "#916e36"
     }
   ],
   "blocks": [

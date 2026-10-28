@@ -18,7 +18,7 @@
   #shopify-section-{{ section.id }} .featured-product {
     padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;
     background-color: {{ section.settings.color_scheme.settings.background }};
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
     color: {{ section.settings.color_scheme.settings.text }};
   }
 

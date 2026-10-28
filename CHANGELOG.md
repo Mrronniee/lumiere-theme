@@ -1,5 +1,31 @@
 # Changelog
 
+## 1.9.1 — 2026-10-28
+
+### Fixed
+- **A color scheme now sets the buttons and borders of its sections.** The
+  button, button label and border colors of a scheme were ignored: a section
+  set to the dark scheme kept a dark button on its dark background. The
+  countdown button and the slideshow controls of the default dark scheme now
+  use its white button.
+- **No more color pickers outside the schemes.** The newsletter field takes the
+  input background of Theme settings > Input fields, the active tab and the
+  rating stars take the scheme accent, and the hero and video banner overlay
+  follows the scheme text (dark under light text, light under dark text).
+- **The divider shows the page background again** by default, as before the
+  color schemes; a new option uses the scheme background instead.
+- **Rating stars read at a glance:** filled stars reach 3:1 on their card, and
+  empty stars are drawn as outlines, so the rating no longer depends on color
+  alone. Store pickup, the free-shipping bar, the current menu link and the
+  active search suggestion get the same treatment.
+- **Focus rings are no longer cut off** on product thumbnails, tabs, the
+  country, language and currency lists, the mobile menu, the cart drawer, quick
+  view, filters, the slideshow button, videos with controls and links in rich
+  text tables.
+- **Filters are announced with their name** by screen readers ("Color, Black,
+  checkbox"), price range included. Search, account, password and selector
+  fields have a 3:1 border.
+
 ## 1.9.0 — 2026-10-27
 
 ### Added

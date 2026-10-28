@@ -16,13 +16,19 @@
 
   comment
     L'APLAT DU CHAMP ET SON ENCRE SONT DEUX REGLAGES INDEPENDANTS ici
-    (input_bg et text_color) : le marchand peut donc poser un texte clair sur
+    (aplat du champ et texte du schema) : le marchand peut donc poser un texte clair sur
     un champ clair. Mesure de l'audit d'accessibilite 1.8.1 : meme patron que
     les 4 champs de contact a 1,00:1. L'encre du champ se derive donc sur
     l'aplat du champ, en gardant la teinte choisie, comme input_border ci-dessus.
   endcomment
+  comment
+    L'aplat du champ est celui des champs de saisie du theme (Parametres du
+    theme > Champs de saisie), et non plus un reglage de couleur propre a la
+    section, hors du schema de couleurs : meme #ffffff par defaut.
+  endcomment
+  assign input_bg = settings.input_background | default: '#ffffff'
   capture input_text
-    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: section.settings.input_bg
+    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: input_bg
   endcapture
   assign input_text = input_text | strip
 -%}
@@ -31,7 +37,7 @@
   .newsletter {
     padding: var(--spacing-xl) var(--container-padding);
     background-color: {{ section.settings.color_scheme.settings.background }};
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
     text-align: center;
   }
 
@@ -80,7 +86,7 @@
     font-family: var(--font-body);
     font-size: 1rem;
     border: 1px solid {{ input_border }};
-    background-color: {{ section.settings.input_bg }};
+    background-color: {{ input_bg }};
     color: {{ input_text }};
     transition: border-color var(--transition-fast);
   }
@@ -250,12 +256,6 @@
       "label": "t:settings_schema.couleurs.settings.color_scheme.label",
       "info": "t:settings_schema.couleurs.settings.color_scheme.info",
       "default": "scheme-3"
-    },
-    {
-      "type": "color",
-      "id": "input_bg",
-      "label": "t:sections.newsletter.settings.input_bg.label",
-      "default": "#ffffff"
     }
   ],
   "presets": [

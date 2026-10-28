@@ -67,7 +67,7 @@
   .comparison {
     padding: var(--spacing-xl) 0;
     background-color: {{ bg_color }};
-    {% render 'section-tokens', bg: bg_color, text: txt_color, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: bg_color, text: txt_color, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .comparison__inner {

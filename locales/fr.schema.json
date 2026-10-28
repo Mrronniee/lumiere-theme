@@ -697,9 +697,6 @@
             "label": "Droite"
           }
         },
-        "overlay_color": {
-          "label": "Couleur du voile"
-        },
         "overlay_opacity": {
           "label": "Opacité du voile"
         },
@@ -971,9 +968,6 @@
         },
         "header__2": {
           "content": "Style"
-        },
-        "input_bg": {
-          "label": "Fond du champ email"
         }
       },
       "presets": {
@@ -1476,9 +1470,6 @@
         },
         "header__4": {
           "content": "Style"
-        },
-        "overlay_color": {
-          "label": "Couleur du voile"
         },
         "overlay_opacity": {
           "label": "Opacité du voile",
@@ -2116,10 +2107,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "active_color": {
-          "label": "Couleur de l’onglet actif",
-          "info": "Utilisée pour le libellé de l’onglet ouvert et son soulignement. Choisissez une couleur suffisamment foncée pour rester lisible sur le fond."
         }
       },
       "blocks": {
@@ -2271,10 +2258,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "star_color": {
-          "label": "Couleur des étoiles",
-          "info": "Utilisée pour les étoiles pleines. Les étoiles vides reprennent la couleur du texte, atténuée."
         }
       },
       "blocks": {
@@ -2526,6 +2509,10 @@
         },
         "space_below": {
           "label": "Hauteur en dessous"
+        },
+        "transparent_background": {
+          "label": "Fond transparent",
+          "info": "Le fond de la page reste visible. Désactivez pour utiliser le fond du schéma de couleurs."
         }
       },
       "presets": {

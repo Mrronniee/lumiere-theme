@@ -9,6 +9,16 @@
   assign thickness = section.settings.line_thickness | at_least: 1
   assign line_width = section.settings.line_width | at_least: 10 | at_most: 100
   assign line_color = section.settings.color_scheme.settings.border
+
+  comment
+    FOND COMME LA PAGE. Avant les schemas de couleurs, le fond du separateur
+    valait #00000000 et laissait voir le fond de la page (Couleurs > fond).
+    Peint du fond opaque de scheme-2, il faisait une bande #faf9f7 entre deux
+    sections des que le marchand changeait le fond de la page. Par defaut il
+    redevient transparent (la classe de schema, qui pose un fond, n'est mise
+    que quand le marchand demande le fond du schema) ; le schema donne
+    toujours la couleur du filet.
+  endcomment
   assign space_above = section.settings.space_above
   assign space_below = section.settings.space_below
   assign space_above_mobile = space_above | times: 65 | divided_by: 100
@@ -20,7 +30,11 @@
 {%- style -%}
   .divider-{{ section.id }} {
     padding: {{ space_above }}px var(--container-padding) {{ space_below }}px;
+    {%- if section.settings.transparent_background %}
+    background-color: transparent;
+    {%- else %}
     background-color: {{ section.settings.color_scheme.settings.background }};
+    {%- endif %}
   }
 
   .divider-{{ section.id }} .divider__inner {
@@ -62,7 +76,7 @@
   }
 {%- endstyle -%}
 
-<div class="divider color-{{ section.settings.color_scheme }} divider-{{ section.id }}" data-section-id="{{ section.id }}" aria-hidden="true">
+<div class="divider{% unless section.settings.transparent_background %} color-{{ section.settings.color_scheme }}{% endunless %} divider-{{ section.id }}" data-section-id="{{ section.id }}" aria-hidden="true">
   <div class="divider__inner">
     {%- if divider_style != 'space' -%}
       <div class="divider__line"></div>
@@ -131,6 +145,13 @@
       "label": "t:settings_schema.couleurs.settings.color_scheme.label",
       "info": "t:settings_schema.couleurs.settings.color_scheme.info",
       "default": "scheme-2"
+    },
+    {
+      "type": "checkbox",
+      "id": "transparent_background",
+      "label": "t:sections.divider.settings.transparent_background.label",
+      "info": "t:sections.divider.settings.transparent_background.info",
+      "default": true
     },
     {
       "type": "header",

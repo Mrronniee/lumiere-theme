@@ -10,9 +10,10 @@
   @param {string} [bg] - Le fond de la section (defaut : settings.color_background).
   @param {string} [text] - L'encre de la section ; quand elle manque, elle est choisie d'apres le fond.
   @param {string} [accent] - L'accent du schema de couleurs de la section (defaut : settings.color_accent).
+  @param {object} [scheme] - Le schema de couleurs de la section : son bouton, le texte de son bouton et ses bordures remplacent la primaire et le filet du theme.
 
   @example
-  {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent %}
+  {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent, scheme: scheme %}
 {% enddoc %}
 {%- liquid
   assign bg = bg | default: settings.color_background
@@ -58,6 +59,26 @@
   endif
   assign c_accent = accent | default: settings.color_accent | default: '#c9a96e'
   assign c_primary = settings.color_primary | default: '#1a1a1a'
+
+  comment
+    LE BOUTON ET LES BORDURES DU SCHEMA. Le schema porte « Bouton », « Texte du
+    bouton » et « Bordures », mais seuls son fond, son texte et son accent
+    devenaient des jetons : .btn--primary restait peint de la primaire GLOBALE
+    (rich-text passe en scheme-4 : bouton #1a1a1a sur un fond #1a1a1a, le
+    bouton #ffffff du schema jamais applique). Quand la section donne son
+    schema, sa primaire, l'encre posee dessus et son filet le remplacent.
+  endcomment
+  assign scheme_primary = blank
+  assign scheme_on_primary = blank
+  assign scheme_border = blank
+  if scheme != blank
+    assign scheme_primary = scheme.settings.primary_button
+    assign scheme_on_primary = scheme.settings.on_primary_button
+    assign scheme_border = scheme.settings.border
+  endif
+  if scheme_primary != blank
+    assign c_primary = scheme_primary
+  endif
 
   capture accent_text
     render 'contrast-color', base: c_accent, bg: bg
@@ -169,6 +190,27 @@
     assign on_primary = ink_dark
   endif
 
+  comment
+    Le texte du bouton choisi dans le schema prend la place du meilleur des
+    trois candidats ; releve jusqu'a 4,5:1 sur le bouton s'il ne tient pas, en
+    gardant sa teinte. Survol : la primaire eclaircie, ou assombrie quand elle
+    est deja claire (un bouton blanc eclairci ne bougeait pas).
+  endcomment
+  if scheme_on_primary != blank
+    capture on_primary_releve
+      render 'contrast-color', base: scheme_on_primary, bg: c_primary
+    endcapture
+    assign on_primary = on_primary_releve | strip
+  endif
+  assign primary_lightness = c_primary | color_extract: 'lightness'
+  if primary_lightness > 85
+    assign primary_hover = c_primary | color_darken: 12
+  else
+    assign primary_hover = c_primary | color_lighten: 12
+  endif
+  if scheme_border != blank
+    assign border_soft = scheme_border
+  endif
 -%}
     --color-background: {{ bg }};
     --color-text: {{ text }};
@@ -178,6 +220,10 @@
     --color-border-strong: {{ border_strong | strip }};
     --color-on-accent: {{ on_accent }};
     --color-on-primary: {{ on_primary }};
+    {%- if scheme_primary != blank %}
+    --color-primary: {{ c_primary }};
+    --color-primary-hover: {{ primary_hover }};
+    {%- endif %}
     --color-primary-text: {{ primary_text | strip }};
     --color-accent-dark: {{ accent_dark_text | strip }};
     --color-sale: {{ sale_text | strip }};

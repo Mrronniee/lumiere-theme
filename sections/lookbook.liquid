@@ -35,7 +35,7 @@
   .lookbook {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.color_scheme.settings.background }};
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .lookbook__header {

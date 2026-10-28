@@ -23,13 +23,28 @@
     render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: card_surface
   endcapture
   assign card_muted = card_muted | strip
+  comment
+    ETOILES : UN INDICATEUR, DONC 3:1 ET UNE FORME (WCAG 1.4.11 et 1.4.1). La
+    note n'est visible que par les etoiles (le libelle est en visually-hidden).
+    L'etoile pleine prenait l'accent brut (#c9a96e, 2,07:1 sur la carte) ou un
+    reglage de couleur propre (#c8952f, 2,49:1), et l'etoile vide un aplat a
+    22 % (1,47-1,58:1) : les deux etats ne se distinguaient que par la couleur.
+    Pleine : l'accent du schema releve a 3:1 sur la surface de la carte, en
+    gardant sa teinte. Vide : dessinee en creux, au trait de l'encre sourde de
+    la carte, pour que l'etat se lise a la forme.
+  endcomment
+  assign star_base = section.settings.color_scheme.settings.accent | default: settings.color_accent
+  capture star_filled
+    render 'contrast-color', base: star_base, bg: card_surface, target: 3
+  endcapture
+  assign star_filled = star_filled | strip
 -%}
 
 {%- style -%}
   .testimonials {
     padding: var(--spacing-xl) 0;
     background-color: {{ section.settings.color_scheme.settings.background }};
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .testimonials__inner {
@@ -104,13 +119,15 @@
     width: 16px;
     height: 16px;
     flex: 0 0 auto;
-    fill: {{ section.settings.color_scheme.settings.text }};
-    opacity: 0.22;
+    fill: none;
+    stroke: {{ card_muted }};
+    stroke-width: 1.5;
+    stroke-linejoin: round;
   }
 
   .testimonials__star--filled {
-    fill: var(--color-accent);
-    opacity: 1;
+    fill: {{ star_filled }};
+    stroke: {{ star_filled }};
   }
 
   .testimonials__quote {

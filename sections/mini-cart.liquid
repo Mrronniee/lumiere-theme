@@ -448,9 +448,10 @@
   .mini-cart__free-shipping-progress {
     height: 100%;
     /* L'accent de marque sur la piste --color-surface-16 donnait 1,53:1 : une
-       progression ne se lit plus. On prend l'encre derivee de la section, qui
-       garde 4,5:1 sur le fond, donc bien plus de 3:1 sur la piste. */
-    background: var(--color-accent-text, var(--color-accent));
+       progression ne se lit plus. L'encre du texte garde plus de 3:1 sur la
+       piste comme sur le fond, quel que soit l'accent choisi (l'accent derive
+       restait lu a 2,2:1 sur le premier schema). */
+    background: var(--color-text);
     transition: width 0.5s ease;
   }
 

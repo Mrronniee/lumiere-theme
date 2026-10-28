@@ -64,6 +64,18 @@
     echo '))'
   endcapture
   assign hero_sizes = hero_sizes | strip
+  comment
+    Voile pose sur le media : de la polarite opposee au texte du schema de
+    couleurs (noir sous un texte clair, blanc sous un texte sombre), au lieu
+    d'un reglage de couleur propre hors du schema. Texte clair du schema par
+    defaut (scheme-4) : noir, comme l'ancien reglage #000000.
+  endcomment
+  assign overlay_text_lightness = section.settings.color_scheme.settings.text | color_extract: 'lightness'
+  if overlay_text_lightness > 50
+    assign overlay_rgb = '0, 0, 0'
+  else
+    assign overlay_rgb = '255, 255, 255'
+  endif
 -%}
 
 {%- style -%}
@@ -105,8 +117,8 @@
     inset: 0;
     background: linear-gradient(
       {{ section.settings.overlay_direction }},
-      rgba({{ section.settings.overlay_color.red }}, {{ section.settings.overlay_color.green }}, {{ section.settings.overlay_color.blue }}, {{ section.settings.overlay_opacity }}),
-      rgba({{ section.settings.overlay_color.red }}, {{ section.settings.overlay_color.green }}, {{ section.settings.overlay_color.blue }}, {{ section.settings.overlay_opacity | times: 0.35 }})
+      rgba({{ overlay_rgb }}, {{ section.settings.overlay_opacity }}),
+      rgba({{ overlay_rgb }}, {{ section.settings.overlay_opacity | times: 0.35 }})
     );
     z-index: 2;
   }
@@ -608,12 +620,6 @@
       "label": "t:settings_schema.couleurs.settings.color_scheme.label",
       "info": "t:settings_schema.couleurs.settings.color_scheme.info",
       "default": "scheme-4"
-    },
-    {
-      "type": "color",
-      "id": "overlay_color",
-      "label": "t:sections.hero.settings.overlay_color.label",
-      "default": "#000000"
     },
     {
       "type": "range",

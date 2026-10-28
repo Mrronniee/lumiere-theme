@@ -10,7 +10,7 @@
             "accent": "#c9a96e",
             "primary_button": "#1a1a1a",
             "on_primary_button": "#ffffff",
-            "border": "#e0e0e0"
+            "border": "#e4e4e4"
           }
         },
         "scheme-2": {
@@ -30,7 +30,7 @@
             "accent": "#c9a96e",
             "primary_button": "#1a1a1a",
             "on_primary_button": "#ffffff",
-            "border": "#e0e0e0"
+            "border": "#dbdbdb"
           }
         },
         "scheme-4": {
@@ -40,7 +40,7 @@
             "accent": "#c9a96e",
             "primary_button": "#ffffff",
             "on_primary_button": "#1a1a1a",
-            "border": "#333333"
+            "border": "#353535"
           }
         }
       }

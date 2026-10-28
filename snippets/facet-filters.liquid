@@ -92,7 +92,13 @@
 
       {%- for filter in filterable.filters -%}
         <div class="collection-filters__group">
-          <button type="button" class="collection-filters__title" data-filter-toggle-group aria-expanded="true">
+          {%- comment -%}
+            Le groupe de valeurs porte le NOM DU FILTRE (id du titre, repris par
+            facet-filter-options et par la plage de prix) : sans lui, un lecteur
+            d'ecran annoncait « Noir, case a cocher » sans dire « Couleur », et
+            « Prix min » sans dire de quel filtre (WCAG 1.3.1).
+          {%- endcomment -%}
+          <button type="button" class="collection-filters__title" id="FilterTitle-{{ section_id }}-{{ forloop.index }}" data-filter-toggle-group aria-expanded="true">
             {{ filter.label }}
             {% render 'icon', icon: 'chevron-down' %}
           </button>
@@ -108,7 +114,7 @@
                 {% render 'facet-filter-options', filter: filter, section_id: section_id, group_index: forloop.index %}
 
               {%- when 'price_range' -%}
-                <div class="collection-filters__price-range">
+                <div class="collection-filters__price-range" role="group" aria-labelledby="FilterTitle-{{ section_id }}-{{ forloop.index }}">
                   <label class="visually-hidden" for="FilterMin-{{ section_id }}-{{ forloop.index }}">{{ 'sections.collection.price_min' | t }}</label>
                   <input
                     type="number"

@@ -354,7 +354,7 @@
   {%- for scheme in settings.color_schemes %}
   .color-{{ scheme.id }} {
     background-color: {{ scheme.settings.background }};
-    {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent %}
+    {% render 'section-tokens', bg: scheme.settings.background, text: scheme.settings.text, accent: scheme.settings.accent, scheme: scheme %}
     color: var(--color-text);
   }
   {%- endfor %}

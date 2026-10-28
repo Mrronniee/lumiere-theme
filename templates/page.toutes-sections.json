@@ -450,14 +450,14 @@
         "tab_3": {
           "type": "tab",
           "settings": {
-            "title": "Care",
+            "title": "Notes",
             "content": "<p>Hand wash at 30°C or dry clean. Dry flat, out of direct light. Do not tumble dry.</p>"
           }
         },
         "tab_4": {
           "type": "tab",
           "settings": {
-            "title": "Shipping & returns",
+            "title": "Services",
             "content": "<p>Shipped within 48 working hours, free delivery over €120. Free returns for 30 days after receipt.</p>"
           }
         }

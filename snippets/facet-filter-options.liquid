@@ -10,6 +10,12 @@
   @example
   {% render 'facet-filter-options', filter: filter, section_id: section_id, group_index: forloop.index %}
 {% enddoc %}
+{%- comment -%}
+  Les cases forment un groupe nomme par le titre du filtre
+  (FilterTitle-…, pose par snippets/facet-filters.liquid) : sans lui, un
+  lecteur d'ecran annoncait « Noir, case a cocher » sans dire « Couleur ».
+{%- endcomment -%}
+<div class="collection-filters__option-list" role="group" aria-labelledby="FilterTitle-{{ section_id }}-{{ group_index }}">
 {%- for filter_value in filter.values -%}
   {%- assign filter_input_id = 'Filter-' | append: section_id | append: '-' | append: group_index | append: '-' | append: forloop.index -%}
   <label class="collection-filters__option" for="{{ filter_input_id }}">
@@ -26,3 +32,4 @@
     <span class="collection-filters__option-count">({{ filter_value.count }})</span>
   </label>
 {%- endfor -%}
+</div>

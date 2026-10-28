@@ -89,13 +89,25 @@
     endcapture
   endif
   assign vb_sizes = vb_sizes | strip
+  comment
+    Voile pose sur le media : de la polarite opposee au texte du schema de
+    couleurs (noir sous un texte clair, blanc sous un texte sombre), au lieu
+    d'un reglage de couleur propre hors du schema. Texte clair du schema par
+    defaut (scheme-4) : noir, comme l'ancien reglage #000000.
+  endcomment
+  assign overlay_text_lightness = section.settings.color_scheme.settings.text | color_extract: 'lightness'
+  if overlay_text_lightness > 50
+    assign overlay_rgb = '0, 0, 0'
+  else
+    assign overlay_rgb = '255, 255, 255'
+  endif
 -%}
 
 {%- style -%}
   .video-banner {
     position: relative;
     background-color: {{ section.settings.color_scheme.settings.background }};
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .video-banner [hidden] {
@@ -168,7 +180,7 @@
     inset: 0;
     z-index: 1;
     pointer-events: none;
-    background-color: rgba({{ section.settings.overlay_color.red }}, {{ section.settings.overlay_color.green }}, {{ section.settings.overlay_color.blue }}, {{ section.settings.overlay_opacity }});
+    background-color: rgba({{ overlay_rgb }}, {{ section.settings.overlay_opacity }});
   }
 
   /* Plancher de lisibilite, de la polarite du texte : le voile reglable seul
@@ -799,12 +811,6 @@
       "label": "t:settings_schema.couleurs.settings.color_scheme.label",
       "info": "t:settings_schema.couleurs.settings.color_scheme.info",
       "default": "scheme-4"
-    },
-    {
-      "type": "color",
-      "id": "overlay_color",
-      "label": "t:sections.video_banner.settings.overlay_color.label",
-      "default": "#000000"
     },
     {
       "type": "range",

@@ -16,7 +16,7 @@
       des points ; chaque diapositive regle l'encre de son texte par son propre
       schema (block.settings.color_scheme.settings.text).
     {%- endcomment -%}
-    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent %}
+    {% render 'section-tokens', bg: section.settings.color_scheme.settings.background, text: section.settings.color_scheme.settings.text, accent: section.settings.color_scheme.settings.accent, scheme: section.settings.color_scheme %}
   }
 
   .slideshow__viewport {

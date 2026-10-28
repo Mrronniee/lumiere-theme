@@ -11,7 +11,6 @@
         "button_label_2": "",
         "button_link_2": "",
         "text_alignment": "center",
-        "overlay_color": "#000000",
         "overlay_opacity": 0.4,
         "overlay_direction": "to bottom",
         "height": 90,
@@ -120,8 +119,7 @@
         "description": "",
         "placeholder": "",
         "button_label": "",
-        "disclaimer": "",
-        "input_bg": "#ffffff"
+        "disclaimer": ""
       }
     }
   },

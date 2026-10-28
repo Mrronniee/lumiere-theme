@@ -697,9 +697,6 @@
             "label": "Right"
           }
         },
-        "overlay_color": {
-          "label": "Overlay color"
-        },
         "overlay_opacity": {
           "label": "Overlay opacity"
         },
@@ -971,9 +968,6 @@
         },
         "header__2": {
           "content": "Style"
-        },
-        "input_bg": {
-          "label": "Email field background"
         }
       },
       "presets": {
@@ -1476,9 +1470,6 @@
         },
         "header__4": {
           "content": "Style"
-        },
-        "overlay_color": {
-          "label": "Overlay color"
         },
         "overlay_opacity": {
           "label": "Overlay opacity",
@@ -2116,10 +2107,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "active_color": {
-          "label": "Active tab color",
-          "info": "Used for the open tab label and its underline. Pick a color dark enough to stay readable on the background."
         }
       },
       "blocks": {
@@ -2271,10 +2258,6 @@
         },
         "header__3": {
           "content": "Style"
-        },
-        "star_color": {
-          "label": "Star color",
-          "info": "Used for filled stars. Empty stars use a muted version of the text color."
         }
       },
       "blocks": {
@@ -2526,6 +2509,10 @@
         },
         "space_below": {
           "label": "Space below"
+        },
+        "transparent_background": {
+          "label": "Transparent background",
+          "info": "The page background shows through. Turn off to use the color scheme background."
         }
       },
       "presets": {
