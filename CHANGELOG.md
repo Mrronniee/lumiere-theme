@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.2 — 2026-10-28
+
+### Fixed
+- **Gift card recipient fields have a 3:1 border.** The email, name and message
+  fields of the gift card form on the product page kept the light 12 % divider
+  (1.3:1); they now use the same input border as every other field. The variant
+  selector declares the same border from its first rule.
+
 ## 1.9.1 — 2026-10-28
 
 ### Fixed
