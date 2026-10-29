@@ -10,9 +10,12 @@
   assign col_t = section.settings.columns_tablet
   assign col_m = section.settings.columns_mobile
 
-  assign vw_d = 100 | divided_by: col_d
-  assign vw_t = 100 | divided_by: col_t
-  assign vw_m = 100 | divided_by: col_m
+  comment
+    L'attribut sizes retire les marges du conteneur (2rem de chaque cote, 1,5rem
+    sous 750 px) : en « 100vw » le navigateur demandait 721 px a 412 en densite
+    1,75 pour une image de 364, et prenait le fichier 1000 (mesure 1.9.2,
+    page des sections, 334 et 286 Kio de sur-livraison).
+  endcomment
 
   assign gap = section.settings.spacing
   assign gap_mobile = gap | times: 0.6 | round
@@ -201,7 +204,7 @@
                       {%- if img.width >= 1000 -%}{{ img | image_url: width: 1000 }} 1000w,{%- endif -%}
                       {%- if img.width >= 1400 -%}{{ img | image_url: width: 1400 }} 1400w,{%- endif -%}"
                     src="{{ img | image_url: width: 1000 }}"
-                    sizes="(min-width: 990px) {{ vw_d }}vw, (min-width: 750px) {{ vw_t }}vw, {{ vw_m }}vw"
+                    sizes="(min-width: 990px) calc((100vw - 4rem) / {{ col_d }}), (min-width: 750px) calc((100vw - 4rem) / {{ col_t }}), calc((100vw - 3rem) / {{ col_m }})"
                     alt="{{ img.alt | escape }}"
                     class="gallery__image"
                     loading="lazy"

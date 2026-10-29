@@ -514,10 +514,12 @@
         // une mutation de la region deja observee, donc une annonce reelle.
         region.appendChild(note);
         note.textContent = message;
+        // 6 s et non 2,6 : un message de stock ou d'erreur doit pouvoir etre
+        // lu en entier (le francais est plus long que l'anglais).
         setTimeout(() => {
           note.classList.add('is-leaving');
           setTimeout(() => note.remove(), 300);
-        }, 2600);
+        }, 6000);
       };
       if (fresh) setTimeout(emit, 50);
       else emit();
@@ -1250,7 +1252,14 @@
       const key = itemEl?.dataset.key;
       const line = itemEl?.dataset.line;
       if (!key && !line) return;
-      if (this.state.isUpdating) return;
+      // Une saisie faite PENDANT une autre mise a jour etait jetee sans un
+      // mot : le panier restait a l'ancienne quantite, et aucun message de
+      // stock ne sortait (mesure 1.9.2, page panier en francais). On garde la
+      // derniere demande et on la rejoue a la fin de la mise a jour en cours.
+      if (this.state.isUpdating) {
+        this.pendingUpdate = { key, line, quantity };
+        return;
+      }
 
       this.state.isUpdating = true;
       try {
@@ -1304,6 +1313,14 @@
         if (!(await this.refresh())) this.revertQuantity(itemEl);
       } finally {
         this.state.isUpdating = false;
+        const suivante = this.pendingUpdate;
+        this.pendingUpdate = null;
+        if (suivante) {
+          const ligne = suivante.key
+            ? document.querySelector(`[data-cart-item][data-key="${CSS.escape(suivante.key)}"]`)
+            : document.querySelector(`[data-cart-item][data-line="${suivante.line}"]`);
+          if (ligne) this.updateItem(ligne, suivante.quantity);
+        }
       }
     }
   };
@@ -2689,6 +2706,14 @@
       };
       if ('ResizeObserver' in window) {
         new ResizeObserver(remesurer).observe(inner);
+        // La liste reste observee pour un menu qui grandit apres coup (entrees
+        // ajoutees, libelles traduits : 166 px de debordement a 1440, mesure
+        // 1.9.2), mais seulement DEPLIEE : replie, sa taille tombe a 0 par
+        // notre fait, et y repondre relancait la boucle decrite plus haut.
+        new ResizeObserver(() => {
+          if (header.classList.contains('is-nav-condensed')) return;
+          measure();
+        }).observe(list);
       } else {
         window.addEventListener('resize', remesurer);
       }

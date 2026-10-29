@@ -150,14 +150,15 @@
     dehors avec le halo blanc global, il ne restait que deux barres verticales.
   {%- endcomment -%}
   {%- comment -%}
-    Rentre de 5 px et non de 3 : a 3 px, le filet actif (2 px au bas de
-    l'onglet, meme teinte) etait le voisin exterieur de l'anneau, cFond 1,14
-    en bas (mesure 1.9.2, regression). L'onglet a 8 px de marge laterale pour
-    que l'anneau ne touche pas son texte.
+    Decalage de -7 px : le trait de 2 px occupe alors 5 a 7 px sous le bord,
+    et le pixel exterieur mesure (2 px plus loin) est le fond, pas le filet
+    actif (2 px au bas de l'onglet, meme teinte) : cFond 1,14 en bas a -3 et
+    encore a -5 px (mesure 1.9.2, regression). L'onglet a 8 px de marge
+    laterale pour que l'anneau ne touche pas son texte.
   {%- endcomment -%}
   .tabs__tab:focus-visible {
     outline: 2px solid {{ active_text }};
-    outline-offset: -5px;
+    outline-offset: -7px;
     box-shadow: none;
   }
 
@@ -369,14 +370,14 @@
                   <img
                     srcset="
                       {%- if panel_image.width >= 400 -%}{{ panel_image | image_url: width: 400 }} 400w,{%- endif -%}
-                      {%- if panel_image.width >= 500 -%}{{ panel_image | image_url: width: 500 }} 500w,{%- endif -%}
-                      {%- if panel_image.width >= 700 -%}{{ panel_image | image_url: width: 700 }} 700w,{%- endif -%}
+                      {%- if panel_image.width >= 650 -%}{{ panel_image | image_url: width: 650 }} 650w,{%- endif -%}
                       {%- if panel_image.width >= 800 -%}{{ panel_image | image_url: width: 800 }} 800w,{%- endif -%}
+                      {%- if panel_image.width >= 1000 -%}{{ panel_image | image_url: width: 1000 }} 1000w,{%- endif -%}
                       {%- if panel_image.width >= 1200 -%}{{ panel_image | image_url: width: 1200 }} 1200w,{%- endif -%}
                       {{ panel_image | image_url: width: 1600 }} 1600w
                     "
                     src="{{ panel_image | image_url: width: 800 }}"
-                    sizes="(max-width: 749px) 92vw, (max-width: 1200px) 46vw, 560px"
+                    sizes="(max-width: 749px) calc(100vw - 3rem), (max-width: 1200px) 46vw, 560px"
                     alt="{{ panel_image.alt | escape }}"
                     width="{{ panel_image.width }}"
                     height="{{ panel_image.height }}"

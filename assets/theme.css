@@ -1477,6 +1477,15 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   box-shadow: inset 0 0 0 3px #fff, inset 0 0 0 6px #1a1a1a;
 }
 
+/* Bouton du diaporama : sa plaque prend l'encre de la diapositive. Sombre sur
+   une diapositive claire (schemas 1 a 3, palette inverse), la bande blanche
+   du ::after touchait le bord du bouton, et son voisin exterieur etait la
+   diapositive blanche : cFond 1 sur les quatre cotes (mesure 1.9.2). Rentree
+   de 3 px, la bande a la plaque du bouton pour voisin. */
+.slideshow__button:focus-visible::after {
+  inset: 3px;
+}
+
 /* Anneau inverse seulement quand le header est reellement sur un media sombre :
    sur un header reste opaque, l anneau blanc disparaissait sur le fond clair. */
 body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--transparent :where(a, button):focus-visible {

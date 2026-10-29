@@ -231,17 +231,21 @@
             retiree est 2rem et non 3rem pour ne jamais sous-annoncer :
             a 1440, 58,33vw - 2rem = 808 px pour 796 peints, 41,67vw - 2rem
             = 568 pour 564, et 33,33vw - 2rem = 448 pour 448.
+            Sous 750 px, la marge du conteneur est de 1,5rem de chaque cote :
+            100vw - 3rem = 364 px pour 364 peints a 412 (100vw - 2rem
+            annoncait 380, et le navigateur prenait le fichier 750 au lieu de
+            650 : 148 Kio de sur-livraison sur l'accueil mobile, mesure 1.9.2).
           {%- endcomment -%}
           {%- liquid
             case forloop.index
               when 1
-                assign tile_sizes = '(min-width: 990px) calc(58.33vw - 2rem), calc(100vw - 2rem)'
+                assign tile_sizes = '(min-width: 990px) calc(58.33vw - 2rem), calc(100vw - 3rem)'
               when 2, 3
-                assign tile_sizes = '(min-width: 990px) calc(41.67vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 2rem)'
+                assign tile_sizes = '(min-width: 990px) calc(41.67vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 3rem)'
               when 4, 5
-                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 2rem)'
+                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), (min-width: 750px) calc(50vw - 2rem), calc(100vw - 3rem)'
               else
-                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), calc(100vw - 2rem)'
+                assign tile_sizes = '(min-width: 990px) calc(33.33vw - 2rem), calc(100vw - 3rem)'
             endcase
           -%}
           {%- comment -%}
