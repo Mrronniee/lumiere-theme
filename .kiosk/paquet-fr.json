@@ -1,11 +1,11 @@
 {
  "slug": "lumiere",
- "version": "1.8.1",
- "commit": "5085901",
+ "version": "1.9.2",
+ "commit": "fdd6ca3",
  "zip": "LUMIERE-Kiosk-FR.zip",
- "empreinte": "d19beb2b4881ac4ad0c7bdecf7f5297ede901ea181a52317ea432cf919f90965",
- "sha256_cloud": "35ce595b2966fda7404a7ea93273f092a17ae8017cc5dbb7d6200bda2ec9d013",
+ "empreinte": "a0716a2d1fceb64556010f293bdf73a164aaa190091839ca4c3387586e9ea307",
+ "sha256_cloud": "f52a3b5783d5886ef484e2a0e73ca9f3bd483da4389add113ae07d38e0c644cf",
  "format": "paquets/lumiere.json",
- "fabrique_le": "2026-10-25",
+ "fabrique_le": "2026-10-29",
  "langue": "fr"
 }
