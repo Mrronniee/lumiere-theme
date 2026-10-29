@@ -38,7 +38,7 @@
   for i in (1..14)
     assign vb_composite = vb_floor_hex | color_mix: vb_pire_cas, vb_floor_pct
     assign vb_ratio = section.settings.color_scheme.settings.text | color_contrast: vb_composite
-    if vb_ratio >= 4.5
+    if vb_ratio >= 4.6
       break
     endif
     if vb_floor_pct >= 85

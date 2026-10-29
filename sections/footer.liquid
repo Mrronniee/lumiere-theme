@@ -9,6 +9,8 @@
     liens, 0,5 sur le copyright) tombaient sous 4,5:1 des que le marchand
     choisissait un fond clair. On melange le texte vers le fond jusqu'a
     atteindre 4,5:1, comme --color-text-light dans css-variables.
+    Seuil 4,6 et non 4,5 : color_contrast arrondit au dixieme, et un 4,5
+    annonce valait 4,49 au pixel sur la palette inverse (mesure 1.9.2).
   endcomment
   assign footer_bg = section.settings.color_scheme.settings.background
   assign footer_text = section.settings.color_scheme.settings.text
@@ -16,7 +18,7 @@
   assign footer_muted = footer_text | color_mix: footer_bg, muted_weight
   for i in (1..15)
     assign ratio = footer_muted | color_contrast: footer_bg
-    if ratio >= 4.5
+    if ratio >= 4.6
       break
     endif
     assign muted_weight = muted_weight | plus: 3

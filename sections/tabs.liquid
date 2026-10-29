@@ -32,7 +32,7 @@
     fond=vive). On garde sa teinte et on la releve juste ce qu'il faut.
   endcomment
   capture active_ring
-    render 'contrast-color', base: active_color, bg: bg_color, target: 3
+    render 'contrast-color', base: active_color, bg: bg_color, target: 3.2
   endcapture
   assign active_ring = active_ring | strip
 
@@ -105,7 +105,7 @@
     position: relative;
     flex: 0 0 auto;
     scroll-snap-align: center;
-    padding: var(--spacing-sm) 0.125rem;
+    padding: var(--spacing-sm) 0.5rem;
     font-family: var(--font-body);
     font-size: 0.8125rem;
     font-weight: 400;
@@ -149,9 +149,15 @@
     overflow-y en auto) et l'onglet en touche le haut et le bas ; dessine 2 px
     dehors avec le halo blanc global, il ne restait que deux barres verticales.
   {%- endcomment -%}
+  {%- comment -%}
+    Rentre de 5 px et non de 3 : a 3 px, le filet actif (2 px au bas de
+    l'onglet, meme teinte) etait le voisin exterieur de l'anneau, cFond 1,14
+    en bas (mesure 1.9.2, regression). L'onglet a 8 px de marge laterale pour
+    que l'anneau ne touche pas son texte.
+  {%- endcomment -%}
   .tabs__tab:focus-visible {
     outline: 2px solid {{ active_text }};
-    outline-offset: -3px;
+    outline-offset: -5px;
     box-shadow: none;
   }
 
@@ -363,7 +369,8 @@
                   <img
                     srcset="
                       {%- if panel_image.width >= 400 -%}{{ panel_image | image_url: width: 400 }} 400w,{%- endif -%}
-                      {%- if panel_image.width >= 600 -%}{{ panel_image | image_url: width: 600 }} 600w,{%- endif -%}
+                      {%- if panel_image.width >= 500 -%}{{ panel_image | image_url: width: 500 }} 500w,{%- endif -%}
+                      {%- if panel_image.width >= 700 -%}{{ panel_image | image_url: width: 700 }} 700w,{%- endif -%}
                       {%- if panel_image.width >= 800 -%}{{ panel_image | image_url: width: 800 }} 800w,{%- endif -%}
                       {%- if panel_image.width >= 1200 -%}{{ panel_image | image_url: width: 1200 }} 1200w,{%- endif -%}
                       {{ panel_image | image_url: width: 1600 }} 1600w

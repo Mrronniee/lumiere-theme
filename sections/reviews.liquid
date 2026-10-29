@@ -39,7 +39,7 @@
   endcomment
   assign star_base = section.settings.color_scheme.settings.accent | default: settings.color_accent
   capture star_filled
-    render 'contrast-color', base: star_base, bg: card_surface, target: 3
+    render 'contrast-color', base: star_base, bg: card_surface, target: 3.2
   endcapture
   assign star_filled = star_filled | strip
 -%}

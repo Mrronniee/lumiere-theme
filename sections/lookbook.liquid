@@ -20,7 +20,7 @@
   endif
   for i in (1..24)
     assign lb_ratio = lb_accent | color_contrast: lb_bg
-    if lb_ratio >= 4.5
+    if lb_ratio >= 4.6
       break
     endif
     if lb_bg_is_dark
@@ -256,9 +256,9 @@
             a 6, comme l'exige le controle du theme (4 a 6 valeurs).
           {%- endcomment -%}
           <img
-            srcset="{%- if block.settings.image.width >= 375 -%}{{ block.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-              {%- if block.settings.image.width >= 500 -%}{{ block.settings.image | image_url: width: 500 }} 500w,{%- endif -%}
-              {%- if block.settings.image.width >= 600 -%}{{ block.settings.image | image_url: width: 600 }} 600w,{%- endif -%}
+            srcset="{%- if block.settings.image.width >= 450 -%}{{ block.settings.image | image_url: width: 450 }} 450w,{%- endif -%}
+              {%- if block.settings.image.width >= 550 -%}{{ block.settings.image | image_url: width: 550 }} 550w,{%- endif -%}
+              {%- if block.settings.image.width >= 650 -%}{{ block.settings.image | image_url: width: 650 }} 650w,{%- endif -%}
               {%- if block.settings.image.width >= 750 -%}{{ block.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
               {%- if block.settings.image.width >= 1100 -%}{{ block.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
               {%- if block.settings.image.width >= 1500 -%}{{ block.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"

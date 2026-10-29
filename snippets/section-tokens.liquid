@@ -51,7 +51,7 @@
     encre lisible ne voit aucun changement : la boucle s'arrete au premier tour.
   endcomment
   assign text_sur_bg = bg | color_contrast: text
-  if text_sur_bg < 4.5
+  if text_sur_bg < 4.6
     capture text_releve
       render 'contrast-color', base: text, bg: bg
     endcapture
@@ -87,7 +87,7 @@
     render 'contrast-color', base: text, bg: bg, target: 4.6
   endcapture
   capture border_strong
-    render 'contrast-color', base: text, bg: bg, target: 3
+    render 'contrast-color', base: text, bg: bg, target: 3.2
   endcapture
   assign border_soft = text | color_mix: bg, 12
 

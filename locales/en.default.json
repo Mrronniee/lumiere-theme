@@ -227,7 +227,8 @@
       "default_disclaimer": "By signing up you agree to our privacy policy."
     },
     "related_products": {
-      "default_title": "You may also like"
+      "default_title": "You may also like",
+      "load_error": "Recommendations could not be loaded. Check your connection, then reload the page."
     },
     "apps": {
       "no_blocks": "Add an app block to this section."
@@ -270,6 +271,7 @@
       "free_shipping_progress_html": "Only <strong>{{ amount }}</strong> away from free shipping",
       "free_shipping_success": "Free shipping unlocked!",
       "cart_error": "An error occurred while updating your cart. Please try again.",
+      "quantity_limited": "Only [quantity] of this item are available. Your cart has been updated.",
       "count_announce": {
         "one": "{{ count }} item in cart",
         "other": "{{ count }} items in cart"

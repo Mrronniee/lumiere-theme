@@ -106,11 +106,11 @@
     les chiffres, composant d'interface pour l'anneau).
   endcomment
   capture digit_ink
-    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: digit_surface, target: 3
+    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: digit_surface, target: 3.2
   endcapture
   assign digit_ink = digit_ink | strip
   capture digit_ring
-    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: section.settings.color_scheme.settings.background, target: 3
+    render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: section.settings.color_scheme.settings.background, target: 3.2
   endcapture
   assign digit_ring = digit_ring | strip
 

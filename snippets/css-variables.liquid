@@ -113,7 +113,7 @@
     textuel qui porte une information, WCAG 1.4.11.
   endcomment
   capture c_border_input
-    render 'contrast-color', base: c_text, bg: c_input_bg, target: 3
+    render 'contrast-color', base: c_text, bg: c_input_bg, target: 3.2
   endcapture
   assign c_border_input = c_border_input | strip
 
@@ -128,7 +128,7 @@
     Le « # » doit etre encode en « %23 » dans une URL.
   endcomment
   capture c_arrow
-    render 'contrast-color', base: '#333333', bg: c_input_bg, target: 3
+    render 'contrast-color', base: '#333333', bg: c_input_bg, target: 3.2
   endcapture
   assign c_arrow = c_arrow | strip | remove_first: '#'
 
@@ -233,7 +233,7 @@
     (1,21:1 sur la newsletter).
   endcomment
   capture c_border_strong
-    render 'contrast-color', base: c_text, bg: c_bg, target: 3
+    render 'contrast-color', base: c_text, bg: c_bg, target: 3.2
   endcapture
   assign c_border_strong = c_border_strong | strip
 

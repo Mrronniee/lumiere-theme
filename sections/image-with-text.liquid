@@ -217,6 +217,11 @@
           la Section Rendering API, et « nil <= 2 » est faux — ecrite a
           l'endroit, la condition donnait loading="lazy" a l'image qui ouvre la
           page. Ainsi, eager reste le defaut quand l'index est inconnu.
+
+          fetchpriority. Meme raison, memes deux premieres sections : derriere
+          un bloc de texte, cette image est le LCP de la page, et elle partait
+          sans priorite haute ni preload (regle T6, page des sections, mesure
+          1.9.2, mobile, bureau et large).
         {%- endcomment -%}
         <img
           srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
@@ -232,7 +237,7 @@
             loading="lazy"
           {%- else %}
             loading="eager"
-            {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
+            {%- if section.index == 1 or section.index == 2 %} fetchpriority="high"{% endif -%}
           {%- endif %}
           {% render 'focal', image: section.settings.image %}
           width="{{ section.settings.image.width }}"

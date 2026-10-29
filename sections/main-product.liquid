@@ -31,6 +31,10 @@
     max-height: calc(100vh - 150px);
     overflow-y: auto;
     scrollbar-width: none;
+    /* 4 px pour l'anneau de focus global (2 px de contour a 2 px), que la
+       zone qui defile rognait ; la marge negative garde la colonne a 80 px. */
+    padding: 4px;
+    margin: -4px;
   }
 
   .product-gallery__thumbnails::-webkit-scrollbar { display: none; }
@@ -45,7 +49,7 @@
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   }
 
-  .product-gallery__thumb.is-active { border-color: var(--color-primary); opacity: 1; }
+  .product-gallery__thumb.is-active { border-color: var(--color-text); opacity: 1; }
   /* Au doigt, la vignette touchee gardait l'opacite de la vignette ACTIVE et
      paraissait selectionnee : le survol ne vaut qu'a la souris. */
   @media (hover: hover) and (pointer: fine) {
@@ -99,7 +103,10 @@
     width: 40px;
     height: 40px;
     background: var(--color-background);
-    color: var(--color-primary);
+    /* Encre de marque RELEVEE sur la plaque : --color-primary brute restait
+       #1a1a1a sur une plaque devenue sombre (palette sombre, mesure 1.9.2 :
+       icones a 1:1, et l'anneau en currentColor, 4 px sur 320). */
+    color: var(--color-primary-text, var(--color-primary));
     display: flex;
     align-items: center;
     justify-content: center;

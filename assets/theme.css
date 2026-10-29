@@ -368,6 +368,9 @@ ul, ol {
   align-items: center;
   justify-content: center;
   position: relative;
+  /* Le panier devient un <button> quand le JavaScript le prend (theme.js,
+     promouvoirDeclencheurs) : meme texte que le lien qu'il remplace. */
+  font: inherit;
   color: var(--color-text);
   transition: color var(--transition-fast);
 }
@@ -1318,8 +1321,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .lookbook__item-link,
   .hero__button,
   .slideshow__button,
-  .slideshow__dot,
-  .product-gallery__thumb
+  .slideshow__dot
 ):focus-visible {
   outline-color: #1a1a1a;
   box-shadow: 0 0 0 2px #fff;
@@ -1379,11 +1381,11 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 
 /* Les boutons de la galerie produit, eux, portent une plaque de
    --color-background et une encre de marque : sous la palette sombre les deux
-   etaient sombres, 4 px d'anneau mesures (tour 2). --color-primary-text garde
-   la teinte de marque en la relevant sur cette plaque. */
-:where(.product-gallery__nav-btn, .product-gallery__zoom):focus-visible {
-  outline-color: var(--color-primary-text, currentColor);
-}
+   etaient sombres, 4 px d'anneau mesures (tour 2). Leur ENCRE est donc
+   --color-primary-text (sections/main-product.liquid), et le currentColor de
+   la regle ci-dessus la reprend. La regle :where() qui posait ici
+   outline-color n'avait aucun effet (specificite 0 contre la regle :is()
+   ci-dessus) : encore 4 px sur 320 en palette sombre, mesure 1.9.2. */
 
 /* POURQUOI L'ANNEAU RENTRE SUFFIT, ET CE QUI L'EMPECHAIT SUR LE HEROS.
    Mesure du 23/10/2026 (session des outils) : button.hero__video-control lisait
@@ -1447,8 +1449,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .slideshow__button,
-  .product-gallery__thumb
+  .slideshow__button
 ):focus-visible {
   position: relative;
 }
@@ -1462,8 +1463,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   .map__media-link,
   .multi-column__media-link,
   .lookbook__item-link,
-  .slideshow__button,
-  .product-gallery__thumb
+  .slideshow__button
 ):focus-visible::after {
   content: '';
   border-radius: inherit;
@@ -1628,8 +1628,10 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   background: var(--color-background);
 }
 
+/* Bord de l'etat choisi a l'encre du texte, lisible sur le fond quelle que
+   soit la primaire (palette sombre : 1:1 en 1.9.2). */
 .product-variant__option-input:checked + .product-variant__option-label {
-  border-color: var(--color-primary);
+  border-color: var(--color-text);
   background: var(--color-primary);
   color: var(--color-on-primary);
 }
@@ -1661,7 +1663,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 }
 
 .product-variant__option-input:checked + .product-variant__option-label--color {
-  border-color: var(--color-primary);
+  border-color: var(--color-text);
   background: var(--color-background);
 }
 
@@ -2066,7 +2068,9 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
 
 /* Pagination */
 .pagination { margin-top: var(--spacing-lg); }
-.pagination__list { display: flex; justify-content: center; gap: 0.5rem; }
+/* Les numeros passent a la ligne : sept cases de 44 px depassaient l'ecran a
+   320 px, et la sixieme recevait le focus hors de la vue (mesure 1.9.2). */
+.pagination__list { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem; }
 .pagination__item {
   display: flex;
   align-items: center;
@@ -2078,7 +2082,7 @@ body:has(> main > .shopify-section:first-child [data-header-overlay]) .header--t
   border: 1px solid var(--color-border);
   transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
 }
-.pagination__item--current { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-primary); }
+.pagination__item--current { background: var(--color-primary); color: var(--color-on-primary); border-color: var(--color-text); }
 .pagination__item--gap { border-color: transparent; }
 a.pagination__item:hover { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-on-primary); }
 
@@ -2502,13 +2506,19 @@ textarea {
    couleurs forcees, ou box-shadow est effacee. */
 :is(
   .map__media-link,
-  .slideshow__button,
-  .product-gallery__thumb
+  .slideshow__button
 ):focus-visible {
   outline-offset: -6px;
 }
 
-/* La vignette inactive est pale (opacity 0.6) : son anneau l'etait aussi. */
+/* VIGNETTES DE LA GALERIE : L'ANNEAU GLOBAL, DEHORS. Rentre sur l'image en
+   1.9.1, l'anneau en deux tons avait sa bande sombre contre la bande sombre du
+   ::after : cFond 1 sur trois cotes, une regression de la mesure 1.9.2
+   (« anneau sous 3:1 », fiche produit a 1440). La colonne des vignettes a
+   maintenant 4 px de marge interieure (sections/main-product.liquid), que sa
+   barre de defilement ne rogne pas : l'anneau global (encre du texte, halo
+   blanc) s'y trace en entier, contre le fond de la section.
+   La vignette inactive est pale (opacity 0.6) : son anneau l'etait aussi. */
 .product-gallery__thumb:focus-visible {
   opacity: 1;
 }
@@ -2527,6 +2537,16 @@ textarea {
   outline: 2px solid currentColor;
   outline-offset: -4px;
   box-shadow: none;
+}
+
+/* CHAMP A BORDURE SOMBRE : RENTRER DE 6 PX, PAS DE 4. Les champs de prix
+   des filtres portent une bordure de 1 px a l'encre du texte (3:1). Rentre de
+   4 px, l'anneau avait cette bordure, de la meme encre, juste a l'exterieur :
+   cFond 1 sur les quatre cotes, BLOQUANT dans chaque palette (mesure 1.9.2).
+   A 6 px, son voisin exterieur est l'aplat du champ ; le texte, a 9 px du
+   bord, n'est pas touche. Meme ecart que les commandes de media plus haut. */
+.collection-filters input:not([type='checkbox'], [type='radio']):focus-visible {
+  outline-offset: -6px;
 }
 
 /* Video avec ses controles, dans un cadre qui masque : l'anneau du navigateur

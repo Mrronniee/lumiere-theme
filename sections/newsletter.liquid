@@ -10,7 +10,7 @@
     fond de la section — #e0e0e0 par defaut mesurait 1,21:1.
   endcomment
   capture input_border
-    render 'contrast-color', base: section.settings.color_scheme.settings.border, bg: section.settings.color_scheme.settings.background, target: 3
+    render 'contrast-color', base: section.settings.color_scheme.settings.border, bg: section.settings.color_scheme.settings.background, target: 3.2
   endcapture
   assign input_border = input_border | strip
 
@@ -31,6 +31,19 @@
     render 'contrast-color', base: section.settings.color_scheme.settings.text, bg: input_bg
   endcapture
   assign input_text = input_text | strip
+
+  comment
+    LE PLACEHOLDER SUIT L'APLAT DU CHAMP, PAS LE FOND DE LA SECTION.
+    --color-text-light est derive sur le fond de la section : en scheme-4
+    (fond #1a1a1a), il devenait un gris clair pose sur le champ blanc, 1:1
+    au pixel (mesure 1.9.2). On l'attenue a partir de l'encre du champ, puis
+    on le releve sur l'aplat du champ.
+  endcomment
+  assign input_placeholder = input_text | color_mix: input_bg, 60
+  capture input_placeholder
+    render 'contrast-color', base: input_placeholder, bg: input_bg
+  endcapture
+  assign input_placeholder = input_placeholder | strip
 -%}
 
 {%- style -%}
@@ -88,11 +101,12 @@
     border: 1px solid {{ input_border }};
     background-color: {{ input_bg }};
     color: {{ input_text }};
+    --newsletter-placeholder: {{ input_placeholder }};
     transition: border-color var(--transition-fast);
   }
 
   .newsletter__input::placeholder {
-    color: var(--color-text-light);
+    color: var(--newsletter-placeholder);
   }
 
   .newsletter__input:focus {

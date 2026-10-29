@@ -194,8 +194,10 @@
               <span class="gallery__media{% if img == blank %} gallery__media--placeholder{% endif %}">
                 {%- if img != blank -%}
                   <img
-                    srcset="{%- if img.width >= 400 -%}{{ img | image_url: width: 400 }} 400w,{%- endif -%}
-                      {%- if img.width >= 700 -%}{{ img | image_url: width: 700 }} 700w,{%- endif -%}
+                    srcset="{%- if img.width >= 450 -%}{{ img | image_url: width: 450 }} 450w,{%- endif -%}
+                      {%- if img.width >= 550 -%}{{ img | image_url: width: 550 }} 550w,{%- endif -%}
+                      {%- if img.width >= 650 -%}{{ img | image_url: width: 650 }} 650w,{%- endif -%}
+                      {%- if img.width >= 750 -%}{{ img | image_url: width: 750 }} 750w,{%- endif -%}
                       {%- if img.width >= 1000 -%}{{ img | image_url: width: 1000 }} 1000w,{%- endif -%}
                       {%- if img.width >= 1400 -%}{{ img | image_url: width: 1400 }} 1400w,{%- endif -%}"
                     src="{{ img | image_url: width: 1000 }}"

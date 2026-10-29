@@ -3,6 +3,8 @@
   « target » (4,6 par defaut, 3 pour un grand texte ou une bordure) sur le
   fond « bg ». On eclaircit si le fond est sombre, on assombrit sinon, par pas
   de 3 % — la teinte de la marque est conservee, seule la luminosite bouge.
+  color_contrast arrondit au dixieme : un « 3 » annonce valait 2,92 au pixel
+  (bordure de champ, mesure 1.9.2). Les appels qui visent 3:1 passent donc 3.2.
 
   @param {string} [base] - Couleur de depart, dont la teinte est conservee (defaut : #1a1a1a).
   @param {string} [bg] - Fond sur lequel l'encre sera posee (defaut : #ffffff).
@@ -28,5 +30,34 @@
       assign out = out | color_darken: 3
     endif
   endfor
+
+  comment
+    SUR UN FOND DE LUMINOSITE MOYENNE, LE SENS SE TROMPE. Un fond qui contraste
+    a plus de 2,5 avec le blanc est traite comme sombre : on eclaircit. Sur
+    la pastille de solde de la palette inverse (fond #d55344), encre #1a1a1a
+    eclaircie jusqu au blanc : 4,08 au pixel, contre 5,06 en assombrissant
+    (mesure 1.9.2). Quand le premier sens rate le seuil, on repart de la base
+    dans l autre sens et on garde le meilleur des deux. Un appel qui atteignait
+    deja le seuil ne change pas.
+  endcomment
+  assign ratio = out | color_contrast: bg
+  if target > ratio
+    assign other = base
+    for i in (1..34)
+      assign other_ratio = other | color_contrast: bg
+      if other_ratio >= target
+        break
+      endif
+      if white_on_bg > 2.5
+        assign other = other | color_darken: 3
+      else
+        assign other = other | color_lighten: 3
+      endif
+    endfor
+    assign other_ratio = other | color_contrast: bg
+    if other_ratio > ratio
+      assign out = other
+    endif
+  endif
   echo out
 -%}

@@ -232,8 +232,10 @@
               <span class="featured-collections__media{% if card_image == blank %} featured-collections__media--placeholder{% endif %}">
                 {%- if card_image != blank -%}
                   <img
-                    srcset="{%- if card_image.width >= 400 -%}{{ card_image | image_url: width: 400 }} 400w,{%- endif -%}
-                      {%- if card_image.width >= 700 -%}{{ card_image | image_url: width: 700 }} 700w,{%- endif -%}
+                    srcset="{%- if card_image.width >= 450 -%}{{ card_image | image_url: width: 450 }} 450w,{%- endif -%}
+                      {%- if card_image.width >= 550 -%}{{ card_image | image_url: width: 550 }} 550w,{%- endif -%}
+                      {%- if card_image.width >= 650 -%}{{ card_image | image_url: width: 650 }} 650w,{%- endif -%}
+                      {%- if card_image.width >= 750 -%}{{ card_image | image_url: width: 750 }} 750w,{%- endif -%}
                       {%- if card_image.width >= 1000 -%}{{ card_image | image_url: width: 1000 }} 1000w,{%- endif -%}
                       {%- if card_image.width >= 1400 -%}{{ card_image | image_url: width: 1400 }} 1400w,{%- endif -%}"
                     src="{{ card_image | image_url: width: 1000 }}"

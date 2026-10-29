@@ -738,9 +738,23 @@
      */
     promouvoirDeclencheurs() {
       if (!this.drawer) return;
+      // Mesure 1.9.2 (interactions, declencheur-lien, 2 releves) : role="button"
+      // pose sur le <a href> ne suffit pas, l'element reste un lien reel (clic
+      // milieu, menu contextuel, « ouvrir dans un onglet »). Il est remplace par
+      // un vrai <button>, qui garde classes, attributs et contenu.
+      for (const el of document.querySelectorAll('a[data-cart-toggle]')) {
+        const bouton = document.createElement('button');
+        bouton.type = 'button';
+        for (const attr of el.attributes) {
+          if (attr.name === 'href' || attr.name === 'role') continue;
+          bouton.setAttribute(attr.name, attr.value);
+        }
+        bouton.replaceChildren(...el.childNodes);
+        const avaitLeFocus = document.activeElement === el;
+        el.replaceWith(bouton);
+        if (avaitLeFocus) bouton.focus();
+      }
       for (const el of document.querySelectorAll('[data-cart-toggle]')) {
-        if (el.tagName !== 'A') continue;
-        el.setAttribute('role', 'button');
         el.setAttribute('aria-haspopup', 'dialog');
         el.setAttribute('aria-controls', this.drawer.id || 'MiniCart');
         el.setAttribute('aria-expanded', this.state.isOpen ? 'true' : 'false');
@@ -750,7 +764,6 @@
     /** Tient aria-expanded des declencheurs a jour avec l'etat du tiroir. */
     synchroniserDeclencheurs() {
       for (const el of document.querySelectorAll('[data-cart-toggle]')) {
-        if (el.tagName !== 'A') continue;
         el.setAttribute('aria-expanded', this.state.isOpen ? 'true' : 'false');
       }
     },
@@ -840,6 +853,7 @@
         'keydown',
         (e) => {
           if (e.key !== 'Escape' && e.key !== 'Esc') return;
+          if (e.defaultPrevented) return;
           const drawer = this.drawer || document.querySelector('[data-mini-cart]');
           if (!this.state.isOpen && !drawer?.classList.contains('is-open')) return;
           if (!utils.echapPourMoi(drawer)) return;
@@ -1032,7 +1046,10 @@
      * @param {Element} [itemEl] La ligne du panier touchee.
      */
     revertQuantity(itemEl) {
-      const champ = itemEl && itemEl.querySelector('input[name="updates[]"], [data-quantity-input]');
+      // [data-qty-input] est l'attribut que portent les champs du tiroir et de
+      // la page panier : le selecteur ne citait que [data-quantity-input], que
+      // rien ne porte, et le tiroir gardait 3 pour un panier a 2 (mesure 1.9.2).
+      const champ = itemEl && itemEl.querySelector('input[name="updates[]"], [data-qty-input]');
       if (champ && typeof champ.defaultValue === 'string') champ.value = champ.defaultValue;
     },
 
@@ -1259,6 +1276,15 @@
           return;
         }
         await this.refresh({ sections: data.sections, cart: data });
+        // QUANTITE PLAFONNEE PAR LE STOCK, SANS ERREUR. Quand la variante suit
+        // son stock, Shopify peut repondre 200 en ramenant la ligne au stock
+        // disponible (5 demandes, 3 au panier) : le champ se remettait a 3 sans
+        // un mot (mesure 1.9.2, page panier). On le dit, dans la region annoncee.
+        const lignes = Array.isArray(data.items) ? data.items : [];
+        const ligne = key ? lignes.find((item) => item.key === key) : lignes[parseInt(line, 10) - 1];
+        if (quantity > 0 && ligne && ligne.quantity < quantity && strings.cartQuantityLimited) {
+          Notify.show(strings.cartQuantityLimited.replace('[quantity]', String(ligne.quantity)), 'error');
+        }
       } catch (error) {
         console.error('Could not update the cart:', error);
         Notify.show(strings.cartError, 'error');
@@ -1310,8 +1336,13 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
+        // Echap deja consomme par un calque du dessus (tiroir panier) : sans
+        // ce test, ce calque devenait « du dessus » des la fermeture du
+        // premier et se fermait sur le MEME Echap (mesure 1.9.2).
+        if (e.defaultPrevented) return;
         if (!this.modal.classList.contains('is-active')) return;
         if (!utils.echapPourMoi(this.modal)) return;
+        e.preventDefault();
         this.close();
       });
 
@@ -2144,8 +2175,13 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
+        // Echap deja consomme par un calque du dessus (tiroir panier) : sans
+        // ce test, ce calque devenait « du dessus » des la fermeture du
+        // premier et se fermait sur le MEME Echap (mesure 1.9.2).
+        if (e.defaultPrevented) return;
         if (!this.modal.classList.contains('is-active')) return;
         if (!utils.echapPourMoi(this.modal)) return;
+        e.preventDefault();
         this.close();
       });
     },
@@ -2232,8 +2268,10 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
+        if (e.defaultPrevented) return;
         if (!this.filters || !this.filters.classList.contains('is-open')) return;
         if (!utils.echapPourMoi(this.filters)) return;
+        e.preventDefault();
         this.closeFilters();
       });
     },
@@ -2631,22 +2669,35 @@
 
       if (this.navWatched) return;
       this.navWatched = true;
+      // La mesure doit se faire a l'etat DEPLIE, sinon .header__nav est en
+      // display: none et son contenu n'a plus de largeur. Deplier et mesurer
+      // dans le MEME tour (getComputedStyle force la mise en page) : rien ne
+      // se peint deplie.
+      //
+      // Mesure 1.9.2 (cas menu-une-ligne, largeur atteinte depuis 1440) : la
+      // liste etait observee elle aussi. Replier la liste change sa taille,
+      // ce qui relancait l'observateur, qui depliait, et ainsi de suite a
+      // chaque image : en-tete deplie et deborde de 298 a 670 px a 1280 et
+      // 1024 au moment de la lecture. Seule la largeur de .header__inner
+      // compte, et elle ne bouge pas quand le menu se replie.
+      let largeur = inner.clientWidth;
+      const remesurer = () => {
+        if (inner.clientWidth === largeur) return;
+        largeur = inner.clientWidth;
+        header.classList.remove('is-nav-condensed');
+        measure();
+      };
       if ('ResizeObserver' in window) {
-        // On observe .header__inner et la liste : la place change avec la
-        // fenetre et avec la taille du logo, le besoin change avec le menu que
-        // le marchand choisit.
-        const observer = new ResizeObserver(() => {
-          // La mesure doit se faire a l'etat DEPLIE, sinon .header__nav est en
-          // display: none et son contenu n'a plus de largeur.
-          header.classList.remove('is-nav-condensed');
-          requestAnimationFrame(measure);
-        });
-        observer.observe(inner);
-        observer.observe(list);
+        new ResizeObserver(remesurer).observe(inner);
       } else {
-        window.addEventListener('resize', () => {
+        window.addEventListener('resize', remesurer);
+      }
+      // Le besoin de la liste change une fois les polices chargees : on
+      // remesure alors une fois (c'etait le role de l'observation de la liste).
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(() => {
           header.classList.remove('is-nav-condensed');
-          requestAnimationFrame(measure);
+          measure();
         });
       }
     },
@@ -2720,6 +2771,10 @@
 
       document.addEventListener('keydown', (e) => {
         if (e.key !== 'Escape') return;
+        // Echap deja consomme par le tiroir panier, ferme en phase de capture :
+        // le menu ou la recherche dessous restaient sinon a fermer sur le meme
+        // Echap (superposes-echap-multiple, mesure 1.9.2).
+        if (e.defaultPrevented) return;
         // UN SEUL CALQUE PAR ECHAP. Les deux « if » successifs d'avant
         // fermaient le menu ET la recherche d'un seul coup quand les deux
         // etaient ouverts (mesure de l'audit de parcours 1.8.1). On ne ferme
@@ -2729,20 +2784,28 @@
         const rechercheOuverte = this.search && this.search.classList.contains('is-active');
         const dessus = utils.focusTraps[utils.focusTraps.length - 1];
         if (dessus === this.search && rechercheOuverte) {
+          e.preventDefault();
           this.closeSearch();
           return;
         }
         if (dessus === this.menu && menuOuvert) {
+          e.preventDefault();
           this.closeMenu();
           return;
         }
-        // Aucun des deux n'est le calque du dessus (pile vide : un panneau
-        // ouvert sans piege) : on ferme celui qui est ouvert, un seul.
+        // Un autre calque est au-dessus (vue rapide, tiroir) : c'est a lui.
+        if (dessus) return;
+        // Pile vide (un panneau ouvert sans piege) : on ferme celui qui est
+        // ouvert, un seul.
         if (rechercheOuverte) {
+          e.preventDefault();
           this.closeSearch();
           return;
         }
-        if (menuOuvert) this.closeMenu();
+        if (menuOuvert) {
+          e.preventDefault();
+          this.closeMenu();
+        }
       });
 
       // Sous-menus desktop : ouverture au focus clavier
@@ -2907,10 +2970,25 @@
         if (section) section.hidden = true;
       };
 
+      // Requete echouee (hors ligne, erreur serveur) : la section se repliait
+      // sans un mot, et ses cartes d'attente restaient dans le DOM (mesure
+      // 1.9.2, parcours reseau coupe). On dit l'echec, dans une region annoncee.
+      const fail = () => {
+        if (!container.dataset.error) {
+          collapse();
+          return;
+        }
+        const message = document.createElement('p');
+        message.className = 'related-products__error';
+        message.setAttribute('role', 'status');
+        message.textContent = container.dataset.error;
+        container.replaceChildren(message);
+      };
+
       try {
         const res = await fetch(container.dataset.url);
         if (!res.ok) {
-          collapse();
+          fail();
           return;
         }
         const html = await res.text();
@@ -2922,7 +3000,7 @@
         container.innerHTML = fresh.innerHTML;
         Wishlist.updateUI();
       } catch (e) {
-        collapse();
+        fail();
       }
     }
   };
@@ -3080,6 +3158,36 @@
     },
   };
 
+  /**
+   * UN ARRET DE TABULATION DANS UNE ZONE QUI DEFILE ENTRE EN ENTIER.
+   *
+   * Mesure 1.9.2 (page des sections, 390, 320 et 400 %) : quand un bouton du
+   * tableau comparatif prend le focus a moitie visible, Chromium ne fait pas
+   * defiler la zone de cote — un tiers ou deux tiers du bouton restaient hors
+   * de la zone (WCAG 2.4.12), et l'anneau du bouton mis en avant, rogne, ne
+   * contrastait plus. scroll-padding-inline ne joue que si le navigateur
+   * defile. On recadre donc la zone a la prise du focus, sans animation.
+   */
+  const ScrollFocus = {
+    init() {
+      if (this.bound) return;
+      this.bound = true;
+      document.addEventListener('focusin', (e) => {
+        const cible = e.target;
+        if (!(cible instanceof Element)) return;
+        const zone = cible.closest('.comparison__scroller, .size-guide__scroll, .rte table[tabindex]');
+        if (!zone || zone === cible) return;
+        const z = zone.getBoundingClientRect();
+        const r = cible.getBoundingClientRect();
+        const marge = parseFloat(getComputedStyle(zone).scrollPaddingInlineStart) || 0;
+        let decalage = 0;
+        if (r.left < z.left + marge) decalage = r.left - z.left - marge;
+        else if (r.right > z.right - marge) decalage = r.right - z.right + marge;
+        if (decalage) zone.scrollBy({ left: decalage, behavior: 'instant' });
+      });
+    }
+  };
+
   // ============================================
   // INITIALISATION
   // ============================================
@@ -3099,6 +3207,7 @@
     HeroVideo.init();
     FormFeedback.init();
     RichText.init(scope);
+    ScrollFocus.init();
   }
 
   if (document.readyState === 'loading') {

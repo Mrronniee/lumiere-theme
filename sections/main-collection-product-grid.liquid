@@ -87,10 +87,12 @@
     transition: opacity var(--transition-fast), transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
   }
 
+  /* Bord de l'etat choisi a l'encre du texte : la primaire, gardee par une
+     palette sombre, se confondait avec le fond (1:1, mesure 1.9.2). */
   .collection-grid__layout-btn.is-active {
     background: var(--color-primary);
     color: var(--color-on-primary);
-    border-color: var(--color-primary);
+    border-color: var(--color-text);
   }
 
   /* ===== FILTRES ===== */
@@ -198,7 +200,7 @@
   }
 
   .collection-filters__option input:checked ~ .collection-filters__swatch {
-    border-color: var(--color-primary);
+    border-color: var(--color-text);
   }
 
   .collection-filters__price-range {
@@ -292,7 +294,7 @@
   .collection-grid__pagination .current {
     background: var(--color-primary);
     color: var(--color-on-primary);
-    border-color: var(--color-primary);
+    border-color: var(--color-text);
   }
 
   .collection-grid__no-results {
@@ -410,6 +412,26 @@
     <div class="collection-grid__products-wrapper">
       {%- if collection.products.size > 0 -%}
         <div class="collection-grid__products" data-products-grid>
+          {%- liquid
+            comment
+              LARGEUR REELLE DES CARTES. La carte supposait 4 colonnes sur toute la
+              fenetre (25vw) : a cote de la colonne de filtres (260 px et son
+              ecart), elle fait 223 px a 1350 pour un sizes de 337 (mesure 1.9.2,
+              sizes trop large sur 12 images). On decrit donc cette grille-ci :
+              marges du conteneur, colonne de filtres, colonnes reglees.
+            endcomment
+            assign grid_mobile = 'calc(100vw - 3rem)'
+            if section.settings.columns_mobile > 1
+              assign grid_mobile = 'calc((100vw - 4rem) / ' | append: section.settings.columns_mobile | append: ')'
+            endif
+            assign grid_container = settings.layout_container_width | default: 1440
+            assign grid_desktop = 'calc((min(100vw, ' | append: grid_container | append: 'px) - 4rem'
+            if collection.filters.size > 0
+              assign grid_desktop = grid_desktop | append: ' - 260px - 4rem'
+            endif
+            assign grid_desktop = grid_desktop | append: ') / ' | append: section.settings.columns_desktop | append: ')'
+            assign grid_sizes = '(min-width: 990px) ' | append: grid_desktop | append: ', (min-width: 750px) calc((100vw - 4rem) / ' | append: section.settings.columns_tablet | append: '), ' | append: grid_mobile
+          -%}
           {%- for product in collection.products -%}
             {%- liquid
               comment
@@ -422,7 +444,7 @@
               endif
               assign card_priority = forloop.first
             -%}
-            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, heading: 'h2', lazy: card_lazy, priority: card_priority, columns_mobile: section.settings.columns_mobile %}
+            {% render 'product-card', product: product, show_vendor: section.settings.show_vendor, heading: 'h2', lazy: card_lazy, priority: card_priority, columns_mobile: section.settings.columns_mobile, sizes: grid_sizes %}
           {%- endfor -%}
         </div>
 

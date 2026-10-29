@@ -227,7 +227,8 @@
       "default_disclaimer": "En vous inscrivant, vous acceptez notre politique de confidentialité."
     },
     "related_products": {
-      "default_title": "Vous aimerez aussi"
+      "default_title": "Vous aimerez aussi",
+      "load_error": "Les recommandations n’ont pas pu être chargées. Vérifiez votre connexion, puis rechargez la page."
     },
     "apps": {
       "no_blocks": "Ajoutez un bloc d’application à cette section."
@@ -270,6 +271,7 @@
       "free_shipping_progress_html": "Plus que <strong>{{ amount }}</strong> pour la livraison gratuite",
       "free_shipping_success": "Livraison gratuite débloquée !",
       "cart_error": "Une erreur est survenue lors de la mise à jour du panier. Veuillez réessayer.",
+      "quantity_limited": "Seulement [quantity] exemplaires de cet article sont disponibles. Votre panier a été mis à jour.",
       "count_announce": {
         "one": "{{ count }} article dans le panier",
         "other": "{{ count }} articles dans le panier"

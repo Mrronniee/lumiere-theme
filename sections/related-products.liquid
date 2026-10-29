@@ -37,6 +37,15 @@
     }
   }
 
+  .related-products__error {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    text-align: center;
+    color: var(--color-text-light);
+  }
+
   @media screen and (max-width: 749px) {
     .related-products__grid {
       grid-template-columns: repeat({{ section.settings.columns_mobile }}, 1fr);
@@ -95,6 +104,7 @@
     <div
       class="related-products__grid"
       data-recommendations
+      data-error="{{ 'sections.related_products.load_error' | t }}"
       data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent={{ section.settings.intent | default: 'related' }}"
     >
       {%- if recommendations.performed and recommendations.products_count > 0 -%}

@@ -7,6 +7,7 @@
   @param {boolean} [lazy] - false pour charger l'image tout de suite (cartes du premier ecran).
   @param {boolean} [priority] - true pour fetchpriority="high" (premiere carte de la page).
   @param {number} [columns_mobile] - Colonnes de la grille en mobile (2 par defaut), pour l'attribut sizes.
+  @param {string} [sizes] - Attribut sizes de la grille qui pose la carte, quand elle sait sa largeur mieux que les colonnes par defaut (grille a cote d'une colonne de filtres).
 
   @example
   {% render 'product-card', product: product, show_vendor: 'inherit' %}
@@ -51,6 +52,9 @@
     assign card_mobile_size = 'calc(100vw - 3rem)'
   endif
   assign card_sizes = '(min-width: 1200px) 25vw, (min-width: 990px) 33vw, (min-width: 750px) 50vw, ' | append: card_mobile_size
+  if sizes != blank
+    assign card_sizes = sizes
+  endif
 -%}
 <div class="product-card{% if settings.badge_position == 'top-right' %} product-card--badge-right{% endif %}" data-product-id="{{ product.id }}">
   <div class="product-card__media">
@@ -73,7 +77,14 @@
             height="{{ product.featured_media.height }}"
           >
 
-          {%- if product.media[1] != nil and settings.product_card_hover_image -%}
+          {%- comment -%}
+            Seule une IMAGE sert d'image de survol. L'apercu d'une video (16:9)
+            recadre dans une carte 3:4 demandait un fichier 2,4 fois plus large
+            que la carte : sizes a 800 px pour une carte de 304 et 91,9 Kio de
+            trop sur la collection (mesure 1.9.2) — pour une image fixe tiree
+            d'une video, qui ne la montre pas.
+          {%- endcomment -%}
+          {%- if product.media[1] != nil and product.media[1].media_type == 'image' and settings.product_card_hover_image -%}
             {%- comment -%}
               Le deuxieme media n'est pas toujours une image : pour une video
               ou un modele 3D, media.width et media.height sont vides et la
@@ -137,6 +148,15 @@
                 echo ')'
               endcapture
               assign hover_sizes = hover_sizes | strip
+              comment
+                Une image a peine plus large que la boite (portrait 4:5 dans une
+                carte 3:4 : facteur 1,07) prend le sizes de la carte : multiplie,
+                il depassait la boite d'une fois et demie a cote des filtres
+                (384 px pour 245, mesure 1.9.2), et le palier de la carte suffit.
+              endcomment
+              if hover_facteur < 1.2
+                assign hover_sizes = card_sizes
+              endif
             -%}
             <img
               srcset="{%- if hover_image.width >= 165 -%}{{ hover_image | image_url: width: 165 }} 165w,{%- endif -%}
