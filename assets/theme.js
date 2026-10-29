@@ -1287,9 +1287,12 @@
           // (« 3 articles seulement ont ete ajoutes … en raison de la
           // disponibilite ») et la page panier en francais ne le faisait pas
           // lire comme un message de stock (mesure 1.9.2). La quantite relue
-          // dans la ligne re-rendue est celle que le panier a gardee.
-          const champ = rafraichi && key
-            ? document.querySelector(`[data-cart-item][data-key="${CSS.escape(key)}"] [data-qty-input]`)
+          // dans la ligne re-rendue est celle que le panier a gardee. La ligne
+          // se retrouve par son RANG : sa cle change quand Shopify recalcule
+          // le panier (remise appliquee), et la recherche par cle ne trouvait
+          // plus rien.
+          const champ = rafraichi && line
+            ? document.querySelector(`[data-cart-item][data-line="${parseInt(line, 10)}"] [data-qty-input]`)
             : null;
           const garde = champ ? parseInt(champ.value, 10) : NaN;
           if (response.status === 422 && quantity > 0 && garde > 0 && garde < quantity && strings.cartQuantityLimited) {
@@ -1305,7 +1308,7 @@
         // disponible (5 demandes, 3 au panier) : le champ se remettait a 3 sans
         // un mot (mesure 1.9.2, page panier). On le dit, dans la region annoncee.
         const lignes = Array.isArray(data.items) ? data.items : [];
-        const ligne = key ? lignes.find((item) => item.key === key) : lignes[parseInt(line, 10) - 1];
+        const ligne = (line && lignes[parseInt(line, 10) - 1]) || (key ? lignes.find((item) => item.key === key) : null);
         if (quantity > 0 && ligne && ligne.quantity < quantity && strings.cartQuantityLimited) {
           Notify.show(strings.cartQuantityLimited.replace('[quantity]', String(ligne.quantity)), 'error');
         }
@@ -1331,9 +1334,9 @@
         const suivante = this.pendingUpdate;
         this.pendingUpdate = null;
         if (suivante) {
-          const ligne = suivante.key
-            ? document.querySelector(`[data-cart-item][data-key="${CSS.escape(suivante.key)}"]`)
-            : document.querySelector(`[data-cart-item][data-line="${suivante.line}"]`);
+          // Par le rang d'abord : la cle d'une ligne change avec le panier.
+          const ligne = (suivante.line && document.querySelector(`[data-cart-item][data-line="${parseInt(suivante.line, 10)}"]`))
+            || (suivante.key ? document.querySelector(`[data-cart-item][data-key="${CSS.escape(suivante.key)}"]`) : null);
           if (ligne) this.updateItem(ligne, suivante.quantity);
         }
       }
