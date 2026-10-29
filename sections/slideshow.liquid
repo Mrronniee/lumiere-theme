@@ -343,10 +343,14 @@
     transition: transform var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
   }
 
+  /* Bord de la puce active a l'encre du texte, comme les autres : l'encre
+     posee sur le bouton (sombre en scheme-4) se perdait sur une diapositive
+     sombre, 1,06:1 a 400 % (mesure 1.9.2). Le halo de --color-background
+     garde l'autre ton pour une diapositive claire. */
   .slideshow__dot.is-active::before {
     transform: scale(1.35);
     background-color: var(--color-primary);
-    border-color: var(--color-on-primary);
+    border-color: var(--color-text);
   }
 
   {%- comment -%}

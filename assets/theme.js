@@ -1278,10 +1278,25 @@
           // { champ: [messages] }. Mesure : « Only 3 items were added to your
           // cart due to availability. » n'arrivait que par « errors », et le
           // client lisait le message generique du theme.
-          Notify.show(utils.messageErreurPanier(data), 'error');
           // La ligne affichait encore la quantite refusee (9 saisi, 3 au
           // panier) : on re-rend le panier pour revenir a l'etat reel.
-          if (!(await this.refresh())) this.revertQuantity(itemEl);
+          const rafraichi = await this.refresh();
+          if (!rafraichi) this.revertQuantity(itemEl);
+          // REFUS POUR STOCK : le message du theme, avec le nombre disponible.
+          // Celui de Shopify ne le dit pas de la meme facon selon la langue
+          // (« 3 articles seulement ont ete ajoutes … en raison de la
+          // disponibilite ») et la page panier en francais ne le faisait pas
+          // lire comme un message de stock (mesure 1.9.2). La quantite relue
+          // dans la ligne re-rendue est celle que le panier a gardee.
+          const champ = rafraichi && key
+            ? document.querySelector(`[data-cart-item][data-key="${CSS.escape(key)}"] [data-qty-input]`)
+            : null;
+          const garde = champ ? parseInt(champ.value, 10) : NaN;
+          if (response.status === 422 && quantity > 0 && garde > 0 && garde < quantity && strings.cartQuantityLimited) {
+            Notify.show(strings.cartQuantityLimited.replace('[quantity]', String(garde)), 'error');
+          } else {
+            Notify.show(utils.messageErreurPanier(data), 'error');
+          }
           return;
         }
         await this.refresh({ sections: data.sections, cart: data });
