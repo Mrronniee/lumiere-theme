@@ -97,12 +97,17 @@
       endif
       echo ' '
       echo ir_wmax
-      echo 'w'
+      echo 'w,'
       if ir_src_w == 0
         assign ir_src_w = ir_wmax
       endif
     endif
   endcapture
+  comment
+    Chaque palier finit par une virgule : on retire seulement la derniere,
+    celle de fin de liste (remove_last enleve la derniere occurrence de la
+    chaine, quelle que soit sa place).
+  endcomment
   assign ir_srcset = ir_srcset | strip | remove_last: ','
 
   if ir_crop
