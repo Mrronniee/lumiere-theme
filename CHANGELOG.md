@@ -1,5 +1,27 @@
 # Changelog
 
+## 1.9.3 — 2026-10-30
+
+### Fixed
+- **Palettes, focus rings and selected states measured on the demo.** The muted
+  footer ink, the field borders, the newsletter placeholder, the sale badge and
+  every selected state (variant, layout, current page, slideshow dot) are now
+  derived so the measured pixels clear 4.5:1 and 3:1 in every color scheme. The
+  focus ring of the filter price fields, the gallery thumbnails, the tabs and
+  the slideshow button is drawn against the right neighbour.
+- **Cart messages that were missing.** A quantity capped by stock, a quantity
+  refused for stock and an entry typed during another update now all show and
+  announce the theme's own message, in both languages.
+- **Recommendations and the long menu.** Cut-off recommendations say so instead
+  of collapsing silently, and the header folds its menu into the drawer before
+  it overflows.
+- **Cart link, overlays.** The cart trigger becomes a real button when the
+  drawer takes it, and Escape closes one layer at a time.
+- **Images.** Collection, lookbook, gallery, tabs and banner images ask the CDN
+  for a file that matches the painted box: a portrait photo used as a
+  full-width banner is cropped to 5/4 when the merchant's focal point is the
+  centre, instead of shipping the cropped-away pixels.
+
 ## 1.9.2 — 2026-10-28
 
 ### Fixed

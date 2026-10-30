@@ -1,0 +1,55 @@
+{
+ "slug": "lumiere",
+ "version": "1.9.2",
+ "commit": "558dee5",
+ "demo": "195172106566",
+ "essai": true,
+ "date": "2026-10-30T07:02:37",
+ "pages": [
+  "accueil",
+  "collections/all",
+  "collections",
+  "products/field-jacket",
+  "cart",
+  "blogs/journal",
+  "blogs/journal/the-two-minute-morning",
+  "pages/lumiere-contact",
+  "pages/lumiere-wishlist",
+  "pages/lumiere-all-sections"
+ ],
+ "pages_perf": [
+  "accueil",
+  "collections/all",
+  "collections",
+  "products/field-jacket",
+  "cart",
+  "search?q=*&type=product",
+  "blogs/journal",
+  "blogs/journal/the-two-minute-morning",
+  "pages/lumiere-contact",
+  "pages/lumiere-wishlist",
+  "pages/lumiere-all-sections"
+ ],
+ "ecrans_perf": [
+  "mobile",
+  "bureau",
+  "large"
+ ],
+ "complet": true,
+ "incomplets": [],
+ "reference": "lumiere",
+ "regressions": [
+  "perf accueil mobile : élément LCP <video> → <img> (hero.jpg → hero.jpg)"
+ ],
+ "absolus": [
+  "perf accueil mobile : sizes trop large sur 1 image(s) (au moins 1,5 × la boîte : le navigateur prend un fichier trop grand) — section hero (1) : div.hero__media.hero__media--video > img : sizes (max-width: 749px) max(100vw, calc(70vh * 2.0)), max(100vw, calc(90vh * 2.0)) = 1152 px pour une boîte de 412 px (× 1)",
+  "perf pages/lumiere-all-sections mobile : sizes trop large sur 2 image(s) (au moins 1,5 × la boîte : le navigateur prend un fichier trop grand) — section image_with_text (1) : div.image-with-text__media.image-with-text__media--portrait > img.image-with-text__image : sizes (min-width: 750px) calc((50vw - 2rem) * 1.7777777777777777), calc(100vw * 1.7777777777777777) = 732 px pour une boîte de 364 px (× 1.13) ; section video_banner (1) : div.video-banner__media.video-banner__media--poster > img.video-banner__cover : sizes (max-width: 749px) max(100vw, calc(60vh * 2.0)), max(100vw, calc(80vh * 2.0)) = 987 px pour une boîte de 412 px (× 1)",
+  "perf pages/lumiere-all-sections bureau : sizes trop large sur 1 image(s) (au moins 1,5 × la boîte : le navigateur prend un fichier trop grand) — section image_with_text (1) : div.image-with-text__media.image-with-text__media--portrait > img.image-with-text__image : sizes (min-width: 750px) calc((50vw - 2rem) * 1.7777777777777777), calc(100vw * 1.7777777777777777) = 1143 px pour une boîte de 611 px (× 1.05)",
+  "perf pages/lumiere-all-sections large : sizes trop large sur 1 image(s) (au moins 1,5 × la boîte : le navigateur prend un fichier trop grand) — section image_with_text (1) : div.image-with-text__media.image-with-text__media--portrait > img.image-with-text__image : sizes (min-width: 750px) calc((50vw - 2rem) * 1.7777777777777777), calc(100vw * 1.7777777777777777) = 1223 px pour une boîte de 656 px (× 1.05)"
+ ],
+ "variantes": {
+  "mesurees": 163,
+  "non_reproductibles": 2,
+  "refusees": 0
+ }
+}
