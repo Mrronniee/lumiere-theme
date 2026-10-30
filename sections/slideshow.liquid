@@ -667,6 +667,15 @@
             else
               assign slide_src = slide_image | image_url: width: 1920
             endif
+            comment
+              width et height decrivent le FICHIER servi : recadre, il ne porte
+              plus le rapport de l'original, et le navigateur en tirerait une
+              boite de reserve fausse.
+            endcomment
+            assign slide_attr_h = slide_image.height
+            if slide_crop
+              assign slide_attr_h = slide_image.width | divided_by: 1.2 | round
+            endif
           -%}
           <div
             class="slideshow__slide{% if forloop.first %} is-active{% endif %}"
@@ -707,7 +716,7 @@
                   alt="{{ slide_image.alt | escape }}"
                   {% render 'focal', image: slide_image %}
                   width="{{ slide_image.width }}"
-                  height="{{ slide_image.height }}"
+                  height="{{ slide_attr_h }}"
                   {% if is_first and section.index == 1 %}
                     loading="eager"
                     fetchpriority="high"
