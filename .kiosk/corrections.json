@@ -867,6 +867,27 @@
       "ou": "assets/theme.js:858",
       "commit": "059c064",
       "raison": "Le seul defaut NOUVEAU du resume est le cas menu-une-ligne a 1440 avec un menu long : meme cause et meme correction que mesure-98aaa6b5 (la liste est de nouveau observee quand le menu grandit, et l'observateur ne boucle plus). Remesure complete du 30/10/2026 sur 558dee5 : plus aucune ligne menu-une-ligne, a 1440, 1280 ni 1024, en anglais comme en francais."
+    },
+    {
+      "id": "mesure-6eee66e7@1.9.3-2d3b9ca-202610301037",
+      "version": "1.9.3",
+      "etat": "pas_un_defaut",
+      "ou": "sections/hero.liquid:344",
+      "raison": "Lu dans le code de main (71d233b) : le bloc commente sections/hero.liquid:319-374 dit pourquoi le poster est rendu en balise <img> et non par l'attribut poster — un attribut poster n'accepte NI srcset NI fetchpriority (regle T6) ; l'image_tag de la l.344 porte donc widths, sizes, loading 'eager', fetchpriority 'high' et preload sur la seule section d'ouverture (l.344-352). L'element LCP <img> est le rendu voulu, et la « regression » vient de la REFERENCE : references/lumiere/perf.json donne \"version_attendue\": \"1.6.1\" et verdict.json version 1.6.1 (commit 7149a05), huit versions avant la 1.9.3. Juge « accepte » par la session des outils le 30/10/2026 pour ce releve (registre, fermetures_jugees)."
+    },
+    {
+      "id": "mesure-8a667912@1.9.3-2d3b9ca-202610301037",
+      "version": "1.9.3",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Lu dans l'outil a origin/main : perf.cjs:1490 juge « trop large » sur la BOITE (i.sizes_px >= 1.5 * i.affiche_px) alors que « trop etroit » du meme ternaire et le rapport affiche (l.1500, arr2(i.sizes_px / rw) avec rw = i.rendu_px || i.affiche_px) se jugent sur le RENDU : une image en object-fit cover recoit l'alerte avec un rapport sous le seuil de 1,5 que le message annonce. Le releve le montre lui-meme : hero mobile, 1152 px de sizes pour une boite de 412 px, rapport x 1 — le sizes suit exactement le rendu. Juge « accepte » par la session des outils le 30/10/2026 pour ce releve (registre, fermetures_jugees) ; correction de l'outil gardee dans chaine/patchs/perf-sizes-rendu-a-prouver.patch."
+    },
+    {
+      "id": "mesure-5f7eb0a3@1.9.3-2d3b9ca-202610301037",
+      "version": "1.9.3",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Meme defaut d'outil que mesure-8a667912 (perf.cjs:1490, seuil sur la boite, rapport sur le rendu) : pages/lumiere-all-sections, rapports x 1.13 et x 1 en mobile, x 1.05 en bureau, x 1.05 en large — les quatre sous le seuil de 1,5 annonce par l'alerte. Juge « accepte » par la session des outils le 30/10/2026 pour ce releve (registre, fermetures_jugees)."
     }
   ]
 }
