@@ -586,6 +586,72 @@
               echo '))'
             endcapture
             assign slide_sizes = slide_sizes | strip
+
+            comment
+              PLAFOND D'ASPECT DU FICHIER DE BANDEAU. La diapositive occupe
+              100vw sur une hauteur reglee en vh : un fichier portrait y perd
+              toujours sa hauteur au recadrage. Mesure 1.9.2, page des
+              sections a 1350 : fichier 1100 x 1375 pour une boite de
+              1350 x 799, 63 et 60,9 Kio jetes par diapositive (regle
+              uses-responsive-images de Lighthouse, qui compte la boite et
+              ignore le recadrage ; la sonde le marque
+              « rendu_plus_grand_que_le_fichier »). On plafonne le fichier
+              demande a 5/4 : aucun bandeau de bureau n'est plus haut que
+              large a ce point, et le recadrage CENTRE montre la meme bande
+              que object-fit: cover montrait deja.
+              Il n'est applique QUE si le marchand n'a pas pose de point de
+              focus : « crop » le remplacerait par le centre et couperait le
+              visage ou le produit qu'il a choisi (snippets/focal.liquid).
+              Les hauteurs se calculent AVANT l'appel : une expression n'est
+              pas une valeur d'argument de filtre valide, et Shopify rejette
+              alors la section au push en repondant « reussi ».
+            endcomment
+            assign slide_crop = false
+            if slide_image.height > 0 and slide_image.presentation.focal_point == blank and slide_ratio < 1.2
+              assign slide_crop = true
+            endif
+            if slide_crop
+              comment
+                Le fichier porte desormais 1,2 : c'est ce rapport que sizes decrit.
+              endcomment
+              capture slide_sizes
+                echo '(max-width: 749px) max(100vw, calc('
+                echo section.settings.height_mobile | default: 65
+                echo 'vh * 1.2)), max(100vw, calc('
+                echo section.settings.height | default: 85
+                echo 'vh * 1.2))'
+              endcapture
+              assign slide_sizes = slide_sizes | strip
+            endif
+            comment
+              Paliers 1300 et 1600 en plus : entre 1100 et 1920, une boite de
+              1350 faisait servir le fichier 1920 (hero.jpg, 17,6 Kio de trop,
+              meme mesure).
+            endcomment
+            assign slide_largeurs = '375,750,1100,1300,1500,1600,1920' | split: ','
+            capture slide_srcset
+              for lg in slide_largeurs
+                assign lg_px = lg | plus: 0
+                if slide_image.width >= lg_px
+                  if slide_crop
+                    assign lg_h = lg_px | divided_by: 1.2 | round
+                    echo slide_image | image_url: width: lg_px, height: lg_h, crop: 'center'
+                  else
+                    echo slide_image | image_url: width: lg_px
+                  endif
+                  echo ' '
+                  echo lg_px
+                  echo 'w,'
+                endif
+              endfor
+            endcapture
+            assign slide_srcset = slide_srcset | strip
+            if slide_crop
+              assign slide_src_h = 1920 | divided_by: 1.2 | round
+              assign slide_src = slide_image | image_url: width: 1920, height: slide_src_h, crop: 'center'
+            else
+              assign slide_src = slide_image | image_url: width: 1920
+            endif
           -%}
           <div
             class="slideshow__slide{% if forloop.first %} is-active{% endif %}"
@@ -620,12 +686,8 @@
                   entre les attributs comme le debut d'une valeur d'attribut.
                 {%- endcomment -%}
                 <img
-                  srcset="{%- if slide_image.width >= 375 -%}{{ slide_image | image_url: width: 375 }} 375w,{%- endif -%}
-                    {%- if slide_image.width >= 750 -%}{{ slide_image | image_url: width: 750 }} 750w,{%- endif -%}
-                    {%- if slide_image.width >= 1100 -%}{{ slide_image | image_url: width: 1100 }} 1100w,{%- endif -%}
-                    {%- if slide_image.width >= 1500 -%}{{ slide_image | image_url: width: 1500 }} 1500w,{%- endif -%}
-                    {%- if slide_image.width >= 1920 -%}{{ slide_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-                  src="{{ slide_image | image_url: width: 1920 }}"
+                  srcset="{{ slide_srcset }}"
+                  src="{{ slide_src }}"
                   sizes="{{ slide_sizes }}"
                   alt="{{ slide_image.alt | escape }}"
                   {% render 'focal', image: slide_image %}
