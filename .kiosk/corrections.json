@@ -888,6 +888,90 @@
       "etat": "defaut_outil",
       "ou": "liquid-tools/mesures/perf.cjs:1490",
       "raison": "Meme defaut d'outil que mesure-8a667912 (perf.cjs:1490, seuil sur la boite, rapport sur le rendu) : pages/lumiere-all-sections, rapports x 1.13 et x 1 en mobile, x 1.05 en bureau, x 1.05 en large — les quatre sous le seuil de 1,5 annonce par l'alerte. Juge « accepte » par la session des outils le 30/10/2026 pour ce releve (registre, fermetures_jugees)."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-resume@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "locales/fr.json:482",
+      "commit": "611aa45",
+      "raison": "5 espaces ordinaires remplacees par l'insecable U+00A0 : locales/fr.json:482 (qr_image_alt, avant le tiret cadratin) et .kiosk/contenu-fr.json (3 avant « — », 1 avant « : ») ; 22 entrees mortes retirees. Mesure : langues.py lumiere --typo = 0 sur 151, --controler = LANGUES PURES 129/129 ; verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-francais-reel@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "locales/fr.json:482",
+      "commit": "611aa45",
+      "raison": "5 espaces ordinaires remplacees par l'insecable U+00A0 : locales/fr.json:482 (qr_image_alt, avant le tiret cadratin) et .kiosk/contenu-fr.json (3 avant « — », 1 avant « : ») ; 22 entrees mortes retirees. Mesure : langues.py lumiere --typo = 0 sur 151, --controler = LANGUES PURES 129/129 ; verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-bibliotheque@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "locales/fr.json:482",
+      "commit": "611aa45",
+      "raison": "5 espaces ordinaires remplacees par l'insecable U+00A0 : locales/fr.json:482 (qr_image_alt, avant le tiret cadratin) et .kiosk/contenu-fr.json (3 avant « — », 1 avant « : ») ; 22 entrees mortes retirees. Mesure : langues.py lumiere --typo = 0 sur 151, --controler = LANGUES PURES 129/129 ; verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-langue-par-defaut@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": ".kiosk/contenu-fr.json:5",
+      "commit": "611aa45",
+      "raison": "5 espaces ordinaires remplacees par l'insecable U+00A0 : locales/fr.json:482 (qr_image_alt, avant le tiret cadratin) et .kiosk/contenu-fr.json (3 avant « — », 1 avant « : ») ; 22 entrees mortes retirees. Mesure : langues.py lumiere --typo = 0 sur 151, --controler = LANGUES PURES 129/129 ; verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-typographie-fr@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "locales/fr.json:482",
+      "commit": "611aa45",
+      "raison": "5 espaces ordinaires remplacees par l'insecable U+00A0 : locales/fr.json:482 (qr_image_alt, avant le tiret cadratin) et .kiosk/contenu-fr.json (3 avant « — », 1 avant « : ») ; 22 entrees mortes retirees. Mesure : langues.py lumiere --typo = 0 sur 151, --controler = LANGUES PURES 129/129 ; verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-editeur-checker-resume@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "sections/multi-column.liquid:344",
+      "commit": "f19b907",
+      "raison": "sections/multi-column.liquid applique maintenant crop: 'center' seulement si le point de focus du marchand est au centre (absent ou 50/50), meme garde que sections/slideshow.liquid:613-623 ; sinon le fichier est servi entier et object-fit: cover le cadre selon le point de focus. Seules multi-column et slideshow emploient crop: sur 55 sections. A l'installation rien ne change. verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-editeur-checker-logo-favicon-focal@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "corrige",
+      "ou": "sections/multi-column.liquid:372",
+      "commit": "f19b907",
+      "raison": "sections/multi-column.liquid applique maintenant crop: 'center' seulement si le point de focus du marchand est au centre (absent ou 50/50), meme garde que sections/slideshow.liquid:613-623 ; sinon le fichier est servi entier et object-fit: cover le cadre selon le point de focus. Seules multi-column et slideshow emploient crop: sur 55 sections. A l'installation rien ne change. verifier-theme.py complet 213/213, code 0."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-demo-en@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "pas_un_defaut",
+      "ou": "locales/en.default.json:1",
+      "raison": "Point non mesure a cause de la consigne C17 de la session des outils (12:22Z, navigateur suspendu), pas d'un defaut du theme : les pages EN et FR de la demo existent et se servent (relevé EN fait a 12:15:56Z : 7 pages a 200, Shopify.theme.id 195172106566), et rien dans le code ne les empeche. Le point se mesure au prochain audit bilingue, que cette demande interdit de lancer ici."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-demo-fr@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "pas_un_defaut",
+      "ou": "locales/fr.json:1",
+      "raison": "Point non mesure a cause de la consigne C17 de la session des outils (12:22Z, navigateur suspendu), pas d'un defaut du theme : les pages EN et FR de la demo existent et se servent (relevé EN fait a 12:15:56Z : 7 pages a 200, Shopify.theme.id 195172106566), et rien dans le code ne les empeche. Le point se mesure au prochain audit bilingue, que cette demande interdit de lancer ici."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-cas-possibles@1.9.3-2d3b9ca-20261030",
+      "version": "1.9.4",
+      "etat": "pas_un_defaut",
+      "ou": "locales/fr.json:1",
+      "raison": "Point non mesure a cause de la consigne C17 de la session des outils (12:22Z, navigateur suspendu), pas d'un defaut du theme : les pages EN et FR de la demo existent et se servent (relevé EN fait a 12:15:56Z : 7 pages a 200, Shopify.theme.id 195172106566), et rien dans le code ne les empeche. Le point se mesure au prochain audit bilingue, que cette demande interdit de lancer ici."
+    },
+    {
+      "id": "mesure-6eee66e7@1.9.4-59a4973-202610301912",
+      "version": "1.9.4",
+      "etat": "pas_un_defaut",
+      "ou": "sections/hero.liquid:344",
+      "raison": "Même ligne que mesure-6eee66e7 des relevés 1.9.2 et 1.9.3, jugée « accepte » par la session des outils le 30/10/2026 (registre, fermetures_jugees). sections/hero.liquid est inchangé depuis 2d3b9ca (git diff vide) : le poster y est rendu en balise <img> (image_tag eager, fetchpriority high, l.344) parce qu'un attribut poster n'accepte ni srcset ni fetchpriority. Mesuré sur 59a4973 : élément LCP de l'accueil mobile = img hero.jpg, loading eager, fetchpriority high, 920 ms non bridé. La « régression » vient de references/lumiere/perf.json, encore à version_attendue 1.6.1."
     }
   ]
 }
