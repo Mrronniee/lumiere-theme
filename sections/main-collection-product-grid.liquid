@@ -420,17 +420,25 @@
               sizes trop large sur 12 images). On decrit donc cette grille-ci :
               marges du conteneur, colonne de filtres, colonnes reglees.
             endcomment
+            comment
+              Les ecarts entre colonnes comptent aussi (mesure 1.9.4 : sans
+              eux sizes annoncait 240,5 px a 1350 pour 223 peints, et le
+              navigateur prenait le palier 360 au lieu de 240, 70 Kio de trop).
+            endcomment
+            assign gap_d = section.settings.columns_desktop | minus: 1 | times: section.settings.grid_gap
+            assign gap_t = section.settings.columns_tablet | minus: 1 | times: section.settings.grid_gap
+            assign gap_m = section.settings.columns_mobile | minus: 1 | times: section.settings.grid_gap_mobile
             assign grid_mobile = 'calc(100vw - 3rem)'
             if section.settings.columns_mobile > 1
-              assign grid_mobile = 'calc((100vw - 4rem) / ' | append: section.settings.columns_mobile | append: ')'
+              assign grid_mobile = 'calc((100vw - 4rem - ' | append: gap_m | append: 'px) / ' | append: section.settings.columns_mobile | append: ')'
             endif
             assign grid_container = settings.layout_container_width | default: 1440
             assign grid_desktop = 'calc((min(100vw, ' | append: grid_container | append: 'px) - 4rem'
             if collection.filters.size > 0
               assign grid_desktop = grid_desktop | append: ' - 260px - 4rem'
             endif
-            assign grid_desktop = grid_desktop | append: ') / ' | append: section.settings.columns_desktop | append: ')'
-            assign grid_sizes = '(min-width: 990px) ' | append: grid_desktop | append: ', (min-width: 750px) calc((100vw - 4rem) / ' | append: section.settings.columns_tablet | append: '), ' | append: grid_mobile
+            assign grid_desktop = grid_desktop | append: ' - ' | append: gap_d | append: 'px) / ' | append: section.settings.columns_desktop | append: ')'
+            assign grid_sizes = '(min-width: 990px) ' | append: grid_desktop | append: ', (min-width: 750px) calc((100vw - 4rem - ' | append: gap_t | append: 'px) / ' | append: section.settings.columns_tablet | append: '), ' | append: grid_mobile
           -%}
           {%- for product in collection.products -%}
             {%- liquid
