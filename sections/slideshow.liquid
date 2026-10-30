@@ -599,15 +599,30 @@
               demande a 5/4 : aucun bandeau de bureau n'est plus haut que
               large a ce point, et le recadrage CENTRE montre la meme bande
               que object-fit: cover montrait deja.
-              Il n'est applique QUE si le marchand n'a pas pose de point de
-              focus : « crop » le remplacerait par le centre et couperait le
-              visage ou le produit qu'il a choisi (snippets/focal.liquid).
+              Il n'est applique QUE si le point de focus du marchand EST le
+              centre (absent, ou « 50.0% 50.0% », ce que Shopify pose par
+              defaut) : ailleurs, « crop: center » le remplacerait et
+              couperait le visage ou le produit qu'il a choisi
+              (snippets/focal.liquid). Relu sur le theme d'essai le
+              30/10/2026 : les trois diapositives portent bien
+              object-position: 50.0% 50.0%.
               Les hauteurs se calculent AVANT l'appel : une expression n'est
               pas une valeur d'argument de filtre valide, et Shopify rejette
               alors la section au push en repondant « reussi ».
             endcomment
+            assign slide_focal_centre = false
+            if slide_image.presentation.focal_point == blank
+              assign slide_focal_centre = true
+            else
+              assign slide_focal = slide_image.presentation.focal_point | remove: '%' | split: ' '
+              assign slide_focal_x = slide_focal[0] | plus: 0 | round
+              assign slide_focal_y = slide_focal[1] | plus: 0 | round
+              if slide_focal_x == 50 and slide_focal_y == 50
+                assign slide_focal_centre = true
+              endif
+            endif
             assign slide_crop = false
-            if slide_image.height > 0 and slide_image.presentation.focal_point == blank and slide_ratio < 1.2
+            if slide_image.height > 0 and slide_focal_centre and slide_ratio < 1.2
               assign slide_crop = true
             endif
             if slide_crop
