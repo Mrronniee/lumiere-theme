@@ -473,6 +473,400 @@
       "ou": "assets/theme.css:2462",
       "commit": "e649318",
       "raison": "Les deux bordures en raccourci relevées (theme.css:1589 .product-variant__select, theme.css:2462 .gift-card-recipient__fields input/textarea) prenaient --color-border, filet à 12 % (1,3:1) ; elles prennent maintenant --color-border-input (dérivé pour 3:1 sur --input-bg), comme la règle groupée des contrôles de saisie. La règle de la carte cadeau venant après la règle groupée à spécificité égale, c'est elle qui s'affichait à 1,3:1 ; le sélecteur était déjà recouvert. verifier-theme.py complet sur e649318 : code 0, 212 OK, 0 ALERTE, 0 ÉCHEC, la ligne n'est plus relevée."
+    },
+    {
+      "id": "mesure-3872d922@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:36",
+      "commit": "059c064",
+      "raison": "Les vignettes de la galerie etaient passees sous l'anneau global en 1.9.1 : sa bande sombre touchait la bande sombre du ::after (cFond 1 sur trois cotes). La colonne a 4 px de marge interieure (marge negative pour garder 80 px), que la barre de defilement ne rogne pas, et l'anneau global s'y trace en entier contre le fond. Remesure complete du 30/10/2026 (558dee5) : plus aucune ligne anneauxCFondSous3."
+    },
+    {
+      "id": "mesure-c9da777e@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:36",
+      "commit": "059c064",
+      "raison": "Meme cause et meme correction que mesure-3872d922 : anneauCFondMin remonte au-dessus du seuil 3,0, plus aucune ligne a la remesure complete."
+    },
+    {
+      "id": "mesure-f2e14751@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ."
+    },
+    {
+      "id": "mesure-62cd9a46@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ."
+    },
+    {
+      "id": "mesure-86ded3e4@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:36",
+      "commit": "059c064",
+      "raison": "Vignette de la galerie : meme regression de 1.9.1 que mesure-3872d922, l'anneau global rendu dehors."
+    },
+    {
+      "id": "mesure-f8361db9@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/tabs.liquid:161",
+      "commit": "059c064",
+      "raison": "L'anneau de l'onglet etait rentre de 5 px : le pixel mesure 2 px plus loin tombait encore sur le filet actif (2 px au bas de l'onglet, meme teinte), cFond 1,14. A -7 px le voisin exterieur est le fond ; l'onglet recoit 8 px de marge laterale pour que l'anneau ne touche pas son texte (sections/tabs.liquid:108)."
+    },
+    {
+      "id": "mesure-6eee66e7@1.9.2-d733565-202610291456",
+      "version": "1.9.2",
+      "etat": "pas_un_defaut",
+      "ou": "sections/hero.liquid:344",
+      "raison": "Juge « accepte » par la session des outils le 30/10/2026 (registre, fermetures_jugees) : rendu voulu. Le poster est rendu en balise <img> (image_tag eager, fetchpriority high, preload sur la seule section d'ouverture) parce qu'un attribut poster n'accepte ni srcset ni fetchpriority ; la « regression » vient de references/lumiere/*.json, restees a la 1.6.1."
+    },
+    {
+      "id": "mesure-e6cbde03@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/newsletter.liquid:36",
+      "commit": "059c064",
+      "raison": "Le placeholder prenait --color-text-light, derive sur le FOND DE LA SECTION : en scheme-4 (fond #1a1a1a) c'etait un gris clair pose sur le champ blanc, 1:1 au pixel. Il est maintenant attenue a partir de l'encre du champ puis releve sur l'aplat du champ (--newsletter-placeholder)."
+    },
+    {
+      "id": "mesure-91359ff1@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/footer.liquid:20",
+      "commit": "059c064",
+      "raison": "L'encre attenue du pied de page s'arretait des que color_contrast annoncait 4,5 ; ce filtre arrondit au dixieme, et 4,5 annonce valait 4,49 au pixel sur la palette inverse. Le seuil de la boucle passe a 4,6 (meme seuil dans video-banner, lookbook et section-tokens)."
+    },
+    {
+      "id": "mesure-aff3795f@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/footer.liquid:20",
+      "commit": "059c064",
+      "raison": "Meme boucle, meme encre attenue que a.footer__link : seuil 4,6 au lieu de 4,5."
+    },
+    {
+      "id": "mesure-d2b4271f@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/newsletter.liquid:14",
+      "commit": "059c064",
+      "raison": "color_contrast arrondit au dixieme : un « 3 » annonce valait 2,92 au pixel. Les appels qui visent 3:1 passent 3.2, et contrast-color repart dans l'autre sens quand le premier sens rate le seuil. Ici la bordure du champ de la newsletter."
+    },
+    {
+      "id": "mesure-ee70462e@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ."
+    },
+    {
+      "id": "mesure-72102bbf@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ."
+    },
+    {
+      "id": "mesure-c132fe95@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ. Mesure sous media noir, encre servie."
+    },
+    {
+      "id": "mesure-d0fdea90@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ. Mesure sous media blanc, encre servie."
+    },
+    {
+      "id": "mesure-7396aed5@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "snippets/contrast-color.liquid:35",
+      "commit": "059c064",
+      "raison": "Sur un fond de luminosite moyenne, contrast-color partait toujours dans le meme sens : sur la pastille de solde de la palette inverse (fond #d55344) il eclaircissait l'encre #1a1a1a jusqu'au blanc, 4,08 au pixel, contre 5,06 en assombrissant. Quand le premier sens rate le seuil, il repart de la base dans l'autre sens et garde le meilleur des deux."
+    },
+    {
+      "id": "mesure-6428c7f2@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-collection-product-grid.liquid:95",
+      "commit": "059c064",
+      "raison": "Le bord de l'etat choisi etait --color-primary, gardee telle quelle par une palette sombre : elle se confondait avec le fond (ratioCss 1). Il prend --color-text, lisible quelle que soit la primaire."
+    },
+    {
+      "id": "mesure-f4370392@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2094",
+      "commit": "059c064",
+      "raison": "Le bord de l'etat choisi etait --color-primary, gardee telle quelle par une palette sombre : elle se confondait avec le fond (ratioCss 1). Il prend --color-text, lisible quelle que soit la primaire. Page courante de la pagination."
+    },
+    {
+      "id": "mesure-b285f005@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ. Mesure sous palette vive."
+    },
+    {
+      "id": "mesure-6e905721@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2557",
+      "commit": "059c064",
+      "raison": "Les champs de prix des filtres portent une bordure de 1 px a l'encre du texte (3:1) : l'anneau rentre de 4 px avait cette bordure, de meme encre, juste a l'exterieur (cFond 1 sur les quatre cotes, dans chaque palette). Rentre de 6 px, son voisin exterieur est l'aplat du champ. Mesure sous palette teinte."
+    },
+    {
+      "id": "mesure-cd36ece1@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:2082",
+      "commit": "059c064",
+      "raison": "Sept cases de 44 px ne tenaient pas sur 320 px : la sixieme recevait le focus hors de la vue. .pagination__list passe en flex-wrap: wrap, les numeros passent a la ligne."
+    },
+    {
+      "id": "mesure-dfc77979@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:106",
+      "commit": "059c064",
+      "raison": "Les commandes de la galerie prenaient --color-primary brute, restee #1a1a1a sur une plaque devenue sombre (icones a 1:1, anneau en currentColor a 4 px) : elles prennent --color-primary-text, l'encre de marque relevee sur la plaque ; la regle :where() qui posait outline-color n'avait aucun effet (specificite 0 contre la regle :is() au-dessus) et a ete retiree."
+    },
+    {
+      "id": "mesure-6ad63f94@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:106",
+      "commit": "059c064",
+      "raison": "Les commandes de la galerie prenaient --color-primary brute, restee #1a1a1a sur une plaque devenue sombre (icones a 1:1, anneau en currentColor a 4 px) : elles prennent --color-primary-text, l'encre de marque relevee sur la plaque ; la regle :where() qui posait outline-color n'avait aucun effet (specificite 0 contre la regle :is() au-dessus) et a ete retiree."
+    },
+    {
+      "id": "mesure-88b49a12@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:106",
+      "commit": "059c064",
+      "raison": "Les commandes de la galerie prenaient --color-primary brute, restee #1a1a1a sur une plaque devenue sombre (icones a 1:1, anneau en currentColor a 4 px) : elles prennent --color-primary-text, l'encre de marque relevee sur la plaque ; la regle :where() qui posait outline-color n'avait aucun effet (specificite 0 contre la regle :is() au-dessus) et a ete retiree."
+    },
+    {
+      "id": "mesure-fd78dac1@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1642",
+      "commit": "059c064",
+      "raison": "Le bord de l'etat choisi etait --color-primary, gardee telle quelle par une palette sombre : elle se confondait avec le fond (ratioCss 1). Il prend --color-text, lisible quelle que soit la primaire. Etiquette de variante (et variante couleur, :1674)."
+    },
+    {
+      "id": "mesure-4467a6e6@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:106",
+      "commit": "059c064",
+      "raison": "Les commandes de la galerie prenaient --color-primary brute, restee #1a1a1a sur une plaque devenue sombre (icones a 1:1, anneau en currentColor a 4 px) : elles prennent --color-primary-text, l'encre de marque relevee sur la plaque ; la regle :where() qui posait outline-color n'avait aucun effet (specificite 0 contre la regle :is() au-dessus) et a ete retiree."
+    },
+    {
+      "id": "mesure-b9cf7a1f@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-product.liquid:106",
+      "commit": "059c064",
+      "raison": "Les commandes de la galerie prenaient --color-primary brute, restee #1a1a1a sur une plaque devenue sombre (icones a 1:1, anneau en currentColor a 4 px) : elles prennent --color-primary-text, l'encre de marque relevee sur la plaque ; la regle :where() qui posait outline-color n'avait aucun effet (specificite 0 contre la regle :is() au-dessus) et a ete retiree."
+    },
+    {
+      "id": "mesure-8f54410f@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1485",
+      "commit": "059c064",
+      "raison": "Le ::after en deux tons du bouton du diaporama touchait le bord du bouton : sur une diapositive claire, sa bande blanche avait la diapositive blanche pour voisin exterieur (cFond 1 sur les quatre cotes). Rentre de 3 px (inset: 3px), la bande a la plaque du bouton pour voisin."
+    },
+    {
+      "id": "mesure-4b01ff4e@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1485",
+      "commit": "059c064",
+      "raison": "Meme cause et meme correction que mesure-8f54410f, schema 2."
+    },
+    {
+      "id": "mesure-b30019f5@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.css:1485",
+      "commit": "059c064",
+      "raison": "Meme cause et meme correction que mesure-8f54410f, schema 3."
+    },
+    {
+      "id": "mesure-ed209fe8@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "snippets/css-variables.liquid:115",
+      "commit": "059c064",
+      "raison": "color_contrast arrondit au dixieme : un « 3 » annonce valait 2,92 au pixel. Les appels qui visent 3:1 passent 3.2, et contrast-color repart dans l'autre sens quand le premier sens rate le seuil. Ici --color-border-input, la bordure du selecteur de variante du produit mis en avant (2,92 au pixel)."
+    },
+    {
+      "id": "mesure-237f4d00@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "059c064",
+      "raison": "Les arrets du tableau comparatif entraient a moitie dans la zone qui defile : scroll-padding-inline sur .comparison__scroller, et l'anneau de la zone elle-meme rentre (outline-offset -2px, :161)."
+    },
+    {
+      "id": "mesure-fac3eb8c@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "059c064",
+      "raison": "Meme cause et meme correction que mesure-237f4d00 : le bouton principal de la colonne mise en avant etait recadre au focus a 320 px."
+    },
+    {
+      "id": "mesure-30f8367d@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "059c064",
+      "raison": "Meme cause et meme correction que mesure-237f4d00."
+    },
+    {
+      "id": "mesure-f9f38b76@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/related-products.liquid:107",
+      "commit": "059c064",
+      "raison": "La section des recommandations se repliait a 0 px quand la requete echouait, en laissant ses 16 squelettes dans le DOM et sans un mot. Elle porte maintenant data-error (cle traduite EN et FR) et le JS affiche .related-products__error a la place des squelettes (assets/theme.js:3025)."
+    },
+    {
+      "id": "mesure-38f46271@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:1051",
+      "commit": "059c064",
+      "raison": "Le retour en arriere du tiroir cherchait input[name=\"updates[]\"], [data-quantity-input] : rien ne porte [data-quantity-input], c'est [data-qty-input] que portent les champs du tiroir et de la page panier. Le tiroir gardait donc 3 pour un panier revenu a 2."
+    },
+    {
+      "id": "mesure-98aaa6b5@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:858",
+      "commit": "059c064",
+      "raison": "Le repli du menu n'etait observe qu'une fois : la liste est de nouveau observee quand le menu grandit, et l'observateur ne boucle plus (166 px de debordement mesures a 1440 avant correction). Remesure complete du 30/10/2026 : plus aucune ligne menu-une-ligne a 1280 ni a 1024, en anglais comme en francais."
+    },
+    {
+      "id": "mesure-afaef58a@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:1306",
+      "commit": "059c064",
+      "raison": "Deux trous : Shopify peut repondre 200 en ramenant la ligne au stock disponible (5 demandes, 3 au panier) et le champ se remettait a 3 sans un mot ; et sur un refus 422 la ligne etait cherchee par sa cle, qui change quand Shopify recalcule le panier. La ligne se retrouve par son rang (data-line) et le message du theme (cartQuantityLimited) sort dans la region annoncee, en anglais comme en francais."
+    },
+    {
+      "id": "mesure-ad3cbddb@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:747",
+      "commit": "059c064",
+      "raison": "role=\"button\" pose sur un <a href> ne suffit pas : l'element reste un lien reel (clic milieu, menu contextuel, « ouvrir dans un onglet »). Quand le JS prend le panier, le lien est remplace par un vrai <button> qui garde classes, attributs et contenu (assets/theme.css:370 pour font: inherit)."
+    },
+    {
+      "id": "mesure-b7eefe1e@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:858",
+      "commit": "059c064",
+      "raison": "Un seul Echap fermait les deux calques superposes : le gestionnaire s'arrete desormais si l'evenement a deja ete traite (e.defaultPrevented), et chaque calque ferme le sien."
+    },
+    {
+      "id": "mesure-40e77bbc@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/lookbook.liquid:241",
+      "commit": "059c064",
+      "raison": "Sous 750 px la marge du conteneur est de 1,5rem de chaque cote : « 100vw - 2rem » annoncait 380 px pour 364 peints et le navigateur prenait le fichier 750 au lieu de 650 (148 Kio). sizes passe a « 100vw - 3rem » et les paliers srcset sont rapproches (450/550/650). Remesure complete du 30/10/2026 : accueil mobile n'a plus de ligne sur-livraison."
+    },
+    {
+      "id": "mesure-8a667912@1.9.2-d733565-202610291456",
+      "version": "1.9.2",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Juge « accepte » par la session des outils le 30/10/2026 (registre, fermetures_jugees) : defaut d'outil. La regle juge « trop large » sur la BOITE (i.sizes_px >= 1.5 * i.affiche_px) alors que « trop etroit » et le rapport affiche (l.1500) se jugent sur le RENDU : le releve lui-meme donne un rapport de x 1, sous le seuil de 1,5 annonce par le message."
+    },
+    {
+      "id": "mesure-58bed0bc@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/main-collection-product-grid.liquid:415",
+      "commit": "059c064",
+      "raison": "La carte supposait 4 colonnes sur toute la fenetre (25vw) : a cote de la colonne de filtres (260 px et son ecart) elle fait 223 px a 1350 pour un sizes de 337. Le sizes decrit maintenant cette grille-ci (marges du conteneur, colonne de filtres, colonnes reglees) et l'image de survol n'est servie que pour une image (snippets/product-card.liquid). Remesure complete du 30/10/2026 : collections/all bureau n'a plus de ligne sur-livraison."
+    },
+    {
+      "id": "mesure-9e857f9a@1.9.2-d733565-202610291456",
+      "version": "1.9.2",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Juge « accepte » le 30/10/2026 : meme defaut d'outil que mesure-8a667912, rapports x 1.42 et x 1.47, tous deux sous le seuil de 1,5 annonce par l'alerte."
+    },
+    {
+      "id": "mesure-4a5c7d38@1.9.2-d733565-202610291456",
+      "version": "1.9.2",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Juge « accepte » le 30/10/2026 : meme defaut d'outil, rapports x 1.11 et x 1.1."
+    },
+    {
+      "id": "mesure-4df8d2d2@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/slideshow.liquid:611",
+      "commit": "059c064",
+      "raison": "Deux causes. Mobile : sizes des sections gallery, featured-collections, tabs et image-with-text decrits sans les marges du conteneur (736,3 Kio). Bureau : un fichier portrait (1100 x 1375) servi a un bandeau de 1350 x 799 ; la sonde le marque « rendu_plus_grand_que_le_fichier », le fichier est deja plus etroit que la boite et seul son recadrage peut l'alleger. Le fichier demande est donc plafonne a 5/4, et seulement quand le point de focus du marchand EST le centre (absent ou 50.0% 50.0%, relu sur le theme d'essai le 30/10/2026), pour ne pas remplacer son choix par « crop: center ». Paliers 1300 et 1600 ajoutes, width/height decrivent le fichier recadre. Remesure complete du 30/10/2026 : 211,6 Kio -> plus aucune ligne sur-livraison."
+    },
+    {
+      "id": "mesure-5f7eb0a3@1.9.2-d733565-202610291456",
+      "version": "1.9.2",
+      "etat": "defaut_outil",
+      "ou": "liquid-tools/mesures/perf.cjs:1490",
+      "raison": "Juge « accepte » le 30/10/2026 : meme defaut d'outil, rapports x 1.13, x 1, x 1.05 et x 1.05, tous sous le seuil de 1,5 annonce par l'alerte."
+    },
+    {
+      "id": "mesure-7c8a41dd@1.9.2-d733565-202610291456",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "sections/image-with-text.liquid:240",
+      "commit": "059c064",
+      "raison": "Derriere un bloc de texte, l'image d'image-with-text est le LCP de la page des sections et partait sans priorite haute : fetchpriority=\"high\" sur les deux premieres sections, comme hero. Remesure complete du 30/10/2026 : plus aucune ligne « image LCP sans fetchpriority=high ni preload »."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-francais-reel@1.8.1-5eccb3b-20261025",
+      "version": "1.9.2",
+      "etat": "pas_un_defaut",
+      "ou": "locales/fr.schema.json:124",
+      "raison": "L'audit lui-meme donnait « francais-reel : 0 DEFAUT », et le code l'avait deja a la version du releve : la ligne relue en octets (cat -A) au commit 5eccb3b (l. 99) comme sur main (l. 124) rend « M-BM-+M-BM- page.wishlistM-BM- M-BM-; », soit des guillemets U+00AB/U+00BB bornes par U+00A0, et l'apostrophe U+2019."
+    },
+    {
+      "id": "audit-theme-bilingue-checker-resume@1.8.1-5eccb3b-20261025",
+      "version": "1.9.3",
+      "etat": "corrige",
+      "ou": "assets/theme.js:858",
+      "commit": "059c064",
+      "raison": "Le seul defaut NOUVEAU du resume est le cas menu-une-ligne a 1440 avec un menu long : meme cause et meme correction que mesure-98aaa6b5 (la liste est de nouveau observee quand le menu grandit, et l'observateur ne boucle plus). Remesure complete du 30/10/2026 sur 558dee5 : plus aucune ligne menu-une-ligne, a 1440, 1280 ni 1024, en anglais comme en francais."
     }
   ]
 }
