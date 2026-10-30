@@ -1,0 +1,116 @@
+{% doc %}
+  Attributs srcset (et, pour une balise img, src) d'une
+  image que le CSS recadre en object-fit: cover dans un cadre de rapport
+  connu.
+
+  Le recadrage est demande au CDN (crop: 'center') pour que le fichier ait
+  deja le rapport du cadre : sans lui, un fichier paysage peint dans un
+  cadre portrait (ou l'inverse) charge des pixels jamais affiches, et
+  Lighthouse les compte en sur-livraison (uses-responsive-images, mesure
+  du 30/10/2026 sur image-with-text, video-banner et map).
+
+  Il n'est demande QUE si le point de focus du marchand est le centre
+  (absent, ou « 50.0% 50.0% ») : ailleurs il couperait la zone choisie, et
+  le fichier est alors servi entier, cadre par object-position (snippets/
+  focal.liquid). Meme garde que sections/slideshow.liquid.
+
+  width et height restent ecrits dans la balise img elle-meme (Theme Check
+  ne lit pas ceux d'un snippet) : le cadre fixe la taille peinte par CSS.
+
+  Les largeurs ne depassent jamais ce que le fichier d'origine permet :
+  la plus grande decoupe possible au rapport demande est ajoutee en dernier
+  palier quand la liste s'arrete avant elle.
+
+  Les hauteurs se calculent avant l'appel du filtre : une expression n'est
+  pas une valeur d'argument de filtre valide, et Shopify rejette alors la
+  section au push en repondant « reussi ».
+
+  @param {image} image - L'image a servir.
+  @param {number} ratio - Rapport largeur / hauteur du cadre ; 0 pour ne pas recadrer.
+  @param {string} largeurs - Paliers en pixels, separes par des virgules (ex. '375,750,1100').
+  @param {boolean} [source] - true dans une balise source : seul srcset est rendu.
+  @param {number} [src_largeur] - Largeur visee pour src (defaut 1100).
+
+  @example
+  <img {% render 'image-recadree', image: img, ratio: 0.75, largeurs: '375,550,750,1100' %} sizes="..." alt="">
+{% enddoc %}
+{%- liquid
+  assign ir_ratio = ratio | default: 0 | times: 1.0
+  assign ir_src_cible = src_largeur | default: 1100
+  assign ir_crop = false
+  if ir_ratio > 0 and image.height > 0
+    assign ir_crop = true
+    if image.presentation.focal_point != blank
+      assign ir_focal = image.presentation.focal_point | remove: '%' | split: ' '
+      assign ir_fx = ir_focal[0] | plus: 0 | round
+      assign ir_fy = ir_focal[1] | plus: 0 | round
+      unless ir_fx == 50 and ir_fy == 50
+        assign ir_crop = false
+      endunless
+    endif
+  endif
+
+  comment
+    Plus grande decoupe au rapport demande : toute la largeur si la hauteur
+    suffit, sinon toute la hauteur.
+  endcomment
+  assign ir_wmax = image.width
+  assign ir_hmax = image.height
+  if ir_crop
+    assign ir_h_pleine = image.width | divided_by: ir_ratio | floor
+    if ir_h_pleine > image.height
+      assign ir_wmax = image.height | times: ir_ratio | floor
+      assign ir_hmax = image.height
+    else
+      assign ir_wmax = image.width
+      assign ir_hmax = ir_h_pleine
+    endif
+  endif
+
+  assign ir_liste = largeurs | split: ','
+  assign ir_dernier = 0
+  assign ir_src_w = 0
+  capture ir_srcset
+    for lg in ir_liste
+      assign lg_px = lg | plus: 0
+      if lg_px <= ir_wmax
+        if ir_crop
+          assign lg_h = lg_px | divided_by: ir_ratio | round
+          echo image | image_url: width: lg_px, height: lg_h, crop: 'center'
+        else
+          echo image | image_url: width: lg_px
+        endif
+        echo ' '
+        echo lg_px
+        echo 'w,'
+        assign ir_dernier = lg_px
+        if lg_px <= ir_src_cible or ir_src_w == 0
+          assign ir_src_w = lg_px
+        endif
+      endif
+    endfor
+    if ir_wmax > ir_dernier
+      if ir_crop
+        echo image | image_url: width: ir_wmax, height: ir_hmax, crop: 'center'
+      else
+        echo image | image_url: width: ir_wmax
+      endif
+      echo ' '
+      echo ir_wmax
+      echo 'w'
+      if ir_src_w == 0
+        assign ir_src_w = ir_wmax
+      endif
+    endif
+  endcapture
+  assign ir_srcset = ir_srcset | strip | remove_last: ','
+
+  if ir_crop
+    assign ir_src_h = ir_src_w | divided_by: ir_ratio | round
+    assign ir_src = image | image_url: width: ir_src_w, height: ir_src_h, crop: 'center'
+  else
+    assign ir_src = image | image_url: width: ir_src_w
+  endif
+-%}
+srcset="{{ ir_srcset }}"
+{%- unless source %} src="{{ ir_src }}"{% endunless -%}

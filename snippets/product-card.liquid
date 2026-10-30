@@ -63,7 +63,9 @@
         <div class="product-card__image-wrapper">
           <img
             srcset="{%- if product.featured_media.width >= 165 -%}{{ product.featured_media | image_url: width: 165 }} 165w,{%- endif -%}
+              {%- if product.featured_media.width >= 240 -%}{{ product.featured_media | image_url: width: 240 }} 240w,{%- endif -%}
               {%- if product.featured_media.width >= 360 -%}{{ product.featured_media | image_url: width: 360 }} 360w,{%- endif -%}
+              {%- if product.featured_media.width >= 450 -%}{{ product.featured_media | image_url: width: 450 }} 450w,{%- endif -%}
               {%- if product.featured_media.width >= 533 -%}{{ product.featured_media | image_url: width: 533 }} 533w,{%- endif -%}
               {%- if product.featured_media.width >= 720 -%}{{ product.featured_media | image_url: width: 720 }} 720w,{%- endif -%}"
             src="{{ product.featured_media | image_url: width: 533 }}"
@@ -160,7 +162,9 @@
             -%}
             <img
               srcset="{%- if hover_image.width >= 165 -%}{{ hover_image | image_url: width: 165 }} 165w,{%- endif -%}
+                {%- if hover_image.width >= 240 -%}{{ hover_image | image_url: width: 240 }} 240w,{%- endif -%}
                 {%- if hover_image.width >= 360 -%}{{ hover_image | image_url: width: 360 }} 360w,{%- endif -%}
+                {%- if hover_image.width >= 450 -%}{{ hover_image | image_url: width: 450 }} 450w,{%- endif -%}
                 {%- if hover_image.width >= 533 -%}{{ hover_image | image_url: width: 533 }} 533w,{%- endif -%}
                 {%- if hover_image.width >= 720 -%}{{ hover_image | image_url: width: 720 }} 720w,{%- endif -%}"
               src="{{ hover_image | image_url: width: 533 }}"

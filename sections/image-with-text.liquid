@@ -36,8 +36,28 @@
       when 'landscape'
         assign iwt_box_ratio = 1.3333
     endcase
-    assign iwt_facteur = 1
+    comment
+      Recadrage au CDN (snippets/image-recadree.liquid) : quand le cadre a un
+      rapport fixe et que le point de focus est le centre, le fichier arrive
+      deja au rapport du cadre, et la largeur du cadre suffit (facteur 1).
+      Sans lui, Lighthouse comptait 32 a 36 Kio de sur-livraison sur la page
+      des sections (fichier 1100 x 825 peint 364 x 485 et 611 x 815, mesure
+      1.9.4). Le facteur ne sert plus qu'au point de focus decentre.
+    endcomment
+    assign iwt_crop = false
     if iwt_box_ratio > 0 and section.settings.image != blank and section.settings.image.height > 0
+      assign iwt_crop = true
+      if section.settings.image.presentation.focal_point != blank
+        assign iwt_focal = section.settings.image.presentation.focal_point | remove: '%' | split: ' '
+        assign iwt_fx = iwt_focal[0] | plus: 0 | round
+        assign iwt_fy = iwt_focal[1] | plus: 0 | round
+        unless iwt_fx == 50 and iwt_fy == 50
+          assign iwt_crop = false
+        endunless
+      endif
+    endif
+    assign iwt_facteur = 1
+    if iwt_crop == false and iwt_box_ratio > 0 and section.settings.image != blank and section.settings.image.height > 0
       assign iwt_img_ratio = section.settings.image.width | times: 1.0 | divided_by: section.settings.image.height
       assign iwt_facteur = iwt_img_ratio | divided_by: iwt_box_ratio
       if iwt_facteur < 1
@@ -224,12 +244,7 @@
           1.9.2, mobile, bureau et large).
         {%- endcomment -%}
         <img
-          srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-            {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {%- if section.settings.image.width >= 2000 -%}{{ section.settings.image | image_url: width: 2000 }} 2000w,{%- endif -%}"
-          src="{{ section.settings.image | image_url: width: 1100 }}"
+          {% render 'image-recadree', image: section.settings.image, ratio: iwt_box_ratio, largeurs: '375,550,650,750,900,1100,1500,2000' %}
           sizes="{{ iwt_sizes }}"
           alt="{{ section.settings.image.alt | escape }}"
           class="image-with-text__image"

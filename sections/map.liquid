@@ -61,6 +61,12 @@
     background-color: var(--color-border);
   }
 
+  /* La balise picture porte seulement la source recadree du telephone
+     (snippets/image-recadree.liquid) : elle ne cree aucune boite. */
+  .map__picture {
+    display: contents;
+  }
+
   .map__image {
     transition: transform var(--transition-slow);
   }
@@ -193,6 +199,19 @@
 {%- endstyle -%}
 
 {%- liquid
+  comment
+    Recadrage au CDN (snippets/image-recadree.liquid), mesure 1.9.4 : la
+    carte peinte 609 x 460 en bureau recevait un fichier portrait 750 x 938
+    (21 Kio de sur-livraison, Lighthouse). Le cadre a une hauteur fixe
+    (image_height, 70 % sur telephone) et la largeur de sa colonne : le
+    rapport se calcule pour une colonne de reference de 630 px en bureau
+    (fenetre de 1395 px) et 364 px sur telephone (412 px moins les marges).
+    La garde du point de focus est dans le snippet.
+  endcomment
+  assign map_h = section.settings.image_height | default: 460
+  assign map_h_mobile = map_h | times: 0.7 | round
+  assign map_r_desk = 630.0 | divided_by: map_h
+  assign map_r_mobile = 364.0 | divided_by: map_h_mobile
   assign map_url = section.settings.map_url
   assign directions_url = section.settings.directions_url
   assign phone_raw = section.settings.phone | strip
@@ -240,20 +259,19 @@
           rel="noopener noreferrer"
         >
           {%- if section.settings.image != blank -%}
-            <img
-              srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-                {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-                {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-                {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
-              src="{{ section.settings.image | image_url: width: 1100 }}"
-              sizes="(min-width: 750px) 50vw, 100vw"
-              alt="{{ image_alt }}"
-              class="map__image"
-              loading="lazy"
-              {% render 'focal', image: section.settings.image %}
-              width="{{ section.settings.image.width }}"
-              height="{{ section.settings.image.height }}"
-            >
+            <picture class="map__picture">
+              <source media="(max-width: 749px)" {% render 'image-recadree', image: section.settings.image, ratio: map_r_mobile, largeurs: '375,550,650,750,900,1100', source: true %} sizes="calc(100vw - 3rem)">
+              <img
+                {% render 'image-recadree', image: section.settings.image, ratio: map_r_desk, largeurs: '375,550,650,750,900,1100,1300' %}
+                sizes="calc((min(100vw, 1440px) - 8.25rem) / 2)"
+                alt="{{ image_alt }}"
+                class="map__image"
+                loading="lazy"
+                {% render 'focal', image: section.settings.image %}
+                width="{{ section.settings.image.width }}"
+                height="{{ section.settings.image.height }}"
+              >
+            </picture>
           {%- else -%}
             <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</span>
             <span class="visually-hidden">{{ view_map_label }}</span>
@@ -267,20 +285,19 @@
         </a>
       {%- else -%}
         {%- if section.settings.image != blank -%}
-          <img
-            srcset="{%- if section.settings.image.width >= 375 -%}{{ section.settings.image | image_url: width: 375 }} 375w,{%- endif -%}
-              {%- if section.settings.image.width >= 750 -%}{{ section.settings.image | image_url: width: 750 }} 750w,{%- endif -%}
-              {%- if section.settings.image.width >= 1100 -%}{{ section.settings.image | image_url: width: 1100 }} 1100w,{%- endif -%}
-              {%- if section.settings.image.width >= 1500 -%}{{ section.settings.image | image_url: width: 1500 }} 1500w,{%- endif -%}"
-            src="{{ section.settings.image | image_url: width: 1100 }}"
-            sizes="(min-width: 750px) 50vw, 100vw"
-            alt="{{ section.settings.image.alt | escape }}"
-            class="map__image"
-            loading="lazy"
-            {% render 'focal', image: section.settings.image %}
-            width="{{ section.settings.image.width }}"
-            height="{{ section.settings.image.height }}"
-          >
+          <picture class="map__picture">
+            <source media="(max-width: 749px)" {% render 'image-recadree', image: section.settings.image, ratio: map_r_mobile, largeurs: '375,550,650,750,900,1100', source: true %} sizes="calc(100vw - 3rem)">
+            <img
+              {% render 'image-recadree', image: section.settings.image, ratio: map_r_desk, largeurs: '375,550,650,750,900,1100,1300' %}
+              sizes="calc((min(100vw, 1440px) - 8.25rem) / 2)"
+              alt="{{ section.settings.image.alt | escape }}"
+              class="map__image"
+              loading="lazy"
+              {% render 'focal', image: section.settings.image %}
+              width="{{ section.settings.image.width }}"
+              height="{{ section.settings.image.height }}"
+            >
+          </picture>
         {%- else -%}
           <span class="placeholder-wrap" aria-hidden="true">{{ 'image' | placeholder_svg_tag: 'placeholder-svg' }}</span>
         {%- endif -%}

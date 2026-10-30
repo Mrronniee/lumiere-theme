@@ -61,34 +61,89 @@
   if section.settings.cover_image != blank and section.settings.cover_image.height > 0
     assign vb_img_ratio = section.settings.cover_image.width | times: 1.0 | divided_by: section.settings.cover_image.height
   endif
+  comment
+    Recadrage au CDN (snippets/image-recadree.liquid), mesure 1.9.4 : le
+    fichier 1920 x 960 etait peint 412 x 494 sur telephone et 1350 x 752 en
+    bureau (28 et 19 Kio de sur-livraison, Lighthouse). Le cadre a un rapport
+    par format : en fond, 100vw sur la hauteur reglee (vh), calcule pour un
+    ecran de reference (412 x 823 sur telephone, 1395 x 920 en bureau, entre
+    1350 x 940 et 1440 x 900) ; en ligne, 4/3 et 16/9 (aspect-ratio du cadre).
+    Seulement si le point de focus est le centre : sinon le fichier reste
+    entier et sizes garde le facteur du rapport de l'image.
+  endcomment
+  assign vb_crop = false
+  if section.settings.cover_image != blank and section.settings.cover_image.height > 0
+    assign vb_crop = true
+    if section.settings.cover_image.presentation.focal_point != blank
+      assign vb_focal = section.settings.cover_image.presentation.focal_point | remove: '%' | split: ' '
+      assign vb_fx = vb_focal[0] | plus: 0 | round
+      assign vb_fy = vb_focal[1] | plus: 0 | round
+      unless vb_fx == 50 and vb_fy == 50
+        assign vb_crop = false
+      endunless
+    endif
+  endif
   if section.settings.layout == 'background'
     assign vb_h_mobile = section.settings.height_mobile | default: 60
     assign vb_h_desk = section.settings.height | default: 80
-    capture vb_sizes
-      echo '(max-width: 749px) max(100vw, calc('
+    assign vb_r_mobile = 41200.0 | divided_by: 823 | divided_by: vb_h_mobile
+    assign vb_r_desk = 139500.0 | divided_by: 920 | divided_by: vb_h_desk
+  else
+    assign vb_r_mobile = 1.3333
+    assign vb_r_desk = 1.7778
+  endif
+  if vb_crop
+    assign vb_rm = vb_r_mobile
+    assign vb_rd = vb_r_desk
+  else
+    assign vb_rm = 0
+    assign vb_rd = 0
+  endif
+  if section.settings.layout == 'background'
+    if vb_crop
+      assign vb_ratio_m = vb_r_mobile
+      assign vb_ratio_d = vb_r_desk
+    else
+      assign vb_ratio_m = vb_img_ratio
+      assign vb_ratio_d = vb_img_ratio
+    endif
+    capture vb_sizes_m
+      echo 'max(100vw, calc('
       echo vb_h_mobile
       echo 'vh * '
-      echo vb_img_ratio
-      echo ')), max(100vw, calc('
+      echo vb_ratio_m
+      echo '))'
+    endcapture
+    capture vb_sizes_d
+      echo 'max(100vw, calc('
       echo vb_h_desk
       echo 'vh * '
-      echo vb_img_ratio
+      echo vb_ratio_d
       echo '))'
     endcapture
   else
-    assign vb_f_mobile = vb_img_ratio | divided_by: 1.3333 | at_least: 1
-    assign vb_f_desk = vb_img_ratio | divided_by: 1.7778 | at_least: 1
-    capture vb_sizes
-      echo '(max-width: 749px) calc((100vw - 3rem) * '
-      echo vb_f_mobile
-      echo '), calc(min(100vw - 4rem, '
+    if vb_crop
+      assign vb_fm = 1
+      assign vb_fd = 1
+    else
+      assign vb_fm = vb_img_ratio | divided_by: 1.3333 | at_least: 1
+      assign vb_fd = vb_img_ratio | divided_by: 1.7778 | at_least: 1
+    endif
+    capture vb_sizes_m
+      echo 'calc((100vw - 3rem) * '
+      echo vb_fm
+      echo ')'
+    endcapture
+    capture vb_sizes_d
+      echo 'calc(min(100vw - 4rem, '
       echo settings.layout_container_width | default: 1440
       echo 'px) * '
-      echo vb_f_desk
+      echo vb_fd
       echo ')'
     endcapture
   endif
-  assign vb_sizes = vb_sizes | strip
+  assign vb_sizes_m = vb_sizes_m | strip
+  assign vb_sizes_d = vb_sizes_d | strip
   comment
     Voile pose sur le media : de la polarite opposee au texte du schema de
     couleurs (noir sous un texte clair, blanc sous un texte sombre), au lieu
@@ -159,9 +214,17 @@
   }
 
   .video-banner__media--poster > img,
+  .video-banner__media--poster > picture > img,
   .video-banner__media--poster > video {
     position: absolute;
     inset: 0;
+  }
+
+  /* La balise picture porte seulement la source recadree du telephone
+     (snippets/image-recadree.liquid) : elle ne cree aucune boite, l'image
+     garde la mise en page qu'elle avait sans elle. */
+  .video-banner__picture {
+    display: contents;
   }
 
   .video-banner__video,
@@ -420,26 +483,24 @@
             tirets Liquid restent hors de la balise : ils mangeraient le blanc
             qui separe deux attributs.
           {%- endcomment -%}
-          <img
-            srcset="{%- if section.settings.cover_image.width >= 375 -%}{{ section.settings.cover_image | image_url: width: 375 }} 375w,{%- endif -%}
-              {%- if section.settings.cover_image.width >= 750 -%}{{ section.settings.cover_image | image_url: width: 750 }} 750w,{%- endif -%}
-              {%- if section.settings.cover_image.width >= 1100 -%}{{ section.settings.cover_image | image_url: width: 1100 }} 1100w,{%- endif -%}
-              {%- if section.settings.cover_image.width >= 1500 -%}{{ section.settings.cover_image | image_url: width: 1500 }} 1500w,{%- endif -%}
-              {%- if section.settings.cover_image.width >= 1920 -%}{{ section.settings.cover_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-            src="{{ section.settings.cover_image | image_url: width: 1100 }}"
-            sizes="{{ vb_sizes }}"
-            alt=""
-            class="video-banner__cover"
-            {% if section.index > 2 -%}
-              loading="lazy"
-            {%- else %}
-              loading="eager"
-              {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
-            {%- endif %}
-            {% render 'focal', image: section.settings.cover_image %}
-            width="{{ section.settings.cover_image.width }}"
-            height="{{ section.settings.cover_image.height }}"
-          >
+          <picture class="video-banner__picture">
+            <source media="(max-width: 749px)" {% render 'image-recadree', image: section.settings.cover_image, ratio: vb_rm, largeurs: '375,550,750,900,1100,1300', source: true %} sizes="{{ vb_sizes_m }}">
+            <img
+              {% render 'image-recadree', image: section.settings.cover_image, ratio: vb_rd, largeurs: '750,1100,1300,1450,1600,1920', src_largeur: 1450 %}
+              sizes="{{ vb_sizes_d }}"
+              alt=""
+              class="video-banner__cover"
+              {% if section.index > 2 -%}
+                loading="lazy"
+              {%- else %}
+                loading="eager"
+                {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
+              {%- endif %}
+              {% render 'focal', image: section.settings.cover_image %}
+              width="{{ section.settings.cover_image.width }}"
+              height="{{ section.settings.cover_image.height }}"
+            >
+          </picture>
         {%- endif -%}
         <video
           class="video-banner__video"
@@ -470,26 +531,24 @@
           la Section Rendering API, et « nil <= 2 » est faux — ecrite a
           l'endroit, la condition differait l'image qui ouvre la page.
         {%- endcomment -%}
-        <img
-          srcset="{%- if section.settings.cover_image.width >= 375 -%}{{ section.settings.cover_image | image_url: width: 375 }} 375w,{%- endif -%}
-            {%- if section.settings.cover_image.width >= 750 -%}{{ section.settings.cover_image | image_url: width: 750 }} 750w,{%- endif -%}
-            {%- if section.settings.cover_image.width >= 1100 -%}{{ section.settings.cover_image | image_url: width: 1100 }} 1100w,{%- endif -%}
-            {%- if section.settings.cover_image.width >= 1500 -%}{{ section.settings.cover_image | image_url: width: 1500 }} 1500w,{%- endif -%}
-            {%- if section.settings.cover_image.width >= 1920 -%}{{ section.settings.cover_image | image_url: width: 1920 }} 1920w,{%- endif -%}"
-          src="{{ section.settings.cover_image | image_url: width: 1920 }}"
-          sizes="{{ vb_sizes }}"
-          alt="{{ section.settings.cover_image.alt | escape }}"
-          class="video-banner__cover"
-          {% if section.index > 2 -%}
-            loading="lazy"
-          {%- else %}
-            loading="eager"
-            {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
-          {%- endif %}
-          {% render 'focal', image: section.settings.cover_image %}
-          width="{{ section.settings.cover_image.width }}"
-          height="{{ section.settings.cover_image.height }}"
-        >
+        <picture class="video-banner__picture">
+          <source media="(max-width: 749px)" {% render 'image-recadree', image: section.settings.cover_image, ratio: vb_rm, largeurs: '375,550,750,900,1100,1300', source: true %} sizes="{{ vb_sizes_m }}">
+          <img
+            {% render 'image-recadree', image: section.settings.cover_image, ratio: vb_rd, largeurs: '750,1100,1300,1450,1600,1920', src_largeur: 1450 %}
+            sizes="{{ vb_sizes_d }}"
+            alt="{{ section.settings.cover_image.alt | escape }}"
+            class="video-banner__cover"
+            {% if section.index > 2 -%}
+              loading="lazy"
+            {%- else %}
+              loading="eager"
+              {%- if section.index == 1 %} fetchpriority="high"{% endif -%}
+            {%- endif %}
+            {% render 'focal', image: section.settings.cover_image %}
+            width="{{ section.settings.cover_image.width }}"
+            height="{{ section.settings.cover_image.height }}"
+          >
+        </picture>
       {%- else -%}
         <span class="placeholder-wrap" aria-hidden="true">{{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}</span>
       {%- endif -%}

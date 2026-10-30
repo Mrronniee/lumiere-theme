@@ -368,16 +368,8 @@
               {%- if panel_image != blank -%}
                 <figure class="tabs__media">
                   <img
-                    srcset="
-                      {%- if panel_image.width >= 400 -%}{{ panel_image | image_url: width: 400 }} 400w,{%- endif -%}
-                      {%- if panel_image.width >= 650 -%}{{ panel_image | image_url: width: 650 }} 650w,{%- endif -%}
-                      {%- if panel_image.width >= 800 -%}{{ panel_image | image_url: width: 800 }} 800w,{%- endif -%}
-                      {%- if panel_image.width >= 1000 -%}{{ panel_image | image_url: width: 1000 }} 1000w,{%- endif -%}
-                      {%- if panel_image.width >= 1200 -%}{{ panel_image | image_url: width: 1200 }} 1200w,{%- endif -%}
-                      {{ panel_image | image_url: width: 1600 }} 1600w
-                    "
-                    src="{{ panel_image | image_url: width: 800 }}"
-                    sizes="(max-width: 749px) calc(100vw - 3rem), (max-width: 1200px) 46vw, 560px"
+                    {% render 'image-recadree', image: panel_image, ratio: 0, largeurs: '400,500,620,720,800,1000,1200,1600', src_largeur: 800 %}
+                    sizes="(max-width: 749px) calc(100vw - 3rem), calc((min(100vw, {{ settings.layout_container_width | default: 1440 }}px) - 8rem) / 2)"
                     alt="{{ panel_image.alt | escape }}"
                     width="{{ panel_image.width }}"
                     height="{{ panel_image.height }}"
