@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.9.4 — 2026-10-30
+
+### Fixed
+- **Multi-column images keep your focal point.** The column images were always
+  cropped around the centre by the image server, so a focal point set off-centre
+  in the admin could be cut away. They are now cropped at the server only when
+  the focal point is the centre; otherwise the full image is served and framed
+  around your focal point.
+- **French typography.** Non-breaking spaces before the dash and the colon in
+  the gift card QR code description and in four default texts of the French
+  package.
+
 ## 1.9.3 — 2026-10-30
 
 ### Fixed

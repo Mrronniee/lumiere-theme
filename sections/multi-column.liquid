@@ -331,6 +331,25 @@
         {%- for block in section.blocks -%}
           {%- liquid
             assign img = block.settings.image
+            comment
+              Le recadrage CENTRE au CDN n'est demande QUE si le point de
+              focus du marchand EST le centre (absent, ou « 50.0% 50.0% »,
+              valeur posee par Shopify par defaut) : ailleurs, il couperait
+              le visage ou le produit choisi, et object-position (snippets/
+              focal.liquid) ne replacerait plus que ce qui reste. Meme garde
+              que sections/slideshow.liquid (slide_focal_centre). Sans
+              recadrage, le fichier garde son rapport et object-fit: cover
+              le cadre en suivant le point de focus.
+            endcomment
+            assign mc_crop = true
+            if img != blank and img.presentation.focal_point != blank
+              assign mc_focal = img.presentation.focal_point | remove: '%' | split: ' '
+              assign mc_focal_x = mc_focal[0] | plus: 0 | round
+              assign mc_focal_y = mc_focal[1] | plus: 0 | round
+              unless mc_focal_x == 50 and mc_focal_y == 50
+                assign mc_crop = false
+              endunless
+            endif
             assign has_link = false
             if block.settings.link != blank and block.settings.link_label != blank
               assign has_link = true
@@ -350,6 +369,7 @@
               <span class="multi-column__media">
                 {%- if img != blank -%}
                   <img
+                    {% if mc_crop %}
                     srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300, height: h300, crop: 'center' }} 300w,{%- endif -%}
                       {%- if img.width >= 450 -%}{{ img | image_url: width: 450, height: h450, crop: 'center' }} 450w,{%- endif -%}
                       {%- if img.width >= 600 -%}{{ img | image_url: width: 600, height: h600, crop: 'center' }} 600w,{%- endif -%}
@@ -357,6 +377,15 @@
                       {%- if img.width >= 900 -%}{{ img | image_url: width: 900, height: h900, crop: 'center' }} 900w,{%- endif -%}
                       {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200, height: h1200, crop: 'center' }} 1200w,{%- endif -%}"
                     src="{{ img | image_url: width: 900, height: h900, crop: 'center' }}"
+                    {% else %}
+                    srcset="{%- if img.width >= 300 -%}{{ img | image_url: width: 300 }} 300w,{%- endif -%}
+                      {%- if img.width >= 450 -%}{{ img | image_url: width: 450 }} 450w,{%- endif -%}
+                      {%- if img.width >= 600 -%}{{ img | image_url: width: 600 }} 600w,{%- endif -%}
+                      {%- if img.width >= 700 -%}{{ img | image_url: width: 700 }} 700w,{%- endif -%}
+                      {%- if img.width >= 900 -%}{{ img | image_url: width: 900 }} 900w,{%- endif -%}
+                      {%- if img.width >= 1200 -%}{{ img | image_url: width: 1200 }} 1200w,{%- endif -%}"
+                    src="{{ img | image_url: width: 900 }}"
+                    {% endif %}
                     sizes="(min-width: 990px) {{ size_d | strip }}, (min-width: 750px) {{ size_t | strip }}, {{ size_m | strip }}"
                     alt="{{ img.alt | escape }}"
                     class="multi-column__image"
