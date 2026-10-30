@@ -43,13 +43,13 @@ at the bottom of the left sidebar):
 
 | Where | What you get |
 | --- | --- |
-| Colours | Four tokens drive everything: primary, accent, background, text. Borders, secondary text and overlays are derived from them. |
+| Colors | Four tokens drive everything: primary, accent, background, text. Borders, secondary text and overlays are derived from them. |
 | Typography | Heading and body fonts from the Shopify library. Playfair Display and Inter by default. |
 | Theme style | *Density* (compact, comfortable, spacious) multiplies every spacing value at once; *border style* switches the hairlines between none, hairline and bold. |
 | Layout · Buttons · Inputs · Icons · Badges | Container width, corner radius, button case and border, field background, icon stroke width. |
 | Product cards | Image ratio, text alignment, vendor. |
-| Prices | Currency code, "from" prefix on variable prices, sale display (colour, badge, or both). |
-| Variant pickers · Color swatches | Buttons or dropdown, hide unavailable variants, swatch size and shape, and the colour mapping below. |
+| Prices | Currency code, "from" prefix on variable prices, sale display (color, badge, or both). |
+| Variant pickers · Color swatches | Buttons or dropdown, hide unavailable variants, swatch size and shape, and the color mapping below. |
 | Cart · Drawers | Side drawer or dedicated page, order note, free-shipping threshold, drawer width and side. |
 | Shopify Markets | Country, language and currency selectors. |
 | Animations · Popovers and modals · Search · Custom CSS | Reveal style and duration, overlay opacity, results per page, and a free-form CSS box. |
@@ -64,7 +64,7 @@ Ecru: #f0e9dd
 Navy: #1f2a44
 ```
 
-Matching is case-insensitive. A value that is already a valid CSS colour
+Matching is case-insensitive. A value that is already a valid CSS color
 (`black`, `#c0392b`) works without mapping, and anything unmapped falls back to
 a neutral grey rather than disappearing.
 
