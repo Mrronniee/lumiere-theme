@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.9.5 — 2026-10-30
+
+### Fixed
+- **Images sized to their frame.** Image with text, video banner and map
+  images are now cropped by the image server to the shape of their frame when
+  your focal point is the centre, so phones and computers no longer download
+  pixels that are never shown. With an off-centre focal point the full image is
+  still served and framed around it.
+- **Lighter product cards and tab images.** Product cards and tab images get
+  intermediate sizes, and the collection grid and tabs now tell the browser
+  their real width (column gaps included), so a smaller file is picked.
+
 ## 1.9.4 — 2026-10-30
 
 ### Fixed
