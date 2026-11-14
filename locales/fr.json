@@ -7,8 +7,8 @@
       "search": "Rechercher",
       "title": "Recherche",
       "placeholder": "Rechercher un produit…",
-      "no_results": "Aucun résultat trouvé pour",
-      "results_for": "Résultats pour",
+      "no_results": "Aucun résultat trouvé pour « {{ terms }} »",
+      "results_for": "Résultats pour « {{ terms }} »",
       "results_count": {
         "one": "{{ count }} résultat",
         "other": "{{ count }} résultats"

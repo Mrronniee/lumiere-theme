@@ -6,7 +6,7 @@
   <div class="page-shell__header">
     <h1 class="page-shell__title">
       {%- if search.performed -%}
-        {{ 'general.search.results_for' | t }} &ldquo;{{ search.terms | escape }}&rdquo;
+        {{ 'general.search.results_for' | t: terms: search.terms }}
       {%- else -%}
         {{ 'general.search.title' | t }}
       {%- endif -%}
@@ -99,7 +99,7 @@
       {%- endpaginate -%}
     {%- else -%}
       <div class="page-shell__empty">
-        <p>{{ 'general.search.no_results' | t }} &ldquo;{{ search.terms | escape }}&rdquo;</p>
+        <p>{{ 'general.search.no_results' | t: terms: search.terms }}</p>
         <a href="{{ routes.all_products_collection_url }}" class="btn btn--primary">
           {{ 'cart.general.continue_shopping' | t }}
         </a>
