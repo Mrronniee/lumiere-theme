@@ -1012,6 +1012,30 @@
       "ou": "sections/hero.liquid:344",
       "commit": "b6fba0f",
       "raison": "Meme ligne que mesure-6eee66e7 des releves 1.9.2, 1.9.3 et 1.9.4, jugee « accepte » par la session des outils le 30/10/2026. Relu dans le code de main (b6fba0f) : sections/hero.liquid est inchange depuis 2d3b9ca (git diff --stat vide) ; le bloc commente l.319-336 dit pourquoi le poster est rendu en balise <img> et non par l'attribut poster (qui n'accepte ni srcset ni fetchpriority), et l'image_tag de la l.344 porte widths, sizes, loading eager, fetchpriority high et preload sur la seule section d'ouverture (l.344-352). L'element LCP <img> est le rendu voulu ; la « regression » vient de la reference : references/lumiere/perf.json porte encore version_attendue 1.6.1 et verdict.json version 1.6.1 (commit 7149a05), relus sur origin/main bd01b8e."
+    },
+    {
+      "id": "mesure-6eee66e7@1.9.5-b6fba0f-202611141315",
+      "version": "1.9.6",
+      "etat": "pas_un_defaut",
+      "ou": "sections/hero.liquid:344",
+      "commit": "9355c23",
+      "raison": "Même ligne que mesure-6eee66e7 des relevés 1.9.2 à 1.9.5 (202611140616). Relu dans le code de main (9355c23, thème en 1.9.6) : sections/hero.liquid est inchangé depuis b6fba0f (git diff --stat b6fba0f HEAD -- sections/hero.liquid vide) ; le commentaire des l.319-336 dit pourquoi le poster est rendu en balise <img> et non par l'attribut poster (qui n'accepte ni srcset ni fetchpriority), et l'image_tag de la l.344 porte widths, sizes, loading eager, fetchpriority high et preload sur la seule section d'ouverture (l.344-352). L'élément LCP <img> de l'accueil mobile est le rendu voulu, pas une régression du code."
+    },
+    {
+      "id": "code-paquet-non-livrable",
+      "version": "1.9.6",
+      "etat": "corrige",
+      "ou": "README.txt:1",
+      "commit": "9355c23",
+      "raison": "README.txt citait « LUMIERE 1.9.5 » alors que config/settings_schema.json est en 1.9.6 ; première ligne mise à 1.9.6, sans autre changement. Relu par paquet.versions_docs_dossier : README.txt 1.9.6 ; README.md:14 déjà à 1.9.6 ; première entrée du CHANGELOG 1.9.6. Aucun code du thème changé, donc pas de nouveau numéro."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-clavier@1.9.5-b6fba0f-20261114",
+      "version": "1.9.6",
+      "etat": "pas_un_defaut",
+      "ou": "sections/comparison.liquid:144",
+      "commit": "d4e5e02",
+      "raison": "Le code de la 1.9.5 n'a pas cette ALERTE : le verdict la citait seulement comme refermée depuis 1.8.1. Remesuré le 14/11/2026 par la même mesure que l'audit (a11y.cjs d'origin/main b3bf8df, pages/lumiere-all-sections à 320 × 568, EN et FR, démo 195172106566 servant la 1.9.5, 3 chargements à 200) : les 3 liens du pied du tableau comparatif visibles à 100 % dans les deux langues, 0 défaut absolu, 53 arrêts et fin = body 2/2 ; seul arrêt masqué, la zone div.comparison__scroller elle-même (272 × 765,56 px, plus haute que la fenêtre, visible à 67 %, anneau px3 8 895 pour 4 150 requis). Code lu : sections/comparison.liquid:144 (scroll-padding-inline), :153-154 et :161-162 (anneaux rentrés), inchangé depuis b6fba0f. Verdict 1.9.5 réécrit dans .kiosk/audits.json (0 ALERTE, même version, même commit, même reprise)."
     }
   ]
 }
