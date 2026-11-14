@@ -1,10 +1,10 @@
 {
  "slug": "lumiere",
- "version": "1.9.4",
- "commit": "59a4973",
+ "version": "1.9.6",
+ "commit": "be36484",
  "demo": "195172106566",
  "essai": true,
- "date": "2026-10-30T19:12:23",
+ "date": "2026-11-14T17:43:28",
  "pages": [
   "accueil",
   "collections/all",
@@ -37,10 +37,8 @@
  ],
  "complet": true,
  "incomplets": [],
- "reference": "lumiere",
- "regressions": [
-  "perf accueil mobile : élément LCP <video> → <img> (hero.jpg → hero.jpg)"
- ],
+ "reference": null,
+ "regressions": [],
  "absolus": [],
  "variantes": {
   "mesurees": 163,

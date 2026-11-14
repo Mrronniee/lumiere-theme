@@ -1036,6 +1036,14 @@
       "ou": "sections/comparison.liquid:144",
       "commit": "d4e5e02",
       "raison": "Le code de la 1.9.5 n'a pas cette ALERTE : le verdict la citait seulement comme refermée depuis 1.8.1. Remesuré le 14/11/2026 par la même mesure que l'audit (a11y.cjs d'origin/main b3bf8df, pages/lumiere-all-sections à 320 × 568, EN et FR, démo 195172106566 servant la 1.9.5, 3 chargements à 200) : les 3 liens du pied du tableau comparatif visibles à 100 % dans les deux langues, 0 défaut absolu, 53 arrêts et fin = body 2/2 ; seul arrêt masqué, la zone div.comparison__scroller elle-même (272 × 765,56 px, plus haute que la fenêtre, visible à 67 %, anneau px3 8 895 pour 4 150 requis). Code lu : sections/comparison.liquid:144 (scroll-padding-inline), :153-154 et :161-162 (anneaux rentrés), inchangé depuis b6fba0f. Verdict 1.9.5 réécrit dans .kiosk/audits.json (0 ALERTE, même version, même commit, même reprise)."
+    },
+    {
+      "id": "code-aucune-img-a-largeur-figee-servie-dans-un-seul-fichier-sans",
+      "version": "1.9.7",
+      "etat": "corrige",
+      "ou": "sections/main-password.liquid:16",
+      "commit": "be36484",
+      "raison": "Les deux <img> servies dans un seul fichier portent un srcset en « w » et un sizes à la largeur rendue : logo de la page mot de passe (sections/main-password.liquid:16-20 : 200w, puis 300w, 400w et 600w selon la largeur du logo, sizes 200px) et vignette de suggestion du tiroir panier (sections/mini-cart.liquid:619-620 : 60w, 120w, 180w, sizes 60px). verifier-theme.py complet d'origin/main 023cdd5 : code 0, 0 ÉCHEC, 0 ALERTE, ligne « aucune <img> a largeur figee servie dans un seul fichier, sans srcset » OK. Mesure entière du commit be36484 sur le thème d'essai 195172106566 : 37/37 étapes, 0 défaut, 0 régression."
     }
   ]
 }

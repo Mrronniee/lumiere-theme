@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.9.7 — 2026-11-14
+
+### Fixed
+- **Sharper small images on high-density screens.** The logo of the password
+  page and the product thumbnail of the cart drawer suggestions are now served
+  in several sizes, so each screen picks the file that fits: lighter on
+  standard screens, crisp on phones and Retina displays.
+
 ## 1.9.6 — 2026-11-14
 
 ### Fixed
