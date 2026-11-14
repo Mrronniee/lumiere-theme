@@ -741,6 +741,10 @@ ul, ol {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-text-light);
+  /* 11 px text: the light ink sits too close to 4.5:1 once anti-aliased
+     (4.10:1 measured at 400 % zoom). A quarter of the text ink is mixed in,
+     in every colour scheme; the line above stays as the fallback. */
+  color: color-mix(in srgb, var(--color-text) 25%, var(--color-text-light));
   margin-bottom: 0.25rem;
   display: block;
 }

@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.9.8 — 2026-11-14
+
+### Fixed
+- **Wishlist page says when products cannot be shown.** If saved products
+  fail to load, the page now shows and announces a message instead of an
+  empty space. A saved product that no longer exists is removed from the
+  list, so the count matches what is displayed.
+- **More readable brand name on product cards.** The small brand line above
+  the product title uses a darker ink, so it stays readable at high zoom.
+
 ## 1.9.7 — 2026-11-14
 
 ### Fixed

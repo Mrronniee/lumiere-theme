@@ -33,6 +33,16 @@
     gap: {{ section.settings.grid_gap }}px;
   }
 
+  .wishlist-page__status {
+    margin: 0 0 var(--spacing-md);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    text-align: center;
+    color: var(--color-text);
+  }
+
+  .wishlist-page__status:empty { display: none; }
+
   .wishlist-page__empty { text-align: center; padding: var(--spacing-xl) 0; }
 
   /* Reserve sa place sans se peindre ni se lire, jusqu'a l'hydratation. */
@@ -115,6 +125,21 @@
       {{ 'wishlist.clear' | t }}
     </button>
   </div>
+
+  {%- comment -%}
+    REGION D'ETAT, VIDE AU CHARGEMENT. assets/theme.js y ecrit ce qui n'a pas
+    pu s'afficher : favoris dont le chargement a echoue, favoris dont le
+    produit n'existe plus (retires de la liste). Vide, elle ne prend aucune
+    place ; presente des le chargement, son texte est annonce (role=status).
+  {%- endcomment -%}
+  <p
+    class="wishlist-page__status"
+    role="status"
+    data-wishlist-status
+    data-error="{{ 'wishlist.load_error' | t }}"
+    data-template-one="{{ 'wishlist.removed_unavailable.one' | t: count: '[count]' }}"
+    data-template-other="{{ 'wishlist.removed_unavailable.other' | t: count: '[count]' }}"
+  ></p>
 
   <div class="wishlist-page__grid" data-wishlist-grid hidden></div>
 

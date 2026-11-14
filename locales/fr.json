@@ -341,7 +341,12 @@
     "empty_text": "Ajoutez vos articles préférés en cliquant sur le cœur.",
     "empty_link": "Découvrir les produits",
     "added": "Ajouté aux favoris !",
-    "link_copied": "Lien copié !"
+    "link_copied": "Lien copié !",
+    "load_error": "Certains favoris n’ont pas pu être chargés. Vérifiez votre connexion, puis rechargez la page.",
+    "removed_unavailable": {
+      "one": "{{ count }} favori n’est plus disponible et a été retiré de votre liste.",
+      "other": "{{ count }} favoris ne sont plus disponibles et ont été retirés de votre liste."
+    }
   },
   "blogs": {
     "article": {

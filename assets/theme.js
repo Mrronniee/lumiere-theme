@@ -578,6 +578,8 @@
     clear() {
       this.items = [];
       this.save();
+      const status = document.querySelector('[data-wishlist-status]');
+      if (status) status.textContent = '';
       this.updateUI();
     },
 
@@ -668,17 +670,46 @@
             const res = await fetch(utils.localizedPath(`/products/${item.handle}?view=card`), {
               signal: abort.signal,
             });
-            if (!res.ok) return null;
+            // 404 : le produit n'existe plus. Tout autre refus (reseau,
+            // serveur) est un echec de chargement, le favori reste en liste.
+            if (res.status === 404) return { gone: item };
+            if (!res.ok) return { failed: true };
             const html = await res.text();
-            return html;
+            return { html: html };
           } catch (e) {
-            return null;
+            return { failed: true };
           }
         })
       );
 
       if (token !== this.renderToken) return;
-      container.innerHTML = cards.filter(Boolean).join('');
+
+      // ECHEC DIT, COMPTE JUSTE. Les reponses en echec etaient jetees sans un
+      // mot : la grille se vidait, le pied remontait et la page annoncait
+      // toujours « 2 articles » (mesure de l'audit de parcours 1.9.7, reseau
+      // coupe puis favori dont le produit a disparu). Un favori disparu sort
+      // de la liste, et chaque cas se dit dans la region role=status de la
+      // section (sections/wishlist.liquid).
+      const gone = cards.filter((card) => card.gone).map((card) => card.gone);
+      const failed = cards.filter((card) => card.failed).length;
+      if (gone.length > 0) {
+        this.items = this.items.filter((item) => !gone.includes(item));
+        this.save();
+      }
+
+      const status = document.querySelector('[data-wishlist-status]');
+      if (status) {
+        const messages = [];
+        if (gone.length > 0) messages.push(utils.pluralTemplate(status, gone.length));
+        if (failed > 0 && status.dataset.error) messages.push(status.dataset.error);
+        status.textContent = messages.join(' ');
+      }
+
+      if (this.items.length === 0) {
+        this.updateUI();
+        return;
+      }
+      container.innerHTML = cards.map((card) => card.html || '').join('');
 
       // LES CONTROLES, PAS updateUI(). Les cartes qu'on vient d'injecter
       // portent leurs propres [data-wishlist-btn], qu'il faut remettre a

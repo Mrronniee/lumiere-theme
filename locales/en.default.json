@@ -341,7 +341,12 @@
     "empty_text": "Add your favorite items by tapping the heart.",
     "empty_link": "Browse products",
     "added": "Added to wishlist!",
-    "link_copied": "Link copied!"
+    "link_copied": "Link copied!",
+    "load_error": "Some saved products could not be loaded. Check your connection, then reload the page.",
+    "removed_unavailable": {
+      "one": "{{ count }} saved product is no longer available and was removed from your wishlist.",
+      "other": "{{ count }} saved products are no longer available and were removed from your wishlist."
+    }
   },
   "blogs": {
     "article": {
