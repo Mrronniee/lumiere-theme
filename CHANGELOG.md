@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.9.9 — 2026-11-14
+
+### Fixed
+- **Download notes at the right version.** The README file of the download
+  now carries the current version number of the theme.
+
 ## 1.9.8 — 2026-11-14
 
 ### Fixed

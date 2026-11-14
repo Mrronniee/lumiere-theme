@@ -1,10 +1,10 @@
 {
  "slug": "lumiere",
- "version": "1.9.6",
- "commit": "be36484",
+ "version": "1.9.8",
+ "commit": "3a175d5",
  "demo": "195172106566",
  "essai": true,
- "date": "2026-11-14T17:43:28",
+ "date": "2026-11-14T22:00:26",
  "pages": [
   "accueil",
   "collections/all",
