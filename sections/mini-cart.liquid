@@ -611,9 +611,13 @@
                       comme la vignette de ligne de panier plus haut (:516).
                       Mesure 1.7.2 : elle etait l'une des 4 images recadrees du
                       theme a n'appeler ni focal ni object-position.
+                      Vignette rendue a 60 px CSS : un fichier par densite (60,
+                      120 et 180 px) au lieu du seul fichier de 120 px (1.9.7).
                     {%- endcomment -%}
                     <img
                       src="{{ product.featured_image | image_url: width: 120 }}"
+                      srcset="{{ product.featured_image | image_url: width: 60 }} 60w, {{ product.featured_image | image_url: width: 120 }} 120w, {{ product.featured_image | image_url: width: 180 }} 180w"
+                      sizes="60px"
                       alt="{{ product.featured_image.alt | default: product.title | escape }}"
                       class="mini-cart__upsell-image"
                       loading="lazy"
