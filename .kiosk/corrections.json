@@ -972,6 +972,46 @@
       "etat": "pas_un_defaut",
       "ou": "sections/hero.liquid:344",
       "raison": "Même ligne que mesure-6eee66e7 des relevés 1.9.2 et 1.9.3, jugée « accepte » par la session des outils le 30/10/2026 (registre, fermetures_jugees). sections/hero.liquid est inchangé depuis 2d3b9ca (git diff vide) : le poster y est rendu en balise <img> (image_tag eager, fetchpriority high, l.344) parce qu'un attribut poster n'accepte ni srcset ni fetchpriority. Mesuré sur 59a4973 : élément LCP de l'accueil mobile = img hero.jpg, loading eager, fetchpriority high, 920 ms non bridé. La « régression » vient de references/lumiere/perf.json, encore à version_attendue 1.6.1."
+    },
+    {
+      "id": "mesure-7c8c2288@1.9.5-b6fba0f-202611140616",
+      "version": "1.9.5",
+      "etat": "defaut_outil",
+      "ou": "sections/slideshow.liquid:231",
+      "commit": "b6fba0f",
+      "raison": "Lu dans le code de main (b6fba0f) : sections/slideshow.liquid:231-235 donne au bouton de chaque diapositive un fond a la couleur du texte du schema (#ffffff en scheme-4) et une encre #1a1a1a ; mesure sur la demo 195172106566 en 390 le 14/11/2026 : les trois boutons, dont « View the selection », rendent rgb(26,26,26) sur rgb(255,255,255). Remesure par la meme commande (a11y.cjs, pages/lumiere-all-sections, en, 390), deux fois : contrasteMin 4.74, textesSousLeSeuil 0, iconeMin 7 puis 7.55 — le releve ne se reproduit pas. Cause : le diaporama tourne seul toutes les 6 s (sections/slideshow.liquid:913) et kiosk-outils/liquid-tools/mesures/a11y.cjs:2774 (mesurerContraste) releve les textes visibles (preparerTextes) puis fait ses captures sans arreter cette rotation ; la 2e diapositive, visible au releve, etait remplacee a la capture, d'ou un texte et une icone a ~1:1 contre leur propre absence. sections/slideshow.liquid est inchange depuis 558dee5 (30/10/2026)."
+    },
+    {
+      "id": "mesure-7e8134c4@1.9.5-b6fba0f-202611140616",
+      "version": "1.9.5",
+      "etat": "defaut_outil",
+      "ou": "sections/slideshow.liquid:231",
+      "commit": "b6fba0f",
+      "raison": "Lu dans le code de main (b6fba0f) : sections/slideshow.liquid:231-235 donne au bouton de chaque diapositive un fond a la couleur du texte du schema (#ffffff en scheme-4) et une encre #1a1a1a ; mesure sur la demo 195172106566 en 390 le 14/11/2026 : les trois boutons, dont « View the selection », rendent rgb(26,26,26) sur rgb(255,255,255). Remesure par la meme commande (a11y.cjs, pages/lumiere-all-sections, en, 390), deux fois : contrasteMin 4.74, textesSousLeSeuil 0, iconeMin 7 puis 7.55 — le releve ne se reproduit pas. Cause : le diaporama tourne seul toutes les 6 s (sections/slideshow.liquid:913) et kiosk-outils/liquid-tools/mesures/a11y.cjs:2774 (mesurerContraste) releve les textes visibles (preparerTextes) puis fait ses captures sans arreter cette rotation ; la 2e diapositive, visible au releve, etait remplacee a la capture, d'ou un texte et une icone a ~1:1 contre leur propre absence. sections/slideshow.liquid est inchange depuis 558dee5 (30/10/2026)."
+    },
+    {
+      "id": "mesure-839544eb@1.9.5-b6fba0f-202611140616",
+      "version": "1.9.5",
+      "etat": "defaut_outil",
+      "ou": "sections/slideshow.liquid:231",
+      "commit": "b6fba0f",
+      "raison": "Lu dans le code de main (b6fba0f) : sections/slideshow.liquid:231-235 donne au bouton de chaque diapositive un fond a la couleur du texte du schema (#ffffff en scheme-4) et une encre #1a1a1a ; mesure sur la demo 195172106566 en 390 le 14/11/2026 : les trois boutons, dont « View the selection », rendent rgb(26,26,26) sur rgb(255,255,255). Remesure par la meme commande (a11y.cjs, pages/lumiere-all-sections, en, 390), deux fois : contrasteMin 4.74, textesSousLeSeuil 0, iconeMin 7 puis 7.55 — le releve ne se reproduit pas. Cause : le diaporama tourne seul toutes les 6 s (sections/slideshow.liquid:913) et kiosk-outils/liquid-tools/mesures/a11y.cjs:2774 (mesurerContraste) releve les textes visibles (preparerTextes) puis fait ses captures sans arreter cette rotation ; la 2e diapositive, visible au releve, etait remplacee a la capture, d'ou un texte et une icone a ~1:1 contre leur propre absence. sections/slideshow.liquid est inchange depuis 558dee5 (30/10/2026)."
+    },
+    {
+      "id": "mesure-c36853bc@1.9.5-b6fba0f-202611140616",
+      "version": "1.9.5",
+      "etat": "defaut_outil",
+      "ou": "sections/slideshow.liquid:231",
+      "commit": "b6fba0f",
+      "raison": "Lu dans le code de main (b6fba0f) : sections/slideshow.liquid:231-235 donne au bouton de chaque diapositive un fond a la couleur du texte du schema (#ffffff en scheme-4) et une encre #1a1a1a ; mesure sur la demo 195172106566 en 390 le 14/11/2026 : les trois boutons, dont « View the selection », rendent rgb(26,26,26) sur rgb(255,255,255). Remesure par la meme commande (a11y.cjs, pages/lumiere-all-sections, en, 390), deux fois : contrasteMin 4.74, textesSousLeSeuil 0, iconeMin 7 puis 7.55 — le releve ne se reproduit pas. Cause : le diaporama tourne seul toutes les 6 s (sections/slideshow.liquid:913) et kiosk-outils/liquid-tools/mesures/a11y.cjs:2774 (mesurerContraste) releve les textes visibles (preparerTextes) puis fait ses captures sans arreter cette rotation ; la 2e diapositive, visible au releve, etait remplacee a la capture, d'ou un texte et une icone a ~1:1 contre leur propre absence. sections/slideshow.liquid est inchange depuis 558dee5 (30/10/2026)."
+    },
+    {
+      "id": "mesure-6eee66e7@1.9.5-b6fba0f-202611140616",
+      "version": "1.9.5",
+      "etat": "pas_un_defaut",
+      "ou": "sections/hero.liquid:344",
+      "commit": "b6fba0f",
+      "raison": "Meme ligne que mesure-6eee66e7 des releves 1.9.2, 1.9.3 et 1.9.4, jugee « accepte » par la session des outils le 30/10/2026. Relu dans le code de main (b6fba0f) : sections/hero.liquid est inchange depuis 2d3b9ca (git diff --stat vide) ; le bloc commente l.319-336 dit pourquoi le poster est rendu en balise <img> et non par l'attribut poster (qui n'accepte ni srcset ni fetchpriority), et l'image_tag de la l.344 porte widths, sizes, loading eager, fetchpriority high et preload sur la seule section d'ouverture (l.344-352). L'element LCP <img> est le rendu voulu ; la « regression » vient de la reference : references/lumiere/perf.json porte encore version_attendue 1.6.1 et verdict.json version 1.6.1 (commit 7149a05), relus sur origin/main bd01b8e."
     }
   ]
 }
