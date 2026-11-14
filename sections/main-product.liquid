@@ -394,6 +394,32 @@
   assign swatch_lines = settings.swatch_map | newline_to_br | split: '<br />'
 -%}
 
+{%- liquid
+  comment
+    SIZES DE LA GALERIE = LA BOITE REELLE, PAS « 50vw ». Au-dessus de 989 px la
+    galerie occupe une demi-grille, moins les marges du conteneur (2 x 2rem),
+    l'espace entre les deux colonnes (--spacing-lg = 4rem x densite) et, des
+    qu'il y a plusieurs medias, le rail de vignettes (80 px + 1rem). « 50vw »
+    annoncait 675 px pour une boite de 515 px a 1350 : le navigateur prenait le
+    palier 720w quand le 550w suffisait (audit de performance 1.9.5, 15,3 Ko).
+    Meme calcul de densite que snippets/css-variables.liquid.
+  endcomment
+  case settings.theme_density
+    when 'compact'
+      assign pg_density = 0.75
+    when 'spacieux'
+      assign pg_density = 1.35
+    else
+      assign pg_density = 1
+  endcase
+  assign pg_marges_rem = 4.0 | times: pg_density | plus: 4
+  assign pg_rail_px = 0
+  if product.media.size > 1
+    assign pg_rail_px = 96
+  endif
+  assign pg_conteneur_px = settings.layout_container_width | default: 1440
+-%}
+
 <div class="product-main" data-section-id="{{ section.id }}" data-section-type="product">
   <div class="product-main__grid">
     {%- comment -%} GALERIE {%- endcomment -%}
@@ -422,7 +448,21 @@
               tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
               aria-label="{{ media.alt | default: product.title | escape }}"
             >
+              {%- liquid
+                comment
+                  La vignette est une boite de 80 x 100 px en object-fit: cover :
+                  une image plus large que 4:5 est rendue plus large que 80 px.
+                  « sizes » annonce cette largeur rendue, et le srcset en « w »
+                  laisse le navigateur prendre 80, 160 ou 240 px selon l'ecran
+                  (un seul fichier de 160 px etait servi a tous : 2,08 x le
+                  rendu en densite 1, audit de performance 1.9.5).
+                endcomment
+                assign thumb_cover = media.preview_image.aspect_ratio | default: 0.8 | divided_by: 0.8 | at_least: 1
+                assign thumb_px = 80 | times: thumb_cover | ceil
+              -%}
               <img
+                srcset="{{ media.preview_image | image_url: width: 80 }} 80w, {{ media.preview_image | image_url: width: 160 }} 160w, {{ media.preview_image | image_url: width: 240 }} 240w"
+                sizes="{{ thumb_px }}px"
                 src="{{ media.preview_image | image_url: width: 160 }}"
                 alt=""
                 loading="lazy"
@@ -455,6 +495,13 @@
               {%- when 'model' -%}
                 {{ media | model_viewer_tag }}
               {%- else -%}
+                {%- liquid
+                  comment
+                    Le cadre est en 3:4 et l'image en object-fit: cover : une
+                    image plus large que 3:4 est rendue plus large que le cadre.
+                  endcomment
+                  assign pg_cover = media.preview_image.aspect_ratio | default: 0.75 | divided_by: 0.75 | at_least: 1 | round: 3
+                -%}
                 <img
                   srcset="{%- if media.preview_image.width >= 550 -%}{{ media | image_url: width: 550 }} 550w,{%- endif -%}
                     {%- if media.preview_image.width >= 720 -%}{{ media | image_url: width: 720 }} 720w,{%- endif -%}
@@ -462,7 +509,7 @@
                     {%- if media.preview_image.width >= 1440 -%}{{ media | image_url: width: 1440 }} 1440w,{%- endif -%}
                     {%- if media.preview_image.width >= 1920 -%}{{ media | image_url: width: 1920 }} 1920w,{%- endif -%}"
                   src="{{ media | image_url: width: 1100 }}"
-                  sizes="(min-width: 990px) 50vw, calc(100vw - 3rem)"
+                  sizes="(min-width: 990px) calc(((min(100vw, {{ pg_conteneur_px }}px) - {{ pg_marges_rem }}rem) / 2 - {{ pg_rail_px }}px) * {{ pg_cover }}), calc(100vw - 3rem)"
                   alt="{{ media.alt | default: product.title | escape }}"
                   loading="{% if forloop.first %}eager{% else %}lazy{% endif %}"
                   {% if forloop.first %}fetchpriority="high"{% endif %}

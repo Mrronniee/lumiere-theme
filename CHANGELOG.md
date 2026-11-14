@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.9.6 — 2026-11-14
+
+### Fixed
+- **Wishlist page no longer jumps.** With saved products, the page now reserves
+  the place of each product card before it is first shown, so the footer stays
+  put while the cards load.
+- **Lighter product gallery on computers.** The main product image and its
+  thumbnails now tell the browser their real width, so a smaller file is
+  picked on standard screens.
+- **Search results quotation marks follow the language.** The searched term is
+  shown between French quotation marks in French and English ones in English.
+- **French editor label.** "Logo & Favicon" now reads "Logo et favicon".
+
 ## 1.9.5 — 2026-10-30
 
 ### Fixed

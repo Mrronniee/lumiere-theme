@@ -142,6 +142,44 @@
     </a>
   </div>
 
+  {%- comment -%}
+    AVEC DES FAVORIS, LA PLACE DES CARTES EST RESERVEE AVANT LA PREMIERE
+    PEINTURE. La reserve ci-dessus ne vaut que pour la liste vide : avec des
+    favoris, assets/theme.js (charge en defer) masquait le bloc vide puis
+    remplissait la grille apres un fetch par produit — deux changements de
+    hauteur apres la premiere peinture, CLS 0,354 a 412 et 0,219 a 1350 pour un
+    seuil de 0,1 (audit de performance 1.9.5). Ce script court s'execute
+    pendant l'analyse du HTML, donc avant que la section soit peinte : il lit
+    le nombre de favoris et pose autant de cartes d'attente, au meme
+    encombrement que les vraies (snippets/product-card-skeleton.liquid).
+    theme.js les remplace ensuite par les cartes, sans rien deplacer. La cle
+    de stockage est celle de Wishlist.STORAGE_KEY dans assets/theme.js.
+  {%- endcomment -%}
+  <template data-wishlist-skeleton>{% render 'product-card-skeleton' %}</template>
+  <script>
+    (function () {
+      var root = document.currentScript.parentElement;
+      var grid = root.querySelector('[data-wishlist-grid]');
+      var skeleton = root.querySelector('[data-wishlist-skeleton]');
+      var count = 0;
+      try {
+        var items = JSON.parse(localStorage.getItem('lumiere_wishlist') || '[]');
+        if (Array.isArray(items)) count = items.length;
+      } catch (e) {
+        count = 0;
+      }
+      if (!grid || !skeleton || count === 0) return;
+      for (var i = 0; i < count; i += 1) {
+        grid.appendChild(skeleton.content.cloneNode(true));
+      }
+      grid.hidden = false;
+      var empty = root.querySelector('[data-wishlist-empty]');
+      if (empty) empty.hidden = true;
+      var actions = root.querySelector('[data-wishlist-actions]');
+      if (actions) actions.hidden = false;
+    })();
+  </script>
+
   <noscript>
     <p class="wishlist-page__empty-text">{{ 'wishlist.empty_text' | t }}</p>
   </noscript>
