@@ -529,6 +529,11 @@
   // ============================================
   // WISHLIST
   // ============================================
+  // Ce qui peut recevoir le focus pose par le script : jamais un element
+  // sorti du cycle de tabulation ou cache aux lecteurs d'ecran.
+  const FOCUSABLE_SHOWN =
+    'a[href]:not([tabindex="-1"]):not([aria-hidden="true"]), button:not([tabindex="-1"]):not([aria-hidden="true"]):not([disabled])';
+
   const Wishlist = {
     STORAGE_KEY: 'lumiere_wishlist',
     items: [],
@@ -651,7 +656,7 @@
         }
         if (actions) actions.hidden = true;
         if (hadFocus && empty) {
-          const target = empty.querySelector('a[href], button');
+          const target = empty.querySelector(FOCUSABLE_SHOWN);
           if (target) target.focus();
         }
         return;
@@ -728,7 +733,10 @@
       const refocus = container.contains(document.activeElement);
       container.innerHTML = cards.map((card) => card.html || '').join('');
       if (refocus) {
-        const target = container.querySelector('a[href], button');
+        // Le lien nomme de la carte, jamais son lien d'image (aria-hidden,
+        // tabindex -1), qui est le premier du DOM (audit d'accessibilite 1.9.10).
+        const target =
+          container.querySelector('.product-card__link') || container.querySelector(FOCUSABLE_SHOWN);
         if (target) target.focus();
       }
 
