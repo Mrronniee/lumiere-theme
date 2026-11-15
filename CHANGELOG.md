@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.11 — 2026-11-15
+
+### Fixed
+- **Wishlist page: focus lands on the product name.** After removing a saved
+  product while others remain, keyboard focus now moves to the name link of
+  the next product card, which screen readers announce.
+
 ## 1.9.10 — 2026-11-15
 
 ### Fixed

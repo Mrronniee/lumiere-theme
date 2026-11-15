@@ -1,4 +1,4 @@
-LUMIERE 1.9.10 - free Shopify theme by KIOSK
+LUMIERE 1.9.11 - free Shopify theme by KIOSK
 https://kioskthemes.com
 
 WHAT'S IN THIS DOWNLOAD
