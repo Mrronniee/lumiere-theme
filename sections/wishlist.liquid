@@ -41,7 +41,9 @@
     color: var(--color-text);
   }
 
-  .wishlist-page__status:empty { display: none; }
+  /* Vide, la region reste rendue (hauteur 0) : un role=status en display:none
+     sort de l'arbre d'accessibilite et son premier message peut ne pas etre lu. */
+  .wishlist-page__status:empty { margin: 0; }
 
   .wishlist-page__empty { text-align: center; padding: var(--spacing-xl) 0; }
 

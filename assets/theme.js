@@ -567,6 +567,8 @@
     toggle(id, handle) {
       if (this.has(id)) {
         this.items = this.items.filter((item) => String(item.id) !== String(id));
+        // Le retrait se dit comme l'ajout (region role=status des notifications).
+        Notify.show(strings.wishlistRemoved);
       } else {
         this.items.push({ id: String(id), handle: handle });
         Notify.show(strings.wishlistAdded);
@@ -580,6 +582,7 @@
       this.save();
       const status = document.querySelector('[data-wishlist-status]');
       if (status) status.textContent = '';
+      Notify.show(strings.wishlistCleared);
       this.updateUI();
     },
 
@@ -631,6 +634,13 @@
       const actions = document.querySelector('[data-wishlist-actions]');
 
       if (this.items.length === 0) {
+        // FOCUS GARDE. « Vider les favoris » et le coeur de la derniere carte
+        // disparaissent avec ce qu'on cache ici : le focus retombait sur
+        // <body> (audit d'accessibilite 1.9.9). S'il etait dans la grille ou
+        // dans les actions, il passe au lien du bloc « liste vide ».
+        const active = document.activeElement;
+        const hadFocus =
+          Boolean(active) && (grid.contains(active) || Boolean(actions && actions.contains(active)));
         grid.hidden = true;
         grid.innerHTML = '';
         // Le bloc vide occupait deja sa place (data-reserving, visibility:
@@ -640,6 +650,10 @@
           empty.hidden = false;
         }
         if (actions) actions.hidden = true;
+        if (hadFocus && empty) {
+          const target = empty.querySelector('a[href], button');
+          if (target) target.focus();
+        }
         return;
       }
 
@@ -709,7 +723,14 @@
         this.updateUI();
         return;
       }
+      // Meme regle quand il reste des favoris : la carte dont on vient de
+      // retirer le coeur est remplacee, le focus passe a la premiere carte.
+      const refocus = container.contains(document.activeElement);
       container.innerHTML = cards.map((card) => card.html || '').join('');
+      if (refocus) {
+        const target = container.querySelector('a[href], button');
+        if (target) target.focus();
+      }
 
       // LES CONTROLES, PAS updateUI(). Les cartes qu'on vient d'injecter
       // portent leurs propres [data-wishlist-btn], qu'il faut remettre a
