@@ -1076,6 +1076,38 @@
       "ou": "assets/theme.js:585",
       "commit": "bd45b0e",
       "raison": "Annonce du vidage et du retrait. Lu dans le code de main (188bbaf, theme_version 1.9.10) : assets/theme.js:642-656, updateUI() note si le focus était dans la grille ou dans les actions avant de les cacher, puis le pose sur le lien du bloc « liste vide » ; :728-733, render() pose le focus sur la première carte quand il reste des favoris ; :571 et :585, toggle() et clear() annoncent « Removed from wishlist » / « Wishlist cleared » (locales/en.default.json:344-345, fr.json:344-345 « Retiré des favoris » / « Favoris vidés », layout/theme.liquid:137-138) dans #ThemeNotifications (role=status) ; sections/wishlist.liquid:46, la région d'état reste rendue quand elle est vide. Même mesure que l'audit (son script au clavier, Tab et Entrée réels, /en/pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après « Clear wishlist » et après le retrait du dernier favori, document.activeElement = a.btn.btn--primary du bloc vide dans les 4 cas (avant : body ou button.markets-selectors__toggle), et #ThemeNotifications porte l'annonce. Mesure complète de la démo au commit d97148f : 37 étapes, 0 régression, 0 défaut."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-resume@1.9.10-db99f17-20261115",
+      "version": "1.9.11",
+      "etat": "corrige",
+      "ou": "assets/theme.js:739",
+      "commit": "085d55f",
+      "raison": "ALERTE 1. Lu dans le code de main (5a87ff2, theme_version 1.9.11) : assets/theme.js:737-740, render() pose le focus sur le lien nommé de la carte (.product-card__link, snippets/product-card.liquid:242) et non plus sur le premier lien du DOM, a.product-card__media-link (aria-hidden=\"true\", tabindex=\"-1\", product-card.liquid:62) ; :534-535 et :659, le sélecteur FOCUSABLE_SHOWN écarte tout élément aria-hidden ou hors tabulation des cibles de focus du script. Même mesure que l'audit (son script comp-favoris-1910b.cjs, Tab et Entrée réels, /en/pages/lumiere-wishlist et /pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après le retrait d'un favori quand il en reste (2 -> 1), document.activeElement = a.product-card__link dans les 4 vues (a.product-card__media-link avant) ; après le retrait du dernier et après « Vider les favoris », a.btn.btn--primary du bloc vide (8 vues) ; annonces « Removed from wishlist » / « Retiré des favoris » et « Wishlist cleared » / « Favoris vidés » dans les 12 gestes. Mesure ciblée seulement, à la demande de Ronnie le 15/11/2026 : pas de mesure complète non-regression.py sur ce commit."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-semantique@1.9.10-db99f17-20261115",
+      "version": "1.9.11",
+      "etat": "corrige",
+      "ou": "assets/theme.js:739",
+      "commit": "085d55f",
+      "raison": "Lien d'image en double dans l'arbre. Lu dans le code de main (5a87ff2, theme_version 1.9.11) : assets/theme.js:737-740, render() pose le focus sur le lien nommé de la carte (.product-card__link, snippets/product-card.liquid:242) et non plus sur le premier lien du DOM, a.product-card__media-link (aria-hidden=\"true\", tabindex=\"-1\", product-card.liquid:62) ; :534-535 et :659, le sélecteur FOCUSABLE_SHOWN écarte tout élément aria-hidden ou hors tabulation des cibles de focus du script. Même mesure que l'audit (son script comp-favoris-1910b.cjs, Tab et Entrée réels, /en/pages/lumiere-wishlist et /pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après le retrait d'un favori quand il en reste (2 -> 1), document.activeElement = a.product-card__link dans les 4 vues (a.product-card__media-link avant) ; après le retrait du dernier et après « Vider les favoris », a.btn.btn--primary du bloc vide (8 vues) ; annonces « Removed from wishlist » / « Retiré des favoris » et « Wishlist cleared » / « Favoris vidés » dans les 12 gestes. Mesure ciblée seulement, à la demande de Ronnie le 15/11/2026 : pas de mesure complète non-regression.py sur ce commit."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-composants-commerce@1.9.10-db99f17-20261115",
+      "version": "1.9.11",
+      "etat": "corrige",
+      "ou": "assets/theme.js:739",
+      "commit": "085d55f",
+      "raison": "Lien d'image décoratif focalisé. Lu dans le code de main (5a87ff2, theme_version 1.9.11) : assets/theme.js:737-740, render() pose le focus sur le lien nommé de la carte (.product-card__link, snippets/product-card.liquid:242) et non plus sur le premier lien du DOM, a.product-card__media-link (aria-hidden=\"true\", tabindex=\"-1\", product-card.liquid:62) ; :534-535 et :659, le sélecteur FOCUSABLE_SHOWN écarte tout élément aria-hidden ou hors tabulation des cibles de focus du script. Même mesure que l'audit (son script comp-favoris-1910b.cjs, Tab et Entrée réels, /en/pages/lumiere-wishlist et /pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après le retrait d'un favori quand il en reste (2 -> 1), document.activeElement = a.product-card__link dans les 4 vues (a.product-card__media-link avant) ; après le retrait du dernier et après « Vider les favoris », a.btn.btn--primary du bloc vide (8 vues) ; annonces « Removed from wishlist » / « Retiré des favoris » et « Wishlist cleared » / « Favoris vidés » dans les 12 gestes. Mesure ciblée seulement, à la demande de Ronnie le 15/11/2026 : pas de mesure complète non-regression.py sur ce commit."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-focus-apres-mise-a-jour@1.9.10-db99f17-20261115",
+      "version": "1.9.11",
+      "etat": "corrige",
+      "ou": "assets/theme.js:739",
+      "commit": "085d55f",
+      "raison": "Focus après le retrait d'un favori. Lu dans le code de main (5a87ff2, theme_version 1.9.11) : assets/theme.js:737-740, render() pose le focus sur le lien nommé de la carte (.product-card__link, snippets/product-card.liquid:242) et non plus sur le premier lien du DOM, a.product-card__media-link (aria-hidden=\"true\", tabindex=\"-1\", product-card.liquid:62) ; :534-535 et :659, le sélecteur FOCUSABLE_SHOWN écarte tout élément aria-hidden ou hors tabulation des cibles de focus du script. Même mesure que l'audit (son script comp-favoris-1910b.cjs, Tab et Entrée réels, /en/pages/lumiere-wishlist et /pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après le retrait d'un favori quand il en reste (2 -> 1), document.activeElement = a.product-card__link dans les 4 vues (a.product-card__media-link avant) ; après le retrait du dernier et après « Vider les favoris », a.btn.btn--primary du bloc vide (8 vues) ; annonces « Removed from wishlist » / « Retiré des favoris » et « Wishlist cleared » / « Favoris vidés » dans les 12 gestes. Mesure ciblée seulement, à la demande de Ronnie le 15/11/2026 : pas de mesure complète non-regression.py sur ce commit."
     }
   ]
 }
