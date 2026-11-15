@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.9.10 — 2026-11-15
+
+### Fixed
+- **Wishlist page keeps keyboard focus.** After clearing the wishlist or
+  removing a saved product, focus now moves to the next useful element
+  instead of being lost, and the change is announced to screen readers.
+
 ## 1.9.9 — 2026-11-14
 
 ### Fixed
