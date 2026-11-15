@@ -1060,6 +1060,22 @@
       "ou": "README.txt:1",
       "commit": "45654c3",
       "raison": "README.txt:1 disait « LUMIERE 1.9.7 - free Shopify theme by KIOSK » alors que le thème était en 1.9.8 (oubli de la 1.9.8, qui n'avait monté que README.md:14). Il dit « LUMIERE 1.9.9 - … », comme config/settings_schema.json:5 (theme_version 1.9.9), README.md:14 et la première entrée du CHANGELOG."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-resume@1.9.9-b470a68-20261115",
+      "version": "1.9.10",
+      "etat": "corrige",
+      "ou": "assets/theme.js:642",
+      "commit": "bd45b0e",
+      "raison": "BLOQUANT 1 et 2. Lu dans le code de main (188bbaf, theme_version 1.9.10) : assets/theme.js:642-656, updateUI() note si le focus était dans la grille ou dans les actions avant de les cacher, puis le pose sur le lien du bloc « liste vide » ; :728-733, render() pose le focus sur la première carte quand il reste des favoris ; :571 et :585, toggle() et clear() annoncent « Removed from wishlist » / « Wishlist cleared » (locales/en.default.json:344-345, fr.json:344-345 « Retiré des favoris » / « Favoris vidés », layout/theme.liquid:137-138) dans #ThemeNotifications (role=status) ; sections/wishlist.liquid:46, la région d'état reste rendue quand elle est vide. Même mesure que l'audit (son script au clavier, Tab et Entrée réels, /en/pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après « Clear wishlist » et après le retrait du dernier favori, document.activeElement = a.btn.btn--primary du bloc vide dans les 4 cas (avant : body ou button.markets-selectors__toggle), et #ThemeNotifications porte l'annonce. Mesure complète de la démo au commit d97148f : 37 étapes, 0 régression, 0 défaut."
+    },
+    {
+      "id": "audit-theme-a11y-auditor-semantique@1.9.9-b470a68-20261115",
+      "version": "1.9.10",
+      "etat": "corrige",
+      "ou": "assets/theme.js:585",
+      "commit": "bd45b0e",
+      "raison": "Annonce du vidage et du retrait. Lu dans le code de main (188bbaf, theme_version 1.9.10) : assets/theme.js:642-656, updateUI() note si le focus était dans la grille ou dans les actions avant de les cacher, puis le pose sur le lien du bloc « liste vide » ; :728-733, render() pose le focus sur la première carte quand il reste des favoris ; :571 et :585, toggle() et clear() annoncent « Removed from wishlist » / « Wishlist cleared » (locales/en.default.json:344-345, fr.json:344-345 « Retiré des favoris » / « Favoris vidés », layout/theme.liquid:137-138) dans #ThemeNotifications (role=status) ; sections/wishlist.liquid:46, la région d'état reste rendue quand elle est vide. Même mesure que l'audit (son script au clavier, Tab et Entrée réels, /en/pages/lumiere-wishlist, 1440 et 390, démo 195172106566 portant ce code) : après « Clear wishlist » et après le retrait du dernier favori, document.activeElement = a.btn.btn--primary du bloc vide dans les 4 cas (avant : body ou button.markets-selectors__toggle), et #ThemeNotifications porte l'annonce. Mesure complète de la démo au commit d97148f : 37 étapes, 0 régression, 0 défaut."
     }
   ]
 }
